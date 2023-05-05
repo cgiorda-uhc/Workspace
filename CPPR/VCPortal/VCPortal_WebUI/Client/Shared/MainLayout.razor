@@ -1,0 +1,163 @@
+﻿@using System.Globalization;
+
+@layout TelerikLayout
+@inherits LayoutComponentBase
+@inject NavigationManager _navigationManager
+@inject IClientAuthorizationService _authorizationService
+@inject UserAccessConfig _userAccessConfig
+<style>
+
+    .toast-custom {
+        z-index: 7000;
+    }
+
+
+</style>
+
+
+
+ @if (_userAccessConfig != null && _authorizationService.CurrentUser != null)
+{
+    @if (_userAccessConfig.AllowedUsers.Contains(_authorizationService.CurrentUser.LoginName))
+    {
+        <div class="mt-0">
+            <div class="mt-0  h-25">
+                <NavMenu />
+            </div>
+            <div>
+                <BlazoredToasts Position="ToastPosition.BottomRight" ErrorClass="toast-custom" ShowCloseButton="false"
+                Timeout="10000"
+                IconType="IconType.FontAwesome"
+                ErrorIcon="fa fa-bug" />
+
+       
+                @Body
+            </div>
+        </div>
+    }
+    else
+    {
+        <text><b>&nbsp;@_status</b></text>
+    }
+}
+else
+{
+    <text><b>&nbsp;@_status</b></text>
+}
+
+@code {
+
+    [CascadingParameter]
+    public Error Error { get; set; }
+
+    private string _status { get; set; } = "Checking User Authentication. Please wait...";
+
+    protected async override Task OnInitializedAsync()
+    {
+
+        try
+        {
+            //if (_authorizationService.CurrentUser == null)
+            //{
+
+            //    var url = _userAccessConfig.IdentityURL;
+            //    _navigationManager.NavigateTo(url, forceLoad: true);
+
+
+            //    string username = _authorizationService.UserName;
+
+            //    if(string.IsNullOrEmpty(username))
+            //    {
+
+            //    }
+            //    else
+            //    {
+            //        //EXTRA SECURITY????
+
+            //        //NOW THAT WE HAVE CURRENT USER NAME USE IT TO GET USER ACCESS VIA SERVICE CALL TO AD API
+            //         _authorizationService.CurrentUser = await _authorizationService.GetCurrentUserAsync(username.DecryptString());
+
+            //    }
+            //}
+
+
+            //if (_userAccessConfig.AllowedUsers != null)
+            //{
+            //    //IS USER ALLOWED IF NOT REDIRECT TO NO PASS URL
+            //    if (!_userAccessConfig.AllowedUsers.Contains(_authorizationService.CurrentUser.LoginName))
+            //    {
+            //        //NavigationManager.NavigateTo($"authentication/login?returnUrl={Uri.EscapeDataString(NavigationManager.Uri)}");
+            //        _navigationManager.NavigateTo("youshallnotpass.html", true);
+            //    }
+            //}
+
+            //COMMENT AFTER TESTING
+            if (_authorizationService.CurrentUser == null)
+                _authorizationService.CurrentUser = await _authorizationService.GetCurrentUserAsync("cgiorda");
+
+            if (_authorizationService.CurrentUser == null)
+            {
+                string username;
+                string decryptedun = "";
+                _navigationManager.TryGetQueryString<string>(_navigationManager.Uri, "pref", out username);
+                if(string.IsNullOrEmpty(username))
+                {
+                    authenticate();
+                }
+                else 
+                {
+                    decryptedun = username.DecryptString();
+                    var date = decryptedun.Split('~')[1];
+                    var user_time = DateTime.ParseExact(date, _userAccessConfig.DateFormat, new CultureInfo("en-US"));
+                    var time_now = DateTime.Now;
+                    if (time_now > user_time.AddDays(1))
+                    {
+                        authenticate();
+                    }
+                }
+
+
+
+                //EXTRA SECURITY????
+
+                //NOW THAT WE HAVE CURRENT USER NAME USE IT TO GET USER ACCESS VIA SERVICE CALL TO AD API
+                _authorizationService.CurrentUser = await _authorizationService.GetCurrentUserAsync(decryptedun.Split('~')[0]);
+
+            }
+
+
+            if (_userAccessConfig.AllowedUsers != null)
+            {
+                //IS USER ALLOWED IF NOT REDIRECT TO NO PASS URL
+                if (!_userAccessConfig.AllowedUsers.Contains(_authorizationService.CurrentUser.LoginName))
+                {
+                    //NavigationManager.NavigateTo($"authentication/login?returnUrl={Uri.EscapeDataString(NavigationManager.Uri)}");
+                    _navigationManager.NavigateTo("youshallnotpass.html", true);
+                }
+            }
+
+
+            //_logger.LogInformation("Initializing {PageTitle}...", _pageTitle);
+
+            base.OnInitializedAsync();
+
+        }
+        catch (Exception ex)
+        {
+            Error.ProcessError(ex);
+        }
+
+
+
+    }
+
+    private void authenticate()
+    {
+        //ENCRYPT CURRENT URL TO PASS TO AUTHENTICATION WEB APP TO REDIRECT BACK TO
+        var currentUrl = _navigationManager.Uri.EncryptString();
+        //AUTHENTICATION WEB APP + URL TO RETURN TO WITH CURRENT USERNAME
+        var url = _userAccessConfig.IdentityURL + "?url=" + currentUrl;
+        //var uri = _navigationManager.ToAbsoluteUri(url);
+        _navigationManager.NavigateTo(url, forceLoad: true);
+    }
+}

@@ -1,0 +1,501 @@
+﻿@page "/chemopx_create"
+
+
+@inject IChemotherapyPX_Services _chemotherapyPX_Service
+@inject IVCPortal_Globals _VCPortal_Globals
+<style>
+    .my-form.k-form .k-form-buttons {
+        justify-content: flex-end;
+        margin: 25px 50px 50px 50px;
+    }
+
+     .margin-form {
+        margin-bottom: 10px;
+
+    }
+
+
+    .TextBoxLarge {
+        margin-bottom: 10px;
+        height: 100px;
+    }
+</style>
+
+<!--      <div class="k-window k-window-wrapper telerik-blazor k-centered custom-popup" style="width: 90vw;height: 100%;overflow: scroll;min-width: 120px;min-height: 100px;"
+         aria-modal="true" role="dialog" tabindex="0">  -->
+<div class="k-dialog-wrapper ">
+
+
+    <div class="k-window k-window-wrapper telerik-blazor k-centered custom-popup" style="width: 90vw;height: 96vh;min-width: 120px;min-height: 100px;"
+         aria-modal="true" role="dialog" tabindex="0">
+
+
+        @if(ValidSubmit)
+        {
+            <div class="demo-alert demo-alert-success" style="font-weight:bold" role="alert">
+                <text>&nbsp;</text> @_status
+            </div>
+        }
+        else if (_VCPortal_Globals.ChemotherapyPXFilters == null || _acListProc == null)
+        {
+            <div class="demo-alert demo-alert-success h4" role="alert">
+                <text>&nbsp;</text> @_status
+            </div>
+        }
+        else
+        {
+            <div style="padding-left:20px">
+
+                
+
+                <TelerikForm EditContext="@_editContext" OnSubmit="@OnSubmitHandler" Class="my-form">
+                    <FormValidation>
+                        <DataAnnotationsValidator></DataAnnotationsValidator>
+                    </FormValidation>
+                    <FormItems>
+
+                        <div class="row border border-3 border-primary m-2">
+                            <div class="col fw-bold">
+                                Add new Proc Code :
+
+                                <AutoComplete AutoCompleteList="@_acListProc" @bind-Value="@chemotherapyPX_CreateDTO.CODE"></AutoComplete>
+                                <TelerikValidationMessage For="@(() => chemotherapyPX_CreateDTO.CODE)"></TelerikValidationMessage>
+
+@*                                <TelerikAutoComplete TItem="@String" @bind-Value="@chemotherapyPX_CreateDTO.CODE"
+                                                 ScrollMode="@DropDownScrollMode.Virtual"
+                                                 ItemHeight="30"
+                                                 PageSize="20"
+                                                 OnRead="@GetRemoteData"
+                                                 Filterable="true" FilterOperator="@StringFilterOperator.StartsWith" />
+                                <TelerikValidationMessage For="@(() => chemotherapyPX_CreateDTO.CODE)"></TelerikValidationMessage>*@
+
+
+                            </div>
+                        </div>
+
+
+
+
+                        <div class="row  m-2">
+                            <div class="col  border border-2 border-info">
+         
+                                <FormItem Field="@nameof(chemotherapyPX_CreateDTO.GENERIC_NAME)">
+                                    <Template>
+                                        <label for="html" class="k-label k-form-label fw-bold">@nameof(chemotherapyPX_CreateDTO.GENERIC_NAME):</label>
+                                        <TelerikTextArea Id="@nameof(chemotherapyPX_CreateDTO.GENERIC_NAME)" @bind-Value="@chemotherapyPX_CreateDTO.GENERIC_NAME" Class="TextBoxLarge" PlaceHolder=""></TelerikTextArea>
+                                        <TelerikValidationMessage For="@(() => chemotherapyPX_CreateDTO.GENERIC_NAME)"></TelerikValidationMessage>
+                                    </Template>
+                                </FormItem>
+
+
+                            </div>
+                            <div class="col  border border-info">
+
+                                <FormItem Field="@nameof(chemotherapyPX_CreateDTO.TRADE_NAME)">
+                                    <Template>
+                                        <label for="html" class="k-label k-form-label fw-bold">@nameof(chemotherapyPX_CreateDTO.TRADE_NAME):</label>
+                                        <TelerikTextArea Id="@nameof(chemotherapyPX_CreateDTO.TRADE_NAME)" @bind-Value="@chemotherapyPX_CreateDTO.TRADE_NAME" Class="TextBoxLarge"  PlaceHolder=""></TelerikTextArea>
+                                        <TelerikValidationMessage For="@(() => chemotherapyPX_CreateDTO.TRADE_NAME)"></TelerikValidationMessage>
+                                    </Template>
+                                </FormItem>
+
+            
+                            </div>
+
+                              <div class="col border  border-2 border-info">
+
+                                 <FormItem Field="@nameof(chemotherapyPX_CreateDTO.CEP_ENROLL_EXCL_DESC)">
+                                    <Template>
+                                        <label for="html" class="k-label k-form-label fw-bold">@nameof(chemotherapyPX_CreateDTO.CEP_ENROLL_EXCL_DESC):</label>
+                                        @*<TelerikTextArea Id="@nameof(chemotherapyPX_CreateDTO.CEP_ENROLL_EXCL_DESC)" @bind-Value="@chemotherapyPX_CreateDTO.CEP_ENROLL_EXCL_DESC" Class="TextBoxLarge" PlaceHolder=""></TelerikTextArea>*@
+
+                                        <AutoComplete AutoCompleteList="@_VCPortal_Globals.ChemotherapyPXFilters.Where(x => x.Filter_Type == "CEP_ENROLL_EXCL_DESC").Select(x => x.Filter_Desc).ToList()" @bind-Value="@chemotherapyPX_CreateDTO.CEP_ENROLL_EXCL_DESC" CanAddNew="true" Rows="4" WildSearch="true" ResultCount="10" FilterLimit="0"></AutoComplete>
+                                        <TelerikValidationMessage For="@(() => chemotherapyPX_CreateDTO.CEP_ENROLL_EXCL_DESC)"></TelerikValidationMessage>
+                                    </Template>
+                                </FormItem>
+                            </div>
+
+
+                            <div class="col border  border-2 border-info">
+
+                                 <FormItem Field="@nameof(chemotherapyPX_CreateDTO.SOURCE)">
+                                    <Template>
+                                        <label for="html" class="k-label k-form-label fw-bold">@nameof(chemotherapyPX_CreateDTO.SOURCE):</label>
+                                        @*<TelerikTextArea Id="@nameof(chemotherapyPX_CreateDTO.SOURCE)" @bind-Value="@chemotherapyPX_CreateDTO.SOURCE" Class="TextBoxLarge" PlaceHolder=""></TelerikTextArea>*@
+                                        <AutoComplete AutoCompleteList="@_VCPortal_Globals.ChemotherapyPXFilters.Where(x => x.Filter_Type == "SOURCE").Select(x => x.Filter_Desc).ToList()" @bind-Value="@chemotherapyPX_CreateDTO.SOURCE" CanAddNew="true" Rows="4" WildSearch="true" ResultCount="10" FilterLimit="0"></AutoComplete>
+                                       <TelerikValidationMessage For="@(() => chemotherapyPX_CreateDTO.SOURCE)"></TelerikValidationMessage>
+                                    </Template>
+                                </FormItem>
+                            </div>
+
+
+                           
+                           
+                        </div>
+                        <div class="row m-2">
+
+                              <div class="col border border-2 border-info">
+
+                                <FormItem Field="@nameof(chemotherapyPX_CreateDTO.CKPT_INHIB_IND)">
+                                    <Template>
+                                        <label for="html" class="k-label k-form-label fw-bold">@nameof(chemotherapyPX_CreateDTO.CKPT_INHIB_IND):</label>
+                                        <TelerikCheckBox Id="@nameof(chemotherapyPX_CreateDTO.CKPT_INHIB_IND)" @bind-Value="@chemotherapyPX_CreateDTO.CKPT_INHIB_IND" Class="margin-form" />
+                                    </Template>
+                                </FormItem>
+                            </div>
+
+
+                             <div class="col border  border-2 border-info">
+                                <FormItem Field="@nameof(chemotherapyPX_CreateDTO.ANTI_EMETIC_IND)">
+                                    <Template>
+                                        <label for="html" class="k-label k-form-label fw-bold">@nameof(chemotherapyPX_CreateDTO.ANTI_EMETIC_IND):</label>
+                                        <TelerikCheckBox Id="@nameof(chemotherapyPX_CreateDTO.ANTI_EMETIC_IND)" @bind-Value="@chemotherapyPX_CreateDTO.ANTI_EMETIC_IND" Class="margin-form" />
+                                    </Template>
+                                </FormItem>
+                            </div>
+    
+
+                             <div class="col border  border-2 border-info">
+                                <FormItem Field="@nameof(chemotherapyPX_CreateDTO.NHNR_CANCER_THERAPY)">
+                                    <Template>
+                                        <label for="html" class="k-label k-form-label fw-bold">@nameof(chemotherapyPX_CreateDTO.NHNR_CANCER_THERAPY):</label>
+                                        <TelerikCheckBox Id="@nameof(chemotherapyPX_CreateDTO.NHNR_CANCER_THERAPY)" @bind-Value="@chemotherapyPX_CreateDTO.NHNR_CANCER_THERAPY" Class="margin-form" />
+                                    </Template>
+                                </FormItem>
+                            </div>
+
+
+
+                            <div class="col border  border-2 border-info">
+
+
+                                <FormItem Field="@nameof(chemotherapyPX_CreateDTO.CODE_CATEGORY_ID)">
+                                    <Template>
+                                        <label for="html" class="k-label k-form-label fw-bold">@nameof(chemotherapyPX_CreateDTO.CODE_CATEGORY_ID):</label>
+                                        <TelerikDropDownList Data="@_VCPortal_Globals.ChemotherapyPXFilters.Where(x => x.Filter_Type == "Code_Category").ToList()" TextField="Filter_Desc" ValueField="Filter_Id" Class="margin-form"
+                                                         @bind-Value="@chemotherapyPX_CreateDTO.CODE_CATEGORY_ID"></TelerikDropDownList>
+                                        <TelerikValidationMessage For="@(() => chemotherapyPX_CreateDTO.CODE_CATEGORY_ID)"></TelerikValidationMessage>
+                                    </Template>
+                                </FormItem>
+
+                            </div>
+                           
+
+                        </div>
+
+
+                        <div class="row  m-2">
+
+                            <div class="col border  border-2 border-info">
+
+
+
+                                <FormItem Field="@nameof(chemotherapyPX_CreateDTO.ASP_CATEGORY_ID)">
+                                    <Template>
+                                        <label for="html" class="k-label k-form-label fw-bold">@nameof(chemotherapyPX_CreateDTO.ASP_CATEGORY_ID):</label>
+                                        <TelerikDropDownList Data="@_VCPortal_Globals.ChemotherapyPXFilters.Where(x => x.Filter_Type == "ASP_Category").ToList()" TextField="Filter_Desc" ValueField="Filter_Id"  Class="margin-form"
+                                                         @bind-Value="@chemotherapyPX_CreateDTO.ASP_CATEGORY_ID"></TelerikDropDownList>
+
+
+                                        <TelerikValidationMessage For="@(() => chemotherapyPX_CreateDTO.ASP_CATEGORY_ID)"></TelerikValidationMessage>
+
+
+                                    </Template>
+                                </FormItem>
+
+
+                            </div>
+
+
+                            <div class="col border  border-2 border-info">
+
+                                <FormItem Field="@nameof(chemotherapyPX_CreateDTO.DRUG_ADM_MODE_ID)">
+                                    <Template>
+                                        <label for="html" class="k-label k-form-label fw-bold">@nameof(chemotherapyPX_CreateDTO.DRUG_ADM_MODE_ID):</label>
+                                        <TelerikDropDownList Data="@_VCPortal_Globals.ChemotherapyPXFilters.Where(x => x.Filter_Type == "Drug_Adm_Mode").ToList()" TextField="Filter_Desc" ValueField="Filter_Id"  Class="margin-form"
+                                                         @bind-Value="@chemotherapyPX_CreateDTO.DRUG_ADM_MODE_ID"></TelerikDropDownList>
+                                        <TelerikValidationMessage For="@(() => chemotherapyPX_CreateDTO.DRUG_ADM_MODE_ID)"></TelerikValidationMessage>
+                                    </Template>
+                                </FormItem>
+
+                            </div>
+
+
+                            <div class="col border  border-2 border-info">
+
+                                <FormItem Field="@nameof(chemotherapyPX_CreateDTO.PA_DRUGS_ID)">
+                                    <Template>
+                                        <label for="html" class="k-label k-form-label fw-bold">@nameof(chemotherapyPX_CreateDTO.PA_DRUGS_ID):</label>
+                                        <TelerikDropDownList Data="@_VCPortal_Globals.ChemotherapyPXFilters.Where(x => x.Filter_Type == "PA_Drugs").ToList()" TextField="Filter_Desc" ValueField="Filter_Id"  Class="margin-form"
+                                                         @bind-Value="@chemotherapyPX_CreateDTO.PA_DRUGS_ID"></TelerikDropDownList>
+                                                         <TelerikValidationMessage For="@(() => chemotherapyPX_CreateDTO.PA_DRUGS_ID)"></TelerikValidationMessage>
+                                    </Template>
+                                </FormItem>
+
+                            </div>
+
+
+                            <div class="col border  border-2 border-info">
+
+
+                                <FormItem Field="@nameof(chemotherapyPX_CreateDTO.CEP_PAY_CD_ID)">
+                                    <Template>
+                                        <label for="html" class="k-label k-form-label fw-bold">@nameof(chemotherapyPX_CreateDTO.CEP_PAY_CD_ID):</label>
+                                        <TelerikDropDownList Data="@_VCPortal_Globals.ChemotherapyPXFilters.Where(x => x.Filter_Type == "CEP_Pay_Cd").ToList()" TextField="Filter_Desc" ValueField="Filter_Id"
+                                                         @bind-Value="@chemotherapyPX_CreateDTO.CEP_PAY_CD_ID" Class="margin-form"></TelerikDropDownList>
+                                        <TelerikValidationMessage For="@(() => chemotherapyPX_CreateDTO.CEP_PAY_CD_ID)"></TelerikValidationMessage>
+                                    </Template>
+                                </FormItem>
+
+                            </div>
+                           
+                        </div>
+
+
+
+
+                        <div class="row  m-2">
+
+
+
+
+                            <div class="col border  border-2 border-info">
+
+                                <FormItem Field="@nameof(chemotherapyPX_CreateDTO.CEP_ENROLL_CD_ID)">
+                                    <Template>
+                                        <label for="html" class="k-label k-form-label fw-bold">@nameof(chemotherapyPX_CreateDTO.CEP_ENROLL_CD_ID):</label>
+                                        <TelerikDropDownList Data="@_VCPortal_Globals.ChemotherapyPXFilters.Where(x => x.Filter_Type == "CEP_Enroll_Cd").ToList()" TextField="Filter_Desc" ValueField="Filter_Id"
+                                                         @bind-Value="@chemotherapyPX_CreateDTO.CEP_ENROLL_CD_ID" Class="margin-form"></TelerikDropDownList>
+                                        <TelerikValidationMessage For="@(() => chemotherapyPX_CreateDTO.CEP_ENROLL_CD_ID)"></TelerikValidationMessage>
+                                    </Template>
+                                </FormItem>
+
+                            </div>
+
+
+
+
+                             <div class="col border  border-2 border-info">
+
+
+                                <FormItem Field="@nameof(chemotherapyPX_CreateDTO.CODE_EFF_DT)">
+                                    <Template>
+                                        <label for="html" class="k-label k-form-label fw-bold">@nameof(chemotherapyPX_CreateDTO.CODE_EFF_DT):</label>
+                                        <TelerikDatePicker @bind-Value="@chemotherapyPX_CreateDTO.CODE_EFF_DT" Format="MM/dd/yyyy" Min="@_VCPortal_Globals.Min" Max="@_VCPortal_Globals.Max" Class="margin-form"></TelerikDatePicker>
+                                        <TelerikValidationMessage For="@(() => chemotherapyPX_CreateDTO.CODE_EFF_DT)"></TelerikValidationMessage>
+                                    </Template>
+                                </FormItem>
+                            </div>
+
+
+
+                            
+
+
+                            <div class="col border  border-2 border-info">
+
+                                <FormItem Field="@nameof(chemotherapyPX_CreateDTO.PA_EFF_DT)">
+                                    <Template>
+                                        <label for="html" class="k-label k-form-label fw-bold">@nameof(chemotherapyPX_CreateDTO.PA_EFF_DT):</label>
+                                        <TelerikDatePicker @bind-Value="@chemotherapyPX_CreateDTO.PA_EFF_DT" Format="MM/dd/yyyy" Min="@_VCPortal_Globals.Min" Max="@_VCPortal_Globals.Max" Class="margin-form"></TelerikDatePicker>
+                                        <TelerikValidationMessage For="@(() => chemotherapyPX_CreateDTO.PA_EFF_DT)"></TelerikValidationMessage>
+                                    </Template>
+                                </FormItem>
+                            </div>
+
+
+                            <div class="col border  border-2 border-info">
+
+                                <FormItem Field="@nameof(chemotherapyPX_CreateDTO.PA_END_DT)">
+                                    <Template>
+                                        <label for="html" class="k-label k-form-label fw-bold">@nameof(chemotherapyPX_CreateDTO.PA_END_DT):</label>
+                                        <TelerikDatePicker @bind-Value="@chemotherapyPX_CreateDTO.PA_END_DT" Format="MM/dd/yyyy" Min="@_VCPortal_Globals.Min" Max="@_VCPortal_Globals.Max" Class="margin-form"></TelerikDatePicker>
+                                        <TelerikValidationMessage For="@(() => chemotherapyPX_CreateDTO.PA_END_DT)"></TelerikValidationMessage>
+                                    </Template>
+                                </FormItem>
+
+                            </div>
+                        </div>
+              
+                    </FormItems>
+                    <FormButtons>
+                        <TelerikButton ButtonType="@ButtonType.Submit" ThemeColor="primary">Save</TelerikButton>
+                        <TelerikButton ButtonType="@ButtonType.Button" OnClick="@(() => { _dialogCancelVisible = true; })">Cancel</TelerikButton>
+                    </FormButtons>
+
+                </TelerikForm>
+
+                </div>
+        }
+
+    </div>
+</div>
+
+
+
+<TelerikDialog @ref="_dialogCancelRef" @bind-Visible="_dialogCancelVisible" ShowCloseButton="false">
+    <DialogContent>
+        <p role="status">Are you sure you want to cancel?</p>
+    </DialogContent>
+    <DialogButtons>
+        <TelerikButton OnClick="@Close">Yes</TelerikButton>
+        <TelerikButton OnClick="@(() => { _dialogCancelVisible = false; })">No</TelerikButton>
+    </DialogButtons>
+</TelerikDialog>
+
+
+
+@code {
+
+    [CascadingParameter]
+    public Error Error { get; set; }
+
+    [Parameter]
+    public bool CreateFormVisible { get; set; }
+
+    [Parameter]
+    public int Id { get; set; }
+    [Parameter]
+    public EventCallback<int> IdChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> CreateFormVisibleChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> ProcessingCompleted { get; set; }
+
+
+    [Parameter]
+    public ChemotherapyPX_CreateDto chemotherapyPX_CreateDTO { get; set; }
+
+
+    private EditContext _editContext { get; set; }
+
+    private TelerikDialog? _dialogCancelRef;
+    private bool _dialogCancelVisible;
+    private List<string> _acListProc { get; set; }
+    private string _status= "Caching proc codes...";
+    private string _pageTitle { get; set; } = "ChemoPX Create Form";
+    private ILogger _logger { get; set; }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        try
+        {
+            _logger = ApplicationLogging.CreateLogger<ChemotherapyPXGrid>();
+            _logger.LogInformation("Initializing {PageTitle}...", _pageTitle);
+            
+  
+            //POPULATE FORMS EDITCONTEXT WITH BLANK FOR INSERT 
+            _editContext = new EditContext(chemotherapyPX_CreateDTO );
+
+            //POPULATE GLOBAL STATIC FILTERS FOR HANDLING DROPDOWNS WITHIN SOME FORM FIELDS
+            if (_VCPortal_Globals.ChemotherapyPXFilters == null)
+                _VCPortal_Globals.ChemotherapyPXFilters = await _chemotherapyPX_Service.GetAllFilters();
+
+            //POPULATE GLOBAL STATIC PROC CODES FOR HANDLING FINDING PROC TO ADD TO A NEW ITEM
+            if(_VCPortal_Globals.Proc_Codes == null)
+                _VCPortal_Globals.Proc_Codes = await _chemotherapyPX_Service.GetAllProcCodes();
+
+            //USE FOR AUTOCOMPLETE DISPLAY OF PROC CODES
+           if(_acListProc == null)
+            {
+                //MAUNUAL MAP FOR NOW :(
+                _acListProc = new List<string>();
+                foreach(var p in _VCPortal_Globals.Proc_Codes )
+                {
+                    _acListProc.Add(p.Proc_Cd + " ~ " +  p.Proc_Desc);
+                }
+            }
+                      
+            base.OnInitialized();
+
+        }
+        catch (Exception ex)
+        {
+            //NO NEED FOR STATUS ON ERROR. HANDLED GLOBALLY VIA MainLayout.BlazoredToasts
+            _status = "";
+            Error.ProcessError(ex);
+        }
+
+
+    }
+
+
+    //private void OnSubmitHandler(EditContext editContext)
+    private void OnSubmitHandler()
+    {
+
+        //GET FORM VALIDITY
+        bool isFormValid = _editContext.Validate();
+
+        if (isFormValid)
+        {
+            //apply some custom logic when the form is valud
+            HandleValidSubmit();
+        }
+        else
+        {
+            //apply some custom logic when the form is not valid
+            HandleInvalidSubmit();
+        }
+    }
+
+
+    public bool ValidSubmit { get; set; } = false;
+
+    async void HandleValidSubmit()
+    {
+
+        try
+        {
+            _logger.LogInformation("Running Create {Title}...", "HandleValidSubmit");
+
+            chemotherapyPX_CreateDTO.CODE = chemotherapyPX_CreateDTO.CODE.Split('~')[0].Trim();
+            Id = await _chemotherapyPX_Service.InsertChemoPXAsync(chemotherapyPX_CreateDTO);
+            await IdChanged.InvokeAsync(Id);
+
+            _status = "Code " + chemotherapyPX_CreateDTO.CODE + " was successfully inserted";
+            ValidSubmit = true;
+
+            StateHasChanged();
+
+        
+            await ProcessingCompleted.InvokeAsync(false);
+        }
+        catch (Exception ex)
+        {
+            //NO NEED FOR STATUS ON ERROR. HANDLED GLOBALLY VIA MainLayout.BlazoredToasts
+            _status = "";
+            Error.ProcessError(ex);
+        }
+        finally
+        {
+            Close();
+        }
+    }
+
+    void HandleInvalidSubmit()
+    {
+        _logger.LogInformation("Running Create {Title}...", "HandleInvalidSubmit");
+        ValidSubmit = false;
+    }
+
+    private async Task Close()
+    {
+        _dialogCancelVisible = false;
+        await CreateFormVisibleChanged.InvokeAsync();
+
+    }
+
+    //private void OpenDialog()
+    //{
+    //    _dialogCancelVisible = true;
+    //}
+
+}
+
+

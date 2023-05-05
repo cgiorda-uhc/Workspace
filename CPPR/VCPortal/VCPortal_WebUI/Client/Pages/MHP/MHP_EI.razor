@@ -1,0 +1,230 @@
+﻿@page "/mhp_ei"
+
+
+
+@inject IJSRuntime js
+@inject MHPUniverse_Services _MHPUniverse_Service
+
+<div>
+    @if (ValidSubmit)
+    {
+        <div class="demo-alert demo-alert-success" role="alert">
+            The form was submitted successfully.
+        </div>
+    }
+    else if (filter == null)
+    {
+         <div class="demo-alert demo-alert-success" role="alert">
+            Loading filters...
+        </div>
+    }
+    else
+    {
+        <TelerikForm EditContext="@EditContext" OnSubmit="@OnSubmitHandler">
+            <FormValidation>
+                <DataAnnotationsValidator></DataAnnotationsValidator>
+            </FormValidation>
+            <FormItems>
+                <div class="row">
+                    <div class="col-4 border border-primary" style="padding-bottom:10px">
+                    <FormItem>
+                        <Template>
+                                <DropDownCheckbox TextField="@nameof(param.State)" ValueField="@nameof(param.State)" Data="@filter.Where(x => x.Filter_Type == "State_of_Issue").OrderBy(x => x.Filter_Value).Select(x => x.Filter_Value).ToList()" Placeholder="* Select States(s)">
+                                    </DropDownCheckbox>
+                        </Template>
+                    </FormItem>
+                    </div>
+                    <div class="col-4 border border-primary">
+                        <div class="row">
+                            <div class="col" style="font-weight: bold">
+                                * Select Start Date
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <FormItem>
+                                    <Template>
+                                        <TelerikDatePicker @bind-Value="@param.StartDate" Format="MM/dd/yyyy" Id="@nameof(param.StartDate)"></TelerikDatePicker>
+                                        <TelerikValidationMessage For="@(() => @param.StartDate)" />
+                                    </Template>
+                                </FormItem>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4 border border-primary">
+                        <div class="row">
+                            <div class="col" style="font-weight: bold">
+                                * Select End Date
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <FormItem>
+                                    <Template>
+                                        <TelerikDatePicker @bind-Value="@param.EndDate" Format="MM/dd/yyyy" Id="@nameof(param.EndDate)"></TelerikDatePicker>
+                                        <TelerikValidationMessage For="@(() => @param.EndDate)" />
+                                    </Template>
+                                </FormItem>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-4 border border-primary" style="padding-bottom:10px">
+                        <FormItem>
+
+                            <Template>
+                                <DropDownCheckbox TextField="@nameof(param.Finc_Arng_Desc)" ValueField="@nameof(param.Finc_Arng_Desc)" Data="@filter.Where(x => x.Filter_Type == "FINC_ARNG_DESC").OrderBy(x => x.Filter_Value).Select(x => x.Filter_Value).ToList()" Placeholder="* Select Finc_Arng_Desc(s)">
+                                </DropDownCheckbox>
+                            </Template>
+
+                        </FormItem>
+                    </div>
+                    <div class="col-4 border border-primary">
+                        <FormItem>
+                            <Template>
+                                <DropDownCheckbox TextField="@nameof(param.Mkt_Seg_Rllp_Desc)" ValueField="@nameof(param.Mkt_Seg_Rllp_Desc)" Data="@filter.Where(x => x.Filter_Type == "MKT_SEG_RLLP_DESC").OrderBy(x => x.Filter_Value).Select(x => x.Filter_Value).ToList()" Placeholder="* Select Mkt_Seg_Rllp_Desc(s)">
+                                </DropDownCheckbox>
+                            </Template>
+                            </FormItem>
+                    </div>
+                    <div class="col-4 border border-primary">
+                        <FormItem>
+                            <Template>
+                                <DropDownCheckbox TextField="@nameof(param.LegalEntities)" ValueField="@nameof(param.LegalEntities)" Data="@filter.Where(x => x.Filter_Type == "LEG_ENTY").OrderBy(x => x.Filter_Value).Select(x => x.Filter_Value).ToList()" Placeholder="* Select LegalEntity(s)">
+                                </DropDownCheckbox>
+                            </Template>
+                            </FormItem>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-4 border border-primary" style="padding-bottom:10px">
+                        <FormItem>
+                            <Template>
+                                <DropDownCheckbox TextField="@nameof(param.Mkt_Typ_Desc)" ValueField="@nameof(param.Mkt_Typ_Desc)" Data="@filter.Where(x => x.Filter_Type == "MKT_TYP_DESC").OrderBy(x => x.Filter_Value).Select(x => x.Filter_Value).ToList()" Placeholder="Select Mkt_Typ_Desc(s)">
+                                </DropDownCheckbox>
+                            </Template>
+                        </FormItem>
+                    </div>
+                    <div class="col-8">
+                        
+                    </div>
+                </div>
+
+            </FormItems>
+        </TelerikForm>
+    }
+</div>
+
+@code {
+    public MHP_EI_Parameters param = new MHP_EI_Parameters();
+    private List<MHP_Reporting_Filters> filter;
+    public EditContext EditContext { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        EditContext = new EditContext(param);
+
+        //NEEDED FOR CACHE? THINKING NAY!!!
+        if(filter == null)
+            filter = await GetFilters();
+
+        base.OnInitialized();
+    }
+
+    private Task<List<MHP_Reporting_Filters>> GetFilters()
+    {
+        return _MHPUniverse_Service.GetMHP_Filters_Async();
+    }
+
+    public bool ValidSubmit { get; set; } = false;
+
+    //private void OnSubmitHandler(EditContext editContext)
+    private void OnSubmitHandler()
+    {
+
+
+        bool isFormValid = EditContext.Validate();
+
+        if (isFormValid)
+        {
+            //apply some custom logic when the form is valud
+            HandleValidSubmit();
+        }
+        else
+        {
+            //apply some custom logic when the form is not valid
+            HandleInvalidSubmit();
+        }
+    }
+
+
+
+
+    async void HandleValidSubmit()
+    {
+        ValidSubmit = true;
+
+        //await Task.Delay(2000);
+
+        var mhp_s = GetMHP_EI();
+        var mhp_d =  GetMHPEIDetails();
+        Task.WaitAll(mhp_s, mhp_d);
+        //var mhp_s = await GetMHP_EI();
+        //var mhp_d = await GetMHPEIDetails();
+
+        var mhp_results = mhp_s.Result.OrderBy(o => o.LegalEntity).OrderBy(o => o.ExcelRow).ToList();
+        var mhp_details = mhp_d.Result.OrderBy(o => o.LEG_ENTY_NBR).OrderBy(o => o.Request_Date).OrderBy(o => o.Authorization).ToList();
+
+
+
+        var fileName = "MHP_Report_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
+        MHCUniverse_Excel ex = new MHCUniverse_Excel();
+        var fileStram = await ex.ExportEIToExcel(mhp_results, mhp_details, ComponentDetached);
+
+        DownloadFile(fileName, fileStram);
+
+
+
+        ValidSubmit = false;
+
+        StateHasChanged();
+    }
+
+    void HandleInvalidSubmit()
+    {
+        ValidSubmit = false;
+
+
+    }
+
+    private Task<List<MHP_EI_Model>> GetMHP_EI()
+    {
+        return _MHPUniverse_Service.GetMHP_EI_Async();
+    }
+
+    private Task<List<MPHUniverseDetails_Model>> GetMHPEIDetails()
+    {
+        return _MHPUniverse_Service.GetMHPEIDetailsAsync();
+    }
+
+    
+
+
+}
+
+@functions {
+    async void DownloadFile(string fileName, Stream s)
+    {
+        byte[] bytes;
+
+        using (BinaryReader br = new BinaryReader(s))
+        {
+            bytes = br.ReadBytes((int)s.Length);
+        }
+        await JSUtilities.SaveAs(js, fileName, bytes);
+    }
+}
+
+

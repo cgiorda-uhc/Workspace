@@ -1,0 +1,77 @@
+﻿@page "/test_grid"
+
+
+<div style="height: 90vh">
+    @if (GridData == null)
+    {
+        <p><em>Loading data...</em></p>
+    }
+    else
+    {
+        <TelerikGrid Data="@GridData" Width="100%" FilterMode="@GridFilterMode.FilterRow" Height="100%" RowHeight="40"
+                 Sortable="true" PageSize="20" Resizable="true" Reorderable="true" ScrollMode="@GridScrollMode.Virtual">
+            <GridSettings>
+            </GridSettings>
+            <GridColumns>
+                <GridCommandColumn Width="100px" Locked="true" Resizable="false">
+                    <GridCommandButton OnClick="@ShowForm" Icon="edit" Primary="true"></GridCommandButton>
+                </GridCommandColumn>
+                <GridColumn Field="sampleString" Title="sampleString" Locked="true" Width="100px" Editable="true" Groupable="false" />
+                <GridColumn Field="sampleBool" Title="sampleBool" Locked="true" Width="100px" Editable="true" Groupable="false" />
+                <GridColumn Field="sampleInt" Title="sampleInt" Locked="true" Width="100px" Editable="true" Groupable="false" />
+                <GridColumn Field="sampleDate" Title="sampleDate" Locked="true" Width="100px" Editable="true" Groupable="false" />
+            </GridColumns>
+        </TelerikGrid>
+
+
+        <TelerikDialog @ref="@DialogRef" @bind-Visible="@EditFormVisible" Width="300px" ShowCloseButton="true">
+            <DialogTitle>
+                Grid Edit Form
+            </DialogTitle>
+            <DialogContent>
+                <TestForm date_test="@FormData" />
+            </DialogContent>
+        </TelerikDialog>
+
+
+    }
+</div>
+
+@code {
+    private List<DateTest> GridData { get; set; }
+
+    private TelerikDialog? DialogRef { get; set; }
+    private bool EditFormVisible { get; set; }
+    private DateTest FormData { get; set; }
+    
+    
+    protected override void OnInitialized()
+    {
+        GridData = new List<DateTest>();
+
+        GridData.Add(new DateTest()
+            {
+                sampleString = "Test",
+                sampleDate = DateTime.Now,
+                sampleInt = 123,
+                sampleBool = true
+
+        });
+     
+    }
+
+    public class DateTest
+    {
+        public string sampleString { get; set; }
+        public int sampleInt { get; set; }
+        public bool sampleBool { get; set; }
+        public DateTime sampleDate { get; set; }
+    }
+
+
+    private async Task ShowForm(GridCommandEventArgs args)
+    {
+        FormData = args.Item as DateTest;
+        EditFormVisible = true;
+    }
+}

@@ -1,0 +1,95 @@
+﻿@inject IVCPortal_Services _VCPortal_Services
+
+<div class="row">
+    <div class="col-md-1 p-0 mb-0 bg-primary text-white text-center" style="font-weight: bold">
+        VCPortal
+    </div>
+
+    <div class="col-md-2">
+        <TelerikMenu Data="@MenuItems">
+            <ItemTemplate Context="item">
+                <NavLink href="@item.Link" class="k-menu-link-text">@item.Text</NavLink>
+            </ItemTemplate>
+        </TelerikMenu>
+    </div>
+    <div class="col-md-6"></div>
+    <div id="page_title" class="col-md-3 float-right border border-primary">VCPortal</div>
+@*    <div class="col-md-3 float-right border border-primary">@_VCPortal_Services.PageTitle</div>*@
+</div>
+
+
+
+@code {
+
+
+
+    public IEnumerable<MenuItem> MenuItems { get; set; }
+
+    public class MenuItem
+    {
+        public string Text { get; set; }
+        public string Link { get; set; }
+        public bool Disabled { get; set; }
+        public bool Separator { get; set; }
+        public IEnumerable<MenuItem> Items { get; set; }
+    }
+
+    protected override void OnInitialized()
+    {
+        MenuItems = new List<MenuItem>()
+        {
+            new MenuItem()
+            {
+                Text = "Data Management",
+                Items = new List<MenuItem>()
+                {
+                    new MenuItem { Text = "ChemotherapyPX", Link = "chemopx_grid" },
+                    new MenuItem { Text = "SampleForm", Link="testform" },
+                    new MenuItem { Text = "SampleGrid" , Link="test_grid" }
+                }
+            },
+            //new MenuItem()
+            //{
+            //    Text = "Color Picker",
+            //    Disabled = true
+            //},
+            new MenuItem()
+            {
+                Separator = true
+            },
+            new MenuItem()
+            {
+                Text = "Reporting",
+                Link = "grid",
+                Items = new List<MenuItem>()
+                {
+                    new MenuItem { Text = "MHP EI", Link = "mhp_ei" },
+                    new MenuItem { Text = "MHP OX" },
+                    new MenuItem { Text = "MHP CS" }
+                }
+            },
+            new MenuItem()
+            {
+                Separator = true
+            },
+            new MenuItem()
+            {
+                Text = "Admin",
+                Items = new List<MenuItem>()
+                {
+                    new MenuItem { Text = "Group Main", Link = "/" },
+                    new MenuItem { Text = "Orientation", Link = "/"  },
+                    new MenuItem { Text = "Keyboard Navigation", Link = "/"  }
+                }
+            }
+        };
+
+        base.OnInitialized();
+    }
+}
+
+<style>
+    #demo-runner {
+        height: 400px;
+    }
+</style>

@@ -1,0 +1,163 @@
+﻿<UserControl x:Class="UCS_Project_Manager.ProjectIntakeSample1"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+            xmlns:vml="clr-namespace:UCS_Project_Manager;assembly=UCS_Project_Manager_ViewModels"
+            vml:ViewModelLocator.AutoHookedUpViewModel="True"
+            xmlns:local="clr-namespace:UCS_Project_Manager"
+            mc:Ignorable="d"
+            Height="800" Width="600" Background="White">
+    <UserControl.Resources>
+        <local:RadioButtonCheckedConverter x:Key="RadioButtonCheckedConverter"></local:RadioButtonCheckedConverter>
+
+        <Style x:Key="gridErrStyle" TargetType="{x:Type Grid}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="ToolTip" 
+                        Value="{Binding RelativeSource={x:Static RelativeSource.Self}, 
+                        Path=(Validation.Errors)[0].ErrorContent}" />
+                </Trigger>
+            </Style.Triggers>
+            <Setter Property="Validation.ErrorTemplate">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <DockPanel LastChildFill="true">
+                            <Border Background="Red" DockPanel.Dock="right" Margin="5,0,0,0" Width="20" Height="20" CornerRadius="10"
+                            ToolTip="{Binding ElementName=customGridAdorner, Path=AdornedElement.(Validation.Errors)[0].ErrorContent}">
+                                <TextBlock Text="!" VerticalAlignment="center" HorizontalAlignment="center" FontWeight="Bold" Foreground="white">
+                                </TextBlock>
+                            </Border>
+                            <AdornedElementPlaceholder Name="customGridAdorner" VerticalAlignment="Center" >
+                                <Border BorderBrush="red" BorderThickness="1" />
+                            </AdornedElementPlaceholder>
+                        </DockPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid  Width="600" Height="800" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="0">
+        <!--<Grid DataContext="{Binding Source={StaticResource m}}" Width="600" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Stretch" Margin="0">-->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition/>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="0" Content="First Name : "></Label>
+        <Label Grid.Row="1" Grid.Column="0" Content="Last Name : "></Label>
+        <Label Grid.Row="2" Grid.Column="0" Content="Full Name : "></Label>
+        <Label Grid.Row="3" Grid.Column="0" Content="Age : "></Label>
+        <Label Grid.Row="4" Grid.Column="0" Content="Gender : "></Label>
+        <Label Grid.Row="5" Grid.Column="0" Content="Line of Business : "></Label>
+        <Label Grid.Row="6" Grid.Column="0" Content="Is Member : "></Label>
+        <Label Grid.Row="7" Grid.Column="0" Content="Test Save : "></Label>
+        <Label Grid.Row="8" Grid.Column="0" Content="Test Add : "></Label>
+        <Label Grid.Row="9" Grid.Column="0" Content="Test Cancel : "></Label>
+        <Label Grid.Row="10" Grid.Column="0" Content="Test List Display : "></Label>
+        <Label Grid.Row="11" Grid.Column="0" Content="Test Delete : "></Label>
+
+        <Grid Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource gridErrStyle}" ToolTip="{Binding SelectedItem.FirstName, ElementName=lbProjectIntakeSample1Arr}">
+            <!--<TextBox Text="{Binding Path=ProjectIntakeSample1.FirstName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"></TextBox>-->
+
+            <TextBox Text="{Binding SelectedItem.FirstName, ElementName=lbProjectIntakeSample1Arr, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"></TextBox>
+
+
+        </Grid>
+
+        <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource gridErrStyle}" ToolTip="{Binding SelectedItem.LastName, ElementName=lbProjectIntakeSample1Arr}">
+            <!--<TextBox Text="{Binding Path=ProjectIntakeSample1.LastName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"></TextBox>-->
+            <TextBox Text="{Binding SelectedItem.LastName, ElementName=lbProjectIntakeSample1Arr,  UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"></TextBox>
+        </Grid>
+
+        <!--<Label Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Background="{Binding Path=lblAgeColor}" Content="{Binding Path=ProjectIntakeSample1.FullName, Mode=OneWay}"></Label>-->
+        <Label Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Background="{Binding Path=lblAgeColor}" Content="{Binding SelectedItem.FullName, ElementName=lbProjectIntakeSample1Arr, Mode=OneWay}"></Label>
+
+        <Grid Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource gridErrStyle}" ToolTip="{Binding SelectedItem.Age, ElementName=lbProjectIntakeSample1Arr}">
+            <!--<TextBox Text="{Binding Path=ProjectIntakeSample1.Age, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}" ></TextBox>-->
+            <TextBox Text="{Binding  SelectedItem.Age, ElementName=lbProjectIntakeSample1Arr,  UpdateSourceTrigger=PropertyChanged, Mode=TwoWay, ValidatesOnExceptions=True}" ></TextBox>
+        </Grid>
+
+        <Grid Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource gridErrStyle}" ToolTip="{Binding Path=ProjectIntakeSample1.Gender}">
+            <!--<RadioButton   GroupName="radGender" Content="Male"  Validation.ErrorTemplate="{x:Null}" IsChecked="{Binding Path=ProjectIntakeSample1.Gender, Converter={StaticResource RadioButtonCheckedConverter}, 
+            ConverterParameter=Male}" HorizontalAlignment="left" VerticalAlignment="Center"   ></RadioButton>
+            <RadioButton  GroupName="radGender" Content="Female" Validation.ErrorTemplate="{x:Null}"  IsChecked="{Binding Path=ProjectIntakeSample1.Gender, Converter={StaticResource RadioButtonCheckedConverter}, 
+            ConverterParameter=Female}" HorizontalAlignment="Center"  VerticalAlignment="Center" ></RadioButton>-->
+            <RadioButton   GroupName="radGender" Content="Male"  Validation.ErrorTemplate="{x:Null}" IsChecked="{Binding SelectedItem.Gender, ElementName=lbProjectIntakeSample1Arr, Converter={StaticResource RadioButtonCheckedConverter}, 
+            ConverterParameter=Male}" HorizontalAlignment="left" VerticalAlignment="Center"   ></RadioButton>
+            <RadioButton  GroupName="radGender" Content="Female" Validation.ErrorTemplate="{x:Null}"  IsChecked="{Binding SelectedItem.Gender, ElementName=lbProjectIntakeSample1Arr, Converter={StaticResource RadioButtonCheckedConverter}, 
+            ConverterParameter=Female}" HorizontalAlignment="Center"  VerticalAlignment="Center" ></RadioButton>
+            
+        </Grid>
+
+        <Grid Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2"  Style="{StaticResource gridErrStyle}" ToolTip="{Binding Path=ProjectIntakeSample1.LOB, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged,  ValidatesOnDataErrors=true, NotifyOnValidationError=True}">
+           <!--<ComboBox  Name="cbxLOB" SelectedValue="{Binding Path=ProjectIntakeSample1.LOB}" SelectedValuePath="Content" IsSynchronizedWithCurrentItem="True">
+                <ComboBoxItem Content="Medicare"/>
+                <ComboBoxItem Content="Medicaid"/>
+                <ComboBoxItem Content="Commercial"/>
+            </ComboBox>-->
+            <ComboBox  Name="cbxLOB" SelectedValue="{Binding SelectedItem.LOB, ElementName=lbProjectIntakeSample1Arr}" SelectedValuePath="Content" IsSynchronizedWithCurrentItem="True">
+                <ComboBoxItem Content="Medicare"/>
+                <ComboBoxItem Content="Medicaid"/>
+                <ComboBoxItem Content="Commercial"/>
+            </ComboBox>
+        </Grid>
+
+        <Grid Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2"  Style="{StaticResource gridErrStyle}" ToolTip="{Binding Path=ProjectIntakeSample1.IsMember}">
+            <!--<CheckBox Name="chkIsMember" IsChecked="{Binding Path=ProjectIntakeSample1.IsMember}" />-->
+            <CheckBox Name="chkIsMember" IsChecked="{Binding SelectedItem.IsMember, ElementName=lbProjectIntakeSample1Arr}" />
+        </Grid>
+        
+        <!--REMOVE BUTTON FROM CONTROL FOR REUSE???-->
+        <Grid Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2">
+            <!--<Button Content="Save" IsEnabled="{Binding Path=IsValid, UpdateSourceTrigger=PropertyChanged}" Command="{Binding Path=SaveCommand}"  />-->
+            <Button Content="Save"  Command="{Binding Path=SaveCommand}"  />
+        </Grid>
+
+        <Grid Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2">
+            <Button Content="Add" Command="{Binding SaveCommand}" IsEnabled="{Binding Path=IsValid, UpdateSourceTrigger=PropertyChanged}" />
+        </Grid>
+
+        <Grid Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="2">
+            <Button Content="Cancel"  Command="{Binding CancelCommand}" />
+        </Grid>
+
+
+        <!--TEST LIST BOUND TO ARRARY DELETE ME!!!!-->
+        <Grid Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="2">
+            <!--<ListBox Name="lbProjectIntakeSample1Arr" ItemsSource = "{Binding ProjectIntakeSample1Arr}" SelectedItem = "{Binding ProjectIntakeSample1}">-->
+            <ListBox x:Name="lbProjectIntakeSample1Arr" ItemsSource = "{Binding ProjectIntakeSample1Arr}" SelectedItem = "{Binding ProjectIntakeSample1}" IsSynchronizedWithCurrentItem="True" >
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding Path=FirstName, StringFormat= '\{0\}, '}" />
+                            <TextBlock Text="{Binding Path=LastName, StringFormat= '\{0\}, '}" />
+                            <TextBlock Text="{Binding Path=Age}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+        
+        <Grid Grid.Row="11" Grid.Column="1" Grid.ColumnSpan="2" >
+            <Button Content = "Delete"  Command = "{Binding DeleteCommand}"  />
+        </Grid>
+    </Grid>
+</UserControl>

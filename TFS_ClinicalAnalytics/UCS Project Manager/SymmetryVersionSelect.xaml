@@ -1,0 +1,38 @@
+﻿<Window x:Class="UCS_Project_Manager.SymmetryVersionSelect"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UCS_Project_Manager"
+        mc:Ignorable="d"
+        Title="SymmetryVersionSelect" Height="450" Width="800">
+
+
+    <Grid ShowGridLines="True">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"></ColumnDefinition>
+            <ColumnDefinition Width="4*"></ColumnDefinition>
+            <ColumnDefinition Width="3*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Label x:Name="Symmetry_VerionCurrent"  FontWeight="Bold" Grid.Column="1"  Grid.Row="0" />
+        <Label Content="Choose Symmetry Verion:" FontWeight="Bold" Grid.Column="1"  Grid.Row="1" />
+        <ComboBox x:Name="Symmetry_VerionFilter"  Grid.Column="1"   Grid.Row="2" ItemsSource="{Binding Path=strSymmetryVersionsArr }" SelectedIndex="0"  />
+        <Button  x:Name="btnVersion"  Margin="4" Content=" Version " Grid.Column="1"   Grid.Row="3" Click="BtnVersion_Click" >
+            <Button.Resources>
+                <local:SearchFilterConverter x:Key="SearchFilterConverter"/>
+            </Button.Resources>
+            <Button.CommandParameter>
+                <MultiBinding Converter="{StaticResource SearchFilterConverter}" >
+                    <Binding Path="SelectedValue" ElementName="Symmetry_VerionFilter"/>
+                </MultiBinding>
+            </Button.CommandParameter>
+        </Button>
+    </Grid>
+</Window>

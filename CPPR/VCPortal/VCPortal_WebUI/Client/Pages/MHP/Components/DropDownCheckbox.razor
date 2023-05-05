@@ -1,0 +1,72 @@
+﻿<div class="row">
+    <div class="col" style="font-weight: bold">
+            @Placeholder
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+        <TelerikMultiSelect Data="@Data" @bind-Value="@Values" AutoClose="false">
+
+                <HeaderTemplate>
+                    <label style="padding: 4px 8px;">
+                        <TelerikCheckBox TValue="bool" Value="@IsAllSelected()" ValueChanged="@( (bool v) => ToggleSelectAll(v) )"></TelerikCheckBox>
+                        &nbsp;Select All
+                    </label>
+                <TelerikValidationMessage For="@(() => @Values)" />
+                </HeaderTemplate>
+
+                <ItemTemplate>
+                    <input type="checkbox" id="@( "cb" + context.Replace(" ", "") )" class="k-checkbox k-checkbox-md" checked="@GetChecked(context)">
+                    <label class="k-checkbox-label" for="@( "cb" + context.Replace(" ", "") )">@context</label>
+                </ItemTemplate>
+            </TelerikMultiSelect>
+        </div>
+</div>
+
+@code {
+    void ToggleSelectAll(bool selectAll)
+    {
+        if (selectAll)
+        {
+            Values = new List<string>(Data);
+        }
+        else
+        {
+            Values = new List<string>();
+        }
+    }
+
+    bool IsAllSelected()
+    {
+        return Values.Count == Data.Count;
+
+        // in this example we do a simple count check for performance
+        // all items in the dropdown should be in the data anyway
+        // caveat: virtualization does not work that way, but for it selecting all
+        // would be a completely different feature anyway that will require asking the server for data
+        // so it is beyond the scope of this article as it depends heavily on the use case and needs
+    }
+
+    // for the item checkboxes
+    bool GetChecked(string text)
+    {
+        return Values.Contains(text);
+    }
+
+
+    List<string> Values { get; set; } = new List<string>();
+
+    [Parameter]
+    public List<string> Data { get; set; } = new List<string>();
+
+    [Parameter]
+    public string Placeholder { get; set; } = "Select one or more items";
+
+    [Parameter]
+    public string TextField { get; set; } = "";
+
+    [Parameter]
+    public string ValueField { get; set; } = "";
+
+
+}

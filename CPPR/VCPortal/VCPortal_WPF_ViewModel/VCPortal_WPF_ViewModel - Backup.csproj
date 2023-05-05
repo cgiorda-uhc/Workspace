@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	  <IncludePackageReferencesDuringMarkupCompilation>true</IncludePackageReferencesDuringMarkupCompilation>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\ExcelConnectionLibrary\FileParsingLibrary.csproj" />
+    <ProjectReference Include="..\..\SharedFunctionsLibrary\SharedFunctionsLibrary.csproj" />
+    <ProjectReference Include="..\VCPortal_Models\VCPortal_Models.csproj" />
+  </ItemGroup>
+	
+
+</Project>

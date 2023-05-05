@@ -1,0 +1,27 @@
+﻿@{
+
+    var key = System.Configuration.ConfigurationManager.AppSettings["EncryptionKey"];
+    var defaulturl = System.Configuration.ConfigurationManager.AppSettings["DefaultRedirect"];
+    var stoppage = System.Configuration.ConfigurationManager.AppSettings["StopPage"];
+    var datefomat = System.Configuration.ConfigurationManager.AppSettings["DateFormat"];
+    var querystring = HttpContext.Current.Request.QueryString["url"];
+    var username = HttpContext.Current.User.Identity.Name;
+    var datetime = DateTime.Now.ToString(datefomat);
+
+
+    if (!string.IsNullOrEmpty(username))
+    {
+
+        var url = (string.IsNullOrEmpty(querystring) ? defaulturl : querystring.DecryptString());
+        var encrypted = (username.ToLower().TrimStart('m','s','\\') + "~" + datetime).EncryptString();
+
+
+        Response.Redirect(url + "?pref=" + encrypted);
+
+
+    }
+    else
+    {
+        Response.Redirect(defaulturl + stoppage);
+    }
+}

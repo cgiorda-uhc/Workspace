@@ -1,0 +1,416 @@
+﻿@page "/etgfs_grid"
+@using System.Linq;
+@using System.Reflection;
+
+@inject IETGFactSymmetryServices _etgFactSymmetry_Service
+@inject IVCPortal_Services _VCPortal_Services
+
+
+<!--https://www.tutorialrepublic.com/snippets/preview.php?topic=bootstrap&file=crud-data-table-for-database-with-modal-form-->
+<style>
+    html {
+        overflow-x: hidden;
+        overflow-y:hidden;
+    }
+    html, body, app, .main, .main > .content {
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+    }
+
+
+
+    .highlightCellBackGround {
+        background-color: lightyellow;
+    }
+
+    .negativeCellBackGround {
+        background-color: red;
+        color:white;
+    }
+
+
+
+    .k-grid .k-grid-header th.etgHeader {
+        background-color: orange;
+        color: white;
+    }
+
+    .pcHeader {
+        background-color: Green;
+        color: white;
+    }
+
+    .ecHeader {
+        background-color: DeepSkyBlue;
+        color: white;
+    }
+
+    .pcentHeader {
+        background-color: CadetBlue;
+        color: white;
+    }
+
+</style>
+
+<JSRuntimeCalls Value="@_pageTitle" />
+<div style="height: 93vh">
+
+    <!--<TelerikButton OnClick="@AutoFit">AutoFit All Columns Manually</TelerikButton>-->
+    @if (GridData == null)
+    {
+        <p><em>@_status</em></p>
+    }
+    else
+    {
+        <TelerikGrid TItem="ETGFactSymmetry_ReadDto" Width="100%" FilterMode="@GridFilterMode.FilterMenu" Height="100%" RowHeight="40"
+                 Sortable="true" PageSize="20" Resizable="true" Reorderable="true" ScrollMode="@GridScrollMode.Virtual" OnRead="@ReadItems"
+                   ConfirmDelete="true">
+            <GridSettings>
+            </GridSettings>
+
+            <GridColumns>
+@*
+                <GridCommandColumn Width="100px" Locked="true" Resizable="false">
+
+                        <!--<GridCommandButton Command="Save" Icon="save" ShowInEdit="true">Update</GridCommandButton>
+                    <GridCommandButton Command="Edit" Icon="edit" Primary="true">Edit</GridCommandButton>                            
+                    <GridCommandButton Command="Cancel" Icon="cancel" ShowInEdit="true">Cancel</GridCommandButton>-->
+                </GridCommandColumn>*@
+                <GridColumn Field="ETG_Fact_Symmetry_Id" Visible="false" />
+                <GridColumn Field="ETG_Fact_Symmetry_Id_Previous" Visible="false" />
+                <GridColumn Field="ETG_Base_Class" Title="ETG Base Class" Width="150px" HeaderClass="etgHeader" Editable="false" Locked="true" />
+
+
+                <GridColumn Field="ETG_Description" Title="ETG Base Description" Width="300px"  HeaderClass="etgHeader"  Editable="false" Locked="true"  />
+
+                <GridColumn Field="Premium_Specialty_Id" Visible="false" />
+                <GridColumn Field="Premium_Specialty" Title="Premium Specialty" Width="250px" HeaderClass="etgHeader" Editable="false" Locked="true" />
+
+
+                <GridColumn Field="LOBPrevious" Title="Previous LOB" Width="150px"  HeaderClass="etgHeader"  Editable="false" />
+                <GridColumn Field="LOB" Title="Current LOB" Width="150px" Editable="true"  HeaderClass="etgHeader"  OnCellRender="@((x) => OnCellRenderHandler(x, "LOB"))" />
+
+
+                <GridColumn Field="RX_NRXPrevious" Title="Previous Rx/NRx" Width="200px"  HeaderClass="etgHeader"  Editable="false" />
+                <GridColumn Field="RX_NRX" Title="Current Rx/NRx" Width="200px"  HeaderClass="etgHeader"  Editable="true" OnCellRender="@((x) => OnCellRenderHandler(x, "RX_NRX"))" />
+
+
+
+                <GridColumn Field="PC_Treatment_Indicator_Previous" Title="PC Previous TX Indicator" Width="300px" HeaderClass="pcHeader" Editable="false" />
+                <GridColumn Field="PC_Treatment_Indicator" Title="PC Current TX Indicator" Width="300px" HeaderClass="pcHeader" Editable="true" OnCellRender="@((x) => OnCellRenderHandler(x, "PC_Treatment_Indicator"))" />
+
+
+                <GridColumn Field="PC_Episode_Count" Title="PC Episode Cnt" Width="150px" HeaderClass="pcHeader" Editable="false" />
+                <GridColumn Field="PC_Total_Cost" Title="PC Tot Cost" Width="150px" HeaderClass="pcHeader" Editable="false" />
+                <GridColumn Field="PC_Average_Cost" Title="PC Avg Cost" Width="150px" HeaderClass="pcHeader" Editable="false" />
+                <GridColumn Field="PC_Coefficients_of_Variation" Title="PC CV" Width="150px" HeaderClass="pcHeader" Editable="false" />
+                <GridColumn Field="PC_Spec_Episode_Count" Title="PC Spec Episode Cnt" Width="200px" HeaderClass="pcHeader" Editable="false" OnCellRender="@((x) => OnCellRenderHandler(x, "PC_Spec_Episode_Count"))" />
+                <GridColumn Field="PC_Spec_Episode_Distribution" Title="PC Spec Episode Distribution" Width="200px" HeaderClass="pcHeader" Editable="false" />
+                <GridColumn Field="PC_Spec_Percent_of_Episodes" Title="PC Spec % of Episodes" Width="200px" HeaderClass="pcHeader" Editable="false" />
+                <GridColumn Field="PC_Spec_Total_Cost" Title="PC Spec Tot Cost" Width="200px" HeaderClass="pcHeader" Editable="false" />
+                <GridColumn Field="PC_Spec_Average_Cost" Title="PC Spec Avg Cost" Width="200px" HeaderClass="pcHeader" Editable="false" />
+                <GridColumn Field="PC_Spec_CV" Title="PC Spec CV" Width="200px" HeaderClass="pcHeader" Editable="false" />
+
+
+
+                <GridColumn Field="PC_Attribution_Previous" Title="PC Prev Attribution" Width="200px" HeaderClass="pcHeader" Editable="false" />
+                <GridColumn Field="PC_Attribution" Title="PC Current Attribution" Width="200px" HeaderClass="pcHeader" Editable="true" OnCellRender="@((x) => OnCellRenderHandler(x, "PC_Attribution"))" />
+
+                <GridColumn Field="PC_Change_Comments" Title="PC Change Comments" Width="350px" HeaderClass="pcHeader" Editable="true" OnCellRender="@((x) => OnCellRenderHandler(x, "PC_Change_Comments"))" />
+
+                <GridColumn Field="EC_Treatment_Indicator_Previous" Title="Previous EC Treatment Indicator" Width="200px" HeaderClass="ecHeader" Editable="false" />
+                <GridColumn Field="EC_Treatment_Indicator" Title="Current EC Treatment Indicator" Width="200px" HeaderClass="ecHeader" Editable="true" OnCellRender="@((x) => OnCellRenderHandler(x, "EC_Treatment_Indicator"))" />
+
+
+                <GridColumn Field="EC_Episode_Count" Title="EC Episode Count" Width="150px" HeaderClass="ecHeader" Editable="false" OnCellRender="@((x) => OnCellRenderHandler(x, "EC_Episode_Count"))" />
+                <GridColumn Field="EC_Total_Cost" Title="EC Tot Cost" Width="150px" HeaderClass="ecHeader" Editable="false" />
+                <GridColumn Field="EC_Average_Cost" Title="EC Avg Cost" Width="150px" HeaderClass="ecHeader" Editable="false" />
+                <GridColumn Field="EC_Coefficients_of_Variation" Title="EC CV" Width="150px" HeaderClass="ecHeader" Editable="false" />
+                <GridColumn Field="EC_Spec_Episode_Count" Title="EC Spec Episode Cnt" Width="200px" HeaderClass="ecHeader" Editable="false" OnCellRender="@((x) => OnCellRenderHandler(x, "EC_Spec_Episode_Count"))" />
+                <GridColumn Field="EC_Spec_Episode_Distribution" Title="EC Spec Episode Distribution" Width="200px" HeaderClass="ecHeader" Editable="false" />
+                <GridColumn Field="EC_Spec_Percent_of_Episodes" Title="EC Spec % of Episodes" Width="200px" HeaderClass="ecHeader" Editable="false" />
+                <GridColumn Field="EC_Spec_Total_Cost" Title="EC Spec Tot Cost" Width="200px" HeaderClass="ecHeader" Editable="false" />
+                <GridColumn Field="EC_Spec_Average_Cost" Title="EC Spec Avg Cost" Width="200px" HeaderClass="ecHeader" Editable="false" />
+                <GridColumn Field="EC_Spec_CV" Title="EC Spec CV" Width="200px" HeaderClass="ecHeader" Editable="false" />
+
+
+
+                <GridColumn Field="EC_Mapping_Previous" Title="EC Previous Mapping" Width="150px" HeaderClass="ecHeader" Editable="false" />
+                <GridColumn Field="EC_Mapping" Title="EC Current Mapping" Width="150px" HeaderClass="ecHeader" Editable="true" OnCellRender="@((x) => OnCellRenderHandler(x, "EC_Mapping"))" />
+
+
+                <GridColumn Field="EC_Change_Comments " Title="EC Change Comments" Width="350px" HeaderClass="ecHeader" Editable="true" OnCellRender="@((x) => OnCellRenderHandler(x, "EC_Change_Comments"))" />
+
+
+                <GridColumn Field="Patient_Centric_Mapping_Previous" Title="Previous Pt-Centric Mapping" Width="350px" HeaderClass="pcentHeader" Editable="false" />
+                <GridColumn Field="Patient_Centric_Mapping" Title="Current Pt-Centric Mapping" Width="350px" HeaderClass="pcentHeader" Editable="true" OnCellRender="@((x) => OnCellRenderHandler(x, "Patient_Centric_Mapping"))" />
+
+                <GridColumn Field="Patient_Centric_Change_Comments" Title="Pt-Centric Change Comments" Width="350px" HeaderClass="pcentHeader" Editable="true" OnCellRender="@((x) => OnCellRenderHandler(x, "Patient_Centric_Change_Comments"))" />
+
+                <GridColumn Field="PC_Measure_Status" Title="Measure Status" Width="150px" HeaderClass="pcHeader" Editable="false" />
+
+            </GridColumns>
+            <GridToolBar>
+         
+                <TelerikGridLayout>
+                    <GridLayoutColumns>
+                        <GridLayoutColumn Width="200px"></GridLayoutColumn>
+                        <GridLayoutColumn Width="200px"></GridLayoutColumn>
+                        <GridLayoutColumn Width="200px"></GridLayoutColumn>
+                    </GridLayoutColumns>
+                    <GridLayoutRows>
+                        <GridLayoutRow Height="50px"></GridLayoutRow>
+                    </GridLayoutRows>
+                    <GridLayoutItems>
+                        <GridLayoutItem>
+                            <div>
+                                <GridCommandButton OnClick="@ExportExcelConfigs" Icon="file-excel">Export to Excel Configs</GridCommandButton>
+                            </div>
+                        </GridLayoutItem>
+                        <GridLayoutItem>
+                            <div style="width:400px">
+       
+                            </div>
+                        </GridLayoutItem>
+                        <GridLayoutItem>
+                            <div style="width:400px">
+          
+                            </div>
+                        </GridLayoutItem>
+                        <GridLayoutItem>
+                            <div style="width:200px">
+                                Current Symmetry <span style="font-weight:bolder">v@_currentVersion</span>
+                            </div>
+                        </GridLayoutItem>
+                        <GridLayoutItem>
+                            <div style="width:200px">
+                                Previous Symmetry <span style="font-weight:bolder">v@_previousVersion</span>
+                            </div>
+                        </GridLayoutItem>
+                    </GridLayoutItems>
+                </TelerikGridLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            </GridToolBar>
+            <GridExport>
+                <GridExcelExport FileName="ETGFactSymmetry" AllPages="true" />
+            </GridExport>
+    </TelerikGrid>
+
+
+    }
+</div>
+
+
+<style>
+    input[type="checkbox"] {
+        border: 1px solid black;
+    }
+</style>
+
+
+
+@code {
+
+    [CascadingParameter]
+    public Error Error { get; set; }
+
+
+
+    //USED TO REFERENCE GRID HERE IN C#
+    public TelerikGrid<ETGFactSymmetry_ReadDto> GridRef { get; set; }
+    //HOLD ALL GRID ROWS
+    List<ETGFactSymmetry_ReadDto> GridData { get; set; }
+
+
+    //POPUP REFERENCE 
+    private int _id { get; set; } = 0;
+    private string _status = "Loading data...";
+    private string _pageTitle { get; set; } = "ETG Fact Symmetry";
+    private ILogger _logger { get; set; }
+
+    private string _currentVersion { get; set; }
+    private string _previousVersion { get; set; }
+
+    //private static readonly Serilog.ILogger Log = Serilog.Log.ForContext<Index>();
+    private List<PagingCache> _pagingCaches { get; set; }
+    private int _totalPageSize { get; set; } = -1;
+
+    protected async Task ReadItems(GridReadEventArgs args)
+    {
+        //update the Data and Total properties
+        //the ToDataSourceResult() extension method can be used to perform the operations over the full data collection
+        //in a real case, you can call data access layer and remote services here instead, to fetch only the necessary data
+
+        //await Task.Delay(1000); //simulate network delay from a real async call
+
+        //DataSourceResult datasourceResult;
+        //if(_totalPageSize == -1)
+        //{
+        //    datasourceResult = GridData.ToDataSourceResult(args.Request);
+        //    _totalPageSize = datasourceResult.Total;
+
+        //    _pagingCaches.Add(new PagingCache { List = (IEnumerable<ETGFactSymmetry_ReadDto>)datasourceResult.Data, Page = args.Request.Skip });
+
+        //    args.Data = datasourceResult.Data;
+        //    args.Total = _totalPageSize;
+
+        //    return;
+
+        //}
+
+        //var page = _pagingCaches.Where(f => f.Page == args.Request.Skip).FirstOrDefault();
+        //if(page == null)
+        //{
+        //    page = new PagingCache();
+
+        //    datasourceResult = GridData.ToDataSourceResult(args.Request);
+        //    page.List = (IEnumerable<ETGFactSymmetry_ReadDto>)datasourceResult.Data;
+        //    page.Page = args.Request.Skip;
+        //    _pagingCaches.Add(page);
+        //}
+
+        var datasourceResult = GridData.ToDataSourceResult(args.Request);
+        args.Data = datasourceResult.Data;
+        args.Total = datasourceResult.Total;
+
+
+        //else
+        //{
+        //    args.Data = datasourceResult.Data;
+   
+        //}
+
+        
+    }
+
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _pagingCaches = new List<PagingCache>();
+
+
+            _logger = ApplicationLogging.CreateLogger<ETGFactSymmetryGrid>();
+            _logger.LogInformation("Initializing {PageTitle}...", _pageTitle);
+
+            //Log.Information("Started GTest {CurrentCount}", _pageTitle);
+            //SET GLOBAL PAGE TITLE NOT WORKING!!!
+            //_VCPortal_Services.PageTitle = "ChemotherapyPX";
+            //GET GRID DATA
+            GridData = await GetETGFactSymmetryDisplay();
+
+
+            _currentVersion = GridData[0].Symmetry_Version.ToString();
+            _previousVersion = GridData[0].Symmetry_Version_Previous.ToString();
+
+            await base.OnInitializedAsync();
+
+        }
+        catch(Exception ex)
+        {
+            _status = "";
+            Error.ProcessError(ex);
+        }
+
+    }
+    //GETS GRID DATA
+    private Task<List<ETGFactSymmetry_ReadDto>> GetETGFactSymmetryDisplay()
+    {
+        _logger.LogInformation("Running {Title}...", "GetETGFactSymmetryDisplay");
+        return _etgFactSymmetry_Service.GetETGFactSymmetryDisplayAsync();
+
+    }
+
+
+
+
+    void OnCellRenderHandler(GridCellRenderEventArgs args, string columnName)
+    {
+        ETGFactSymmetry_ReadDto item = args.Item as ETGFactSymmetry_ReadDto;
+
+
+        if (columnName == "EC_Spec_Episode_Count" || columnName == "EC_Episode_Count" || columnName == "PC_Spec_Episode_Count")
+        {
+            string[] psgroup = ("FAMED,INTMD,PEDS").Split(",");
+            if ((psgroup.Contains(item.Premium_Specialty) && item.EC_Spec_Episode_Count < 1000) || item.EC_Spec_Episode_Count < 500)
+                args.Class = "negativeCellBackGround";
+        }
+        else
+        {
+            args.Class = "highlightCellBackGround";
+        }
+
+    }
+
+    private void ExportExcelConfigs(GridCommandEventArgs args)
+    {
+        try
+        {
+
+            string[] cols = typeof(ETGFactSymmetry_ReadDto).GetProperties().Select(p => p.Name).ToArray();
+            List<string[]> columns = new List<string[]> { cols };
+            _VCPortal_Services.RunExcelExport<ETGFactSymmetry_ReadDto>(GridData.ToList(), "Test", columns);
+
+        }
+        catch (Exception ex)
+        {
+            //NO NEED FOR STATUS ON ERROR. HANDLED GLOBALLY VIA MainLayout.BlazoredToasts
+            _status = "";
+            Error.ProcessError(ex);
+        }
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public class PagingCache
+    {
+        public int Page { get; set; }
+        public IEnumerable<ETGFactSymmetry_ReadDto> List { get; set; }
+    }
+
+    //void OnRowRenderHandler(GridRowRenderEventArgs args)
+    //{
+    //    //ETGFactSymmetry_ReadDto item = args.Item as ETGFactSymmetry_ReadDto;
+    //    //string[] psgroup = ("FAMED,INTMD,PEDS").Split(",");
+
+
+    //    //if ((psgroup.Contains(item.Premium_Specialty) && item.EC_Spec_Episode_Count < 1000) || item.EC_Spec_Episode_Count < 500 )
+    //    //    args.Class = "negativeValuesRowFormatting";
+
+
+    //}
+
+
+
+
+}
+

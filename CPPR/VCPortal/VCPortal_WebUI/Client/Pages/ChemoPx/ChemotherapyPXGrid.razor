@@ -1,0 +1,304 @@
+﻿@page "/chemopx_grid"
+@using AutoMapper
+
+@inject IChemotherapyPX_Services _chemotherapyPX_Service
+@inject IVCPortal_Services _VCPortal_Services
+@inject IVCPortal_Globals _VCPortal_Globals
+
+<!--https://www.tutorialrepublic.com/snippets/preview.php?topic=bootstrap&file=crud-data-table-for-database-with-modal-form-->
+<style>
+    html {
+        overflow-x: hidden;
+        overflow-y:hidden;
+    }
+    html, body, app, .main, .main > .content {
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+    }
+</style>
+
+<JSRuntimeCalls Value="@_pageTitle" />
+<div style="height: 93vh">
+
+    <!--<TelerikButton OnClick="@AutoFit">AutoFit All Columns Manually</TelerikButton>-->
+    @if (GridData == null)
+    {
+        <p><em>@_status</em></p>
+    }
+    else
+    {
+        <TelerikGrid @ref="@GridRef" Data="@GridData" Width="100%" FilterMode="@GridFilterMode.FilterMenu" Height="100%" RowHeight="40"
+                    Sortable="true" PageSize="20"  Resizable="true" Reorderable="true" ScrollMode="@GridScrollMode.Virtual"
+                 OnDelete="@DeleteHandler"  ConfirmDelete="true">
+            <GridSettings>
+            </GridSettings>
+
+            <GridColumns>
+
+                <GridCommandColumn Width="100px" Locked="true" Resizable="false">
+                    <GridCommandButton OnClick="@ShowEditForm" Icon="edit" Primary="true"></GridCommandButton>
+                    <GridCommandButton Command="Delete" Icon="delete"></GridCommandButton>
+                        <!--<GridCommandButton Command="Save" Icon="save" ShowInEdit="true">Update</GridCommandButton>
+                    <GridCommandButton Command="Edit" Icon="edit" Primary="true">Edit</GridCommandButton>                            
+                    <GridCommandButton Command="Cancel" Icon="cancel" ShowInEdit="true">Cancel</GridCommandButton>-->
+                </GridCommandColumn>
+                <GridColumn Field="ID" Title="ID" Visible="false" />
+
+                <GridColumn Field="CODE" Title="CODE" Locked="true" Width="100px" Editable="true" Groupable="false" />
+                <GridColumn Field="CODE_DESC" Title="CODE_DESC" Locked="true" Width="350px" Editable="true" Groupable="false" />
+                <GridColumn Field="GENERIC_NAME" Title="GENERIC_NAME"    Width="450px" Editable="true" Groupable="false" />
+                <GridColumn Field="TRADE_NAME" Title="TRADE_NAME" Width="350px" Editable="true" Groupable="false" />
+                <GridColumn Field="CKPT_INHIB_IND" Title="CKPT_INHIB_IND" Width="200px"  Editable="true" Groupable="false" />
+                <GridColumn Field="ANTI_EMETIC_IND" Title="ANTI_EMETIC_IND" Width="200px" Editable="true" Groupable="false" />
+                <GridColumn Field="CODE_TYPE" Title="CODE_TYPE" Width="200px" Editable="true" Groupable="false" />
+                <GridColumn Field="CODE_EFF_DT" Title="CODE_EFF_DT" Width="175px" DisplayFormat="{0:MM/dd/yyyy}" Editable="true" Groupable="false" />
+                <GridColumn Field="CODE_END_DT" Title="CODE_END_DT" Width="175px"  DisplayFormat="{0:MM/dd/yyyy}"  Editable="true" Groupable="false" />
+                <GridColumn Field="NHNR_CANCER_THERAPY" Title="NHNR_CANCER_THERAPY" Width="200px" Editable="true" Groupable="false" />
+                <GridColumn Field="CODE_CATEGORY" Title="CODE_CATEGORY" Width="450px" Editable="true" Groupable="false" />
+                <GridColumn Field="ASP_CATEGORY" Title="ASP_CATEGORY" Width="450px"  Editable="true" Groupable="false" />
+                <GridColumn Field="DRUG_ADM_MODE" Title="DRUG_ADM_MODE" Width="200px"  Editable="true" Groupable="false" />
+                <GridColumn Field="PA_DRUGS" Title="PA_DRUGS" Width="200px" Editable="true" Groupable="false" />
+                <GridColumn Field="PA_EFF_DT" Title="PA_EFF_DT" Width="175x" DisplayFormat="{0:MM/dd/yyyy}" Editable="true" Groupable="false" />
+                <GridColumn Field="PA_END_DT" Title="PA_END_DT" Width="175px" DisplayFormat="{0:MM/dd/yyyy}" Editable="true" Groupable="false" />
+                <GridColumn Field="CEP_PAY_CD" Title="CEP_PAY_CD" Width="250px"  Editable="true" Groupable="false" />
+                <GridColumn Field="CEP_ENROLL_CD" Title="CEP_ENROLL_CD" Width="200px" Editable="true" Groupable="false" />
+                <GridColumn Field="CEP_ENROLL_EXCL_DESC" Title="CEP_ENROLL_EXCL_DESC" Width="230px"  Editable="true" Groupable="false" />
+                <GridColumn Field="NOVEL_STATUS_IND" Title="NOVEL_STATUS_IND" Width="200px" Editable="true" Groupable="false" />
+                <GridColumn Field="FIRST_NOVEL_MNTH" Title="FIRST_NOVEL_MNTH" Width="200px" Editable="true" Groupable="false" />
+                <GridColumn Field="SOURCE" Title="SOURCE" Width="800px" Editable="true" Groupable="false" />
+
+            </GridColumns>
+            <GridToolBar>
+                <GridCommandButton Command="Add" Icon="plus" OnClick="ShowCreateForm" Primary="true">Add New Item</GridCommandButton>
+                <GridCommandButton Command="ExcelExport" Icon="file-excel">Export to Excel</GridCommandButton>
+            </GridToolBar>
+            <GridExport>
+                    <GridExcelExport FileName="ChemotherapyPX" AllPages="true" />
+            </GridExport>
+    </TelerikGrid>
+
+     <TelerikDialog @ref="@EditDialogRef" @bind-Visible="@EditFormVisible" Width="300px" ShowCloseButton="true">
+        <DialogTitle>
+            Grid Edit Form
+        </DialogTitle>
+        <DialogContent>
+                <ChemotherapyPXUpdateForm @bind-EditFormVisible="@EditFormVisible" ProcessingCompleted="@RebindGridEdit" chemotherapyPX_UpdateDto="@FormDataUpdate" />
+        </DialogContent>
+    </TelerikDialog>
+
+        <TelerikDialog @ref="@CreateDialogRef" @bind-Visible="@CreateFormVisible" Width="300px" ShowCloseButton="true">
+            <DialogTitle>
+                Grid Create Form
+            </DialogTitle>
+            <DialogContent>
+                <ChemotherapyPXCreateForm @bind-CreateFormVisible="@CreateFormVisible" ProcessingCompleted="@RebindGridInsert" chemotherapyPX_CreateDTO="@FormDataInsert" @bind-Id="_id" />
+            </DialogContent>
+        </TelerikDialog>
+
+    }
+</div>
+
+
+<style>
+    input[type="checkbox"] {
+        border: 1px solid black;
+    }
+</style>
+
+
+
+@code {
+
+    [CascadingParameter]
+    public Error Error { get; set; }
+
+
+
+    //USED TO REFERENCE GRID HERE IN C#
+    public TelerikGrid<ChemotherapyPX_ReadDto> GridRef { get; set; }
+    //HOLD ALL GRID ROWS
+    List<ChemotherapyPX_ReadDto> GridData { get; set; }
+    //HOLDS CHOSED GRID ROW TO BE PASSED TO FORM
+    private ChemotherapyPX_UpdateDto FormDataUpdate{ get; set; }
+    //HOLDS CHOSED GRID ROW TO BE PASSED TO FORM
+    private ChemotherapyPX_CreateDto FormDataInsert { get; set; } 
+
+    //POPUP REFERENCE 
+    private TelerikDialog? EditDialogRef { get; set; }
+    private TelerikDialog? CreateDialogRef { get; set; }
+    private bool EditFormVisible { get; set; }
+    private bool CreateFormVisible { get; set; }
+    private int _id { get; set; } = 0;
+    private string _status = "Loading data...";
+    private string _pageTitle { get; set; } = "ChemotherapyPX";
+    private ILogger _logger { get; set; }
+
+    //private static readonly Serilog.ILogger Log = Serilog.Log.ForContext<Index>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+
+            _logger = ApplicationLogging.CreateLogger<ChemotherapyPXGrid>();
+            _logger.LogInformation("Initializing {PageTitle}...", _pageTitle);
+
+            //Log.Information("Started GTest {CurrentCount}", _pageTitle);
+            //SET GLOBAL PAGE TITLE NOT WORKING!!!
+            //_VCPortal_Services.PageTitle = "ChemotherapyPX";
+            //GET GRID DATA
+            GridData = await GetChemotherapyPX();
+
+            await base.OnInitializedAsync();
+
+        }
+        catch(Exception ex)
+        {
+            _status = "";
+            Error.ProcessError(ex);
+        }
+
+    }
+    //GETS GRID DATA
+    private Task<List<ChemotherapyPX_ReadDto>> GetChemotherapyPX()
+    {
+        _logger.LogInformation("Running {Title}...", "GetChemotherapyPX");
+        return _chemotherapyPX_Service.GetChemoPXListAsync();
+
+    }
+
+    public async Task DeleteHandler(GridCommandEventArgs args)
+    {
+        try
+        {
+            _logger.LogInformation("Running {Title}...", "DeleteHandler");
+            //GET INSTANCE TO DELETE
+            ChemotherapyPX_ReadDto item = (ChemotherapyPX_ReadDto)args.Item;
+            //ARCHIVE IN DB
+            await _chemotherapyPX_Service.DeleteChemoPXAsync(item.Id);
+            //REMOVE FROM GRID
+            GridData.Remove(item);
+
+            //ADD DELETED CODE TO FUTURE SEARCHES 
+            var proc = new ProcCodesModel()
+            {
+                Proc_Cd = item.CODE,
+                Proc_Desc = item.CODE_DESC,
+                Proc_Cd_Type = item.CODE_TYPE,
+                Proc_Cd_Date = (DateTime)item.CODE_END_DT
+
+            };
+            _VCPortal_Globals.Proc_Codes.Add(proc);
+
+        }
+        catch (Exception ex)
+        {
+            //NO NEED FOR STATUS ON ERROR. HANDLED GLOBALLY VIA MainLayout.BlazoredToasts
+            _status = "";
+            Error.ProcessError(ex);
+        }
+    }
+
+    //MAKE EDIT DIALOG VISIBLE
+    private async Task ShowEditForm(GridCommandEventArgs args)
+    {
+        try
+        {
+            //GET INSTANCE FOR UPDATE
+            var read = args.Item as ChemotherapyPX_ReadDto;
+            FormDataUpdate = VCAutoMapper.AutoMapChemotherapyPX<ChemotherapyPX_ReadDto, ChemotherapyPX_UpdateDto>(read);
+            EditFormVisible = true;
+        }
+        catch (Exception ex)
+        {
+            //NO NEED FOR STATUS ON ERROR. HANDLED GLOBALLY VIA MainLayout.BlazoredToasts
+            _status = "";
+            Error.ProcessError(ex);
+        }
+
+    }
+
+    //MAKE INSERT DIALOG VISIBLE
+    private async Task ShowCreateForm()
+    {
+        try
+        {
+            //NEW INSTANCE TO INSERT
+            FormDataInsert = new ChemotherapyPX_CreateDto();
+            CreateFormVisible = true;
+
+        }
+        catch (Exception ex)
+        {
+            //NO NEED FOR STATUS ON ERROR. HANDLED GLOBALLY VIA MainLayout.BlazoredToasts
+            _status = "";
+            Error.ProcessError(ex);
+        }
+    }
+
+    //NOT IN USE YET!!!!!
+    private async Task AutoFit()
+    {
+        GridRef.AutoFitAllColumns();
+    }
+
+    //CLEAN GRIF AFTER EDIT
+    async Task RebindGridEdit()
+    {
+        try
+        {
+            _logger.LogInformation("Running {Title}...", "RebindGridEdit");
+
+            //REMOVE OLD ROW AND ADD WITH UPDATED ROW TO AVOID A REFRESH
+            var u = VCAutoMapper.AutoMapChemotherapyPX<ChemotherapyPX_UpdateDto, ChemotherapyPX_ReadDto>(FormDataUpdate);
+            GridData.Remove(GridData.Where(g => g.Id == u.Id).First());
+            GridData.Insert(0, u);
+
+            await GridRef.SetState(GridRef.GetState());
+            GridRef.Rebind();
+        }
+        catch (Exception ex)
+        {
+            //NO NEED FOR STATUS ON ERROR. HANDLED GLOBALLY VIA MainLayout.BlazoredToasts
+            _status = "";
+            Error.ProcessError(ex);
+        }
+    }
+    //CLEAN GRID AFTER UPDATE
+    async Task RebindGridInsert()
+    {
+        try
+        {
+            _logger.LogInformation("Running {Title}...", "RebindGridInsert");
+
+            //ADDED NEEDED VALUES TO DATAGRID TO AVOID DB REFRESH
+            var u = VCAutoMapper.AutoMapChemotherapyPX<ChemotherapyPX_CreateDto, ChemotherapyPX_ReadDto>(FormDataInsert);
+            u.Id = _id; //GET AUTO ID CAPTURE ON INSERT
+            var proc = _VCPortal_Globals.Proc_Codes.Where(x => x.Proc_Cd == FormDataInsert.CODE).FirstOrDefault();
+            u.CODE_DESC = proc.Proc_Desc;  //GET DESC
+            u.CODE_TYPE = proc.Proc_Cd_Type;
+            u.CODE_END_DT = proc.Proc_Cd_Date;
+            //ADD NEW ROW TO DATAGRID MANUALLY
+            GridData.Insert(0, u);
+
+
+            //REMOVE INSERTED CODE FROM FUTURE SEARCHES
+            _VCPortal_Globals.Proc_Codes.RemoveAll(x => x.Proc_Cd == FormDataInsert.CODE);
+
+
+            //REFRESHGRID
+            await GridRef.SetState(GridRef.GetState());
+            GridRef.Rebind();
+        }
+        catch (Exception ex)
+        {
+            //NO NEED FOR STATUS ON ERROR. HANDLED GLOBALLY VIA MainLayout.BlazoredToasts
+            _status = "";
+            Error.ProcessError(ex);
+        }
+    }
+
+
+}
+

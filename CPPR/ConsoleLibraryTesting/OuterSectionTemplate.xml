@@ -1,0 +1,107 @@
+﻿<w:trPr>
+	<w:trHeight w:val="1041" />
+	<w:jc w:val="center" />
+</w:trPr>
+<w:tc >
+	<w:tcPr>
+		<w:tcW w:w="511" w:type="dxa" />
+		<w:shd w:val="clear" w:color="auto" w:fill="auto" />
+	</w:tcPr>
+	<w:p w:rsidR="002E5F22" w:rsidP="002E5F22" w:rsidRDefault="002E5F22" w14:paraId="55A3EBFC" w14:textId="77777777" >
+		<w:pPr>
+			<w:pStyle w:val="Text" />
+			<w:jc w:val="center" />
+			<w:rPr>
+				<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+				<w:b />
+				<w:sz w:val="20" />
+			</w:rPr>
+		</w:pPr>
+	</w:p>
+</w:tc><w:tc>
+	<w:tcPr>
+		<w:tcW w:w="8755" w:type="dxa" />
+		<w:shd w:val="clear" w:color="auto" w:fill="auto" />
+		<w:vAlign w:val="center" />
+	</w:tcPr>
+	<w:p w:rsidRPr="006C3D1F" w:rsidR="002E5F22" w:rsidP="002E5F22" w:rsidRDefault="002E5F22" w14:paraId="7000C901" w14:textId="77777777" >
+		<w:pPr>
+			<w:rPr>
+				<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+				<w:b />
+				<w:sz w:val="20" />
+				<w:szCs w:val="20" />
+			</w:rPr>
+		</w:pPr>
+		<w:r w:rsidRPr="006C3D1F">
+			<w:rPr>
+				<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+				<w:b />
+				<w:sz w:val="20" />
+				<w:szCs w:val="20" />
+				<w:u w:val="single" />
+			</w:rPr>
+			<w:t>{$section}</w:t>
+		</w:r>
+	</w:p>
+	<w:p w:rsidRPr="0067027D" w:rsidR="002E5F22" w:rsidP="002E5F22" w:rsidRDefault="002E5F22" w14:paraId="692C17C8" w14:textId="77777777" >
+		<w:pPr>
+			<w:numPr>
+				<w:ilvl w:val="0" />
+				<w:numId w:val="2" />
+			</w:numPr>
+			<w:rPr>
+				<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+				<w:sz w:val="20" />
+				<w:szCs w:val="20" />
+			</w:rPr>
+		</w:pPr>
+		<w:r w:rsidRPr="0002154F">
+			<w:rPr>
+				<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+				<w:color w:val="4472C4" w:themeColor="accent1" />
+				<w:sz w:val="20" />
+				<w:szCs w:val="20" />
+				<w:u w:val="single" />
+			</w:rPr>
+			<w:t xml:space="preserve">Radiology </w:t>
+		</w:r>
+	</w:p>
+	{$radiology}
+	<w:p w:rsidRPr="00703E3C" w:rsidR="002E5F22" w:rsidP="002E5F22" w:rsidRDefault="002E5F22" w14:paraId="42F96DDD" w14:textId="77777777" >
+		<w:pPr>
+			<w:numPr>
+				<w:ilvl w:val="0" />
+				<w:numId w:val="2" />
+			</w:numPr>
+			<w:rPr>
+				<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+				<w:sz w:val="20" />
+				<w:szCs w:val="20" />
+				<w:u w:val="single" />
+			</w:rPr>
+		</w:pPr>
+		<w:r w:rsidRPr="0002154F">
+			<w:rPr>
+				<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+				<w:color w:val="4472C4" w:themeColor="accent1" />
+				<w:sz w:val="20" />
+				<w:szCs w:val="20" />
+				<w:u w:val="single" />
+			</w:rPr>
+			<w:t>Cardiology</w:t>
+		</w:r>
+	</w:p>
+	{$cardiology}
+	<w:p w:rsidRPr="00430C76" w:rsidR="002E5F22" w:rsidP="002E5F22" w:rsidRDefault="002E5F22" w14:paraId="645DCF52" w14:textId="77777777" >
+		<w:pPr>
+			<w:ind w:left="1440" />
+			<w:rPr>
+				<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+				<w:color w:val="FF0000" />
+				<w:sz w:val="20" />
+				<w:szCs w:val="20" />
+			</w:rPr>
+		</w:pPr>
+	</w:p>
+</w:tc>

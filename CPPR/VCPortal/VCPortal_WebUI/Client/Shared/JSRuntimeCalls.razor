@@ -1,0 +1,34 @@
+﻿@inject IJSRuntime JSRuntime
+@code {
+
+    [CascadingParameter]
+    public Error Error { get; set; }
+
+
+    [Parameter]
+    public string Value { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+
+        try
+        {
+
+            if(firstRender)
+            {
+                await JSRuntime.InvokeVoidAsync("setTitle", Value);
+                await JSRuntime.InvokeVoidAsync("setTagValue", "page_title", Value);
+            }
+
+            await base.OnAfterRenderAsync(firstRender);
+
+        }
+        catch (Exception ex)
+        {
+            Error.ProcessError(ex);
+        }
+
+
+
+    }
+}

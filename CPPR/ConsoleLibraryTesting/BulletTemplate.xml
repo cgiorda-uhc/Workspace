@@ -1,0 +1,25 @@
+﻿<w:p w:rsidRPr="004445B7" w:rsidR="0018202B" w:rsidP="0018202B" w:rsidRDefault="0018202B" w14:paraId="6454B1AF" w14:textId="3596B5A8" >
+	<w:pPr>
+		<w:numPr>
+			<w:ilvl w:val="1" />
+			<w:numId w:val="2" />
+		</w:numPr>
+		<w:rPr>
+			<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+			<w:color w:val="FF0000" />
+			<w:sz w:val="20" />
+			<w:szCs w:val="20" />
+		</w:rPr>
+	</w:pPr>
+	<w:r w:rsidRPr="004445B7">
+		<w:rPr>
+			<w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial" />
+			<w:color w:val="FF0000" />
+			<w:sz w:val="20" />
+			<w:szCs w:val="20" />
+		</w:rPr>
+		<w:t xml:space="preserve">Telephone metric misses (intake + MD) – ASA: 46 sec. v. SLA 30 sec. </w:t>
+	</w:r>
+</w:p>
+
+

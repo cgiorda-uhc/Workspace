@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="aca69355-0751-42fc-8271-cc291eb4a050" ChangeDateTime="03/15/2023 20:14:04">
+    <Property Name="ElementName" Value="[dbo].[ETG_Dim_Master].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ETG_Dim_Master]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ETG_Base_Class" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="67445a0e-1466-4df2-9f19-d915d925140a" ChangeDateTime="03/15/2023 20:16:06">
+    <Property Name="ElementName" Value="[dbo].[ETG_Dim_Premium_Spec_Master].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ETG_Dim_Premium_Spec_Master]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Premium_Specialty_id" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="234c1b44-955c-44c7-9c5d-1b42b51c83e7" ChangeDateTime="03/30/2023 22:08:06">
+    <Property Name="ElementName" Value="[dbo].[ETG_Fact_Symmetry].[ETG_Fact_Symmetry_id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ETG_Fact_Symmetry]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ETG_Fact_Symmetry_Id" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="6fa5440b-0ffd-4202-b5e2-95533b526d2e" ChangeDateTime="03/30/2023 22:08:11">
+    <Property Name="ElementName" Value="[dbo].[ETG_Fact_Symmetry].[Premium_Specialty_id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ETG_Fact_Symmetry]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Premium_Specialty_Id" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="9d8f9ee0-b589-446a-b6c0-5573d81eccbc" ChangeDateTime="03/30/2023 22:08:26">
+    <Property Name="ElementName" Value="[dbo].[ETG_Dim_Premium_Spec_Master].[Premium_Specialty_id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[ETG_Dim_Premium_Spec_Master]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Premium_Specialty_Id" />
+  </Operation>
+</Operations>

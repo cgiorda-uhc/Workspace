@@ -1,0 +1,28 @@
+﻿
+<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<IISExpressAnonymousAuthentication>disabled</IISExpressAnonymousAuthentication>
+	</PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Blazored.Toast" Version="4.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="7.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+    <PackageReference Include="System.Net.Http.Json" Version="7.0.0" />
+    <PackageReference Include="Telerik.UI.for.Blazor" Version="3.7.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\ExcelConnectionLibrary\FileParsingLibrary.csproj" />
+    <ProjectReference Include="..\..\..\SharedFunctionsLibrary\SharedFunctionsLibrary.csproj" />
+    <ProjectReference Include="..\..\VCPortal_Models\VCPortal_Models.csproj" />
+    <ProjectReference Include="..\..\VCPortal_Shared\VCPortal_Shared.csproj" />
+  </ItemGroup>
+</Project>

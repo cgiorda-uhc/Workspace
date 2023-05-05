@@ -1,0 +1,41 @@
+﻿
+
+
+@inject ILogger<Error> _logger
+@inject IToastService _toastService
+@inject IVCPortal_Services _VCPortal_Services
+
+@inject IWebAssemblyHostEnvironment _webAssemblyHostEnvironment
+
+
+
+
+<CascadingValue Value="this">
+    @ChildContent
+</CascadingValue>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+ 
+    public void ProcessError(Exception ex)
+    {
+
+
+        if(_webAssemblyHostEnvironment.IsDevelopment() == false)
+            _toastService.ShowError("Oops something went wrong. Please contact the system admin.");
+        else
+            _toastService.ShowError("Please check logs. " + ex.Message);
+        //Logger.LogError("Error:ProcessError - Type: {Type} Message: {Message}",
+         //   ex.GetType(), ex.Message);
+        ILogger logger = ApplicationLogging.CreateLogger<Error>();
+
+        //IMPLEMENT SERILOG!!!!
+        logger.LogError(ex, "Error");
+
+
+
+
+    }
+}

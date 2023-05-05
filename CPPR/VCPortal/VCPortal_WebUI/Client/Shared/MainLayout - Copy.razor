@@ -1,0 +1,27 @@
+﻿
+@layout TelerikLayout
+@inherits LayoutComponentBase
+
+<style>
+
+    .toast-custom {
+        z-index: 7000;
+    }
+
+
+</style>
+
+<div class="mt-0">
+    <div class="mt-0  h-25">
+        <NavMenu />
+    </div>
+    <div>
+        <BlazoredToasts Position="ToastPosition.BottomRight" ErrorClass="toast-custom" ShowCloseButton="false"
+                        Timeout="10000"
+                        IconType="IconType.FontAwesome"
+                        ErrorIcon="fa fa-bug" />
+        @Body
+
+    </div>
+</div>
+

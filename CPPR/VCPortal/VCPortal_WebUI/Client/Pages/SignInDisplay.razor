@@ -1,0 +1,43 @@
+﻿
+@inject IClientAuthorizationService _authorizationService
+
+
+    <div>
+    @if (_authorizationService.CurrentUser != null)
+    {
+        <span class="form-control text-center">@_authorizationService.CurrentUser.LoginName</span>
+
+    }
+    </div>
+
+@*
+
+@code {
+    [CascadingParameter]
+    public Error Error { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            if (_authorizationService.CurrentUser == null)
+            {
+
+                _authorizationService.CurrentUser = await _authorizationService.GetCurrentUserAsync();
+            }
+
+            //_logger.LogInformation("Initializing {PageTitle}...", _pageTitle);
+
+            base.OnInitializedAsync();
+
+        }
+        catch (Exception ex)
+        {
+            Error.ProcessError(ex);
+        }
+
+
+        //Log.Information("Started {CurrentCount}", _VCPortal_Services.PageTitle);
+    }
+}*@

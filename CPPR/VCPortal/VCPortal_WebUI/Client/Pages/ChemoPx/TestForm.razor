@@ -1,0 +1,20 @@
+﻿@using static VCPortal_WebUI.Client.Pages.ChemoPx.TestGrid
+
+
+<TelerikForm Model="@date_test">
+    <FormValidation>
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+    </FormValidation>
+    <FormItems>
+        <FormItem Field="@nameof(date_test.sampleString)"></FormItem>
+        <FormItem Field="@nameof(date_test.sampleInt)"></FormItem>
+        <FormItem Field="@nameof(date_test.sampleBool)"></FormItem>
+        <FormItem Field="@nameof(date_test.sampleDate)"></FormItem>
+    </FormItems>
+</TelerikForm>
+
+
+
+@code {
+    [Parameter] public DateTest  date_test { get; set; }
+}

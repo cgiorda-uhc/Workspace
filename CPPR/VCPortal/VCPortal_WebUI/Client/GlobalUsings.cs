@@ -1,0 +1,22 @@
+﻿global using Blazored.Toast;
+global using Microsoft.AspNetCore.Components.Web;
+global using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+global using VCPortal_WebUI.Client;
+global using VCPortal_WebUI.Client.Services.ChemoPx;
+global using VCPortal_WebUI.Client.Services.Shared;
+global using VCPortal_WebUI.Client.Services.ETGFactSymmetry;
+global using System.Net.Http.Json;
+global using System.Text.Json;
+global using VCPortal_Models.Dtos.ChemoPx;
+global using VCPortal_Models.Models.ChemoPx;
+global using VCPortal_Models.Models.Shared;
+global using Microsoft.JSInterop;
+global using Microsoft.AspNetCore.Components;
+global using VCPortal_Models.Models.MHP;
+global using VCPortal_Models.Parameters.MHP;
+global using Microsoft.AspNetCore.WebUtilities;
+global using VCPortal_Models.Models.ActiveDirectory;
+global using SharedFunctionsLibrary;
+global using AutoMapper;
+global using VCPortal_Models.Dtos.ETGFactSymmetry;
+

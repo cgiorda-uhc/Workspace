@@ -1,0 +1,169 @@
+﻿@page "/sample_form"
+@using System.ComponentModel.DataAnnotations
+@using VCPortal_Models.Shared
+
+<div>
+    @if (ValidSubmit)
+    {
+        <div class="demo-alert demo-alert-success" role="alert">
+            The form was submitted successfully.
+        </div>
+    }
+    else if (filter == null)
+    {
+        <div class="demo-alert demo-alert-success" role="alert">
+            Loading filters...
+        </div>
+    }
+    else
+    {
+        <TelerikForm Model="@param" OnSubmit="@OnSubmitHandler">
+            <FormValidation>
+                <DataAnnotationsValidator></DataAnnotationsValidator>
+            </FormValidation>
+            <FormItems>
+                <div class="row">
+                    <div class="col-4 border border-primary" style="padding-bottom:10px">
+                        <FormItem>
+                            <Template>
+                                <DropDownCheckbox TextField="@nameof(param.State)" ValueField="@nameof(param.State)" Data="@filter.Where(x => x.Filter_Type == "State").OrderBy(x => x.Filter_Value).Select(x => x.Filter_Value).ToList()" Placeholder="* Select States(s)">
+                                </DropDownCheckbox>
+                            </Template>
+                        </FormItem>
+                    </div>
+                    <div class="col-4 border border-primary">
+                        <div class="row">
+                            <div class="col" style="font-weight: bold">
+                                * Select Date
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <FormItem>
+                                    <Template>
+                                        <TelerikDatePicker @bind-Value="@param.TheDate" Format="MM/dd/yyyy" Id="@nameof(param.TheDate)"></TelerikDatePicker>
+                                    </Template>
+                                </FormItem>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4 border border-primary" style="padding-bottom:10px">
+                        <FormItem>
+                            <Template>
+                                <DropDownCheckbox TextField="@nameof(param.OtherList)" ValueField="@nameof(param.OtherList)" Data="@filter.Where(x => x.Filter_Type == "Other").OrderBy(x => x.Filter_Value).Select(x => x.Filter_Value).ToList()" Placeholder="Select Other(s)">
+                                </DropDownCheckbox>
+                            </Template>
+                        </FormItem>
+                    </div>
+                    <div class="col-8">
+                    </div>
+                </div>
+
+            </FormItems>
+        </TelerikForm>
+    }
+</div>
+
+@code {
+    //WANT TO POPULAT THIS FOR AND RETURN
+    public FormRequestModel param = new FormRequestModel();
+    //USED TO POPULATE ALL USER OPTIONS
+    private List<FilterModel> filter;
+    public DateTime StartDate = new DateTime(2021, 1, 1);
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        filter = new List<FilterModel>
+        {
+   
+            new FilterModel{ Filter_Value = "CA",Filter_Type = "State" },
+            new FilterModel{ Filter_Value = "NY",Filter_Type = "State" },
+            new FilterModel{ Filter_Value = "AZ",Filter_Type = "State"},
+            new FilterModel{ Filter_Value = "FL",Filter_Type = "State"},
+            new FilterModel{ Filter_Value = "VA",Filter_Type = "State" },
+            new FilterModel{ Filter_Value = "1111",Filter_Type = "Other" },
+            new FilterModel{ Filter_Value = "2222",Filter_Type = "Other" },
+            new FilterModel{ Filter_Value = "3333",Filter_Type = "Other"},
+            new FilterModel{ Filter_Value = "4444",Filter_Type = "Other"},
+            new FilterModel{ Filter_Value = "5555",Filter_Type = "Other" }
+        };
+    }
+
+    
+    public bool ValidSubmit { get; set; } = false;
+
+    private void OnSubmitHandler(EditContext editContext)
+    {
+
+        //INVALID WHY???
+        bool isFormValid = editContext.Validate();
+
+
+        if (isFormValid)
+        {
+            //apply some custom logic when the form is valud
+            HandleValidSubmit();
+        }
+        else
+        {
+            //apply some custom logic when the form is not valid
+            HandleInvalidSubmit();
+        }
+    }
+
+
+    async void HandleValidSubmit()
+    {
+        ValidSubmit = true;
+
+        await Task.Delay(2000);
+        //DO THINGS MODEL RETURNED FROM FORM
+
+
+        ValidSubmit = false;
+
+        StateHasChanged();
+    }
+
+    void HandleInvalidSubmit()
+    {
+        ValidSubmit = false;
+
+        //DO THINGS
+    }
+
+
+
+
+
+    public class FormRequestModel
+    {
+
+        private List<string> _state;
+        private DateTime _theDate;
+        private List<string> _OtherList;
+
+
+        [ValidateEachItem]
+        public List<string> State { get => _state; set => _state = value; }
+        [Required]
+        public DateTime TheDate { get => _theDate; set => _theDate = value; }
+        [ValidateEachItem]
+        public List<string> OtherList { get => _OtherList; set => _OtherList = value; }
+
+    }
+
+    public class FilterModel
+    {
+        private string _filter_Value;
+        private string _filter_Type;
+
+        public string Filter_Value { get => _filter_Value; set => _filter_Value = value; }
+        public string Filter_Type { get => _filter_Type; set => _filter_Type = value; }
+    }
+
+}
+
+
+

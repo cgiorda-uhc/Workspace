@@ -1,0 +1,14 @@
+﻿{
+  "profiles": {
+    "VCPortal_WebUI.Client": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
+      "applicationUrl": "https://localhost:64425;http://localhost:64426"
+    }
+  }
+}
+

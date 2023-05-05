@@ -1,0 +1,540 @@
+﻿<UserControl x:Class="VCPortal_WPF.UserControls.Projects.ETGFactSymmetry.ETGFactSymmetryControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+              xmlns:sys="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:VCPortal_WPF.UserControls.Projects.ETGFactSymmetry" 
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+            xmlns:vml="clr-namespace:VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;assembly=VCPortal_WPF_ViewModel"
+            xmlns:modalcontrol="clr-namespace:ModalControl;assembly=ModalControl" xmlns:Collections="clr-namespace:System.Collections;assembly=System.Runtime.Extensions" xmlns:specialized="clr-namespace:System.Collections.Specialized;assembly=System"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+
+        <SolidColorBrush x:Key="editableColor" Color="LightYellow" />
+
+        <Style x:Key="mainHeader"  TargetType="telerik:GridViewHeaderCell">
+                <Setter Property="Background" Value="Orange" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="BorderBrush" Value="Black" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+            </Style>
+            <Style x:Key="pcHeader"  TargetType="telerik:GridViewHeaderCell">
+                <Setter Property="Background" Value="LightGreen" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="BorderBrush" Value="Black" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+            </Style>
+
+            <Style x:Key="ecHeader"  TargetType="telerik:GridViewHeaderCell">
+                <Setter Property="Background" Value="LightPink" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="BorderBrush" Value="Black" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+            </Style>
+
+            <Style x:Key="pcentHeader"  TargetType="telerik:GridViewHeaderCell">
+                <Setter Property="Background" Value="DeepSkyBlue" />
+                <Setter Property="FontWeight" Value="Bold" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="BorderBrush" Value="Black" />
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+            </Style>
+
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="CadetBlue" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontFamily" Value="./#Segoe UI" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+        </Style>
+
+
+        <Style TargetType="telerik:RadComboBox">
+            <Setter Property="OpenDropDownOnFocus" Value="True"/>
+        </Style>
+
+
+        <!--<Collections:ArrayList x:Key="LOBList">
+            <ObjectDataProvider ObjectInstance="{Binding DataContext.LobTest}" />
+        </Collections:ArrayList>-->
+
+
+
+        <!--<specialized:StringCollection x:Key="LOBList">
+            <sys:String>Not Mapped</sys:String>
+            <sys:String>All</sys:String>
+            <sys:String>Commercial + Medicare</sys:String>
+            <sys:String>Commercial + Medicaid</sys:String>
+            <sys:String>Medicare + Medicaid</sys:String>
+            <sys:String>Commercial Only</sys:String>
+            <sys:String>Medicare Only</sys:String>
+            <sys:String>Medicaid Only</sys:String>
+        </specialized:StringCollection>-->
+
+    </UserControl.Resources>
+
+
+
+    <Grid>
+        <Grid.Resources>
+            <local:EpisodeCountConditionalFormat x:Key="EpisodeCountConditionalFormatStyle">
+                <local:EpisodeCountConditionalFormat.FlaggedStyle>
+                    <Style TargetType="telerik:GridViewCell">
+                        <Setter Property="Background" Value="PaleVioletRed"/>
+                        <Setter Property="Foreground" Value="White" />
+                        <Setter Property="HorizontalContentAlignment" Value="Right" />
+                    </Style>
+                </local:EpisodeCountConditionalFormat.FlaggedStyle>
+                <local:EpisodeCountConditionalFormat.DefaultStyle>
+                    <Style TargetType="telerik:GridViewCell">
+                        <Setter Property="HorizontalAlignment" Value="Right" />
+                        <Setter Property="Background" Value="White" />
+                    </Style>
+                </local:EpisodeCountConditionalFormat.DefaultStyle>
+            </local:EpisodeCountConditionalFormat>
+
+
+        </Grid.Resources>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+
+
+
+        <modalcontrol:Modal x:Name="modalControl"  DataContext="{Binding StatusMessageViewModel}"  Grid.Row="0" Grid.RowSpan="2" Panel.ZIndex="100" IsOpen="{Binding Path=HasMessage}" >
+            <modalcontrol:Modal.Background>
+                <SolidColorBrush Opacity=".5" Color="AliceBlue" />
+            </modalcontrol:Modal.Background>
+            <ContentControl  x:Name="modalContentControl" Height="600" Width="800" />
+        </modalcontrol:Modal>
+
+        <Grid Grid.Row="0" Background="LightGray">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" FontSize="19" Background="LightGray" FontFamily="Verdana"  FontWeight="Bold" Text="ETG Fact Symmetry"></TextBlock>
+            <TextBlock DataContext="{Binding ErrorMessageViewModel}" Text="{Binding Message}" FontWeight="ExtraBold"  Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="3"  Foreground="Red"></TextBlock>
+            <telerik:RadButton x:Name="btnSave" Grid.Row="0" Grid.Column="6" Click="btnSave_Click" Command="{Binding saveCommand}" IsEnabled="False" Content="Save"></telerik:RadButton>
+            <telerik:RadButton x:Name="btnExporConfig" Grid.Row="0" Grid.Column="7" Command="{Binding ExportConfigsCallCommand}" Click="btnExporConfig_Click"  Content="Export Configs"></telerik:RadButton>
+            <telerik:RadButton Grid.Row="0" Grid.Column="8" Command="{Binding GetETGFactSymmetryDataCallCommand}" Content="Refresh Data"></telerik:RadButton>
+        </Grid>
+
+
+        <telerik:RadGridView x:Name="ETGGridView"  Grid.Row="1" ItemsSource="{Binding OC_ETGFactSymmetryViewModel, Mode=TwoWay, IsAsync=True}" AutoGenerateColumns="False"  ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible" SelectedItem="{Binding SelectedRow, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" FrozenColumnCount="6" BeginningEdit="ETGGridView_BeginningEdit"  CellEditEnded="ETGGridView_CellEditEnded" EnableRowVirtualization="True" EnableColumnVirtualization="True" GroupRenderMode="Flat">
+
+            <telerik:RadGridView.Resources>
+
+
+            </telerik:RadGridView.Resources>
+
+
+            <telerik:RadGridView.Columns>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding ETG_Fact_Symmetry_Id}" IsVisible="False"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding ETG_Fact_Symmetry_Id_Previous}" IsVisible="False"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding Premium_Specialty_Id}" IsVisible="False"/>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding ETG_Base_Class}" Header="ETG Base Class" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding ETG_Description}" Header="ETG Base Description" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding Premium_Specialty}" Header="Premium Specialty" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}"/>
+
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding LOBPrevious}" Header="Prev LOB" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding LOB}" Header="Curr LOB" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="Background" Value="{StaticResource editableColor}" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                    <telerik:GridViewDataColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding LOB, Mode=TwoWay}"></TextBlock>
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellTemplate>
+                    <telerik:GridViewDataColumn.CellEditTemplate>
+                        <DataTemplate>
+                            <telerik:RadComboBox  ItemsSource="{Binding DataContext.LobOptions, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" SelectedValue="{Binding LOB, UpdateSourceTrigger=PropertyChanged}">
+                            </telerik:RadComboBox>
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellEditTemplate>
+                </telerik:GridViewDataColumn>
+
+
+
+                <!--<telerik:GridViewDataColumn DataMemberBinding="{Binding Has_Commercial_Previous}" Header="Prev Commercial"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding Has_Medicare_Previous}" Header="Prev Medicare"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding Has_Medicaid_Previous}" Header="Prev Medicaid"/>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding Has_Commercial}" Header="Curr Commercial"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding Has_Medicare}" Header="Curr Medicare"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding Has_Medicaid}" Header="Curr Medicaid"/>-->
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding RX_NRXPrevious}" Header="Prev Rx/NRx" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding RX_NRX}" Header="Curr Rx/NRx" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="Background" Value="{StaticResource editableColor}" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                    <telerik:GridViewDataColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding RX_NRX, Mode=TwoWay}"></TextBlock>
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellTemplate>
+                    <telerik:GridViewDataColumn.CellEditTemplate>
+                        <DataTemplate>
+                            <telerik:RadComboBox ItemsSource="{Binding DataContext.RxNrxOptions, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" SelectedValue="{Binding RX_NRX, UpdateSourceTrigger=PropertyChanged}">
+                            </telerik:RadComboBox>
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellEditTemplate>
+                </telerik:GridViewDataColumn>
+
+
+                <!--<telerik:GridViewDataColumn DataMemberBinding="{Binding Has_RX_Previous}" Header="Prev RX"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding Has_NRX_Previous}" Header="Prev NRX"/>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding Has_RX}" Header="Curr RX"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding Has_NRX}" Header="Curr NRX"/>-->
+
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Treatment_Indicator_Previous}" Width="100" Header="PC Prev TX Indicator" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Treatment_Indicator}" Width="100" Header="PC Curr TX Indicator" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="Background" Value="{StaticResource editableColor}" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                    <telerik:GridViewDataColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding PC_Treatment_Indicator, Mode=TwoWay}"></TextBlock>
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellTemplate>
+                    <telerik:GridViewDataColumn.CellEditTemplate>
+                        <DataTemplate>
+                            <telerik:RadComboBox ItemsSource="{Binding DataContext.TreatmentIndicatorOptions, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" SelectedValue="{Binding PC_Treatment_Indicator, UpdateSourceTrigger=PropertyChanged}">
+                            </telerik:RadComboBox>
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellEditTemplate>
+                </telerik:GridViewDataColumn>
+
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Episode_Count, StringFormat={}{0:N0}}" Width="100" Header="PC Episode Cnt" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Total_Cost, StringFormat={}{0:c0}}" Header="PC Tot Cost" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Average_Cost, StringFormat={}{0:c0}}" Width="100" Header="PC Avg Cost" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Coefficients_of_Variation, StringFormat={}{0:N4}}" Header="PC CV" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+
+
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_Episode_Count, StringFormat={}{0:N0}}" Width="100" x:Name="PC_Spec_Episode_Count" Header="PC Spec Episode Cnt" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}" CellStyleSelector="{StaticResource EpisodeCountConditionalFormatStyle}"/>
+
+
+
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_Episode_Distribution, StringFormat={}{0:N4}}" Width="120" Header="PC Spec Episode Distribution" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_Percent_of_Episodes, StringFormat={}{0:P2}}" Width="100" Header="PC Spec % of Episodes" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_Total_Cost, StringFormat={}{0:c0}}" Width="100" Header="PC Spec Tot Cost" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_Average_Cost, StringFormat={}{0:c0}}" Width="100" Header="PC Spec Avg Cost" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_CV, StringFormat={}{0:N4}}" Width="100" Header="PC Spec CV" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Attribution_Previous}" Header="PC Prev Attribution" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Attribution}" Header="PC Curr Attribution" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="Background" Value="{StaticResource editableColor}" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                    <telerik:GridViewDataColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding PC_Attribution, Mode=TwoWay}"></TextBlock>
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellTemplate>
+                    <telerik:GridViewDataColumn.CellEditTemplate>
+                        <DataTemplate>
+                            <telerik:RadComboBox ItemsSource="{Binding DataContext.AttributionOptions, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" SelectedValue="{Binding PC_Attribution, UpdateSourceTrigger=PropertyChanged}">
+                            </telerik:RadComboBox>
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellEditTemplate>
+                </telerik:GridViewDataColumn>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Change_Comments}" Width="700" Header="PC Change Comments" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="Background" Value="{StaticResource editableColor}" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Treatment_Indicator_Previous}" Width="100" Header="Prev EC Tx Indicator" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}"/>
+                <telerik:GridViewDataColumn  DataMemberBinding="{Binding EC_Treatment_Indicator}" Width="100" Header="Curr EC Tx Indicator" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="Background" Value="{StaticResource editableColor}" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                    <telerik:GridViewDataColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding EC_Treatment_Indicator, Mode=TwoWay}"></TextBlock>
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellTemplate>
+                    <telerik:GridViewDataColumn.CellEditTemplate>
+                        <DataTemplate>
+                            <telerik:RadComboBox ItemsSource="{Binding DataContext.TreatmentIndicatorECOptions, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" SelectedValue="{Binding EC_Treatment_Indicator, UpdateSourceTrigger=PropertyChanged}">
+                            </telerik:RadComboBox>
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellEditTemplate>
+                </telerik:GridViewDataColumn>
+
+
+
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Episode_Count, StringFormat={}{0:N0}}" Width="100" x:Name="EC_Episode_Count" Header="EC Episode Cnt" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}" CellStyleSelector="{StaticResource EpisodeCountConditionalFormatStyle}"/>
+
+
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Total_Cost, StringFormat={}{0:c0}}" Width="100" Header="EC Tot Cost" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Average_Cost, StringFormat={}{0:c0}}" Width="100" Header="EC Avg Cost" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Coefficients_of_Variation, StringFormat={}{0:N4}}" Header="EC CV" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+
+
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_Episode_Count, StringFormat={}{0:N0}}" x:Name="EC_Spec_Episode_Count" Width="100" Header="EC Spec Episode Cnt" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}" CellStyleSelector="{StaticResource EpisodeCountConditionalFormatStyle}"/>
+
+
+
+
+
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_Episode_Distribution, StringFormat={}{0:N4}}" Width="120" Header="EC Spec Episode Distribution" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_Percent_of_Episodes, StringFormat={}{0:P2}}" Width="100" Header="EC Spec % of Episodes" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_Total_Cost, StringFormat={}{0:c0}}" Width="100" Header="EC Spec Tot Cost" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_Average_Cost, StringFormat={}{0:c0}}" Width="100" Header="EC Spec Avg Cost" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_CV, StringFormat={}{0:N4}}" Width="100" Header="EC Spec CV" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Mapping_Previous}" Header="EC Prev Mapping" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}"/>
+                <telerik:GridViewDataColumn  DataMemberBinding="{Binding EC_Mapping}" Header="EC Curr Mapping" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="Background" Value="{StaticResource editableColor}" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                    <telerik:GridViewDataColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding EC_Mapping, Mode=TwoWay}"></TextBlock>
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellTemplate>
+                    <telerik:GridViewDataColumn.CellEditTemplate>
+                        <DataTemplate>
+                            <telerik:RadComboBox ItemsSource="{Binding DataContext.MappingOptions, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" SelectedValue="{Binding EC_Mapping, UpdateSourceTrigger=PropertyChanged}">
+                            </telerik:RadComboBox>
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellEditTemplate>
+                </telerik:GridViewDataColumn>
+
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Change_Comments}" Width="700" Header="EC Change Comments" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="Background" Value="{StaticResource editableColor}" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+                <!--<telerik:GridViewDataColumn  Header="EC Change Comments" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="Background" Value="{StaticResource editableColor}" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                    <telerik:GridViewDataColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBox Margin="0 3 0 3"  Width="350" Text="{Binding EC_Change_Comments, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            -->
+                <!-- MaskType="Numeric" Mask="n2" Tag="MOA" />-->
+                <!--
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellTemplate>
+                    <telerik:GridViewDataColumn.CellEditTemplate>
+                        <DataTemplate>
+                            <TextBox Margin="0 3 0 3"  Width="350" Text="{Binding EC_Change_Comments, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            -->
+                <!--  MaskType="Numeric" Mask="n2" Tag="MOA" />-->
+                <!--
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellEditTemplate>
+                </telerik:GridViewDataColumn>-->
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding Patient_Centric_Mapping_Previous}" Width="140" Header="Prev Pt-Centric Mapping" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcentHeader}"/>
+                <telerik:GridViewDataColumn  DataMemberBinding="{Binding Patient_Centric_Mapping}" Width="140" Header="Curr Pt-Centric Mapping" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcentHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="Background" Value="{StaticResource editableColor}" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                    <telerik:GridViewDataColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Patient_Centric_Mapping, Mode=TwoWay}"></TextBlock>
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellTemplate>
+                    <telerik:GridViewDataColumn.CellEditTemplate>
+                        <DataTemplate>
+                            <telerik:RadComboBox ItemsSource="{Binding DataContext.PatientCentricMappingOptions, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" SelectedValue="{Binding Patient_Centric_Mapping, UpdateSourceTrigger=PropertyChanged}">
+                            </telerik:RadComboBox>
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellEditTemplate>
+                </telerik:GridViewDataColumn>
+
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding Patient_Centric_Change_Comments}" Width="700" Header="Pt-Centric Change Comments" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcentHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="Background" Value="{StaticResource editableColor}" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Measure_Status}" Header="Measure Status" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}"/>
+
+            </telerik:RadGridView.Columns>
+        </telerik:RadGridView>
+    </Grid>
+</UserControl>

@@ -1,0 +1,389 @@
+﻿<UserControl x:Class="UCS_Project_Manager.MHP_Yearly_Universes_Reporting"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:UCS_Project_Manager"
+              xmlns:vml="clr-namespace:UCS_Project_Manager;assembly=UCS_Project_Manager_ViewModels"
+             xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:cmd="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Platform"
+             xmlns:wpftoolkit="http://schemas.microsoft.com/wpf/2008/toolkit"
+             xmlns:wpfTool="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
+             vml:ViewModelLocator.AutoHookedUpViewModel="True"
+             xmlns:converter="clr-namespace:UCS_Project_Manager"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"  >
+    <UserControl.Resources>
+
+
+
+        <Style x:Key="MyRadioButton" TargetType="{x:Type RadioButton}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <Grid>
+                            <CheckBox
+                    IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent}, 
+                                Path=IsChecked, Mode=TwoWay}"
+                    IsHitTestVisible="False" Content="{TemplateBinding Content}" />
+                            <CheckBox
+                IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent}, 
+                            Path=IsChecked, Mode=TwoWay}"   
+                Content="{TemplateBinding Content}" Opacity="0"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="mainHeader"  TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="Orange" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="Black" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+
+        <Style x:Key="pcHeader"  TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="LightGreen" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="Black" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <DockPanel Grid.Row="0">
+            <Menu DockPanel.Dock="Top"  Width="Auto">
+                <MenuItem Header="_File">
+                    <!--<MenuItem Header="_Export All" Command="{Binding Path=ExportCommand}"/>
+                    <MenuItem Header="_Export Filtered" Click="MenuItem_Click_ExportFiltered" />-->
+                    <Separator />
+                    <MenuItem Header="_Exit" Click="MenuItem_Click" />
+                </MenuItem>
+
+                <!--<MenuItem Header="_Filter">
+                    <MenuItem Header="_Version" Click="MenuItem_Click_Filter" />
+                    
+                </MenuItem>-->
+            </Menu>
+            <TextBox AcceptsReturn="True"  Background="CornflowerBlue"/>
+        </DockPanel>
+
+
+
+
+        
+        <Grid Grid.Row="1"  Background="LightBlue" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+
+            <!--<Label Grid.Row="0"   Grid.Column="0" Content="* Choose a State:" FontWeight="Bold" Margin="4" HorizontalAlignment="Left"  />
+            <GroupBox Grid.Row="1"   Grid.Column="0"  Margin="5" Padding="5">
+                <ComboBox  x:Name="cbxStateFilter"  ItemsSource="{Binding Path=States}" Width="140"  HorizontalAlignment="Left"  SelectedIndex="0"  />
+            </GroupBox>-->
+
+            <Grid Grid.Row="0"   Grid.Column="0" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10*"/>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+
+                <StackPanel Orientation="Horizontal"  >
+                    <Label Content="Choose a report type:" FontWeight="Bold" Margin="3" HorizontalAlignment="Left"  />
+                    <Separator Width="20" Background="Transparent"/>
+                    <RadioButton x:Name="radEI" Command="{Binding ReportTypeCommand}"  CommandParameter="EI" Margin="6" IsChecked="True" Click="ReportType_Checked" >EI </RadioButton>
+                    <RadioButton x:Name="radIFP" Command="{Binding ReportTypeCommand}" CommandParameter="IFP" Margin="6"  Click="ReportType_Checked">IFP</RadioButton>
+                    <RadioButton x:Name="radCS" Command="{Binding ReportTypeCommand}" CommandParameter="CS" Margin="6" Click="ReportType_Checked"  >CS </RadioButton>
+                </StackPanel>
+            </Grid>
+
+
+
+            <Label Grid.Row="1"   Grid.Column="0" Content="* Select State(s):" Foreground="DarkBlue" FontWeight="Bold" Margin="4" HorizontalAlignment="Left"  />
+            <GroupBox Grid.Row="2"   Grid.Column="0"  Margin="5" Padding="5">
+                <StackPanel >
+                    <local:SelectAllCheckComboBox x:Name="cbxStateFilter" Command="{Binding StateChangedCommand}"  Grid.Column="3"  Width="460"  Margin="4"  HorizontalAlignment="Left" ItemsSource="{Binding Path=States}" ItemSelectionChanged="CbxStateFilter_ItemSelectionChanged" Loaded="CbxStateFilter_Loaded" >
+                    </local:SelectAllCheckComboBox>
+                </StackPanel>
+            </GroupBox>
+
+
+
+
+            <!--<ComboBox x:Name="Symmetry_VerionFilter"  ItemsSource="{Binding Path=SymmetryVersionFilterArr }" Visibility="Hidden" SelectedIndex="0"  />-->
+
+            <Label  Grid.Row="1"    Grid.Column="1" Content="* Start Date:" Foreground="DarkBlue"  FontWeight="Bold" Margin="4"  HorizontalAlignment="Left"   />
+            <GroupBox  Grid.Row="2"   Grid.Column="1"   Margin="5" Padding="5">
+                <DatePicker x:Name="dtStartDate"   VerticalAlignment="Top" HorizontalAlignment="Left" Text="01/01/2022"/>
+            </GroupBox>
+
+            <Label  Grid.Row="1"    Grid.Column="2" Content="* End Date:" Foreground="DarkBlue"  FontWeight="Bold" Margin="4"  HorizontalAlignment="Left"  />
+            <GroupBox  Grid.Row="2"   Grid.Column="2"    Margin="5" Padding="5">
+                <DatePicker  x:Name="dtEndDate"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="115" Text="12/31/2022" />
+            </GroupBox>
+
+
+
+
+            <Label  Grid.Row="3"    Grid.Column="0" Content="* Select Legal Entity(s):" Foreground="DarkBlue"  FontWeight="Bold" Margin="4"  HorizontalAlignment="Left"  Visibility="{Binding EIFormVisibility}"  />
+            <GroupBox  Grid.Row="4"    Grid.Column="0" Margin="5" Padding="5"  Visibility="{Binding EIFormVisibility}">
+                <StackPanel Visibility="{Binding EIFormVisibility}"  >
+                        <local:SelectAllCheckComboBoxTilde x:Name="cbxLegalEntityFilter"   Grid.Column="3"  Width="460"  Margin="4"  HorizontalAlignment="Left" ItemsSource="{Binding Path=LEG_ENTY}" ItemSelectionChanged="CbxLegalEntityFilter_ItemSelectionChanged" Loaded="CbxLegalEntityFilter_Loaded"  />
+                    </StackPanel>
+                </GroupBox>
+
+            <Label   Grid.Row="3"   Grid.Column="1" Content="* Select FINC ARNG DESC(s):" Foreground="DarkBlue"  FontWeight="Bold" Margin="4"  HorizontalAlignment="Left"  Visibility="{Binding EIFormVisibility}" />
+            <GroupBox Grid.Row="4"    Grid.Column="1" Margin="5" Padding="5"  Visibility="{Binding EIFormVisibility}">
+                <StackPanel Visibility="{Binding EIFormVisibility}"  >
+                        <local:SelectAllCheckComboBox x:Name="cbxFINC_ARNG_CDFilter"   Grid.Column="3"  Width="460"  Margin="4"  HorizontalAlignment="Left" ItemsSource="{Binding Path=FINC_ARNG_DESC}" ItemSelectionChanged="CbxFINC_ARNG_CDFilter_ItemSelectionChanged" Loaded="CbxFINC_ARNG_CDFilter_Loaded" />
+                    </StackPanel>
+                </GroupBox>
+
+            <Label   Grid.Row="3"   Grid.Column="2" Content="* Select MKT SEG RLLP DESC(s):" Foreground="DarkBlue"  FontWeight="Bold" Margin="4"  HorizontalAlignment="Left"  Visibility="{Binding EIFormVisibility}" />
+            <GroupBox Grid.Row="4"    Grid.Column="2" Margin="5" Padding="5"  Visibility="{Binding EIFormVisibility}">
+                <StackPanel Visibility="{Binding EIFormVisibility}"  >
+                        <local:SelectAllCheckComboBox x:Name="cbxMKT_SEG_RLLP_DESCFilter"   Grid.Column="3"  Width="460"  Margin="4"  HorizontalAlignment="Left" ItemsSource="{Binding Path=MKT_SEG_RLLP_DESC}" ItemSelectionChanged="CbxMKT_SEG_RLLP_DESCFilter_ItemSelectionChanged" Loaded="CbxMKT_SEG_RLLP_DESCFilter_Loaded" />
+                    </StackPanel>
+                </GroupBox>
+
+
+           
+            <GroupBox Grid.Row="5"  Grid.Column="0" Margin="5" Padding="5"   Visibility="{Binding EIFormVisibility}">
+                <StackPanel Visibility="{Binding EIFormVisibility}" >
+                    <Label   Grid.Row="5"  Grid.Column="0" Content="Select MKT TYP DESC(s):" Foreground="DarkCyan" FontWeight="Bold" Margin="4"  HorizontalAlignment="Left" Visibility="{Binding EIFormVisibility}"  />
+                    <local:SelectAllCheckComboBox x:Name="cbMKT_TYP_DESCFilter"   Grid.Column="3"  Width="460"  Margin="4"  HorizontalAlignment="Left" ItemsSource="{Binding Path=MKT_TYP_DESC}" ItemSelectionChanged="CbxMKT_TYP_DESCFilter_ItemSelectionChanged" Loaded="CbxMKT_TYP_DESCFilter_Loaded" />
+                    </StackPanel>
+                </GroupBox>
+
+
+
+
+            <GroupBox Grid.Row="5"    Grid.Column="1" Margin="5" Padding="5"   Visibility="{Binding EIFormVisibility}">
+                <StackPanel Visibility="{Binding EIFormVisibility}" >
+                    <Label   Grid.Row="5"   Grid.Column="1" Content="Select CUST SEG(s):" Foreground="DarkCyan"   FontWeight="Bold" Margin="4"  HorizontalAlignment="Left" Visibility="{Binding EIFormVisibility}"  />
+                    <TextBox Name="txtCUST_SEGFilter"  Grid.Column="3"  Width="460" Height="60px"  Margin="4"  HorizontalAlignment="Left" >
+                    </TextBox>
+                </StackPanel>
+            </GroupBox>
+
+
+
+            <Label  Grid.Row="3"    Grid.Column="0" Content="* Select Product(s):" Foreground="DarkBlue"  FontWeight="Bold" Margin="4"  HorizontalAlignment="Left" Visibility="{Binding IFPFormVisibility}" />
+            <GroupBox  Grid.Row="4"    Grid.Column="0" Margin="5" Padding="5" Visibility="{Binding IFPFormVisibility}" >
+                <StackPanel Visibility="{Binding IFPFormVisibility}">
+                    <local:SelectAllCheckComboBox x:Name="cbxProductCode"   Grid.Column="3"  Width="460"  Margin="4"  HorizontalAlignment="Left" ItemsSource="{Binding Path=ProductCode}" ItemSelectionChanged="CbxProductCode_ItemSelectionChanged" Loaded="CbxProductCode_Loaded"  />
+                </StackPanel>
+            </GroupBox>
+
+
+
+
+            <Label  Grid.Row="3"    Grid.Column="0" Content="* Select CS TADM PRDCT MAP(s):" Foreground="DarkBlue"  FontWeight="Bold" Margin="4"  HorizontalAlignment="Left" Visibility="{Binding CSFormVisibility}" />
+            <GroupBox  Grid.Row="4"    Grid.Column="0" Margin="5" Padding="5"  Visibility="{Binding CSFormVisibility}"  >
+                <StackPanel Visibility="{Binding CSFormVisibility}">
+                    <local:SelectAllCheckComboBox x:Name="cbxCS_TADM_PRDCT_MAP"   Grid.Column="3"  Width="460"  Margin="4"  HorizontalAlignment="Left" ItemsSource="{Binding Path=CS_TADM_PRDCT_MAP}" ItemSelectionChanged="CbxCS_TADM_PRDCT_MAP_ItemSelectionChanged" Loaded="CbxCS_TADM_PRDCT_MAP_Loaded"  />
+                    </StackPanel>
+                </GroupBox>
+
+
+            <GroupBox  Grid.Row="4"    Grid.Column="1" Margin="5" Padding="5"  Visibility="{Binding CSFormVisibility}" >
+                <StackPanel Visibility="{Binding CSFormVisibility}">
+                    <Label  Grid.Row="3"    Grid.Column="1" Content="Select PRDCT CD DESC(s):" Foreground="DarkCyan" FontWeight="Bold" Margin="4"  HorizontalAlignment="Left" Visibility="{Binding CSFormVisibility}" />
+                    <local:SelectAllCheckComboBox x:Name="cbxGroupNumbers"   Grid.Column="3"  Width="460"  Margin="4"  HorizontalAlignment="Left" ItemsSource="{Binding Path=GroupNumbers}" ItemSelectionChanged="CbxGroupNumbers_ItemSelectionChanged" Loaded="CbxGroupNumbers_Loaded"  />
+                </StackPanel>
+            </GroupBox>
+
+
+
+            <StatusBar Grid.Row="7"    Grid.Column="0" Grid.ColumnSpan="3" x:Name="StatusBar">
+                <StatusBar.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="500"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                    </ItemsPanelTemplate>
+                </StatusBar.ItemsPanel>
+                <StatusBarItem VerticalAlignment="Top" HorizontalAlignment="Left"   >
+                    <ScrollViewer x:Name="ScrollViewer" ScrollChanged="ScrollViewer_ScrollChanged" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  >
+                        <TextBlock x:Name="StatusText" FontWeight="Bold" FontSize="16" Width="1500" Text="{Binding Path=Status, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+                    </ScrollViewer>
+                </StatusBarItem>
+               <!-- <StatusBarItem Grid.Column="1">
+                    <ProgressBar x:Name="ProgressBar" Value="0" Width="80" Height="18"/>
+                </StatusBarItem>-->
+            </StatusBar>
+
+
+            <StackPanel x:Name="spRunContainter"  Grid.Row="5"  Grid.Column="3"  Visibility="{Binding EIFormVisibility}" >
+
+                <StackPanel x:Name="spRun"  Grid.Row="5"  Grid.Column="3"  Visibility="{Binding GenerateReportVisibility}" >
+
+                    <Button  x:Name="btnGenerateReport"  FontWeight="Bold" Content=" Generate Report " VerticalAlignment="Top"  HorizontalAlignment="Right" Margin="0,10,15,0" Command="{Binding Path=SearchCommand}" Height="50"  Width="150">
+                        <Button.Resources>
+                            <local:InverseAndBooleansToBooleanConverter x:Key="InverseAndBooleansToBooleanConverter"/>
+                            <local:SearchFilterConverter x:Key="SearchFilterConverter"/>
+                        </Button.Resources>
+                        <Button.IsEnabled>
+                            <MultiBinding Converter="{StaticResource InverseAndBooleansToBooleanConverter}" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                <Binding ElementName="cbxStateFilter" Path="(SelectedItem)" />
+                                <Binding ElementName="dtStartDate" Path="(Text)" />
+                                <Binding ElementName="dtEndDate" Path="(Text)" />
+                                <Binding ElementName="cbxLegalEntityFilter" Path="(SelectedItem)" />
+                                <Binding ElementName="cbxFINC_ARNG_CDFilter" Path="(SelectedItem)" />
+                                <Binding ElementName="cbxMKT_SEG_RLLP_DESCFilter" Path="(SelectedItem)" />
+                                <Binding Path="Disable"   />
+                            </MultiBinding>
+                        </Button.IsEnabled>
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource SearchFilterConverter}" >
+                                <Binding Path="SelectedValue" ElementName="cbxStateFilter" />
+                                <Binding Path="Text" ElementName="dtStartDate"/>
+                                <Binding Path="Text" ElementName="dtEndDate"/>
+                                <Binding Path="Text" ElementName="cbxLegalEntityFilter"/>
+                                <Binding Path="SelectedValue" ElementName="cbxFINC_ARNG_CDFilter"/>
+                                <Binding Path="SelectedValue" ElementName="cbxMKT_SEG_RLLP_DESCFilter"/>
+                                <Binding Path="SelectedValue" ElementName="cbMKT_TYP_DESCFilter"/>
+                                <Binding Path="Text" ElementName="txtCUST_SEGFilter"/>
+                                <!--<Binding Path="SelectedValue" ElementName="Symmetry_VerionFilter"/>-->
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                    </Button>
+
+                </StackPanel>
+            </StackPanel>
+
+
+            <StackPanel x:Name="spCSRunContainter"  Grid.Row="5"  Grid.Column="3"  Visibility="{Binding CSFormVisibility}" >
+
+                <StackPanel x:Name="spCSRun"  Grid.Row="5"  Grid.Column="3"  Visibility="{Binding GenerateReportVisibility}" >
+
+                    <Button  x:Name="btnCSGenerateReport"  FontWeight="Bold" Content=" Generate Report " VerticalAlignment="Top"  HorizontalAlignment="Right" Margin="0,10,15,0"    Command="{Binding Path=SearchCommand}" Height="50"  Width="150"  >
+                        <Button.Resources>
+                            <local:InverseAndBooleansToBooleanConverter x:Key="InverseAndBooleansToBooleanConverter"/>
+                            <local:SearchFilterConverter x:Key="SearchFilterConverter"/>
+                        </Button.Resources>
+                        <Button.IsEnabled>
+                            <MultiBinding Converter="{StaticResource InverseAndBooleansToBooleanConverter}" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                <Binding ElementName="cbxStateFilter" Path="(SelectedItem)" />
+                                <Binding ElementName="dtStartDate" Path="(Text)" />
+                                <Binding ElementName="dtEndDate" Path="(Text)" />
+                                <Binding ElementName="cbxCS_TADM_PRDCT_MAP" Path="(SelectedItem)" />
+                                <Binding Path="Disable"   />
+                            </MultiBinding>
+                        </Button.IsEnabled>
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource SearchFilterConverter}" >
+                                <Binding Path="SelectedValue" ElementName="cbxStateFilter" />
+                                <Binding Path="Text" ElementName="dtStartDate"/>
+                                <Binding Path="Text" ElementName="dtEndDate"/>
+                                <Binding Path="SelectedValue" ElementName="cbxCS_TADM_PRDCT_MAP"/>
+                                <Binding Path="SelectedValue" ElementName="cbxGroupNumbers"/>
+                                <!--<Binding Path="SelectedValue" ElementName="Symmetry_VerionFilter"/>-->
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                    </Button>
+
+                </StackPanel>
+            </StackPanel>
+
+
+            <StackPanel x:Name="spIFPRunContainter"  Grid.Row="5"  Grid.Column="3"  Visibility="{Binding IFPFormVisibility}" >
+
+                <StackPanel x:Name="spIFPRun"  Grid.Row="5"  Grid.Column="3"  Visibility="{Binding GenerateReportVisibility}" >
+
+                    <Button  x:Name="btnIFPGenerateReport"  FontWeight="Bold" Content=" Generate Report " VerticalAlignment="Top"  HorizontalAlignment="Right" Margin="0,10,15,0"  Command="{Binding Path=SearchCommand}" Height="50"  Width="150"  >
+                        <Button.Resources>
+                            <local:InverseAndBooleansToBooleanConverter x:Key="InverseAndBooleansToBooleanConverter"/>
+                            <local:SearchFilterConverter x:Key="SearchFilterConverter"/>
+                        </Button.Resources>
+                        <Button.IsEnabled>
+                            <MultiBinding Converter="{StaticResource InverseAndBooleansToBooleanConverter}" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                                <Binding ElementName="cbxStateFilter" Path="(SelectedItem)" />
+                                <Binding ElementName="dtStartDate" Path="(Text)" />
+                                <Binding ElementName="dtEndDate" Path="(Text)" />
+                                <Binding ElementName="cbxProductCode" Path="(SelectedItem)" />
+                                <Binding Path="Disable"   />
+                            </MultiBinding>
+                        </Button.IsEnabled>
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource SearchFilterConverter}" >
+                                <Binding Path="SelectedValue" ElementName="cbxStateFilter" />
+                                <Binding Path="Text" ElementName="dtStartDate"/>
+                                <Binding Path="Text" ElementName="dtEndDate"/>
+                                <Binding Path="SelectedValue" ElementName="cbxProductCode"/>
+                                <!--<Binding Path="SelectedValue" ElementName="Symmetry_VerionFilter"/>-->
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                    </Button>
+
+                </StackPanel>
+            </StackPanel>
+            <StackPanel x:Name="spCancel"  Grid.Row="5"  Grid.Column="3" Visibility="{Binding CancelReportVisibility}"  >
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label  Grid.Row="0" HorizontalAlignment="Left"  Grid.Column="0"   x:Name="lblLECnt" Content="{Binding Path=StatusValue}" FontWeight="Bold" FontSize="15"  ></Label>
+
+                    <Label  Grid.Row="1" HorizontalAlignment="Left"  Grid.Column="0"   x:Name="lblTimer" Content="{Binding Path=TimerValue}" FontWeight="Bold" FontSize="15" Foreground="DarkBlue"  ></Label>
+
+
+                    <Button Grid.Row="2"  HorizontalAlignment="Left" Grid.Column="0"  x:Name="btnCancel"  FontWeight="Bold" Content=" Cancel Report "  VerticalAlignment="Top"   Command="{Binding Path=CancelCommand}"   Width="150"  >
+                    </Button>
+
+                </Grid>
+
+
+
+
+            </StackPanel>
+
+
+        </Grid>
+
+
+    </Grid>
+</UserControl>

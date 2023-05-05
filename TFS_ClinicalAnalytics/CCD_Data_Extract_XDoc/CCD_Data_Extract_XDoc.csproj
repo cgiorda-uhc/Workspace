@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BAE8DA8D-C3E0-4608-A0B2-A20FCFCD13FA}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>CCD_Data_Extract_XDoc</RootNamespace>
+    <AssemblyName>CCD_Data_Extract_XDoc</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="NHapi.Base, Version=2.5.0.6, Culture=neutral, PublicKeyToken=d0d8ea960a3440eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\nHapi.2.5.0.6\lib\NHapi.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="NHapi.Model.V21, Version=2.5.0.6, Culture=neutral, PublicKeyToken=d0d8ea960a3440eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\nHapi.2.5.0.6\lib\NHapi.Model.V21.dll</HintPath>
+    </Reference>
+    <Reference Include="NHapi.Model.V22, Version=2.5.0.6, Culture=neutral, PublicKeyToken=d0d8ea960a3440eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\nHapi.2.5.0.6\lib\NHapi.Model.V22.dll</HintPath>
+    </Reference>
+    <Reference Include="NHapi.Model.V23, Version=2.5.0.6, Culture=neutral, PublicKeyToken=d0d8ea960a3440eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\nHapi.2.5.0.6\lib\NHapi.Model.V23.dll</HintPath>
+    </Reference>
+    <Reference Include="NHapi.Model.V231, Version=2.5.0.6, Culture=neutral, PublicKeyToken=d0d8ea960a3440eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\nHapi.2.5.0.6\lib\NHapi.Model.V231.dll</HintPath>
+    </Reference>
+    <Reference Include="NHapi.Model.V24, Version=2.5.0.6, Culture=neutral, PublicKeyToken=d0d8ea960a3440eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\nHapi.2.5.0.6\lib\NHapi.Model.V24.dll</HintPath>
+    </Reference>
+    <Reference Include="NHapi.Model.V25, Version=2.5.0.6, Culture=neutral, PublicKeyToken=d0d8ea960a3440eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\nHapi.2.5.0.6\lib\NHapi.Model.V25.dll</HintPath>
+    </Reference>
+    <Reference Include="NHapi.Model.V251, Version=2.5.0.6, Culture=neutral, PublicKeyToken=d0d8ea960a3440eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\nHapi.2.5.0.6\lib\NHapi.Model.V251.dll</HintPath>
+    </Reference>
+    <Reference Include="NHapi.Model.V26, Version=2.5.0.6, Culture=neutral, PublicKeyToken=d0d8ea960a3440eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\nHapi.2.5.0.6\lib\NHapi.Model.V26.dll</HintPath>
+    </Reference>
+    <Reference Include="NHapi.Model.V27, Version=2.5.0.6, Culture=neutral, PublicKeyToken=d0d8ea960a3440eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\nHapi.2.5.0.6\lib\NHapi.Model.V27.dll</HintPath>
+    </Reference>
+    <Reference Include="NHapi.Model.V271, Version=2.5.0.6, Culture=neutral, PublicKeyToken=d0d8ea960a3440eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\nHapi.2.5.0.6\lib\NHapi.Model.V271.dll</HintPath>
+    </Reference>
+    <Reference Include="NHapi.Model.V28, Version=2.5.0.6, Culture=neutral, PublicKeyToken=d0d8ea960a3440eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\nHapi.2.5.0.6\lib\NHapi.Model.V28.dll</HintPath>
+    </Reference>
+    <Reference Include="NHapi.Model.V281, Version=2.5.0.6, Culture=neutral, PublicKeyToken=d0d8ea960a3440eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\nHapi.2.5.0.6\lib\NHapi.Model.V281.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WinSCPnet, Version=1.7.2.10516, Culture=neutral, PublicKeyToken=2271ec4a3c56d0bf, processorArchitecture=MSIL">
+      <HintPath>..\packages\WinSCP.5.17.6\lib\net40\WinSCPnet.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DBConnection\DBConnection32.csproj">
+      <Project>{4fa67d78-012d-4194-b55b-c208d5a0c3c6}</Project>
+      <Name>DBConnection32</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\WinSCP.5.17.6\build\WinSCP.targets" Condition="Exists('..\packages\WinSCP.5.17.6\build\WinSCP.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\WinSCP.5.17.6\build\WinSCP.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinSCP.5.17.6\build\WinSCP.targets'))" />
+  </Target>
+</Project>

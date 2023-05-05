@@ -1,0 +1,9 @@
+﻿global using DataAccessLibrary.Data.Context;
+global using DataAccessLibrary.DataAccess;
+global using DataAccessLibrary.Data.Abstract;
+global using DataAccessLibrary.Data.Concrete.ChemoPx;
+global using DataAccessLibrary.Data.Concrete.MHP;
+global using VCPortal_Models.Models.ChemoPx;
+global using VCPortal_API.Api_Calls;
+global using VCPortal_Models.Dtos.ChemoPx;
+global using DataAccessLibrary.Data.Concrete.Shared;

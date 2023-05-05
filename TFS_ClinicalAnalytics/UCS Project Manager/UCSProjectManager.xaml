@@ -1,0 +1,30 @@
+﻿<Window x:Class="UCS_Project_Manager.UCSProjectManager"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:UCS_Project_Manager"
+        Title="VC Automation Interface" WindowState="Maximized" Background="CornflowerBlue"  Height="{x:Static SystemParameters.PrimaryScreenHeight}" 
+      Width="{x:Static SystemParameters.PrimaryScreenWidth}" LocationChanged="Window_LocationChanged"  >
+    <!--<Grid  Width="Auto" Height="Auto" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="23">-->
+    <!--<Grid Margin="23">-->
+        <!--<local:ProjectIntakeSample1 />-->
+       <!-- <local:ADUserSelect />-->
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+
+
+        <ContentControl x:Name="contentControl" Grid.Row="1"/>
+
+
+        <!-- <local:MHP_Yearly_Universes_Reporting  local:MHP_Yearly_Universes_Reporting.WindowTitle="MHP Monthly Universes Reporting" Grid.Row="1"  />
+
+       <local:ETG_Fact_Symmetry  local:ETG_Fact_Symmetry.WindowTitle="ETG Fact Symmetry" Grid.Row="1"  />
+        <local:CPM_Intake BorderThickness="32" BorderBrush="LightBlue" />-->
+    </Grid>
+</Window>
