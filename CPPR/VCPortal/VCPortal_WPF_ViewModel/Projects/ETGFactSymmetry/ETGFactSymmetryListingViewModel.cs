@@ -64,6 +64,8 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
     private List<string> mappingOptions;
     [ObservableProperty]
     private List<string> patientCentricMappingOptions;
+
+    private StringBuilder _sbStatus;
     public ETGFactSymmetryListingViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
     {
         _logger = logger;
@@ -84,8 +86,7 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
 
         if (_config != null)
         {
-            loadGridLists();
-            worker.RunWorkerAsync("LoadData");
+            worker.RunWorkerAsync("InitialLoadData");
             //loadGridLists();
             //Task.Run(async () => await getETGFactSymmetryData());
         }
@@ -99,6 +100,12 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
     private void worker_DoWork(object sender, DoWorkEventArgs e)
     {
         var callingFunction = (string)e.Argument;
+
+        _sbStatus = new StringBuilder();
+        ErrorMessageViewModel.Message = "";
+        StatusMessageViewModel.Message = "";
+
+
         if (callingFunction == "ExportConfigs")
         {
             StatusMessageViewModel.HasMessage = true;
@@ -110,7 +117,14 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
             getETGFactSymmetryData();
 
         }
- 
+        else if (callingFunction == "InitialLoadData")
+        {
+            StatusMessageViewModel.HasMessage = true;
+            loadGridLists();
+            getETGFactSymmetryData();
+
+        }
+
     }
 
     private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -182,15 +196,14 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
 
     private async Task getETGFactSymmetryData()
     {
-        StringBuilder sbStatus = new StringBuilder();
         try
         {
             ErrorMessageViewModel.Message = "";
             OC_ETGFactSymmetryViewModel.Clear();
 
             _logger.Information("Running getETGFactSymmetryData() for {CurrentUser}...", Authentication.UserName);
-            sbStatus.Append("Requesting data for ETGFactSymmetry, please wait..." + Environment.NewLine);
-            StatusMessageViewModel.Message = sbStatus.ToString();
+            _sbStatus.Append("Requesting data for ETGFactSymmetry, please wait..." + Environment.NewLine);
+            StatusMessageViewModel.Message = _sbStatus.ToString();
             var api = _config.APIS.Where(x => x.Name == "MainData").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
             var response = WebAPIConsume.GetCall(api.Url);
@@ -203,16 +216,16 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
                 });
                 int cnt = 1;
                 int total = result.Count();
-                sbStatus.Append("Rendering row {$cnt} out of " + total.ToString("N0") + Environment.NewLine);
+                _sbStatus.Append("Rendering row {$cnt} out of " + total.ToString("N0") + Environment.NewLine);
                 result.ForEach(x => 
                 {
-                    StatusMessageViewModel.Message = sbStatus.ToString().Replace("{$cnt}", cnt.ToString("N0"));
+                    StatusMessageViewModel.Message = _sbStatus.ToString().Replace("{$cnt}", cnt.ToString("N0"));
                     OC_ETGFactSymmetryViewModel.Add(new ETGFactSymmetryViewModel(x));
                     cnt++;
                 });
 
                 _logger.Information("ETGFactSymmetryData.getETGFactSymmetryData sucessfully completed for {CurrentUser}...", Authentication.UserName);
-                StatusMessageViewModel.Message = sbStatus.ToString();
+                StatusMessageViewModel.Message = _sbStatus.ToString();
             }
             else
             {
@@ -230,10 +243,6 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
         {
             ErrorMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
             _logger.Fatal(ex, "getETGFactSymmetryData.WebAPIConsume.GetCall threw an error for {CurrentUser}", Authentication.UserName);
-        }
-        finally
-        {
-            StatusMessageViewModel.Message = "";
         }
 
     }
@@ -300,14 +309,13 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
             ErrorMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
             _logger.Fatal(ex, "ETGFactSymmetryData.exportConfigs threw an error for {CurrentUser}", Authentication.UserName);
         }
-        finally
-        {
-            StatusMessageViewModel.Message = "";
-        }
     }
 
     private void loadGridLists()
     {
+
+        _sbStatus.Append("Getting RxNrxOption list..." + Environment.NewLine);
+        StatusMessageViewModel.Message = _sbStatus.ToString();
         RxNrxOptions = new List<string>();
         RxNrxOptions.Add("Not Mapped");
         RxNrxOptions.Add("Rx: N / NRx: Y");
@@ -315,6 +323,9 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
         RxNrxOptions.Add("Rx: N / NRx: N");
         RxNrxOptions.Add("Rx: Y / NRx: N");
 
+
+        _sbStatus.Append("Getting LobOption list..." + Environment.NewLine);
+        StatusMessageViewModel.Message = _sbStatus.ToString();
         LobOptions = new List<string>();
         LobOptions.Add("Not Mapped");
         LobOptions.Add("All");
@@ -326,25 +337,35 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
         LobOptions.Add("Medicaid Only");
 
 
+        _sbStatus.Append("Getting TreatmentIndicatorOption list..." + Environment.NewLine);
+        StatusMessageViewModel.Message = _sbStatus.ToString();
         TreatmentIndicatorOptions = new List<string>();
         TreatmentIndicatorOptions.Add("Not Mapped");
         TreatmentIndicatorOptions.Add("All");
         TreatmentIndicatorOptions.Add("0");
 
+        _sbStatus.Append("Getting AttributionOption list..." + Environment.NewLine);
+        StatusMessageViewModel.Message = _sbStatus.ToString();
         AttributionOptions = new List<string>();
         AttributionOptions.Add("Not Mapped");
         AttributionOptions.Add("Always Attributed");
         AttributionOptions.Add("If Involved");
 
+        _sbStatus.Append("Getting TreatmentIndicatorECOption list..." + Environment.NewLine);
+        StatusMessageViewModel.Message = _sbStatus.ToString();
         TreatmentIndicatorECOptions = new List<string>();
         TreatmentIndicatorECOptions.Add("Not Mapped");
         TreatmentIndicatorECOptions.Add("0");
         TreatmentIndicatorECOptions.Add("0 & 1");
 
+        _sbStatus.Append("Getting MappingOption list..." + Environment.NewLine);
+        StatusMessageViewModel.Message = _sbStatus.ToString();
         MappingOptions = new List<string>();
         MappingOptions.Add("Mapped");
         MappingOptions.Add("Not Mapped");
 
+        _sbStatus.Append("Getting PatientCentricMapping list..." + Environment.NewLine);
+        StatusMessageViewModel.Message = _sbStatus.ToString();
         PatientCentricMappingOptions = new List<string>();
         PatientCentricMappingOptions.Add("Not Mapped");
         PatientCentricMappingOptions.Add("Yes");
