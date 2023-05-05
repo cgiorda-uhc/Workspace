@@ -46,7 +46,6 @@ public partial class ETGFactSymmetryControl : UserControl
         modalContentControl.Content = new StatusControl();
         modalContentControl.DataContext = this.DataContext;
         //modalContentControl.Content = new StatusControl();
-
     }
 
     private void btnExporConfig_Click(object sender, RoutedEventArgs e)
