@@ -203,10 +203,10 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
                 });
                 int cnt = 1;
                 int total = result.Count();
-                sbStatus.Append("Rendering row {$cnt} out of " + total + Environment.NewLine);
+                sbStatus.Append("Rendering row {$cnt} out of " + total.ToString("N0") + Environment.NewLine);
                 result.ForEach(x => 
                 {
-                    StatusMessageViewModel.Message = sbStatus.ToString().Replace("{$cnt}", cnt.ToString());
+                    StatusMessageViewModel.Message = sbStatus.ToString().Replace("{$cnt}", cnt.ToString("N0"));
                     OC_ETGFactSymmetryViewModel.Add(new ETGFactSymmetryViewModel(x));
                     cnt++;
                 });

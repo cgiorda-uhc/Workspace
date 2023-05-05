@@ -41,11 +41,11 @@ public partial class MainWindow : Window
         //this.Title = "Value Creation Assistant Home";
         //this.contentControl.Content = new HomeControl();
 
-        this.Title = "Chemotherapy PX";
-        this.contentControl.Content = new ChemotherapyPXControl(config, excelFunctions, logger);
+        //this.Title = "Chemotherapy PX";
+        //this.contentControl.Content = new ChemotherapyPXControl(config, excelFunctions, logger);
 
-        //this.Title = "ETG Fact Symmetry";
-        //this.contentControl.Content = new ETGFactSymmetryControl(config, excelFunctions, logger);
+        this.Title = "ETG Fact Symmetry";
+        this.contentControl.Content = new ETGFactSymmetryControl(config, excelFunctions, logger);
     }
 
 

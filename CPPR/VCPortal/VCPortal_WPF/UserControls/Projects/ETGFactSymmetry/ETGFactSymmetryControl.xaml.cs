@@ -42,7 +42,6 @@ public partial class ETGFactSymmetryControl : UserControl
         DataContext = new MainViewModel("ETG Fact Symmetry", config, excelFunctions, logger).CurrentViewModel;
         InitializeComponent();
 
-
         modalContentControl.Content = new StatusControl();
         modalContentControl.DataContext = this.DataContext;
         //modalContentControl.Content = new StatusControl();

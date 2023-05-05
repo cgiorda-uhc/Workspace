@@ -87,9 +87,8 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
 
         if (_config != null)
         {
-            loadGridLists();
             //Task.Run(async () => await loadGridLists());
-            worker.RunWorkerAsync("LoadData");
+            worker.RunWorkerAsync("InitialLoadData");
 
 
             //Task.Run(async () => await getChemotherapyPXData());
@@ -115,6 +114,13 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
         else if (callingFunction == "LoadData")
         {
             StatusMessageViewModel.HasMessage = true;
+            getChemotherapyPXData();
+
+        }
+        else if (callingFunction == "InitialLoadData") 
+        {
+            StatusMessageViewModel.HasMessage = true;
+            loadGridLists();
             getChemotherapyPXData();
 
         }
@@ -259,10 +265,10 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
 
                 int cnt = 1;
                 int total = result.Count();
-                sbStatus.Append("Retrieving row {$cnt} out of " + total + Environment.NewLine);
+                sbStatus.Append("Retrieving row {$cnt} out of " + total.ToString("N0") + Environment.NewLine);
                 result.ForEach(x => 
                     {
-                        StatusMessageViewModel.Message = sbStatus.ToString().Replace("{$cnt}", cnt.ToString());
+                        StatusMessageViewModel.Message = sbStatus.ToString().Replace("{$cnt}", cnt.ToString("N0"));
                         OC_ChemotherapyPXViewModel.Add(new ChemotherapyPXViewModel(x));
                         cnt++;
                     });
@@ -338,9 +344,12 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
     private async Task loadGridLists()
     {
         try 
-        { 
+        {
+            StringBuilder sbStatus = new StringBuilder();
             var api = _config.APIS.Where(x => x.Name == "CodeCategory").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
+            sbStatus.Append("Getting CodeCategory list..." + Environment.NewLine);
+            StatusMessageViewModel.Message = sbStatus.ToString();
             var response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -361,6 +370,8 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
 
             api = _config.APIS.Where(x => x.Name == "AspCategory").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
+            sbStatus.Append("Getting AspCategory list..." + Environment.NewLine);
+            StatusMessageViewModel.Message = sbStatus.ToString();
             response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -380,6 +391,8 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
 
             api = _config.APIS.Where(x => x.Name == "DrugAdmMode").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
+            sbStatus.Append("Getting DrugAdmMode list..." + Environment.NewLine);
+            StatusMessageViewModel.Message = sbStatus.ToString();
             response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -399,6 +412,8 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
 
             api = _config.APIS.Where(x => x.Name == "PADrugs").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
+            sbStatus.Append("Getting PADrugs list..." + Environment.NewLine);
+            StatusMessageViewModel.Message = sbStatus.ToString();
             response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -418,6 +433,8 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
 
             api = _config.APIS.Where(x => x.Name == "CEPPayCd").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
+            sbStatus.Append("Getting CEPPayCd list..." + Environment.NewLine);
+            StatusMessageViewModel.Message = sbStatus.ToString();
             response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -437,6 +454,8 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
 
             api = _config.APIS.Where(x => x.Name == "CEPEnrollCd").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
+            sbStatus.Append("Getting CEPEnrollCd list..." + Environment.NewLine);
+            StatusMessageViewModel.Message = sbStatus.ToString();
             response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -456,6 +475,8 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
 
             api = _config.APIS.Where(x => x.Name == "Source").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
+            sbStatus.Append("Getting Source list..." + Environment.NewLine);
+            StatusMessageViewModel.Message = sbStatus.ToString();
             response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -475,6 +496,8 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
 
             api = _config.APIS.Where(x => x.Name == "CEPEnrExcl").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
+            sbStatus.Append("Getting CEPEnrExcl list..." + Environment.NewLine);
+            StatusMessageViewModel.Message = sbStatus.ToString();
             response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -497,6 +520,8 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
             {
                 api = _config.APIS.Where(x => x.Name == "ProcCodes").FirstOrDefault();
                 WebAPIConsume.BaseURI = api.BaseUrl;
+                sbStatus.Append("Getting ProcCodes list..." + Environment.NewLine);
+                StatusMessageViewModel.Message = sbStatus.ToString();
                 response = WebAPIConsume.GetCall(api.Url);
                 if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
                 {
@@ -522,8 +547,11 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
         {
             _logger.Fatal(ex, "loadGridLists.WebAPIConsume.GetCall threw an error for {CurrentUser}", Authentication.UserName);
         }
+        finally
+        {
+            StatusMessageViewModel.Message = "";
+        }
 
-        
 
     }
 
