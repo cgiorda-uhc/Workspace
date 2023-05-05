@@ -286,6 +286,10 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
             ErrorMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
             _logger.Fatal(ex, "getChemotherapyPXData.WebAPIConsume.GetCall threw an error for {CurrentUser}", Authentication.UserName);
         }
+        finally
+        {
+            StatusMessageViewModel.Message = "";
+        }
 
 
 
@@ -322,6 +326,10 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
         {
             ErrorMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
             _logger.Fatal(ex, "ChemotherapyPXData.exportConfigs threw an error for {CurrentUser}", Authentication.UserName);
+        }
+        finally
+        {
+            StatusMessageViewModel.Message = "";
         }
     }
 
