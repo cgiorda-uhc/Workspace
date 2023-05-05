@@ -77,10 +77,7 @@ public partial class ETGFactSymmetryControl : UserControl
     private object _value;
     private void ETGGridView_BeginningEdit(object sender, GridViewBeginningEditRoutedEventArgs e)
     {
-
         _value = ((TextBlock)e.Cell.Content).Text;
-
-
     }
 
     private void ETGGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
