@@ -69,7 +69,6 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
     public ChemotherapyPXListingViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
     {
 
-
         _logger = logger;
         _excelFunctions = excelFunctions;
         _config = prepareConfig(config);
