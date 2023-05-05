@@ -115,7 +115,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
         }
         else if (callingFunction == "LoadData")
         {
-            //StatusMessageViewModel.HasMessage = true;
+            StatusMessageViewModel.HasMessage = true;
             getChemotherapyPXData();
 
         }
