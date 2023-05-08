@@ -3,17 +3,23 @@
 	@update_date DATETIME
 AS
  --DELETE
-  UPDATE [dbo].[ChemotherapyPX] SET [Is_Archived] = 1 WHERE [Id] in 
+    UPDATE [dbo].[ChemotherapyPX] SET [Is_Archived] = 1 WHERE [Id] in 
   (SELECT [ChemoPX_Id] FROM [dbo].[ChemotherapyPX_Tracking]   WHERE [UPDATE_USER] = @username AND UPDATE_DT = @update_date AND [UPDATE_ACTION] = 'DELETE')
 
   --INSERT
 INSERT INTO [dbo].[ChemotherapyPX] ([CODE] ,[GENERIC_NAME] ,[TRADE_NAME] ,[CKPT_INHIB_IND] ,[ANTI_EMETIC_IND] ,[CODE_EFF_DT] ,[NHNR_CANCER_THERAPY] ,[CODE_CATEGORY_ID] ,[ASP_CATEGORY_ID] ,[DRUG_ADM_MODE_ID] ,[PA_DRUGS_ID] ,[PA_EFF_DT] ,[PA_END_DT] ,[CEP_PAY_CD_ID] ,[CEP_ENROLL_CD_ID] ,[CEP_ENROLL_EXCL_DESC] ,[NOVEL_STATUS_IND] ,[FIRST_NOVEL_MNTH] ,[SOURCE] ,[Is_Archived]) SELECT [CODE] ,[GENERIC_NAME] ,[TRADE_NAME] ,[CKPT_INHIB_IND] ,[ANTI_EMETIC_IND] ,[CODE_EFF_DT] ,[NHNR_CANCER_THERAPY] ,[CODE_CATEGORY_ID] ,[ASP_CATEGORY_ID] ,[DRUG_ADM_MODE_ID] ,[PA_DRUGS_ID] ,[PA_EFF_DT] ,[PA_END_DT] ,[CEP_PAY_CD_ID] ,[CEP_ENROLL_CD_ID] ,[CEP_ENROLL_EXCL_DESC] ,[NOVEL_STATUS_IND] ,[FIRST_NOVEL_MNTH] ,[SOURCE] ,0 as [Is_Archived] FROM [dbo].[ChemotherapyPX_Tracking] WHERE [UPDATE_USER] = @username AND UPDATE_DT = @update_date AND [UPDATE_ACTION] = 'INSERT';
 
+UPDATE Track
+SET 
+[ChemoPX_Id]  = CASE WHEN Track.[ChemoPX_Id] IS NULL THEN Chemo.[Id] ELSE Track.[ChemoPX_Id] END
+FROM [dbo].[ChemotherapyPX_Tracking] Track
+INNER JOIN 
+[dbo].[ChemotherapyPX] Chemo
+ON Chemo.[CODE] = Track.[CODE]
+WHERE Track.[UPDATE_USER] = @username AND Track.UPDATE_DT =@update_date AND Track.[UPDATE_ACTION] = 'INSERT'
 
 
-
-
-
+--UPDATE
 UPDATE Track
 SET 
 [GENERIC_NAME_PREVIOUS] = CASE WHEN Track.[GENERIC_NAME] IS NULL THEN NULL ELSE Chemo.[GENERIC_NAME] END,
@@ -37,11 +43,8 @@ SET
 FROM [dbo].[ChemotherapyPX_Tracking] Track
 INNER JOIN 
 [dbo].[ChemotherapyPX] Chemo
-ON Chemo.[Id] = Track.[ChemoPX_Id]
+ON Chemo.[CODE] = Track.[CODE]
 WHERE Track.[UPDATE_USER] = @username AND Track.UPDATE_DT =@update_date AND Track.[UPDATE_ACTION] = 'UPDATE'
-
-
-
 
 
 UPDATE Chemo
@@ -68,5 +71,5 @@ SET
 FROM [dbo].[ChemotherapyPX] Chemo
 INNER JOIN 
 [dbo].[ChemotherapyPX_Tracking] Track
-ON Chemo.[Id] = Track.[ChemoPX_Id]
+ON Chemo.[CODE] = Track.[CODE]
 WHERE Track.[UPDATE_USER] = @username AND Track.UPDATE_DT =@update_date AND Track.[UPDATE_ACTION] = 'UPDATE'

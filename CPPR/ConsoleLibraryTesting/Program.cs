@@ -19,7 +19,7 @@ using Org.BouncyCastle.Asn1.X509;
 using SharedFunctionsLibrary;
 
 using System.Text;
-using static NPOI.HSSF.UserModel.HeaderFooter;
+//using static NPOI.HSSF.UserModel.HeaderFooter;
 using MongoDB.Driver.Core.Configuration;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -51,25 +51,93 @@ using SharpCompress.Common;
 using NPOI.OpenXmlFormats;
 using System.Formats.Asn1;
 using DocumentFormat.OpenXml.Math;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using Microsoft.Extensions.Primitives;
 
 //var adHoc = new AdHoc();
+
+
 
 char chrDelimiter = '|';
 List<string>? strLstColumnNames = null;
 StreamReader? csvreader = null;
 string _strTableName;
-string[] strLstFiles = Directory.GetFiles(@"C:\Users\cgiorda\Desktop\Projects\UGAP Configuration", "*.txt", SearchOption.TopDirectoryOnly);
-string? strInputLine = "";
+string[] strLstFiles;
+//string[] strLstFiles = Directory.GetFiles(@"C:\Users\cgiorda\Desktop\Projects\UGAP Configuration", "*.txt", SearchOption.TopDirectoryOnly);
+string ? strInputLine = "";
 string[] csvArray;
 string strSQL;
 int intBulkSize = 10000;
 var connectionString = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
-IRelationalDataAccess db_dest = new SqlDataAccess();
+var tdConnectionString = "Data Source=UDWPROD;User ID=cgiorda;Password=BooWooDooFoo2023!!;Authentication Mechanism=LDAP;Session Mode=TERADATA;Session Character Set=ASCII;Persist Security Info=true;Connection Timeout=99999;";
+IRelationalDataAccess db_sql = new SqlDataAccess();
+IRelationalDataAccess db_td = new TeraDataAccess();
 System.Data.DataTable dtTransfer = new System.Data.DataTable();
 System.Data.DataRow? drCurrent = null;
+
+
+strSQL = "SELECT [SPECIALTY] as ERG_SPCL_CATGY_CD ,[BASEETG] as ETG_BAS_CLSS_NBR ,[TREATMENT_IND] as TRT_CD ,[IF_ALWAYS] as [ALWAYS] ,[IF_ATTRIB] as ATTRIBUTED ,[RISK_MODEL] as RISK_MDL ,[RX] ,[NRX] FROM [IL_UCA].[stg].[UGAPCFG_ETG_TI_RX_NRX_COM]";
+
+var etg = await db_sql.LoadData<UGAPETGModel>(connectionString: connectionString, strSQL);
+
+strSQL = "Select distinct ETG_BAS_CLSS_NBR, MPC_NBR from CLODM001.ETG_NUMBER";
+
+var mcp = await db_td.LoadData<UGAPMPCNBRModel>(connectionString: tdConnectionString, strSQL);
+
+
+foreach(var item in etg)
+{
+    var m = mcp.Where(x => x.ETG_BAS_CLSS_NBR == item.ETG_BAS_CLSS_NBR).Select(x=>x.MPC_NBR).FirstOrDefault();
+
+    item.MPC_NBR = m;
+}
+
+
+List<UGAPETGModel> etg_final = etg.OrderBy(o => o.MPC_NBR).ToList();
+StringBuilder sb    = new StringBuilder();
+
+var filename = "C:\\Users\\cgiorda\\Desktop\\Projects\\UGAP Configuration\\output\\test.txt";
+if(File.Exists(filename))
+{
+    File.Delete(filename);
+}
+
+using (var file = File.CreateText(filename))
+{
+    string[] columns = typeof(UGAPETGModel).GetProperties().Select(p => p.Name).ToArray();
+    foreach(var column in columns)
+    {
+        sb.Append(column + "|");
+
+    }
+    file.WriteLine(sb.ToString().TrimEnd('|'));
+    file.Flush();
+    sb.Clear();
+
+    foreach (var e in etg_final)
+    {
+        sb.Append(e.MPC_NBR + "|"); 
+        sb.Append(e.ETG_BAS_CLSS_NBR + "|"); 
+        sb.Append(e.ALWAYS + "|"); 
+        sb.Append(e.ATTRIBUTED + "|"); 
+        sb.Append(e.ERG_SPCL_CATGY_CD + "|"); 
+        sb.Append(e.TRT_CD + "|"); 
+        sb.Append(e.RX + "|"); 
+        sb.Append(e.NRX + "|"); 
+        sb.Append(e.RISK_MDL + "|");
+        file.WriteLine(sb.ToString().TrimEnd('|'));
+        sb.Clear();
+    }
+    file.Flush();
+}
+
+return;
+
+
+
 foreach (var strFile in strLstFiles)
 {
-    var filename = "ugapcfg_" + Path.GetFileName(strFile).Replace(".txt", "");
+    filename = "ugapcfg_" + Path.GetFileName(strFile).Replace(".txt", "");
 
     var table = CommonFunctions.getCleanTableName(filename);
     var tmp_table = table.Substring(0, Math.Min(28, table.Length)) + "_TMP";
@@ -93,11 +161,11 @@ foreach (var strFile in strLstFiles)
 
             //SQL FOR TMP TABLE TO STORE ALL VALUES A VARCHAR(MAX)
             strSQL = CommonFunctions.getCreateTmpTableScript("stg", tmp_table, strLstColumnNames);
-            await db_dest.Execute(connectionString: connectionString, strSQL);
+            await db_sql.Execute(connectionString: connectionString, strSQL);
 
             strSQL = "SELECT * FROM [stg].[" + tmp_table + "]; ";
             //CREATE TMP TABLE AND COLLECT NEW DB TABLE FOR BULK TRANSFERS
-            dtTransfer = await db_dest.LoadDataTable(connectionString, strSQL);
+            dtTransfer = await db_sql.LoadDataTable(connectionString, strSQL);
             dtTransfer.TableName = "stg." + tmp_table;
 
             //GOT COLUMNS, CREATED TMP TABLE FOR FIRST PASS
@@ -115,7 +183,7 @@ foreach (var strFile in strLstFiles)
 
         if (dtTransfer.Rows.Count == intBulkSize) //intBulkSize = 10000 DEFAULT
         {
-            await db_dest.BulkSave(connectionString: connectionString, dtTransfer);
+            await db_sql.BulkSave(connectionString: connectionString, dtTransfer);
             dtTransfer.Rows.Clear();
         }
 
@@ -124,23 +192,28 @@ foreach (var strFile in strLstFiles)
 
     //CATCH REST OF UPLOADS OUTSIDE CSV LOOP
     if (dtTransfer.Rows.Count > 0)
-        await db_dest.BulkSave(connectionString: connectionString, dtTransfer);
+        await db_sql.BulkSave(connectionString: connectionString, dtTransfer);
 
 
 
     strSQL = CommonFunctions.getTableAnalysisScript("stg", tmp_table, strLstColumnNames);
-    var dataTypes = (await db_dest.LoadData<DataTypeModel>(connectionString: connectionString, strSQL));
+    var dataTypes = (await db_sql.LoadData<DataTypeModel>(connectionString: connectionString, strSQL));
 
     strSQL = CommonFunctions.getCreateFinalTableScript("stg", table, dataTypes);
-    await db_dest.Execute(connectionString: connectionString, strSQL);
+    await db_sql.Execute(connectionString: connectionString, strSQL);
 
     strSQL = CommonFunctions.getSelectInsertScript("stg", tmp_table, table, strLstColumnNames);
-    await db_dest.Execute(connectionString: connectionString, strSQL);
+    await db_sql.Execute(connectionString: connectionString, strSQL);
 
     strLstColumnNames = null;
+
+
+
+
+
+
+
 }
-
-
 
 
 

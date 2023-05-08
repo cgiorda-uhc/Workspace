@@ -45,53 +45,53 @@ public partial class ChemotherapyPXControl : UserControl
     private void ChemotherapyPXGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
     {
 
-        var objType = ((GridViewEditorPresenter)e.Cell.Content).Content.GetType();
-        object newvalue;
+        //var objType = ((GridViewEditorPresenter)e.Cell.Content).Content.GetType();
+        //object newvalue;
 
-        if (objType == typeof(RadButton))
-        {
-            btnSave.IsEnabled = true;
-            return;
-        }
+        //if (objType == typeof(RadButton))
+        //{
+        //    btnSave.IsEnabled = true;
+        //    return;
+        //}
 
-        if (objType == typeof(RadAutoCompleteBox))
-        {
-            newvalue = ((RadAutoCompleteBox)((GridViewEditorPresenter)e.Cell.Content).Content).SearchText;
-        }
-        else if(objType == typeof(TextBox))
-        {
-            newvalue = ((TextBox)((GridViewEditorPresenter)e.Cell.Content).Content).Text;
-        }
-        else if (objType == typeof(DatePicker))
-        {
-            newvalue = ((DatePicker)((GridViewEditorPresenter)e.Cell.Content).Content).Text;//bug
-        }
-        else if (objType == typeof(RadComboBox))
-        {
-            newvalue = ((RadComboBox)((GridViewEditorPresenter)e.Cell.Content).Content).Text;
-        }
-        else
-        {
-            newvalue = ((TextBox)((GridViewEditorPresenter)e.Cell.Content).Content).Text;
-        }
+        //if (objType == typeof(RadAutoCompleteBox))
+        //{
+        //    newvalue = ((RadAutoCompleteBox)((GridViewEditorPresenter)e.Cell.Content).Content).SearchText;
+        //}
+        //else if(objType == typeof(TextBox))
+        //{
+        //    newvalue = ((TextBox)((GridViewEditorPresenter)e.Cell.Content).Content).Text;
+        //}
+        //else if (objType == typeof(DatePicker))
+        //{
+        //    newvalue = ((DatePicker)((GridViewEditorPresenter)e.Cell.Content).Content).Text;//bug
+        //}
+        //else if (objType == typeof(RadComboBox))
+        //{
+        //    newvalue = ((RadComboBox)((GridViewEditorPresenter)e.Cell.Content).Content).Text;
+        //}
+        //else
+        //{
+        //    newvalue = ((TextBox)((GridViewEditorPresenter)e.Cell.Content).Content).Text;
+        //}
 
-        if (_value + "" != newvalue + "")
-        {
-            btnSave.IsEnabled = true;
-        }
+        //if (_value + "" != newvalue + "")
+        //{
+        //    btnSave.IsEnabled = true;
+        //}
 
     }
 
     private void btnSave_Click(object sender, RoutedEventArgs e)
     {
-        btnSave.IsEnabled = false;
+        //btnSave.IsEnabled = false;
     }
 
     private object _value;
     private void ChemotherapyPXGridView_BeginningEdit(object sender, GridViewBeginningEditRoutedEventArgs e)
     {
 
-        _value = ((TextBlock)e.Cell.Content).Text;
+        //_value = ((TextBlock)e.Cell.Content).Text;
     }
 
     private void btnExporData_Click(object sender, RoutedEventArgs e)

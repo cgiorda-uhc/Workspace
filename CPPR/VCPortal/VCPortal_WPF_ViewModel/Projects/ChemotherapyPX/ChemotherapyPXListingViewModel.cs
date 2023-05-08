@@ -1,23 +1,20 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using FileParsingLibrary.Models;
 using FileParsingLibrary.MSExcel;
 using Microsoft.Extensions.Configuration;
 using SharedFunctionsLibrary;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Windows.Media;
 using VCPortal_Models.Configuration.HeaderInterfaces.Abstract;
 using VCPortal_Models.Configuration.HeaderInterfaces.Concrete;
 using VCPortal_Models.Dtos.ChemoPx;
-using VCPortal_Models.Dtos.ETGFactSymmetry;
 using VCPortal_Models.Models.ChemoPx;
-using VCPortal_Models.Models.ETGFactSymmetry;
 using VCPortal_Models.Models.Shared;
-using VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;
 using VCPortal_WPF_ViewModel.Shared;
 
 namespace VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
@@ -30,8 +27,12 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
     private readonly BackgroundWorker worker = new BackgroundWorker();
 
 
-    public MessageViewModel ErrorMessageViewModel { get; }
-    public MessageViewModel StatusMessageViewModel { get; }
+    public MessageViewModel UserMessageViewModel { get; }
+    public MessageViewModel ProgressMessageViewModell { get; }
+
+    [ObservableProperty]
+    private bool canSave;
+
 
     [ObservableProperty]
     private ObservableCollection<ChemotherapyPXViewModel> oC_ChemotherapyPXViewModel;
@@ -75,11 +76,14 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
         _excelFunctions = excelFunctions;
         _config = prepareConfig(config);
 
-        ErrorMessageViewModel = new MessageViewModel();
-        StatusMessageViewModel = new MessageViewModel();
-        //StatusMessageViewModel.HasMessage = true;
+        CanSave = false;
+        UserMessageViewModel = new MessageViewModel();
+        ProgressMessageViewModell = new MessageViewModel();
 
-        SharedChemoObjects.ChemotherapyPX_Tracking_List = new List<ChemotherapyPX_Tracking_CUD_Dto>();
+        //ProgressMessageViewModell.HasMessage = true;
+
+        SharedChemoObjects.ChemotherapyPX_Tracking_List = new ObservableCollection<ChemotherapyPX_Tracking_CUD_Dto>();
+        SharedChemoObjects.ChemotherapyPX_Tracking_List.CollectionChanged += listChanged;
 
         worker.DoWork += worker_DoWork;
         worker.RunWorkerCompleted += worker_RunWorkerCompleted;
@@ -97,45 +101,58 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
         }
         else
         {
-            ErrorMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
             _logger.Error($"No Config found for ChemotherapyPX");
         }
 
-        //StatusMessageViewModel.HasMessage = false;
+        //ProgressMessageViewModell.HasMessage = false;
     }
 
     private void worker_DoWork(object sender, DoWorkEventArgs e)
     {
         _sbStatus = new StringBuilder();
-        ErrorMessageViewModel.Message = "";
-        StatusMessageViewModel.Message = "";
+        UserMessageViewModel.Message = "";
+        ProgressMessageViewModell.Message = "";
 
         var callingFunction = (string)e.Argument;
         if (callingFunction == "ExportData")
         {
-            StatusMessageViewModel.HasMessage = true;
+            ProgressMessageViewModell.HasMessage = true;
             exportData();
 
         }
         else if (callingFunction == "LoadData")
         {
-            StatusMessageViewModel.HasMessage = true;
+            ProgressMessageViewModell.HasMessage = true;
             getChemotherapyPXData();
 
         }
         else if (callingFunction == "InitialLoadData") 
         {
-            StatusMessageViewModel.HasMessage = true;
+            ProgressMessageViewModell.HasMessage = true;
             loadGridLists();
             getChemotherapyPXData();
 
         }
+        else if (callingFunction == "SaveData")
+        {
+            save();
+
+        }
     }
+
+
+    private void listChanged(object sender, NotifyCollectionChangedEventArgs args)
+    {
+        // list changed
+        CanSave = true;
+    }
+
 
     private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
     {
         //update ui once worker complete his work
-        StatusMessageViewModel.HasMessage = false;
+        ProgressMessageViewModell.HasMessage = false;
 
     }
 
@@ -143,23 +160,29 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
     [RelayCommand]
     private async Task getChemotherapyPXDataCall()
     {
-        //StatusMessageViewModel.HasMessage = true;
+        //ProgressMessageViewModell.HasMessage = true;
         //getChemotherapyPXData();
-        //StatusMessageViewModel.HasMessage = false;
+        //ProgressMessageViewModell.HasMessage = false;
 
 
-        StatusMessageViewModel.HasMessage = true;
+        ProgressMessageViewModell.HasMessage = true;
         worker.RunWorkerAsync("LoadData");
     }
-
-
 
     [RelayCommand]
     private async Task ExportDataCall()
     {
-        StatusMessageViewModel.HasMessage = true;
+        ProgressMessageViewModell.HasMessage = true;
         worker.RunWorkerAsync("ExportData");
     }
+
+    [RelayCommand]
+    private async Task SaveCall()
+    {
+        //ProgressMessageViewModell.HasMessage = true;
+        worker.RunWorkerAsync("SaveData");
+    }
+
 
     [RelayCommand]
     private void addNewRow()
@@ -193,19 +216,25 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
         }
         catch (Exception ex)
         {
-            ErrorMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            UserMessageViewModel.IsError = true;
+            UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
             _logger.Fatal(ex, "ChemotherapyPXData.deleteRow threw an error for {CurrentUser}", Authentication.UserName);
         }
 
     }
 
-    [RelayCommand]
+   // [RelayCommand]
     private void save()
     {
         try
         {
-            _logger.Information("Running ChemotherapyPXData.Save for {CurrentUser}...", Authentication.UserName);
+            if(SharedChemoObjects.ChemotherapyPX_Tracking_List.Count == 0)
+            {
+                UserMessageViewModel.Message = "No changes to save";
+                return;
+            }
 
+            _logger.Information("Running ChemotherapyPXData.Save for {CurrentUser}...", Authentication.UserName);
             var tracked = SharedChemoObjects.ChemotherapyPX_Tracking_List;
             var date = DateTime.Now;
             foreach (var t in tracked)
@@ -216,14 +245,19 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
 
             var api = _config.APIS.Where(x => x.Name == "MainData").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
-            var response = WebAPIConsume.PostCall<List<ChemotherapyPX_Tracking_CUD_Dto>>(api.Url, tracked);
+            var response = WebAPIConsume.PostCall<ObservableCollection<ChemotherapyPX_Tracking_CUD_Dto>>(api.Url, tracked);
             if (response.Result.StatusCode != System.Net.HttpStatusCode.OK)
             {
-                ErrorMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
                 _logger.Error("ChemotherapyPXData.Save threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
             }
             else
             {
+
+                UserMessageViewModel.IsError = false;
+                UserMessageViewModel.Message = "ChemotherapyPXData.Save sucessfully completed";
                 _logger.Information("ChemotherapyPXData.Save sucessfully completed for {CurrentUser}...", Authentication.UserName);
             }
 
@@ -239,8 +273,13 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
         }
         catch (Exception ex)
         {
-            ErrorMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            UserMessageViewModel.IsError = true;
+            UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
             _logger.Fatal(ex, "ChemotherapyPXData.save threw an error for {CurrentUser}", Authentication.UserName);
+        }
+        finally
+        {
+            CanSave = false;
         }
     }
 
@@ -250,12 +289,12 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
         try
         {
 
-            ErrorMessageViewModel.Message = "";
+            UserMessageViewModel.Message = "";
             OC_ChemotherapyPXViewModel.Clear();
 
             _logger.Information("Running getChemotherapyPXData() for {CurrentUser}...", Authentication.UserName);
             _sbStatus.Append("Requesting data for ChemotherapyPX, please wait..." + Environment.NewLine);
-            StatusMessageViewModel.Message = _sbStatus.ToString();
+            ProgressMessageViewModell.Message = _sbStatus.ToString();
             var api = _config.APIS.Where(x => x.Name == "MainData").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
             var response = WebAPIConsume.GetCall(api.Url);
@@ -272,7 +311,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
                 _sbStatus.Append("Retrieving row {$cnt} out of " + total.ToString("N0") + Environment.NewLine);
                 result.ForEach(x => 
                     {
-                        StatusMessageViewModel.Message = _sbStatus.ToString().Replace("{$cnt}", cnt.ToString("N0"));
+                        ProgressMessageViewModell.Message = _sbStatus.ToString().Replace("{$cnt}", cnt.ToString("N0"));
                         OC_ChemotherapyPXViewModel.Add(new ChemotherapyPXViewModel(x));
                         cnt++;
                     });
@@ -280,12 +319,13 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
 
                 _logger.Information("getChemotherapyPXData sucessfully completed for {CurrentUser}...", Authentication.UserName);
                 _sbStatus.Append("Rendering grid..." + Environment.NewLine);
-                StatusMessageViewModel.Message = _sbStatus.ToString();
+                ProgressMessageViewModell.Message = _sbStatus.ToString();
 
             }
             else
             {
-                ErrorMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
                 _logger.Error("getChemotherapyPXData threw an error for {CurrentUser}..." + response.Result.StatusCode.ToString(), Authentication.UserName);
             }
 
@@ -293,7 +333,8 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
         }
         catch (Exception ex)
         {
-            ErrorMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            UserMessageViewModel.IsError = true;
+            UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
             _logger.Fatal(ex, "getChemotherapyPXData.WebAPIConsume.GetCall threw an error for {CurrentUser}", Authentication.UserName);
         }
 
@@ -309,7 +350,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
 
 
             var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "tmp.xlsx";
-            var result = await _excelFunctions.ExportToExcelAsync(OC_ChemotherapyPXViewModel.ToList(),"ChemotherapyPX_Data",  () => StatusMessageViewModel.Message, x => StatusMessageViewModel.Message = x);
+            var result = await _excelFunctions.ExportToExcelAsync(OC_ChemotherapyPXViewModel.ToList(),"ChemotherapyPX_Data",  () => ProgressMessageViewModell.Message, x => ProgressMessageViewModell.Message = x);
 
             if (File.Exists(file))
                 File.Delete(file);
@@ -328,23 +369,20 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
         }
         catch (Exception ex)
         {
-            ErrorMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            UserMessageViewModel.IsError = true;
+            UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
             _logger.Fatal(ex, "ChemotherapyPXData.exportConfigs threw an error for {CurrentUser}", Authentication.UserName);
         }
     }
-
-
 
     private async Task loadGridLists()
     {
         try 
         {
-
-
             var api = _config.APIS.Where(x => x.Name == "CodeCategory").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("Getting CodeCategory list..." + Environment.NewLine);
-            StatusMessageViewModel.Message = _sbStatus.ToString();
+            ProgressMessageViewModell.Message = _sbStatus.ToString();
             var response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -358,7 +396,8 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
             }
             else
             {
-                ErrorMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
                 _logger.Error("loadGridLists.CodeCategory threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
             }
 
@@ -366,7 +405,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
             api = _config.APIS.Where(x => x.Name == "AspCategory").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("Getting AspCategory list..." + Environment.NewLine);
-            StatusMessageViewModel.Message = _sbStatus.ToString();
+            ProgressMessageViewModell.Message = _sbStatus.ToString();
             response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -380,14 +419,15 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
             }
             else
             {
-                ErrorMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
                 _logger.Error("loadGridLists.AspCategory threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
             }
 
             api = _config.APIS.Where(x => x.Name == "DrugAdmMode").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("Getting DrugAdmMode list..." + Environment.NewLine);
-            StatusMessageViewModel.Message = _sbStatus.ToString();
+            ProgressMessageViewModell.Message = _sbStatus.ToString();
             response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -401,14 +441,15 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
             }
             else
             {
-                ErrorMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
                 _logger.Error("loadGridLists.DrugAdmMode threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
             }
 
             api = _config.APIS.Where(x => x.Name == "PADrugs").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("Getting PADrugs list..." + Environment.NewLine);
-            StatusMessageViewModel.Message = _sbStatus.ToString();
+            ProgressMessageViewModell.Message = _sbStatus.ToString();
             response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -422,14 +463,15 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
             }
             else
             {
-                ErrorMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
                 _logger.Error("loadGridLists.PADrugs threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
             }
 
             api = _config.APIS.Where(x => x.Name == "CEPPayCd").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("Getting CEPPayCd list..." + Environment.NewLine);
-            StatusMessageViewModel.Message = _sbStatus.ToString();
+            ProgressMessageViewModell.Message = _sbStatus.ToString();
             response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -443,14 +485,14 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
             }
             else
             {
-                ErrorMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
                 _logger.Error("loadGridLists.CEPPayCd threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
             }
 
             api = _config.APIS.Where(x => x.Name == "CEPEnrollCd").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("Getting CEPEnrollCd list..." + Environment.NewLine);
-            StatusMessageViewModel.Message = _sbStatus.ToString();
+            ProgressMessageViewModell.Message = _sbStatus.ToString();
             response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -464,14 +506,15 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
             }
             else
             {
-                ErrorMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
                 _logger.Error("loadGridLists.CEPEnrollCd threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
             }
 
             api = _config.APIS.Where(x => x.Name == "Source").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("Getting Source list..." + Environment.NewLine);
-            StatusMessageViewModel.Message = _sbStatus.ToString();
+            ProgressMessageViewModell.Message = _sbStatus.ToString();
             response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -485,14 +528,15 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
             }
             else
             {
-                ErrorMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
                 _logger.Error("loadGridLists.Source threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
             }
 
             api = _config.APIS.Where(x => x.Name == "CEPEnrExcl").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("Getting CEPEnrExcl list..." + Environment.NewLine);
-            StatusMessageViewModel.Message = _sbStatus.ToString();
+            ProgressMessageViewModell.Message = _sbStatus.ToString();
             response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -506,7 +550,8 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
             }
             else
             {
-                ErrorMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
                 _logger.Error("loadGridLists.CEPEnrExcl threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
             }
 
@@ -516,7 +561,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
                 api = _config.APIS.Where(x => x.Name == "ProcCodes").FirstOrDefault();
                 WebAPIConsume.BaseURI = api.BaseUrl;
                 _sbStatus.Append("Getting ProcCodes list..." + Environment.NewLine);
-                StatusMessageViewModel.Message = _sbStatus.ToString();
+                ProgressMessageViewModell.Message = _sbStatus.ToString();
                 response = WebAPIConsume.GetCall(api.Url);
                 if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
                 {
@@ -531,7 +576,8 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
                 }
                 else
                 {
-                    ErrorMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                    UserMessageViewModel.IsError = true;
+                    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
                     _logger.Error("loadGridLists.ProcCodes threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
                 }
             }
@@ -540,6 +586,8 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
         }
         catch (Exception ex)
         {
+            UserMessageViewModel.IsError = true;
+            UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
             _logger.Fatal(ex, "loadGridLists.WebAPIConsume.GetCall threw an error for {CurrentUser}", Authentication.UserName);
         }
 

@@ -112,7 +112,7 @@
 
 
 
-        <modalcontrol:Modal x:Name="modalControl"  DataContext="{Binding StatusMessageViewModel}"  Grid.Row="0" Grid.RowSpan="2" Panel.ZIndex="100" IsOpen="{Binding Path=HasMessage}" >
+        <modalcontrol:Modal x:Name="modalControl"  DataContext="{Binding ProgressMessageViewModell}"  Grid.Row="0" Grid.RowSpan="2" Panel.ZIndex="100" IsOpen="{Binding Path=HasMessage}" >
             <modalcontrol:Modal.Background>
                 <SolidColorBrush Opacity=".5" Color="AliceBlue" />
             </modalcontrol:Modal.Background>
@@ -135,7 +135,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" FontSize="19" Background="LightGray" FontFamily="Verdana"  FontWeight="Bold" Text="ETG Fact Symmetry"></TextBlock>
-            <TextBlock DataContext="{Binding ErrorMessageViewModel}" Text="{Binding Message}" FontWeight="ExtraBold"  Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="3"  Foreground="Red"></TextBlock>
+            <TextBlock DataContext="{Binding UserMessageViewModel}" Text="{Binding Message}" FontWeight="ExtraBold"  Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="3"  Foreground="Red"></TextBlock>
             <telerik:RadButton x:Name="btnSave" Grid.Row="0" Grid.Column="6" Click="btnSave_Click" Command="{Binding saveCommand}" IsEnabled="False" Content="Save"></telerik:RadButton>
             <telerik:RadButton x:Name="btnExporConfig" Grid.Row="0" Grid.Column="7" Command="{Binding ExportConfigsCallCommand}" Click="btnExporConfig_Click"  Content="Export Configs"></telerik:RadButton>
             <telerik:RadButton Grid.Row="0" Grid.Column="8" Command="{Binding GetETGFactSymmetryDataCallCommand}" Content="Refresh Data"></telerik:RadButton>

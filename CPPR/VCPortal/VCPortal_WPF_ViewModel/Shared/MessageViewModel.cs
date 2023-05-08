@@ -17,7 +17,8 @@ public partial class MessageViewModel : ObservableObject, ViewModelBase
     [ObservableProperty]
     private bool hasMessage;
 
-
+    [ObservableProperty]
+    private bool isError;
 
     public void Dispose()
     {
