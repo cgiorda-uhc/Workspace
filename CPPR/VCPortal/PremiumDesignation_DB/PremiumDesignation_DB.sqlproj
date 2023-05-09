@@ -73,6 +73,7 @@
     <Build Include="dbo\Views\VW_ETG_Symmetry_RX_NRX_CONFIG.sql" />
     <Build Include="dbo\StoredProcedures\sp_ETGSymmetry_Update.sql" />
     <Build Include="dbo\StoredProcedures\sp_ETGSymmetry_BulkUpdate.sql" />
+    <Build Include="dbo\Views\vw_GetETGSymmetryTracking.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="PremiumDesignation_DB.refactorlog" />

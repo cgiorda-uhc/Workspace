@@ -320,6 +320,15 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
                 export.Add(new ExcelExport() { ExportList = etgpe.ToList<object>(), SheetName = sheet.SheetName });
             }
 
+            api = _config.APIS.Where(x => x.Name == "Tracking").FirstOrDefault();
+            var tracking = await VM_Functions.APIGetResultAsync<ETGFactSymmetry_Tracking_ReadDto>(api.BaseUrl, api.Url);
+            if (tracking.Count > 0)
+            {
+                export.Add(new ExcelExport() { ExportList = tracking.ToList<object>(), SheetName = "Tracking" });
+            }
+
+
+
             var result = await _excelFunctions.ExportToExcelAsync(export, () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x);
 
             if (File.Exists(file))

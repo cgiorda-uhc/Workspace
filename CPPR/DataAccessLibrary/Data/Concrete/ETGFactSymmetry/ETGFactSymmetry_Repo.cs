@@ -38,6 +38,18 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
     }
 
 
+
+    public Task<IEnumerable<ETGFactSymmetry_Tracking_ReadDto>> GetETGTrackingAsync(CancellationToken token)
+    {
+
+        string strSQL = "SELECT * FROM [dbo].[vw_GetETGSymmetryTracking] v ORDER BY  v.Tracker_Id;";
+
+        var results = _db.LoadData<ETGFactSymmetry_Tracking_ReadDto>(sql: strSQL, token, connectionId: "ETGSymmetry");
+
+        return results;
+    }
+
+
     public Task<IEnumerable<ETGPatientCentricConfig>> GetETGPatientCentricConfigAsync(CancellationToken token)
     {
 

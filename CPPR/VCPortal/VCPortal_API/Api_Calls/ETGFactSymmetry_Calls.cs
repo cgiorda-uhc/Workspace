@@ -43,6 +43,34 @@ public static class ETGFactSymmetry_Calls
         });
 
 
+        app.MapGet(pattern: "/etgsymmetrytracking", async (IETGFactSymmetry_Repo repo, CancellationToken token) =>
+        {
+            try
+            {
+                _log.Information("Requesting API GetETGTracking()...");
+                ////RETURN HTTP 200
+                ///
+                var results = await repo.GetETGTrackingAsync(token);
+
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetETGTracking() 404, not found");
+                return Results.NotFound(); //404
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, "API GetETGTracking threw an error");
+                //RETURN ERROR
+                return Results.Problem(ex.Message);
+
+            }
+        });
+
+
+
         app.MapGet(pattern: "/etgpcconfig", async (IETGFactSymmetry_Repo repo, CancellationToken token) =>
         {
             try
