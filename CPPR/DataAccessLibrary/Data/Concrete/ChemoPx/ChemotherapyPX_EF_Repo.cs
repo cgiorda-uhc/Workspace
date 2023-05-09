@@ -112,4 +112,9 @@ public class ChemotherapyPX_EF_Repo : IChemotherapyPX_Repo
     {
         throw new NotImplementedException();
     }
+
+    public Task<IEnumerable<ChemotherapyPX_Tracking_ReadDto>> GetChemotherapyPXTrackingAsync()
+    {
+        throw new NotImplementedException();
+    }
 }

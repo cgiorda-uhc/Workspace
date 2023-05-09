@@ -12,7 +12,7 @@ public interface IChemotherapyPX_Repo
 
     Task InsertChemotherapyPXTracking(List<ChemotherapyPX_Tracking_CUD_Dto> chemPX);
 
-
+    Task<IEnumerable<ChemotherapyPX_Tracking_ReadDto>> GetChemotherapyPXTrackingAsync();
     Task<IEnumerable<ChemotherapyPXFilters>> GetAllFilters();
 
     Task<IEnumerable<ProcCodesModel>> GetAllProcCodes();

@@ -20,6 +20,8 @@ public static class ChemotherapyPX_Calls
         app.MapPost(pattern: "/chemotherapypx", InsertChemotherapyPX).Produces(StatusCodes.Status200OK).Produces(StatusCodes.Status404NotFound);
 
 
+        app.MapGet(pattern: "/chemopxtracking", GetChemotherapyPXTracking).Produces<IEnumerable<ChemotherapyPX_Tracking_ReadDto>>(StatusCodes.Status200OK, "application/json").Produces(StatusCodes.Status404NotFound);
+
         //app.MapGet(pattern: "/filters", GetAllFilters).Produces<IEnumerable<ChemotherapyPXFilters>>(StatusCodes.Status200OK).Produces(StatusCodes.Status404NotFound);
         app.MapGet(pattern: "/proc_codes", GetAllProcCodes).Produces<IEnumerable<ProcCodesModel>>(StatusCodes.Status200OK).Produces(StatusCodes.Status404NotFound);
 
@@ -78,6 +80,41 @@ public static class ChemotherapyPX_Calls
 
         }
     }
+
+
+    private static async Task<IResult> GetChemotherapyPXTracking(IChemotherapyPX_Repo repo)
+    {
+        try
+        {
+            _log.Information("Requesting API GetChemotherapyPXTracking()...");
+
+            var results = await repo.GetChemotherapyPXTrackingAsync();
+            if (results != null)
+            {
+                return Results.Ok(results);//200 SUCCESS
+
+            }
+
+            _log.Warning("API GetChemotherapyPXTracking() 404, not found");
+            return Results.NotFound(); //404
+
+
+            //RETURN HTTP 200
+            //return Results.Ok(_mapper.Map<IEnumerable<ChemotherapyPX_ReadDto>>(await repo.GetAllChemotherapyPX()));//200 SUCCESS
+            //return Results.Ok(await repo.GetAllChemotherapyPX());
+        }
+        catch (Exception ex)
+        {
+            _log.Error(ex, "API GetChemotherapyPXTracking threw an error");
+
+
+            //RETURN ERROR
+            return Results.Problem(ex.Message);
+
+        }
+    }
+
+
 
     private static async Task<IResult> GetChemotherapyPX(int id, IChemotherapyPX_Repo repo)
     {

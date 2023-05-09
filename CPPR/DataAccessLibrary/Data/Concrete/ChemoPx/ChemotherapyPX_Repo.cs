@@ -2,6 +2,7 @@
 using Azure;
 using DataAccessLibrary.Data.Abstract;
 using DataAccessLibrary.DataAccess;
+using MongoDB.Driver.Core.Configuration;
 using VCPortal_Models.Dtos.ChemoPx;
 using VCPortal_Models.Models.ChemoPx;
 using VCPortal_Models.Models.ETGFactSymmetry;
@@ -46,12 +47,12 @@ public class ChemotherapyPX_Repo : IChemotherapyPX_Repo
 
     }
 
-    public Task<IEnumerable<ETGPatientCentricConfig>> GetChemotherapyPXTrackingAsync(CancellationToken token)
+    public Task<IEnumerable<ChemotherapyPX_Tracking_ReadDto>> GetChemotherapyPXTrackingAsync()
     {
 
-        string strSQL = "SELECT * FROM [dbo].[VW_ETG_Symmetry_PATIENT_CENTRIC_CONFIG] v ORDER BY  v.[Base_ETG],v.[Premium_Specialty];";
+        string strSQL = "SELECT * FROM [dbo].[vw_GetChemoTracking] v ORDER BY  v.[Tracking_Id];";
 
-        var results = _db.LoadData<ETGPatientCentricConfig>(sql: strSQL, token, connectionId: "ETGSymmetry");
+        var results = _db.LoadData<ChemotherapyPX_Tracking_ReadDto>(sql: strSQL, connectionStringId: "ChemotherapyPX", has_connectionstring : false) ; 
 
         return results;
     }

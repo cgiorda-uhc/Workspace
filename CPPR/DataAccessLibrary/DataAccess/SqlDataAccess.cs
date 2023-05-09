@@ -43,6 +43,18 @@ public class SqlDataAccess : IRelationalDataAccess
     }
 
 
+
+    public async Task<IEnumerable<T>> LoadData<T>( string sql, string connectionStringId = "Default", bool has_connectionstring = false)
+    {
+
+        using IDbConnection connection =new SqlConnection((has_connectionstring ? connectionStringId :  _config.GetConnectionString(connectionStringId)));
+
+        var cmd = new CommandDefinition(sql, commandTimeout: 120);
+        var result = await connection.QueryAsync<T>(cmd);
+        return result;
+    }
+
+
     public async Task<IDataReader> LoadData(string connectionString, string sql)
     {
 

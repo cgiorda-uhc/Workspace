@@ -9,7 +9,7 @@ public interface IRelationalDataAccess
 
     Task<IEnumerable<T>> LoadData<T>(string connectionString, string sql);
 
-
+    Task<IEnumerable<T>> LoadData<T>(string sql, string connectionStringId = "Default", bool has_connectionstring = false);
     Task<IEnumerable<T>> LoadData<T, U>(string storedProcedure, U parameters, string connectionId = "Default");
     Task<IEnumerable<T>> LoadData<T, U>(string connectionString, string storedProcedure, U parameters, string connectionId = "Default");
     Task<IDataReader> LoadData(string connectionString, string sql);

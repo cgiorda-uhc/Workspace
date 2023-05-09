@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DocumentFormat.OpenXml.Spreadsheet;
+using FileParsingLibrary.Models;
 using FileParsingLibrary.MSExcel;
 using Microsoft.Extensions.Configuration;
 using SharedFunctionsLibrary;
@@ -7,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Windows.Media;
@@ -14,7 +17,9 @@ using VCPortal_Models.Configuration.HeaderInterfaces.Abstract;
 using VCPortal_Models.Configuration.HeaderInterfaces.Concrete;
 using VCPortal_Models.Dtos.ChemoPx;
 using VCPortal_Models.Models.ChemoPx;
+using VCPortal_Models.Models.ETGFactSymmetry;
 using VCPortal_Models.Models.Shared;
+using VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;
 using VCPortal_WPF_ViewModel.Shared;
 
 namespace VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
@@ -362,7 +367,20 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
 
 
             var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "tmp.xlsx";
-            var result = await _excelFunctions.ExportToExcelAsync(OC_ChemotherapyPXViewModel.ToList(),"ChemotherapyPX_Data",  () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x);
+
+            List<ExcelExport> export = new List<ExcelExport>();
+
+            export.Add(new ExcelExport() { ExportList = OC_ChemotherapyPXViewModel.ToList<object>(), SheetName = "ChemotherapyPX_Data" });
+
+            var api = _config.APIS.Where(x => x.Name == "Tracking").FirstOrDefault();
+            var tracking = await VM_Functions.APIGetResultAsync<ChemotherapyPX_Tracking_ReadDto>(api.BaseUrl, api.Url);
+            if (tracking.Count > 0)
+            {
+                export.Add(new ExcelExport() { ExportList = tracking.ToList<object>(), SheetName = "Tracking"});
+            }
+
+
+            var result = await _excelFunctions.ExportToExcelAsync(export, () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x);
 
             if (File.Exists(file))
                 File.Delete(file);

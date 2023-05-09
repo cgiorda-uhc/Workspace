@@ -108,4 +108,9 @@ public class ODBCDataAccess : IRelationalDataAccess
         throw new NotImplementedException();
 
     }
+
+    public Task<IEnumerable<T>> LoadData<T>(string sql, string connectionStringId = "Default", bool has_connectionstring = false)
+    {
+        throw new NotImplementedException();
+    }
 }
