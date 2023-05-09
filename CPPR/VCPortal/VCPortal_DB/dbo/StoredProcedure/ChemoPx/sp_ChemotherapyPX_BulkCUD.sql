@@ -16,7 +16,7 @@ FROM [dbo].[ChemotherapyPX_Tracking] Track
 INNER JOIN 
 [dbo].[ChemotherapyPX] Chemo
 ON Chemo.[CODE] = Track.[CODE]
-WHERE Track.[UPDATE_USER] = @username AND Track.UPDATE_DT =@update_date AND Track.[UPDATE_ACTION] = 'INSERT'
+WHERE Track.[UPDATE_USER] = @username AND Track.UPDATE_DT =@update_date; --AND Track.[UPDATE_ACTION] = 'INSERT'
 
 
 --UPDATE

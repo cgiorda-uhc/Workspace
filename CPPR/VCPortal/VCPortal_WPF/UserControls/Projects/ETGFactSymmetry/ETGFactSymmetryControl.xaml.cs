@@ -69,33 +69,33 @@ public partial class ETGFactSymmetryControl : UserControl
 
     private void btnSave_Click(object sender, RoutedEventArgs e)
     {
-        btnSave.IsEnabled = false;
+        //btnSave.IsEnabled = false;
     }
 
     private object _value;
     private void ETGGridView_BeginningEdit(object sender, GridViewBeginningEditRoutedEventArgs e)
     {
-        _value = ((TextBlock)e.Cell.Content).Text;
+        //_value = ((TextBlock)e.Cell.Content).Text;
     }
 
     private void ETGGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
     {
-        var content = ((GridViewEditorPresenter)e.Cell.Content).Content;
-        var type = content.GetType();
-        string newvalue = "";
-        if(type.Name == "RadComboBox") 
-        {
-            newvalue = ((RadComboBox)content).Text;
-        }
-        else
-        {
-            newvalue = ((TextBox)content).Text;
-        }
+        //var content = ((GridViewEditorPresenter)e.Cell.Content).Content;
+        //var type = content.GetType();
+        //string newvalue = "";
+        //if(type.Name == "RadComboBox") 
+        //{
+        //    newvalue = ((RadComboBox)content).Text;
+        //}
+        //else
+        //{
+        //    newvalue = ((TextBox)content).Text;
+        //}
 
-        if (_value + "" != newvalue + "")
-        {
-            btnSave.IsEnabled = true;
-        }
+        //if (_value + "" != newvalue + "")
+        //{
+        //    btnSave.IsEnabled = true;
+        //}
 
     }
 

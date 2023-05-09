@@ -17,9 +17,9 @@
                 <telerik:RadMenuSeparatorItem />
                 <telerik:RadMenuItem Header="_Custom Reporting">
                 </telerik:RadMenuItem>
-                <telerik:RadMenuSeparatorItem />
+                <!--<telerik:RadMenuSeparatorItem />
                 <telerik:RadMenuItem x:Name="Home" Header="_Home" Click="Home_Click">
-                </telerik:RadMenuItem>
+                </telerik:RadMenuItem>-->
                 <telerik:RadMenuSeparatorItem />
                 <telerik:RadMenuItem x:Name="Exit" Header="_Exit" Click="Exit_Click">
                 </telerik:RadMenuItem>

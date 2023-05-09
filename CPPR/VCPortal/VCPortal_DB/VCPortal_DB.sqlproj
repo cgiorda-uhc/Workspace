@@ -65,6 +65,7 @@
     <Folder Include="dbo\Types\ChemoPx" />
     <Folder Include="dbo\Tables\Globals" />
     <Folder Include="dbo\StoredProcedure\Globals" />
+    <Folder Include="dbo\Views" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\StoredProcedure\ChemoPx\sp_ChemotherapyPX_Delete.sql" />
@@ -96,6 +97,7 @@
     <Build Include="dbo\StoredProcedure\ChemoPx\sp_CEP_Enroll_Excl_Desc_GetAll.sql" />
     <Build Include="dbo\Tables\ChemoPx\ChemotherapyPX_Tracking.sql" />
     <Build Include="dbo\StoredProcedure\ChemoPx\sp_ChemotherapyPX_BulkCUD.sql" />
+    <Build Include="dbo\Views\vw_GetChemoTracking.sql" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment.sql" />

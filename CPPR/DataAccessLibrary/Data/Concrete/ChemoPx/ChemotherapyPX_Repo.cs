@@ -4,6 +4,7 @@ using DataAccessLibrary.Data.Abstract;
 using DataAccessLibrary.DataAccess;
 using VCPortal_Models.Dtos.ChemoPx;
 using VCPortal_Models.Models.ChemoPx;
+using VCPortal_Models.Models.ETGFactSymmetry;
 using VCPortal_Models.Models.Shared;
 
 namespace DataAccessLibrary.Data.Concrete.ChemoPx;
@@ -45,7 +46,15 @@ public class ChemotherapyPX_Repo : IChemotherapyPX_Repo
 
     }
 
- 
+    public Task<IEnumerable<ETGPatientCentricConfig>> GetChemotherapyPXTrackingAsync(CancellationToken token)
+    {
+
+        string strSQL = "SELECT * FROM [dbo].[VW_ETG_Symmetry_PATIENT_CENTRIC_CONFIG] v ORDER BY  v.[Base_ETG],v.[Premium_Specialty];";
+
+        var results = _db.LoadData<ETGPatientCentricConfig>(sql: strSQL, token, connectionId: "ETGSymmetry");
+
+        return results;
+    }
 
     public Task<IEnumerable<ChemotherapyPXFilters>> GetAllFilters() =>
     //RETURN TYPE

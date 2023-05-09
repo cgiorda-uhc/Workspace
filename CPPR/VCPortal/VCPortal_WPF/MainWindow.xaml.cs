@@ -41,7 +41,7 @@ public partial class MainWindow : Window
         //this.Title = "Value Creation Assistant Home";
         //this.contentControl.Content = new HomeControl();
 
-        if(Authentication.UserName == "cgiorda" || Authentication.UserName == "sdonela")
+        if(Authentication.UserName == "cgiordaaa" || Authentication.UserName == "sdonela")
         {
             this.Title = "Chemotherapy PX";
             this.contentControl.Content = new ChemotherapyPXControl(config, excelFunctions, logger);
