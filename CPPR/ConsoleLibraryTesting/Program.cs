@@ -62,8 +62,8 @@ char chrDelimiter = '|';
 List<string>? strLstColumnNames = null;
 StreamReader? csvreader = null;
 string _strTableName;
-string[] strLstFiles;
-//string[] strLstFiles = Directory.GetFiles(@"C:\Users\cgiorda\Desktop\Projects\UGAP Configuration", "*.txt", SearchOption.TopDirectoryOnly);
+//string[] strLstFiles;
+string[] strLstFiles = Directory.GetFiles(@"C:\Users\cgiorda\Desktop\Projects\UGAP Configuration", "*.txt", SearchOption.TopDirectoryOnly);
 string ? strInputLine = "";
 string[] csvArray;
 string strSQL;
@@ -74,65 +74,11 @@ IRelationalDataAccess db_sql = new SqlDataAccess();
 IRelationalDataAccess db_td = new TeraDataAccess();
 System.Data.DataTable dtTransfer = new System.Data.DataTable();
 System.Data.DataRow? drCurrent = null;
+string filename;
 
-
-strSQL = "SELECT [SPECIALTY] as ERG_SPCL_CATGY_CD ,[BASEETG] as ETG_BAS_CLSS_NBR ,[TREATMENT_IND] as TRT_CD ,[IF_ALWAYS] as [ALWAYS] ,[IF_ATTRIB] as ATTRIBUTED ,[RISK_MODEL] as RISK_MDL ,[RX] ,[NRX] FROM [IL_UCA].[stg].[UGAPCFG_ETG_TI_RX_NRX_COM]";
-
-var etg = await db_sql.LoadData<UGAPETGModel>(connectionString: connectionString, strSQL);
 
 strSQL = "Select distinct ETG_BAS_CLSS_NBR, MPC_NBR from CLODM001.ETG_NUMBER";
-
 var mcp = await db_td.LoadData<UGAPMPCNBRModel>(connectionString: tdConnectionString, strSQL);
-
-
-foreach(var item in etg)
-{
-    var m = mcp.Where(x => x.ETG_BAS_CLSS_NBR == item.ETG_BAS_CLSS_NBR).Select(x=>x.MPC_NBR).FirstOrDefault();
-
-    item.MPC_NBR = m;
-}
-
-
-List<UGAPETGModel> etg_final = etg.OrderBy(o => o.MPC_NBR).ToList();
-StringBuilder sb    = new StringBuilder();
-
-var filename = "C:\\Users\\cgiorda\\Desktop\\Projects\\UGAP Configuration\\output\\test.txt";
-if(File.Exists(filename))
-{
-    File.Delete(filename);
-}
-
-using (var file = File.CreateText(filename))
-{
-    string[] columns = typeof(UGAPETGModel).GetProperties().Select(p => p.Name).ToArray();
-    foreach(var column in columns)
-    {
-        sb.Append(column + "|");
-
-    }
-    file.WriteLine(sb.ToString().TrimEnd('|'));
-    file.Flush();
-    sb.Clear();
-
-    foreach (var e in etg_final)
-    {
-        sb.Append(e.MPC_NBR + "|"); 
-        sb.Append(e.ETG_BAS_CLSS_NBR + "|"); 
-        sb.Append(e.ALWAYS + "|"); 
-        sb.Append(e.ATTRIBUTED + "|"); 
-        sb.Append(e.ERG_SPCL_CATGY_CD + "|"); 
-        sb.Append(e.TRT_CD + "|"); 
-        sb.Append(e.RX + "|"); 
-        sb.Append(e.NRX + "|"); 
-        sb.Append(e.RISK_MDL + "|");
-        file.WriteLine(sb.ToString().TrimEnd('|'));
-        sb.Clear();
-    }
-    file.Flush();
-}
-
-return;
-
 
 
 foreach (var strFile in strLstFiles)
@@ -208,12 +154,75 @@ foreach (var strFile in strLstFiles)
     strLstColumnNames = null;
 
 
+    ///////////////////////////////////////////////////////////////
 
 
+    strSQL = "SELECT [SPECIALTY] as ERG_SPCL_CATGY_CD ,[BASEETG] as ETG_BAS_CLSS_NBR ,[TREATMENT_IND] as TRT_CD ,[IF_ALWAYS] as [ALWAYS] ,[IF_ATTRIB] as ATTRIBUTED ,[RISK_MODEL] as RISK_MDL ,[RX] ,[NRX] FROM [IL_UCA].[stg].["+ table + "]";
+
+    var etg = await db_sql.LoadData<UGAPETGModel>(connectionString: connectionString, strSQL);
+
+
+    foreach (var item in etg)
+    {
+        var m = mcp.Where(x => x.ETG_BAS_CLSS_NBR == item.ETG_BAS_CLSS_NBR).Select(x => x.MPC_NBR).FirstOrDefault();
+        item.MPC_NBR = m;
+    }
+
+
+    List<UGAPETGModel> etg_final = etg.OrderBy(o => o.MPC_NBR).ToList();
+    StringBuilder sb = new StringBuilder();
+
+    filename = "C:\\Users\\cgiorda\\Desktop\\Projects\\UGAP Configuration\\output\\"+ table + ".txt";
+    if (File.Exists(filename))
+    {
+        File.Delete(filename);
+    }
+
+    using (var file = File.CreateText(filename))
+    {
+        string[] columns = typeof(UGAPETGModel).GetProperties().Select(p => p.Name).ToArray();
+        foreach (var column in columns)
+        {
+            sb.Append(column + "|");
+
+        }
+        file.WriteLine(sb.ToString().TrimEnd('|'));
+        file.Flush();
+        sb.Clear();
+
+        foreach (var e in etg_final)
+        {
+            sb.Append((e.MPC_NBR == null ? "" : e.MPC_NBR )+ "|");
+            sb.Append((e.ETG_BAS_CLSS_NBR == null ? "" : e.ETG_BAS_CLSS_NBR) + "|");
+            sb.Append((e.ALWAYS == null ? "" : e.ALWAYS) + "|");
+            sb.Append((e.ATTRIBUTED == null ? "" : e.ATTRIBUTED) + "|");
+            sb.Append((e.ERG_SPCL_CATGY_CD == null ? "" : e.ERG_SPCL_CATGY_CD) + "|");
+            sb.Append((e.TRT_CD == null ? "" : e.TRT_CD) + "|");
+            sb.Append((e.RX == null ? "" : e.RX) + "|");
+            sb.Append((e.NRX == null ? "" : e.NRX) + "|");
+            sb.Append((e.RISK_MDL == null ? "" : e.RISK_MDL));
+            file.WriteLine(sb.ToString());
+            sb.Clear();
+        }
+        file.Flush();
+    }
 
 
 
 }
+
+
+
+
+
+
+
+
+
+
+return;
+
+
 
 
 

@@ -15,18 +15,18 @@ public class ETGFactSymmetry_Tracking_ReadDto
 
     public string Premium_Specialty { get; set; }
 
-    public bool? Has_Commercial { get; set; }
-    public bool? Has_Commercial_Previous { get; set; }
-    public bool? Has_Medicare { get; set; }
-    public bool? Has_Medicare_Previous { get; set; }
-    public bool? Has_Medicaid { get; set; }
+    public char? Has_Commercial { get; set; }
+    public char? Has_Commercial_Previous { get; set; }
+    public char? Has_Medicare { get; set; }
+    public char? Has_Medicare_Previous { get; set; }
+    public char? Has_Medicaid { get; set; }
 
-    public bool? Has_Medicaid_Previous { get; set; }
-    public bool? Has_RX { get; set; }
+    public char? Has_Medicaid_Previous { get; set; }
+    public char? Has_RX { get; set; }
 
-    public bool? Has_RX_Previous { get; set; }
-    public bool? Has_NRX { get; set; }
-    public bool? Has_NRX_Previous { get; set; }
+    public char? Has_RX_Previous { get; set; }
+    public char? Has_NRX { get; set; }
+    public char? Has_NRX_Previous { get; set; }
     public string PC_Treatment_Indicator { get; set; }
     public string PC_Treatment_Indicator_Previous { get; set; }
     public string PC_Attribution { get; set; }
