@@ -58,4 +58,9 @@ public partial class MainWindow : Window
     {
         Window.GetWindow(this).Close();
     }
+
+    private void MainMenuLink_Click(object sender, RoutedEventArgs e)
+    {
+        Keyboard.ClearFocus();
+    }
 }

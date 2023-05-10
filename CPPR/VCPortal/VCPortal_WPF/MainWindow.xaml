@@ -46,11 +46,11 @@
         <DockPanel Grid.Row="0" Grid.Column="1" >
             <telerik:RadMenu  x:Name="MainMenu" DockPanel.Dock="Top"  Width="Auto">
                 <!--<telerik:RadMenuItem Header="_Data Management" ItemsSource="{Binding NavigationViewModelTypes}" Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" CommandParameter="{Binding VMType}">-->
-                <telerik:RadMenuItem Header="_Data Management" ItemsSource="{Binding NavigationViewModelTypes}">
+                <telerik:RadMenuItem Header="_Data Management" ItemsSource="{Binding NavigationViewModelTypes}" StaysOpenOnClick="False">
                     <telerik:RadMenuItem.ItemTemplate>
                         <DataTemplate>
                             <TextBlock>
-                                    <Hyperlink TextDecorations="None" Foreground="Black" Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" CommandParameter="{Binding VMType}">
+                                    <Hyperlink TextDecorations="None" Click="MainMenuLink_Click" Foreground="Black" Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" CommandParameter="{Binding VMType}">
                                         <TextBlock Text="{Binding Name}"/>
                                     </Hyperlink>
                             </TextBlock>
@@ -60,7 +60,18 @@
                     </telerik:RadMenuItem.ItemTemplate>
                 </telerik:RadMenuItem>
                 <telerik:RadMenuSeparatorItem />
-                <telerik:RadMenuItem Header="_Custom Reporting">
+                <telerik:RadMenuItem Header="_Custom Reporting"  ItemsSource="{Binding NavigationViewModelTypesReports}">
+                    <telerik:RadMenuItem.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock>
+                                    <Hyperlink x:Name="MainMenuReportLink" Click="MainMenuLink_Click"  TextDecorations="None" Foreground="Black" Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" CommandParameter="{Binding VMType}">
+                                        <TextBlock Text="{Binding Name}"/>
+                                    </Hyperlink>
+                            </TextBlock>
+                            <!--<TextBlock Text="{Binding Name}" />-->
+                            <!--<Button Content="{Binding Name}" Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" CommandParameter="{Binding VMType}"/>-->
+                        </DataTemplate>
+                    </telerik:RadMenuItem.ItemTemplate>
                 </telerik:RadMenuItem>
                 <telerik:RadMenuSeparatorItem />
                 <telerik:RadMenuItem x:Name="Exit" Header="_Exit" Click="Exit_Click">

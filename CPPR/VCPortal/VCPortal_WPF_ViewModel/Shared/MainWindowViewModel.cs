@@ -51,9 +51,22 @@ public class MainWindowViewModel : INotifyPropertyChanged
         new List<TypeAndDisplay>
         {
              new TypeAndDisplay{ Name="Chemotherapy PX", VMType= typeof(ChemotherapyPXListingViewModel) },
-             new TypeAndDisplay{ Name="ETG Fact Symmetry", VMType= typeof(ETGFactSymmetryListingViewModel) }
+             new TypeAndDisplay{ Name="ETG Fact Symmetry", VMType= typeof(ETGFactSymmetryListingViewModel) },
+             new TypeAndDisplay{ Name="EBM Mapping" },
+             new TypeAndDisplay{ Name="PEG Mapping" }
         }
     );
+
+
+    public ObservableCollection<TypeAndDisplay> NavigationViewModelTypesReports { get; set; } = new ObservableCollection<TypeAndDisplay>
+(
+    new List<TypeAndDisplay>
+    {
+             new TypeAndDisplay{ Name="MHP" },
+             new TypeAndDisplay{ Name="Compliance Reporting" }
+    }
+);
+
 
     private object currentViewModel;
 
@@ -71,8 +84,11 @@ public class MainWindowViewModel : INotifyPropertyChanged
             ?? (navigateCommand = new RelayCommand<Type>(
             vmType =>
             {
-                CurrentViewModel = null;
-                CurrentViewModel = Activator.CreateInstance(vmType, _config, _excelFunctions, _logger);
+                if (vmType != null)
+                {        
+                    CurrentViewModel = null;
+                    CurrentViewModel = Activator.CreateInstance(vmType, _config, _excelFunctions, _logger);
+                }
             }));
         }
     }

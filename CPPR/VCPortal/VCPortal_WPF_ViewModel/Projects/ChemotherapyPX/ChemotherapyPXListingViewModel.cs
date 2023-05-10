@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
+using System.Windows.Input;
 using System.Windows.Media;
 using VCPortal_Models.Configuration.HeaderInterfaces.Abstract;
 using VCPortal_Models.Configuration.HeaderInterfaces.Concrete;
@@ -90,15 +91,15 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
 
         worker.DoWork += worker_DoWork;
         worker.RunWorkerCompleted += worker_RunWorkerCompleted;
-
+        _sbStatus = new StringBuilder();
 
         OC_ChemotherapyPXViewModel = new ObservableCollection<ChemotherapyPXViewModel>();
 
         if (_config != null)
         {
             //Task.Run(async () => await loadGridLists());
-            worker.RunWorkerAsync("InitialLoadData");
-
+            //worker.RunWorkerAsync("InitialLoadData");
+            InitialLoadData();
 
             //Task.Run(async () => await getChemotherapyPXData());
         }
@@ -110,72 +111,40 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
 
     }
 
-    private void worker_DoWork(object sender, DoWorkEventArgs e)
+    private async void InitialLoadData()
     {
-        _sbStatus = new StringBuilder();
+        _sbStatus.Clear();
+        Mouse.OverrideCursor = Cursors.Wait;
         UserMessageViewModel.Message = "";
         ProgressMessageViewModel.Message = "";
-
-        var callingFunction = (string)e.Argument;
-        if (callingFunction == "ExportData")
-        {
-            ProgressMessageViewModel.HasMessage = true;
-            exportData();
-
-        }
-        else if (callingFunction == "LoadData")
-        {
-            ProgressMessageViewModel.HasMessage = true;
-            getChemotherapyPXData();
-
-        }
-        else if (callingFunction == "InitialLoadData") 
-        {
-            ProgressMessageViewModel.HasMessage = true;
-            loadGridLists();
-            getChemotherapyPXData();
-
-        }
-        else if (callingFunction == "SaveData")
-        {
-            save();
-
-        }
-    }
-
-
-    private void listChanged(object sender, NotifyCollectionChangedEventArgs args)
-    {
-        // list changed
-        CanSave = true;
-    }
-
-
-    private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
-        //update ui once worker complete his work
+        ProgressMessageViewModel.HasMessage = true;
+        await loadGridLists();
+        await getChemotherapyPXData();
+        Mouse.OverrideCursor = null;
         ProgressMessageViewModel.HasMessage = false;
-
     }
-
 
     [RelayCommand]
     private async Task getChemotherapyPXDataCall()
     {
-        //ProgressMessageViewModel.HasMessage = true;
-        //getChemotherapyPXData();
-        //ProgressMessageViewModel.HasMessage = false;
-
-
+        _sbStatus.Clear();
+        Mouse.OverrideCursor = Cursors.Wait;
+        UserMessageViewModel.Message = "";
+        ProgressMessageViewModel.Message = "";
         ProgressMessageViewModel.HasMessage = true;
-        worker.RunWorkerAsync("LoadData");
+        await getChemotherapyPXData();
+        Mouse.OverrideCursor = null;
+        ProgressMessageViewModel.HasMessage = false;
     }
 
     [RelayCommand]
     private async Task ExportDataCall()
     {
-        ProgressMessageViewModel.HasMessage = true;
-        worker.RunWorkerAsync("ExportData");
+        //ProgressMessageViewModel.HasMessage = true;
+
+        Mouse.OverrideCursor = Cursors.Wait;
+        await Task.Run(() => worker.RunWorkerAsync("ExportData"));
+        Mouse.OverrideCursor = null;
     }
 
     [RelayCommand]
@@ -185,6 +154,58 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
         worker.RunWorkerAsync("SaveData");
     }
 
+
+    private void worker_DoWork(object sender, DoWorkEventArgs e)
+    {
+        _sbStatus.Clear();
+        UserMessageViewModel.Message = "";
+        ProgressMessageViewModel.Message = "";
+        ProgressMessageViewModel.HasMessage = true;
+
+        var callingFunction = (string)e.Argument;
+        if (callingFunction == "ExportData")
+        {
+            ProgressMessageViewModel.HasMessage = true;
+            exportData();
+
+        }
+        //else if (callingFunction == "LoadData")
+        //{
+        //    ProgressMessageViewModel.HasMessage = true;
+        //    getChemotherapyPXData();
+
+        //}
+        //else if (callingFunction == "InitialLoadData") 
+        //{
+        //    ProgressMessageViewModel.HasMessage = true;
+        //    loadGridLists();
+        //    getChemotherapyPXData();
+
+        //}
+        //else if (callingFunction == "SaveData")
+        //{
+        //    save();
+
+        //}
+    }
+    private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+    {
+        //update ui once worker complete his work
+        ProgressMessageViewModel.HasMessage = false;
+
+    }
+
+    private void listChanged(object sender, NotifyCollectionChangedEventArgs args)
+    {
+        // list changed
+        CanSave = true;
+    }
+
+
+
+
+
+    
 
     [RelayCommand]
     private void addNewRow()
@@ -308,6 +329,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
             _logger.Information("Running getChemotherapyPXData() for {CurrentUser}...", Authentication.UserName);
             _sbStatus.Append("--Requesting data for ChemotherapyPX, please wait..." + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
+            await Task.Delay(TimeSpan.FromSeconds(1));
             var api = _config.APIS.Where(x => x.Name == "MainData").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
             var response = WebAPIConsume.GetCall(api.Url);
@@ -322,13 +344,24 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
                 int cnt = 1;
                 int total = result.Count();
                 _sbStatus.Append("--Retrieving row {$cnt} out of " + total.ToString("N0") + Environment.NewLine);
-                result.ForEach(x => 
-                    {
-                        ProgressMessageViewModel.Message = _sbStatus.ToString().Replace("{$cnt}", cnt.ToString("N0"));
-                        OC_ChemotherapyPXViewModel.Add(new ChemotherapyPXViewModel(x));
-                        cnt++;
-                    });
+                //result.ForEach(x => 
+                //    {
+                //        ProgressMessageViewModel.Message = _sbStatus.ToString().Replace("{$cnt}", cnt.ToString("N0"));
+                //        OC_ChemotherapyPXViewModel.Add(new ChemotherapyPXViewModel(x));
+                //        cnt++;
+                //    });
 
+                foreach (var r in result)
+                {
+                    ProgressMessageViewModel.Message = _sbStatus.ToString().Replace("{$cnt}", cnt.ToString("N0"));
+                    OC_ChemotherapyPXViewModel.Add(new ChemotherapyPXViewModel(r));
+                    //await Task.Delay(TimeSpan.FromSeconds(.001));
+                    if (cnt % 10 == 0)
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(.001));
+                    }
+                    cnt++;
+                }
 
                 _logger.Information("getChemotherapyPXData sucessfully completed for {CurrentUser}...", Authentication.UserName);
                 _sbStatus.Append("--Rendering grid..." + Environment.NewLine);
@@ -413,6 +446,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
             WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("--Getting CodeCategory list..." + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
+            await Task.Delay(TimeSpan.FromSeconds(.5));
             var response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -436,6 +470,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
             WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("--Getting AspCategory list..." + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
+            await Task.Delay(TimeSpan.FromSeconds(.5));
             response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -458,6 +493,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
             WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("--Getting DrugAdmMode list..." + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
+            await Task.Delay(TimeSpan.FromSeconds(.5));
             response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -480,6 +516,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
             WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("--Getting PADrugs list..." + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
+            await Task.Delay(TimeSpan.FromSeconds(.5));
             response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -502,6 +539,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
             WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("--Getting CEPPayCd list..." + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
+            await Task.Delay(TimeSpan.FromSeconds(.5));
             response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -523,6 +561,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
             WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("--Getting CEPEnrollCd list..." + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
+            await Task.Delay(TimeSpan.FromSeconds(.5));
             response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -545,6 +584,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
             WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("--Getting Source list..." + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
+            await Task.Delay(TimeSpan.FromSeconds(.5));
             response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -567,6 +607,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
             WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("--Getting CEPEnrExcl list..." + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
+            await Task.Delay(TimeSpan.FromSeconds(.5));
             response = WebAPIConsume.GetCall(api.Url);
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -592,6 +633,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
                 WebAPIConsume.BaseURI = api.BaseUrl;
                 _sbStatus.Append("--Getting ProcCodes list..." + Environment.NewLine);
                 ProgressMessageViewModel.Message = _sbStatus.ToString();
+                await Task.Delay(TimeSpan.FromSeconds(.5));
                 response = WebAPIConsume.GetCall(api.Url);
                 if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
                 {
