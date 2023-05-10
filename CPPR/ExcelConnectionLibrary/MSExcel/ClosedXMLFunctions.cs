@@ -2,6 +2,7 @@
 using ClosedXML.Graphics;
 using DocumentFormat.OpenXml.Office2019.Excel.RichData2;
 using FileParsingLibrary.Models;
+using NPOI.SS.Formula.Functions;
 using SixLabors.Fonts;
 using System.ComponentModel;
 using System.IO;
@@ -582,7 +583,6 @@ namespace FileParsingLibrary.MSExcel
                             rowcnt++;
                         }
 
-
                         sbStatus.Clear();
                         sbStatus.Append(getterStatus());
                         sbStatus.Append("--" + ex.SheetName + " has beeen generated." + Environment.NewLine);
@@ -592,8 +592,7 @@ namespace FileParsingLibrary.MSExcel
 
                     ws.Columns().AdjustToContents(1, 20);
                 }
-
-                sbStatus.Append(Environment.NewLine + Environment.NewLine + "Opening spreadsheet..." );
+                sbStatus.Append( "Opening spreadsheet..." );
                 setterStatus(sbStatus.ToString());
 
                 //save file to memory stream and return it as byte array

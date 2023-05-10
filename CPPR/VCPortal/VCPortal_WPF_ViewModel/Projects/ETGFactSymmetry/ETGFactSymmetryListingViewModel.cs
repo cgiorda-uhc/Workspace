@@ -3,12 +3,14 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FileParsingLibrary.Models;
 using FileParsingLibrary.MSExcel;
+using MathNet.Numerics.Providers.SparseSolver;
 using Microsoft.Extensions.Configuration;
 using SharedFunctionsLibrary;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.Json;
 using System.Windows.Input;
@@ -71,7 +73,7 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
 
         worker.DoWork += worker_DoWork;
         worker.RunWorkerCompleted += worker_RunWorkerCompleted;
-
+        _sbStatus = new StringBuilder();
 
         OC_ETGFactSymmetryViewModel = new ObservableCollection<ETGFactSymmetryViewModel>();
 
@@ -99,48 +101,78 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
 
     private async void InitialLoadData()
     {
+        _sbStatus.Clear();
         Mouse.OverrideCursor = Cursors.Wait;
+        UserMessageViewModel.Message = "";
+        ProgressMessageViewModel.Message = "";
         ProgressMessageViewModel.HasMessage = true;
-        _sbStatus = new StringBuilder();
         loadGridLists();
         await getETGFactSymmetryData();
         Mouse.OverrideCursor = null;
         ProgressMessageViewModel.HasMessage = false;
     }
 
+    [RelayCommand]
+    private async Task GetETGFactSymmetryDataCall()
+    {
+        _sbStatus.Clear();
+        Mouse.OverrideCursor = Cursors.Wait;
+        UserMessageViewModel.Message = "";
+        ProgressMessageViewModel.Message = "";
+        ProgressMessageViewModel.HasMessage = true;
+        await getETGFactSymmetryData();
+        Mouse.OverrideCursor = null;
+        ProgressMessageViewModel.HasMessage = false;
+    }
 
+    [RelayCommand]
+    private async Task ExportConfigsCall()
+    {
+
+        Mouse.OverrideCursor = Cursors.Wait;
+        await Task.Run(() => worker.RunWorkerAsync("ExportConfigs"));
+        Mouse.OverrideCursor = null;
+
+    }
+
+    [RelayCommand]
+    private async Task SaveCall()
+    {
+        //worker.RunWorkerAsync("SaveData");
+        save();
+    }
 
 
     private void worker_DoWork(object sender, DoWorkEventArgs e)
     {
         var callingFunction = (string)e.Argument;
 
-        _sbStatus = new StringBuilder();
+        _sbStatus.Clear();
         UserMessageViewModel.Message = "";
         ProgressMessageViewModel.Message = "";
-
+        ProgressMessageViewModel.HasMessage = true;
         if (callingFunction == "ExportConfigs")
         {
             ProgressMessageViewModel.HasMessage = true;
             exportConfigs();
         }
-        else if (callingFunction == "LoadData")
-        {
-            ProgressMessageViewModel.HasMessage = true;
-            getETGFactSymmetryData();
+        //else if (callingFunction == "LoadData")
+        //{
+        //    ProgressMessageViewModel.HasMessage = true;
+        //    getETGFactSymmetryData();
 
-        }
-        else if (callingFunction == "InitialLoadData")
-        {
-            ProgressMessageViewModel.HasMessage = true;
-            loadGridLists();
-            getETGFactSymmetryData();
+        //}
+        //else if (callingFunction == "InitialLoadData")
+        //{
+        //    ProgressMessageViewModel.HasMessage = true;
+        //    loadGridLists();
+        //    getETGFactSymmetryData();
 
-        }
-        else if (callingFunction == "SaveData")
-        {
-            save();
-        }
+        //}
+        //else if (callingFunction == "SaveData")
+        //{
+        //    save();
+        //}
 
     }
     private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -155,30 +187,6 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
         CanSave = true;
     }
 
-
-
-
-
-    [RelayCommand]
-    private async Task GetETGFactSymmetryDataCall()
-    {
-        ProgressMessageViewModel.HasMessage = true;
-        worker.RunWorkerAsync("LoadData");
-    }
-
-    [RelayCommand]
-    private async Task ExportConfigsCall()
-    {
-        ProgressMessageViewModel.HasMessage = true;
-        worker.RunWorkerAsync("ExportConfigs");
-    }
-
-    [RelayCommand]
-    private async Task SaveCall()
-    {
-        //ProgressMessageViewModel.HasMessage = true;
-        worker.RunWorkerAsync("SaveData");
-    }
 
     private void save()
     {
@@ -242,7 +250,6 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
     {
         try
         {
-            UserMessageViewModel.Message = "";
             OC_ETGFactSymmetryViewModel.Clear();
 
             _logger.Information("Running getETGFactSymmetryData() for {CurrentUser}...", Authentication.UserName);
