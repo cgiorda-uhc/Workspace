@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:mainvml="clr-namespace:VCPortal_WPF_ViewModel.Shared;assembly=VCPortal_WPF_ViewModel"
+        xmlns:homeuc="clr-namespace:VCPortal_WPF.UserControls" 
+        xmlns:homevml="clr-namespace:VCPortal_WPF_ViewModel.Projects.Home;assembly=VCPortal_WPF_ViewModel"
         xmlns:etguc="clr-namespace:VCPortal_WPF.UserControls.Projects.ETGFactSymmetry" 
         xmlns:etgvml="clr-namespace:VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;assembly=VCPortal_WPF_ViewModel"
         xmlns:chemouc="clr-namespace:VCPortal_WPF.UserControls.Projects.ChemotherapyPX" 
@@ -14,6 +16,9 @@
 
 
     <Window.Resources>
+        <DataTemplate DataType="{x:Type homevml:HomeViewModel}">
+            <homeuc:HomeControl/>
+        </DataTemplate>
         <DataTemplate DataType="{x:Type etgvml:ETGFactSymmetryListingViewModel}">
             <etguc:ETGFactSymmetryControl/>
         </DataTemplate>
@@ -90,7 +95,8 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>-->
-        <ContentControl  Grid.Row="1" Grid.Column="1" Content="{Binding CurrentViewModel}"/>
+        <ContentControl x:Name="contentControl"  Grid.Row="1" Grid.Column="1" Content="{Binding CurrentViewModel}">
+        </ContentControl> 
     </Grid>
 
 

@@ -573,7 +573,7 @@ namespace FileParsingLibrary.MSExcel
                         rowcnt = 2;
                         foreach (var item in ex.ExportList)
                         {
-                            setterStatus(sbStatus.ToString() + "--Adding " + rowcnt.ToString() + " out of "+ totalcnt + " rows..." + Environment.NewLine);
+                            setterStatus(sbStatus.ToString() + "--Adding " + (rowcnt - 1).ToString("N0") + " out of "+ totalcnt.ToString("N0") + " rows..." + Environment.NewLine);
                             colcnt = 1;
                             foreach (var prop in properties)
                             {

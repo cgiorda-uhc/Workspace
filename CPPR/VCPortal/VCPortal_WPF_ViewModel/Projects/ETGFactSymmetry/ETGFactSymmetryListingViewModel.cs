@@ -23,7 +23,7 @@ using VCPortal_WPF_ViewModel.Shared;
 
 namespace VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;
 
-public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewModelBase
+public partial class ETGFactSymmetryListingViewModel : ObservableObject
 {
     private readonly IExcelFunctions _excelFunctions;
     private readonly IETGFactSymmetryConfig? _config;
@@ -494,24 +494,24 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
     }
 
 
-    bool disposed;
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposed)
-        {
-            if (disposing)
-            {
-                //dispose managed resources
-            }
-        }
-        //dispose unmanaged resources
-        disposed = true;
-    }
+    //bool disposed;
+    //protected virtual void Dispose(bool disposing)
+    //{
+    //    if (!disposed)
+    //    {
+    //        if (disposing)
+    //        {
+    //            //dispose managed resources
+    //        }
+    //    }
+    //    //dispose unmanaged resources
+    //    disposed = true;
+    //}
 
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
+    //public void Dispose()
+    //{
+    //    Dispose(true);
+    //    GC.SuppressFinalize(this);
+    //}
 
 }

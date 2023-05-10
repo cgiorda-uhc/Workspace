@@ -48,19 +48,19 @@ public partial class ETGFactSymmetryControl : UserControl
 
 
 
-    //public ETGFactSymmetryControl(IConfiguration config, IExcelFunctions excelFunctions)
-    public ETGFactSymmetryControl(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
-    {
-        logger.Information("Initializing ETGFactSymmetryControl for  for {CurrentUser}...", Authentication.UserName);
+    ////public ETGFactSymmetryControl(IConfiguration config, IExcelFunctions excelFunctions)
+    //public ETGFactSymmetryControl(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
+    //{
+    //    logger.Information("Initializing ETGFactSymmetryControl for  for {CurrentUser}...", Authentication.UserName);
 
 
-        DataContext = new MainViewModel("ETG Fact Symmetry", config, excelFunctions, logger).CurrentViewModel;
-        InitializeComponent();
+    //    DataContext = new MainViewModel("ETG Fact Symmetry", config, excelFunctions, logger).CurrentViewModel;
+    //    InitializeComponent();
 
-        modalContentControl.Content = new StatusControl();
-        modalContentControl.DataContext = this.DataContext;
-        //modalContentControl.Content = new StatusControl();
-    }
+    //    modalContentControl.Content = new StatusControl();
+    //    modalContentControl.DataContext = this.DataContext;
+    //    //modalContentControl.Content = new StatusControl();
+    //}
 
     private void btnExporConfig_Click(object sender, RoutedEventArgs e)
     {

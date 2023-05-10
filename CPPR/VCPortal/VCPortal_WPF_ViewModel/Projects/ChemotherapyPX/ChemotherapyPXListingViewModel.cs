@@ -24,7 +24,7 @@ using VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;
 using VCPortal_WPF_ViewModel.Shared;
 
 namespace VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
-public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewModelBase
+public partial class ChemotherapyPXListingViewModel : ObservableObject
 {
     private readonly IExcelFunctions _excelFunctions;
     private readonly IChemotherapyPXConfig? _config;
@@ -151,7 +151,8 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
     private async Task SaveCall()
     {
         //ProgressMessageViewModel.HasMessage = true;
-        worker.RunWorkerAsync("SaveData");
+        //worker.RunWorkerAsync("SaveData");
+        save();
     }
 
 
@@ -696,23 +697,23 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject, ViewMode
 
 
 
-    bool disposed;
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposed)
-        {
-            if (disposing)
-            {
-                //dispose managed resources
-            }
-        }
-        //dispose unmanaged resources
-        disposed = true;
-    }
+    //bool disposed;
+    //protected virtual void Dispose(bool disposing)
+    //{
+    //    if (!disposed)
+    //    {
+    //        if (disposing)
+    //        {
+    //            //dispose managed resources
+    //        }
+    //    }
+    //    //dispose unmanaged resources
+    //    disposed = true;
+    //}
 
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
+    //public void Dispose()
+    //{
+    //    Dispose(true);
+    //    GC.SuppressFinalize(this);
+    //}
 }

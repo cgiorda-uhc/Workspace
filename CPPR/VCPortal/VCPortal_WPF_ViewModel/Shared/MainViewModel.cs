@@ -27,24 +27,24 @@ public partial class MainViewModel : ObservableObject, ViewModelBase
 
 
     //public MainViewModel(NavigationStore navigationStore, IConfiguration config, IExcelFunctions excelFunctions)
-    public MainViewModel(string header, IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
-    {
-        CurrentViewModel?.Dispose();
+    //public MainViewModel(string header, IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
+    //{
+    //    CurrentViewModel?.Dispose();
 
 
-        if (header == "ETG Fact Symmetry")
-        {
-            CurrentViewModel = new ETGFactSymmetryListingViewModel(config, excelFunctions, logger);
-        }
-        else if (header == "Chemotherapy PX")
-        {
-            CurrentViewModel = new ChemotherapyPXListingViewModel(config, excelFunctions, logger);
-        }
-        else if (header == "MHP")
-        {
-            CurrentViewModel = new MHPViewModel(config, excelFunctions);
-        }
-    }
+    //    if (header == "ETG Fact Symmetry")
+    //    {
+    //        CurrentViewModel = new ETGFactSymmetryListingViewModel(config, excelFunctions, logger);
+    //    }
+    //    else if (header == "Chemotherapy PX")
+    //    {
+    //        CurrentViewModel = new ChemotherapyPXListingViewModel(config, excelFunctions, logger);
+    //    }
+    //    else if (header == "MHP")
+    //    {
+    //        CurrentViewModel = new MHPViewModel(config, excelFunctions);
+    //    }
+    //}
 
 
 

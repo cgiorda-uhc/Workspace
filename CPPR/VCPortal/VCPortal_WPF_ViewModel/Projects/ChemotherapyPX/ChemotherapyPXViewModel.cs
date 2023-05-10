@@ -5,7 +5,7 @@ using VCPortal_Models.Dtos.ChemoPx;
 using VCPortal_WPF_ViewModel.Shared;
 
 namespace VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
-public partial class ChemotherapyPXViewModel : ObservableObject, ViewModelBase
+public partial class ChemotherapyPXViewModel : ObservableObject
 {
     
     private ChemotherapyPX_ReadDto _chmpx;
@@ -587,24 +587,24 @@ public partial class ChemotherapyPXViewModel : ObservableObject, ViewModelBase
 
 
 
-    bool disposed;
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposed)
-        {
-            if (disposing)
-            {
-            }
-        }
-        //dispose unmanaged resources
-        disposed = true;
-    }
+    //bool disposed;
+    //protected virtual void Dispose(bool disposing)
+    //{
+    //    if (!disposed)
+    //    {
+    //        if (disposing)
+    //        {
+    //        }
+    //    }
+    //    //dispose unmanaged resources
+    //    disposed = true;
+    //}
 
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
+    //public void Dispose()
+    //{
+    //    Dispose(true);
+    //    GC.SuppressFinalize(this);
+    //}
 
 
 }

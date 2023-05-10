@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using VCPortal_Models.Configuration.HeaderInterfaces.Abstract;
 using VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
 using VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;
+using VCPortal_WPF_ViewModel.Projects.Home;
 using VCPortal_WPF_ViewModel.Projects.MHP;
 
 namespace VCPortal_WPF_ViewModel.Shared;
@@ -32,6 +33,8 @@ public class MainWindowViewModel : INotifyPropertyChanged
         _excelFunctions = excelFunctions;
         _config = config;
 
+        CurrentViewModel = Activator.CreateInstance(typeof(HomeViewModel), _config, _excelFunctions, _logger);
+
         //if (header == "ETG Fact Symmetry")
         //{
         //    currentViewModel = new ETGFactSymmetryListingViewModel(config, excelFunctions, logger);
@@ -50,7 +53,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     (
         new List<TypeAndDisplay>
         {
-             new TypeAndDisplay{ Name="Chemotherapy PX", VMType= typeof(ChemotherapyPXListingViewModel) },
+            new TypeAndDisplay{ Name="Chemotherapy PX", VMType= typeof(ChemotherapyPXListingViewModel) },
              new TypeAndDisplay{ Name="ETG Fact Symmetry", VMType= typeof(ETGFactSymmetryListingViewModel) },
              new TypeAndDisplay{ Name="EBM Mapping" },
              new TypeAndDisplay{ Name="PEG Mapping" }

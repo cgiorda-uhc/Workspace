@@ -29,6 +29,6 @@ public partial class MHPEIControl : UserControl
     public MHPEIControl(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
     {
         InitializeComponent();
-        DataContext = new MainViewModel("MHP", config, excelFunctions, logger).CurrentViewModel;
+        //DataContext = new MainViewModel("MHP", config, excelFunctions, logger).CurrentViewModel;
     }
 }

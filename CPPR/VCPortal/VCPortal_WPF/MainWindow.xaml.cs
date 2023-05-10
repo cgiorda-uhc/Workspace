@@ -34,7 +34,7 @@ public partial class MainWindow : Window
 
         logger.Information("Starting MainWindow....");
 
-
+        //contentControl.Content = new HomeControl();
         //DataContext = new MainViewModel("", config, excelFunctions, logger).CurrentViewModel;
         //this.menuControl.Content = new MenuItemsControl(config,excelFunctions, logger);
 
@@ -51,7 +51,7 @@ public partial class MainWindow : Window
         //    this.Title = "ETG Fact Symmetry";
         //    this.contentControl.Content = new ETGFactSymmetryControl(config, excelFunctions, logger);
         //}
-        
+
     }
 
     private void Exit_Click(object sender, Telerik.Windows.RadRoutedEventArgs e)
