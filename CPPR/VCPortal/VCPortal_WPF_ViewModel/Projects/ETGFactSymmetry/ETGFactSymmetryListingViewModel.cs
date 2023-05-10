@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
+using System.Windows.Input;
 using VCPortal_Models.Configuration.HeaderInterfaces.Abstract;
 using VCPortal_Models.Configuration.HeaderInterfaces.Concrete;
 using VCPortal_Models.Dtos.ETGFactSymmetry;
@@ -76,7 +77,14 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
 
         if (_config != null)
         {
-            worker.RunWorkerAsync("InitialLoadData");
+
+
+            InitialLoadData();
+            //getETGFactSymmetryData();
+            //Task.Run(async () => await getETGFactSymmetryData());
+
+
+            //worker.RunWorkerAsync("InitialLoadData");
             //loadGridLists();
             //Task.Run(async () => await getETGFactSymmetryData());
         }
@@ -88,6 +96,21 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
 
 
     }
+
+    private async void InitialLoadData()
+    {
+        Mouse.OverrideCursor = Cursors.Wait;
+        ProgressMessageViewModel.HasMessage = true;
+        _sbStatus = new StringBuilder();
+        loadGridLists();
+        await getETGFactSymmetryData();
+        Mouse.OverrideCursor = null;
+        ProgressMessageViewModel.HasMessage = false;
+    }
+
+
+
+
     private void worker_DoWork(object sender, DoWorkEventArgs e)
     {
         var callingFunction = (string)e.Argument;
@@ -95,7 +118,6 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
         _sbStatus = new StringBuilder();
         UserMessageViewModel.Message = "";
         ProgressMessageViewModel.Message = "";
-
 
         if (callingFunction == "ExportConfigs")
         {
@@ -121,7 +143,12 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
         }
 
     }
+    private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+    {
+        //update ui once worker complete his work
+        ProgressMessageViewModel.HasMessage = false;
 
+    }
     private void listChanged(object sender, NotifyCollectionChangedEventArgs args)
     {
         // list changed
@@ -129,11 +156,7 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
     }
 
 
-    private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-    {
-        //update ui once worker complete his work
-        ProgressMessageViewModel.HasMessage = false;
-    }
+
 
 
     [RelayCommand]
@@ -225,6 +248,7 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
             _logger.Information("Running getETGFactSymmetryData() for {CurrentUser}...", Authentication.UserName);
             _sbStatus.Append("--Requesting data for ETGFactSymmetry, please wait..." + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
+            await Task.Delay(TimeSpan.FromSeconds(1));
             var api = _config.APIS.Where(x => x.Name == "MainData").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
             var response = WebAPIConsume.GetCall(api.Url);
@@ -238,12 +262,28 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
                 int cnt = 1;
                 int total = result.Count();
                 _sbStatus.Append("--Rendering row {$cnt} out of " + total.ToString("N0") + Environment.NewLine);
-                result.ForEach(x =>
+
+       
+                foreach (var r in result)
                 {
                     ProgressMessageViewModel.Message = _sbStatus.ToString().Replace("{$cnt}", cnt.ToString("N0"));
-                    OC_ETGFactSymmetryViewModel.Add(new ETGFactSymmetryViewModel(x));
+                    OC_ETGFactSymmetryViewModel.Add(new ETGFactSymmetryViewModel(r));
+                    //await Task.Delay(TimeSpan.FromSeconds(.001));
+                    if(cnt % 100 == 0)
+                    {
+                        await Task.Delay(TimeSpan.FromSeconds(.001));
+                    }
                     cnt++;
-                });
+                }    
+
+
+                //result.ForEach(x =>
+                //{
+                //    ProgressMessageViewModel.Message = _sbStatus.ToString().Replace("{$cnt}", cnt.ToString("N0"));
+                //    OC_ETGFactSymmetryViewModel.Add(new ETGFactSymmetryViewModel(x));
+                //    //Task.Delay(TimeSpan.FromSeconds(1.0));
+                //    cnt++;
+                //});
 
                 _logger.Information("ETGFactSymmetryData.getETGFactSymmetryData sucessfully completed for {CurrentUser}...", Authentication.UserName);
                 ProgressMessageViewModel.Message = _sbStatus.ToString();
