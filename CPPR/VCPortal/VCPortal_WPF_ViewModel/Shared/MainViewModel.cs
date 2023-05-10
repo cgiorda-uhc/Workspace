@@ -17,6 +17,15 @@ public partial class MainViewModel : ObservableObject, ViewModelBase
     public ViewModelBase CurrentViewModel;
 
 
+    public MainViewModel()
+    {
+        CurrentViewModel?.Dispose();
+
+    }
+
+
+
+
     //public MainViewModel(NavigationStore navigationStore, IConfiguration config, IExcelFunctions excelFunctions)
     public MainViewModel(string header, IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
     {

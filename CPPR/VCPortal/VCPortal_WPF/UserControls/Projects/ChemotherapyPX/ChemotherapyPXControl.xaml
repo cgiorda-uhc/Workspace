@@ -73,15 +73,14 @@
         </Grid.RowDefinitions>
 
 
-
-
-        <modalcontrol:Modal x:Name="modalControl" DataContext="{Binding ProgressMessageViewModel}"  Grid.Row="0" Grid.RowSpan="2" Panel.ZIndex="100" IsOpen="{Binding Path=HasMessage}" >
-            <modalcontrol:Modal.Background>
-                <SolidColorBrush Opacity=".5" Color="AliceBlue" />
-            </modalcontrol:Modal.Background>
-            <ContentControl  x:Name="modalContentControl" Height="600" Width="800"  />
-        </modalcontrol:Modal>
-
+        <modalcontrol:Modal x:Name="modalControl" DataContext="{Binding Path=ProgressMessageViewModel}"  Grid.Row="0" Grid.RowSpan="2" Panel.ZIndex="100" IsOpen="{Binding Path=HasMessage}" >
+                <modalcontrol:Modal.Background>
+                    <SolidColorBrush Opacity=".5" Color="AliceBlue" />
+                </modalcontrol:Modal.Background>
+                <ContentControl  x:Name="modalContentControl" Height="600" Width="800"  />
+            </modalcontrol:Modal>
+     
+        
         <Grid Grid.Row="0" Background="LightGray">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="20"/>

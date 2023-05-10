@@ -1,26 +1,20 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DocumentFormat.OpenXml.ExtendedProperties;
 using FileParsingLibrary.Models;
 using FileParsingLibrary.MSExcel;
-using MathNet.Numerics.Providers.SparseSolver;
 using Microsoft.Extensions.Configuration;
 using SharedFunctionsLibrary;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Net.NetworkInformation;
-using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Text.Json;
 using VCPortal_Models.Configuration.HeaderInterfaces.Abstract;
 using VCPortal_Models.Configuration.HeaderInterfaces.Concrete;
-using VCPortal_Models.Dtos.ChemoPx;
 using VCPortal_Models.Dtos.ETGFactSymmetry;
 using VCPortal_Models.Models.ETGFactSymmetry;
-using VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
 using VCPortal_WPF_ViewModel.Shared;
 
 
@@ -33,7 +27,7 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
     private readonly Serilog.ILogger _logger;
 
     public MessageViewModel UserMessageViewModel { get; }
-    public MessageViewModel ProgressMessageViewModel{ get; }
+    public MessageViewModel ProgressMessageViewModel { get; }
 
     [ObservableProperty]
     private ObservableCollection<ETGFactSymmetryViewModel> oC_ETGFactSymmetryViewModel;
@@ -69,14 +63,14 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
         _config = prepareConfig(config);
 
         UserMessageViewModel = new MessageViewModel();
-        ProgressMessageViewModel= new MessageViewModel();
+        ProgressMessageViewModel = new MessageViewModel();
 
         SharedETGSymmObjects.ETGFactSymmetry_Tracking_List = new ObservableCollection<ETGFactSymmetry_Tracking_UpdateDto>();
         SharedETGSymmObjects.ETGFactSymmetry_Tracking_List.CollectionChanged += listChanged;
 
         worker.DoWork += worker_DoWork;
         worker.RunWorkerCompleted += worker_RunWorkerCompleted;
- 
+
 
         OC_ETGFactSymmetryViewModel = new ObservableCollection<ETGFactSymmetryViewModel>();
 
@@ -244,7 +238,7 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject, ViewMod
                 int cnt = 1;
                 int total = result.Count();
                 _sbStatus.Append("--Rendering row {$cnt} out of " + total.ToString("N0") + Environment.NewLine);
-                result.ForEach(x => 
+                result.ForEach(x =>
                 {
                     ProgressMessageViewModel.Message = _sbStatus.ToString().Replace("{$cnt}", cnt.ToString("N0"));
                     OC_ETGFactSymmetryViewModel.Add(new ETGFactSymmetryViewModel(x));

@@ -26,33 +26,36 @@ namespace VCPortal_WPF;
 /// </summary>
 public partial class MainWindow : Window
 {
-
-    public MainWindow(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
-    {
+    //public MainWindow(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
+    public MainWindow(Serilog.ILogger logger)
+    { 
         InitializeComponent();
 
 
         logger.Information("Starting MainWindow....");
 
 
-        DataContext = new MainViewModel("", config, excelFunctions, logger).CurrentViewModel;
-        this.menuControl.Content = new MenuItemsControl(config,excelFunctions, logger);
+        //DataContext = new MainViewModel("", config, excelFunctions, logger).CurrentViewModel;
+        //this.menuControl.Content = new MenuItemsControl(config,excelFunctions, logger);
 
         //this.Title = "Value Creation Assistant Home";
         //this.contentControl.Content = new HomeControl();
 
-        if(Authentication.UserName == "cgiordas" || Authentication.UserName == "sdonela")
-        {
-            this.Title = "Chemotherapy PX";
-            this.contentControl.Content = new ChemotherapyPXControl(config, excelFunctions, logger);
-        }
-        else
-        {
-            this.Title = "ETG Fact Symmetry";
-            this.contentControl.Content = new ETGFactSymmetryControl(config, excelFunctions, logger);
-        }
+        //if(Authentication.UserName == "cgiordaa" || Authentication.UserName == "sdonela")
+        //{
+        //    this.Title = "Chemotherapy PX";
+        //    this.contentControl.Content = new ChemotherapyPXControl(config, excelFunctions, logger);
+        //}
+        //else
+        //{
+        //    this.Title = "ETG Fact Symmetry";
+        //    this.contentControl.Content = new ETGFactSymmetryControl(config, excelFunctions, logger);
+        //}
         
     }
 
-
+    private void Exit_Click(object sender, Telerik.Windows.RadRoutedEventArgs e)
+    {
+        Window.GetWindow(this).Close();
+    }
 }

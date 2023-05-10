@@ -22,6 +22,8 @@ using Telerik.Windows.Controls.GridView;
 using Telerik.Windows.Controls;
 using System.Data;
 using VCPortal_WPF.UserControls.Shared;
+using VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;
+using VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
 
 namespace VCPortal_WPF.UserControls.Projects.ChemotherapyPX;
 /// <summary>
@@ -30,17 +32,32 @@ namespace VCPortal_WPF.UserControls.Projects.ChemotherapyPX;
 public partial class ChemotherapyPXControl : UserControl
 {
 
-    public ChemotherapyPXControl(IConfiguration config, IExcelFunctions excelFunctions,  Serilog.ILogger logger)
+    //private ChemotherapyPXListingViewModel _viewModel => (ChemotherapyPXListingViewModel)DataContext;
+    public ChemotherapyPXControl()
     {
-        logger.Information("Initializing ChemotherapyPXControl for  for {CurrentUser}...", Authentication.UserName);
-        DataContext = new MainViewModel("Chemotherapy PX", config, excelFunctions, logger).CurrentViewModel;
+        //logger.Information("Initializing ChemotherapyPXControl for  for {CurrentUser}...", Authentication.UserName);
+        //DataContext = new MainViewModel("Chemotherapy PX", config, excelFunctions, logger).CurrentViewModel;
 
         InitializeComponent();
 
-
         modalContentControl.Content = new StatusControl();
-        modalContentControl.DataContext = this.DataContext;
+        //modalContentControl.DataContext = _viewModel;
+        //modalContentControl.DataContext = MainWindowViewModel;
     }
+
+
+
+    //public ChemotherapyPXControl(IConfiguration config, IExcelFunctions excelFunctions,  Serilog.ILogger logger)
+    //{
+    //    logger.Information("Initializing ChemotherapyPXControl for  for {CurrentUser}...", Authentication.UserName);
+    //    DataContext = new MainViewModel("Chemotherapy PX", config, excelFunctions, logger).CurrentViewModel;
+
+    //    InitializeComponent();
+
+
+    //    modalContentControl.Content = new StatusControl();
+    //    modalContentControl.DataContext = this.DataContext;
+    //}
 
     private void ChemotherapyPXGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
     {

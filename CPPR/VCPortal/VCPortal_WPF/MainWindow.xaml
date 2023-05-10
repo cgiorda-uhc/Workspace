@@ -2,11 +2,90 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-        xmlns:modalcontrol="clr-namespace:ModalControl;assembly=ModalControl"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mainvml="clr-namespace:VCPortal_WPF_ViewModel.Shared;assembly=VCPortal_WPF_ViewModel"
+        xmlns:etguc="clr-namespace:VCPortal_WPF.UserControls.Projects.ETGFactSymmetry" 
+        xmlns:etgvml="clr-namespace:VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;assembly=VCPortal_WPF_ViewModel"
+        xmlns:chemouc="clr-namespace:VCPortal_WPF.UserControls.Projects.ChemotherapyPX" 
+        xmlns:chemovml="clr-namespace:VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;assembly=VCPortal_WPF_ViewModel"
+        xmlns:modalcontrol="clr-namespace:ModalControl;assembly=ModalControl" xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         mc:Ignorable="d" 
         Title="MainWindow" Height="450" Width="800" WindowState="Maximized"  FontFamily="Segoe UI Light" FontSize="18" >
+
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type etgvml:ETGFactSymmetryListingViewModel}">
+            <etguc:ETGFactSymmetryControl/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type chemovml:ChemotherapyPXListingViewModel}">
+            <chemouc:ChemotherapyPXControl/>
+        </DataTemplate>
+    </Window.Resources>
+    <!--<Window.DataContext>
+        <mainvml:MainWindowViewModel />
+    </Window.DataContext>-->
+
+
+
+
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="10"/>
+        </Grid.RowDefinitions>
+
+
+
+
+        <DockPanel Grid.Row="0" Grid.Column="1" >
+            <telerik:RadMenu  x:Name="MainMenu" DockPanel.Dock="Top"  Width="Auto">
+                <!--<telerik:RadMenuItem Header="_Data Management" ItemsSource="{Binding NavigationViewModelTypes}" Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" CommandParameter="{Binding VMType}">-->
+                <telerik:RadMenuItem Header="_Data Management" ItemsSource="{Binding NavigationViewModelTypes}">
+                    <telerik:RadMenuItem.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock>
+                                    <Hyperlink TextDecorations="None" Foreground="Black" Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" CommandParameter="{Binding VMType}">
+                                        <TextBlock Text="{Binding Name}"/>
+                                    </Hyperlink>
+                            </TextBlock>
+                            <!--<TextBlock Text="{Binding Name}" />-->
+                            <!--<Button Content="{Binding Name}" Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" CommandParameter="{Binding VMType}"/>-->
+                        </DataTemplate>
+                    </telerik:RadMenuItem.ItemTemplate>
+                </telerik:RadMenuItem>
+                <telerik:RadMenuSeparatorItem />
+                <telerik:RadMenuItem Header="_Custom Reporting">
+                </telerik:RadMenuItem>
+                <telerik:RadMenuSeparatorItem />
+                <telerik:RadMenuItem x:Name="Exit" Header="_Exit" Click="Exit_Click">
+                </telerik:RadMenuItem>
+            </telerik:RadMenu>
+        </DockPanel>
+
+
+
+
+
+        <!--<ItemsControl Grid.Row="0" Grid.Column="1"  ItemsSource="{Binding NavigationViewModelTypes}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button Width="100" Content="{Binding Name}" Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" CommandParameter="{Binding VMType}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>-->
+        <ContentControl  Grid.Row="1" Grid.Column="1" Content="{Binding CurrentViewModel}"/>
+    </Grid>
+
+
+
+
+    <!--<Grid>
 
         
         <Grid.ColumnDefinitions>
@@ -25,7 +104,7 @@
         <ContentControl  x:Name="contentControl" Grid.Row="1" Grid.Column="1" />
 
 
-        <!--<wpf_modal:Modal x:Name="Modal" Grid.Row="1" Grid.Column="1" Panel.ZIndex="10">
+        --><!--<wpf_modal:Modal x:Name="Modal" Grid.Row="1" Grid.Column="1" Panel.ZIndex="10">
             <wpf_modal:Modal.Background>
                 <SolidColorBrush Opacity="0.5" Color="PaleVioletRed"/>
             </wpf_modal:Modal.Background>
@@ -35,9 +114,9 @@
                 </StackPanel>
 
             </Grid>
-        </wpf_modal:Modal>-->
+        </wpf_modal:Modal>--><!--
 
 
 
-    </Grid>
+    </Grid>-->
 </Window>

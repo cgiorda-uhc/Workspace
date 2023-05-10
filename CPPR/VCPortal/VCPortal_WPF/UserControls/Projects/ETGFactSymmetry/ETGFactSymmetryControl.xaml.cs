@@ -33,6 +33,21 @@ public partial class ETGFactSymmetryControl : UserControl
 
     private ETGFactSymmetryListingViewModel _viewModel => (ETGFactSymmetryListingViewModel)DataContext;
 
+
+
+    public ETGFactSymmetryControl()
+    {
+
+        InitializeComponent();
+
+        modalContentControl.Content = new StatusControl();
+        //modalContentControl.DataContext = this.DataContext;
+        //modalContentControl.Content = new StatusControl();
+    }
+
+
+
+
     //public ETGFactSymmetryControl(IConfiguration config, IExcelFunctions excelFunctions)
     public ETGFactSymmetryControl(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
     {
@@ -99,4 +114,11 @@ public partial class ETGFactSymmetryControl : UserControl
 
     }
 
+    //private void uc_etgfact_Unloaded(object sender, RoutedEventArgs e)
+    //{
+    //    ETGGridView.ItemsSource = null;
+    //    ETGGridView.Columns.Clear();
+    //    ETGGridView.Items.Clear();
+    //    ETGGridView.Items.Refresh();
+    //}
 }

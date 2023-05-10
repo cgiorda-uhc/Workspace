@@ -30,8 +30,8 @@ public partial class App : Application
     Serilog.ILogger logger;
     public App()
     {
-        var appsettings = "appsettings.Development.json";
-        //var appsettings = "appsettings.json";
+        //var appsettings = "appsettings.Development.json";
+        var appsettings = "appsettings.json";
 
         var configuration = new ConfigurationBuilder().AddJsonFile(appsettings).AddEnvironmentVariables().Build();
         logger = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
@@ -67,7 +67,7 @@ public partial class App : Application
             //AppDomain.CurrentDomain.FirstChanceException += new EventHandler<System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs>(CurrentDomain_FirstChanceException);
 
             var startupForm = AppHost.Services.GetRequiredService<MainWindow>();
-            startupForm.DataContext = new MainViewModel("", config, excel, logger);
+            startupForm.DataContext = new MainWindowViewModel("", config, excel, logger);
             startupForm.Show();
 
             base.OnStartup(e);

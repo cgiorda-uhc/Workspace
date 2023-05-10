@@ -17,8 +17,8 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="1"/>
         </Grid.RowDefinitions>
-
-        <StatusBar Grid.Row="1"    Grid.Column="1"  x:Name="StatusBar"  DataContext="{Binding ProgressMessageViewModel}" >
+        <!--<StatusBar Grid.Row="1"    Grid.Column="1"  x:Name="StatusBar"  DataContext="{Binding ProgressMessageViewModel}" >-->
+        <StatusBar Grid.Row="1"    Grid.Column="1"  x:Name="StatusBar">
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Grid>
