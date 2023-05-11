@@ -1,0 +1,6 @@
+﻿CREATE TABLE [chemopx].[Drug_Adm_Mode]
+(
+	[DRUG_ADM_MODE_ID] INT NOT NULL PRIMARY KEY IDENTITY, 
+    [DRUG_ADM_MODE] VARCHAR(20) NULL, 
+    [Is_Archived] BIT NULL DEFAULT 0
+)

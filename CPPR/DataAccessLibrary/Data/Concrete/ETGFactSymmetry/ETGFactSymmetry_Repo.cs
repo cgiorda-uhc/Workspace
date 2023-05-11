@@ -32,7 +32,7 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
 
         string strSQL = "SELECT * FROM [dbo].[VW_ETG_Symmetry_Main_Interface] ORDER BY Premium_Specialty, ETG_Description;";
 
-        var results = _db.LoadData<ETGFactSymmetry_ReadDto>(sql: strSQL, token, connectionId: "ETGSymmetry");
+        var results = _db.LoadData<ETGFactSymmetry_ReadDto>(sql: strSQL, token, connectionId: "VCT_DB");
 
         return results;
     }
@@ -44,7 +44,7 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
 
         string strSQL = "SELECT * FROM [dbo].[vw_GetETGSymmetryTracking] v ORDER BY  v.Tracker_Id;";
 
-        var results = _db.LoadData<ETGFactSymmetry_Tracking_ReadDto>(sql: strSQL, token, connectionId: "ETGSymmetry");
+        var results = _db.LoadData<ETGFactSymmetry_Tracking_ReadDto>(sql: strSQL, token, connectionId: "VCT_DB");
 
         return results;
     }
@@ -55,7 +55,7 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
 
         string strSQL = "SELECT * FROM [dbo].[VW_ETG_Symmetry_PATIENT_CENTRIC_CONFIG] v ORDER BY  v.[Base_ETG],v.[Premium_Specialty];";
 
-        var results = _db.LoadData<ETGPatientCentricConfig>(sql: strSQL, token, connectionId: "ETGSymmetry");
+        var results = _db.LoadData<ETGPatientCentricConfig>(sql: strSQL, token, connectionId: "VCT_DB");
 
         return results;
     }
@@ -65,7 +65,7 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
 
         string strSQL = "SELECT * FROM [dbo].[VW_ETG_Symmetry_POP_EPISODE_CONFIG] v  ORDER BY  v.[Base_ETG],v.[Premium_Specialty];";
 
-        var results = _db.LoadData<ETGPopEpisodeConfig>(sql: strSQL, token, connectionId: "ETGSymmetry");
+        var results = _db.LoadData<ETGPopEpisodeConfig>(sql: strSQL, token, connectionId: "VCT_DB");
 
         return results;
     }
@@ -76,7 +76,7 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
 
         string strSQL = "SELECT * FROM [dbo].[VW_ETG_Symmetry_RX_NRX_CONFIG] v  ORDER BY  v.[Base_ETG],v.[Premium_Specialty];";
 
-        var results = _db.LoadData<ETGRxNrxConfig>(sql: strSQL, token, connectionId: "ETGSymmetry");
+        var results = _db.LoadData<ETGRxNrxConfig>(sql: strSQL, token, connectionId: "VCT_DB");
 
         return results;
     }

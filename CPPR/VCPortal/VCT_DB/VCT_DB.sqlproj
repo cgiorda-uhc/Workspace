@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>VCT_DB</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{124f375c-ae65-436c-8f35-f38311b057dc}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql140DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>VCT_DB</RootNamespace>
+    <AssemblyName>VCT_DB</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="vct" />
+    <Folder Include="chemopx" />
+    <Folder Include="etgsymm" />
+    <Folder Include="chemopx\StoredProcedure" />
+    <Folder Include="chemopx\Tables" />
+    <Folder Include="chemopx\Types" />
+    <Folder Include="chemopx\Views" />
+    <Folder Include="vct\StoredProcedure" />
+    <Folder Include="vct\Tables" />
+    <Folder Include="etgsymm\StoredProcedures" />
+    <Folder Include="etgsymm\Tables" />
+    <Folder Include="etgsymm\Views" />
+    <Folder Include="deploy" />
+    <Folder Include="deploy\Tables" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="chemopx\Views\vw_GetChemoTracking.sql" />
+    <Build Include="chemopx\Tables\ASP_Category.sql" />
+    <Build Include="chemopx\Tables\CEP_Enroll_Cd.sql" />
+    <Build Include="chemopx\Tables\CEP_Pay_Cd.sql" />
+    <Build Include="chemopx\Tables\ChemotherapyPX.sql" />
+    <Build Include="chemopx\Tables\ChemotherapyPX_Tracking.sql" />
+    <Build Include="chemopx\Tables\Code_Category.sql" />
+    <Build Include="chemopx\Tables\Drug_Adm_Mode.sql" />
+    <Build Include="chemopx\Tables\PA_Drugs.sql" />
+    <Build Include="chemopx\StoredProcedure\sp_ASP_Category_GetAll.sql" />
+    <Build Include="vct\StoredProcedure\sp_Log_Insert.sql" />
+    <Build Include="vct\Tables\Proc_Codes.sql" />
+    <Build Include="vct\Tables\Logs.sql" />
+    <Build Include="etgsymm\StoredProcedures\sp_ETGSymmetry_BulkUpdate.sql" />
+    <Build Include="etgsymm\StoredProcedures\sp_ETGSymmetry_Update.sql" />
+    <Build Include="etgsymm\Tables\ETG_Fact_Symmetry.sql" />
+    <Build Include="etgsymm\Tables\ETG_Fact_Symmetry_Update_Tracker.sql" />
+    <Build Include="etgsymm\Views\VW_ETG_Symmetry_All_Data.sql" />
+    <Build Include="etgsymm\Views\VW_ETG_Symmetry_Main_Interface.sql" />
+    <Build Include="etgsymm\Views\VW_ETG_Symmetry_PATIENT_CENTRIC_CONFIG.sql" />
+    <Build Include="etgsymm\Views\VW_ETG_Symmetry_POP_EPISODE_CONFIG.sql" />
+    <Build Include="etgsymm\Views\VW_ETG_Symmetry_RX_NRX_CONFIG.sql" />
+    <Build Include="etgsymm\Views\vw_GetETGSymmetryTracking.sql" />
+    <Build Include="vct\Tables\ETG_Dim_Master.sql" />
+    <Build Include="vct\Tables\ETG_Dim_Premium_Spec_Master.sql" />
+    <Build Include="deploy\Tables\ChemotherapyPXCodes.sql" />
+    <Build Include="deploy\Tables\ETG_Dim_Master.sql" />
+    <Build Include="deploy\Tables\ETG_Dim_Premium_Spec_Master.sql" />
+    <Build Include="deploy\Tables\ETG_Fact_Symmetry.sql" />
+    <Build Include="deploy\Tables\Proc_Codes.sql" />
+    <Build Include="chemopx\chemopx.sql" />
+    <Build Include="etgsymm\etgsymm.sql" />
+    <Build Include="deploy\deploy.sql" />
+    <Build Include="vct\vct.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Cd_GetAll.sql" />
+    <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Excl_Desc_GetAll.sql" />
+    <Build Include="chemopx\StoredProcedure\sp_CEP_Pay_Cd_GetAll.sql" />
+    <Build Include="chemopx\StoredProcedure\sp_ChemotherapyPX_BulkCUD.sql" />
+    <Build Include="chemopx\StoredProcedure\sp_ChemotherapyPX_Delete.sql" />
+    <Build Include="chemopx\StoredProcedure\sp_ChemotherapyPX_Get.sql" />
+    <Build Include="chemopx\StoredProcedure\sp_ChemotherapyPX_GetAll.sql" />
+    <Build Include="chemopx\StoredProcedure\sp_ChemotherapyPX_GetAllFilters.sql" />
+    <Build Include="chemopx\StoredProcedure\sp_ChemotherapyPX_Insert.sql" />
+    <Build Include="chemopx\StoredProcedure\sp_ChemotherapyPX_InsertMany.sql" />
+    <Build Include="chemopx\StoredProcedure\sp_ChemotherapyPX_Update.sql" />
+    <Build Include="chemopx\StoredProcedure\sp_Code_Category_GetAll.sql" />
+    <Build Include="chemopx\StoredProcedure\sp_Drug_Adm_Mode_GetAll.sql" />
+    <Build Include="chemopx\StoredProcedure\sp_PA_Drugs_GetAll.sql" />
+    <Build Include="chemopx\StoredProcedure\sp_Source_GetAll.sql" />
+    <Build Include="vct\StoredProcedure\sp_Proc_Codes_GetAll.sql" />
+    <None Include="chemopx\Types\ChemotherapyPX.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Script.PostDeployment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="VCT_DB.publish.xml" />
+  </ItemGroup>
+</Project>

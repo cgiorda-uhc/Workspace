@@ -158,7 +158,7 @@ public static class ETGFactSymmetry_Calls
             try
             {
                 _log.Information("Requesting API InsertETGFactSymmetry()...");
-                await repo.InsertETGFactSymmetryTracking(etg, "ETGSymmetry");
+                await repo.InsertETGFactSymmetryTracking(etg, "VCT_DB");
 
                 return Results.Ok();  ////RETURN HTTP 200
 

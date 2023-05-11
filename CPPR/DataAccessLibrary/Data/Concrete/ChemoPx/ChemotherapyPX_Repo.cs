@@ -52,7 +52,7 @@ public class ChemotherapyPX_Repo : IChemotherapyPX_Repo
 
         string strSQL = "SELECT * FROM [dbo].[vw_GetChemoTracking] v ORDER BY  v.[Tracking_Id];";
 
-        var results = _db.LoadData<ChemotherapyPX_Tracking_ReadDto>(sql: strSQL, connectionStringId: "ChemotherapyPX", has_connectionstring : false) ; 
+        var results = _db.LoadData<ChemotherapyPX_Tracking_ReadDto>(sql: strSQL, connectionStringId: "VCT_DB", has_connectionstring : false) ; 
 
         return results;
     }

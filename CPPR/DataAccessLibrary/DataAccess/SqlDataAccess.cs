@@ -23,7 +23,7 @@ public class SqlDataAccess : IRelationalDataAccess
         _config = config;
     }
 
-    public async Task<IEnumerable<T>> LoadData<T>(string sql, CancellationToken token, string connectionId = "Default")
+    public async Task<IEnumerable<T>> LoadData<T>(string sql, CancellationToken token, string connectionId = "VCT_DB")
     {
         using IDbConnection connection = new SqlConnection(_config.GetConnectionString(connectionId));
 
@@ -44,7 +44,7 @@ public class SqlDataAccess : IRelationalDataAccess
 
 
 
-    public async Task<IEnumerable<T>> LoadData<T>( string sql, string connectionStringId = "Default", bool has_connectionstring = false)
+    public async Task<IEnumerable<T>> LoadData<T>( string sql, string connectionStringId = "VCT_DB", bool has_connectionstring = false)
     {
 
         using IDbConnection connection =new SqlConnection((has_connectionstring ? connectionStringId :  _config.GetConnectionString(connectionStringId)));
@@ -105,7 +105,7 @@ public class SqlDataAccess : IRelationalDataAccess
     }
 
 
-    public async Task<IEnumerable<T>> LoadData<T, U>(string connectionString, string storedProcedure, U parameters, string connectionId = "Default")
+    public async Task<IEnumerable<T>> LoadData<T, U>(string connectionString, string storedProcedure, U parameters, string connectionId = "VCT_DB")
     {
         using IDbConnection connection = new SqlConnection(connectionString);
 
@@ -115,7 +115,7 @@ public class SqlDataAccess : IRelationalDataAccess
 
 
 
-    public async Task<IEnumerable<T>> LoadData<T, U>(string storedProcedure, U parameters, string connectionId = "Default")
+    public async Task<IEnumerable<T>> LoadData<T, U>(string storedProcedure, U parameters, string connectionId = "VCT_DB")
 	{
 		using IDbConnection connection = new SqlConnection(_config.GetConnectionString(connectionId));
 
@@ -124,7 +124,7 @@ public class SqlDataAccess : IRelationalDataAccess
 	}
 
 
-    public async Task<object> ExecuteScalar<T>(string storedProcedure, T parameters, string connectionId = "Default")
+    public async Task<object> ExecuteScalar<T>(string storedProcedure, T parameters, string connectionId = "VCT_DB")
     {
         using IDbConnection connection = new SqlConnection(_config.GetConnectionString(connectionId));
 
@@ -142,7 +142,7 @@ public class SqlDataAccess : IRelationalDataAccess
 
     }
 
-    public async Task SaveData<T>(string storedProcedure, T parameters, string connectionId = "Default")
+    public async Task SaveData<T>(string storedProcedure, T parameters, string connectionId = "VCT_DB")
 	{
 		using IDbConnection connection = new SqlConnection(_config.GetConnectionString(connectionId));
 
@@ -150,7 +150,7 @@ public class SqlDataAccess : IRelationalDataAccess
 		await connection.ExecuteAsync(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
 	}
 
-    public async Task BulkSave<T>(string table, IEnumerable<T> data, string[] columns, int bulkTimeout = 120, int batchSize = 5000, string connectionId = "Default")
+    public async Task BulkSave<T>(string table, IEnumerable<T> data, string[] columns, int bulkTimeout = 120, int batchSize = 5000, string connectionId = "VCT_DB")
     {
 
         // data is an IEnumerable<T>           

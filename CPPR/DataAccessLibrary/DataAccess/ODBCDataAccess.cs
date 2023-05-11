@@ -21,7 +21,7 @@ public class ODBCDataAccess : IRelationalDataAccess
         _config = config;
     }
 
-    public async Task<IEnumerable<T>> LoadData<T>(string sql, CancellationToken token, string connectionId = "Default")
+    public async Task<IEnumerable<T>> LoadData<T>(string sql, CancellationToken token, string connectionId = "VCT_DB")
     {
         throw new NotImplementedException();
     }
@@ -52,12 +52,12 @@ public class ODBCDataAccess : IRelationalDataAccess
     }
 
 
-    public async Task<IEnumerable<T>> LoadData<T, U>(string storedProcedure, U parameters, string connectionId = "Default")
+    public async Task<IEnumerable<T>> LoadData<T, U>(string storedProcedure, U parameters, string connectionId = "VCT_DB")
     {
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<T>> LoadData<T, U>(string connectionString, string storedProcedure, U parameters, string connectionId = "Default")
+    public Task<IEnumerable<T>> LoadData<T, U>(string connectionString, string storedProcedure, U parameters, string connectionId = "VCT_DB")
     {
         throw new NotImplementedException();
     }
@@ -67,7 +67,7 @@ public class ODBCDataAccess : IRelationalDataAccess
     {
         throw new NotImplementedException();
     }
-    public async Task<object> ExecuteScalar<T>(string storedProcedure, T parameters, string connectionId = "Default")
+    public async Task<object> ExecuteScalar<T>(string storedProcedure, T parameters, string connectionId = "VCT_DB")
     {
         throw new NotImplementedException();
 
@@ -79,12 +79,12 @@ public class ODBCDataAccess : IRelationalDataAccess
 
     }
 
-    public async Task SaveData<T>(string storedProcedure, T parameters, string connectionId = "Default")
+    public async Task SaveData<T>(string storedProcedure, T parameters, string connectionId = "VCT_DB")
     {
         throw new NotImplementedException();
     }
 
-    public async Task BulkSave<T>(string table, IEnumerable<T> data, string[] columns, int bulkTimeout = 120, int batchSize = 5000, string connectionId = "Default")
+    public async Task BulkSave<T>(string table, IEnumerable<T> data, string[] columns, int bulkTimeout = 120, int batchSize = 5000, string connectionId = "VCT_DB")
     {
         throw new NotImplementedException();
     }
@@ -109,7 +109,7 @@ public class ODBCDataAccess : IRelationalDataAccess
 
     }
 
-    public Task<IEnumerable<T>> LoadData<T>(string sql, string connectionStringId = "Default", bool has_connectionstring = false)
+    public Task<IEnumerable<T>> LoadData<T>(string sql, string connectionStringId = "VCT_DB", bool has_connectionstring = false)
     {
         throw new NotImplementedException();
     }
