@@ -73,7 +73,7 @@
         </Grid.RowDefinitions>
 
 
-        <modalcontrol:Modal x:Name="modalControl" DataContext="{Binding Path=ProgressMessageViewModel}"  Grid.Row="0" Grid.RowSpan="2" Panel.ZIndex="100" IsOpen="{Binding Path=HasMessage}" >
+        <modalcontrol:Modal x:Name="modalControl"  DataContext="{Binding Path=ProgressMessageViewModel}"  Grid.Row="0" Grid.RowSpan="2" Panel.ZIndex="100" IsOpen="{Binding Path=HasMessage}" >
                 <modalcontrol:Modal.Background>
                     <SolidColorBrush Opacity=".5" Color="AliceBlue" />
                 </modalcontrol:Modal.Background>

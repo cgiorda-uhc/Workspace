@@ -51,7 +51,7 @@
         <DockPanel Grid.Row="0" Grid.Column="1" >
             <telerik:RadMenu  x:Name="MainMenu" DockPanel.Dock="Top"  Width="Auto">
                 <!--<telerik:RadMenuItem Header="_Data Management" ItemsSource="{Binding NavigationViewModelTypes}" Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" CommandParameter="{Binding VMType}">-->
-                <telerik:RadMenuItem Header="_Data Management" ItemsSource="{Binding NavigationViewModelTypes}" StaysOpenOnClick="False">
+                <telerik:RadMenuItem Header="_Data Management" ItemsSource="{Binding NavigationViewModelTypesDM}" StaysOpenOnClick="False">
                     <telerik:RadMenuItem.ItemTemplate>
                         <DataTemplate>
                             <TextBlock>

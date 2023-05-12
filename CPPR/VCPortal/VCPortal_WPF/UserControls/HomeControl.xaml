@@ -14,11 +14,26 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="10"/>
+            <RowDefinition Height="20"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="10"/>
         </Grid.RowDefinitions>
-
-        <FlowDocumentReader Grid.Column="1" Grid.Row="1">
+        <TextBlock DataContext="{Binding UserMessageViewModel}" Text="{Binding Message}" FontWeight="ExtraBold"  Grid.Row="1" Grid.Column="1" >
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <!-- Set the default value here (if any). 
+                             If you set it directly on the button that will override the trigger. -->
+                    <Setter Property="Foreground" Value="DarkGreen" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsError}"
+                                         Value="True">
+                            <Setter Property="Foreground" Value="Red" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
+        <FlowDocumentReader Grid.Column="1" Grid.Row="2">
             <FlowDocument>
                 <Paragraph FontSize="20" FontWeight="Bold">Value Creation Assistant Home</Paragraph>
                 <Section>

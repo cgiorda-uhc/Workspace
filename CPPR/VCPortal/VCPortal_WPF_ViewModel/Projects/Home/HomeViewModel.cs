@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VCPortal_Models.Configuration.HeaderInterfaces.Abstract;
+using VCPortal_WPF_ViewModel.Shared;
 
 namespace VCPortal_WPF_ViewModel.Projects.Home;
 public class HomeViewModel : ObservableObject
@@ -16,10 +17,22 @@ public class HomeViewModel : ObservableObject
     private readonly IConfiguration? _config;
     private readonly Serilog.ILogger _logger;
 
+    public MessageViewModel UserMessageViewModel { get; }
+
     public HomeViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
     {
         _logger = logger;
         _excelFunctions = excelFunctions;
         _config = config;
+
+        UserMessageViewModel = new MessageViewModel();
+
+        if (Authentication.CurrentUser == null)
+        {
+            UserMessageViewModel.IsError = true;
+            UserMessageViewModel.Message = "Authentication Failed. Please contact the system admin.";
+            _logger.Error("Authenitcation Failed  for {CurrentUser}", Authentication.UserName);
+        }
+
     }
 }

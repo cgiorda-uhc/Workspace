@@ -55,7 +55,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
 
 
-    public ObservableCollection<TypeAndDisplay> NavigationViewModelTypes { get; set; }
+    public ObservableCollection<TypeAndDisplay> NavigationViewModelTypesDM { get; set; }
     //public ObservableCollection<TypeAndDisplay> NavigationViewModelTypes { get; set; } = new ObservableCollection<TypeAndDisplay>
     //(
 
@@ -73,21 +73,25 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
     private void populateNavigation()
     {
-        var groups = Authentication.CurrentUser.Groups.ToList();
-
-        NavigationViewModelTypes = new ObservableCollection<TypeAndDisplay>();
-        if(groups.Contains("ChemoPX", StringComparer.OrdinalIgnoreCase))
+        if (Authentication.CurrentUser != null)
         {
-            NavigationViewModelTypes.Add(new TypeAndDisplay { Name = "Chemotherapy PX", VMType = typeof(ChemotherapyPXListingViewModel) });
+            var groups = Authentication.CurrentUser.Groups.ToList();
+
+            NavigationViewModelTypesDM = new ObservableCollection<TypeAndDisplay>();
+            if (groups.Contains("ms\\chemopx", StringComparer.OrdinalIgnoreCase))
+            {
+                NavigationViewModelTypesDM.Add(new TypeAndDisplay { Name = "Chemotherapy PX", VMType = typeof(ChemotherapyPXListingViewModel) });
+            }
+
+            if (groups.Contains("ms\\etgsymm", StringComparer.OrdinalIgnoreCase))
+            {
+                NavigationViewModelTypesDM.Add(new TypeAndDisplay { Name = "ETG Fact Symmetry", VMType = typeof(ETGFactSymmetryListingViewModel) });
+            }
+
+            NavigationViewModelTypesDM.Add(new TypeAndDisplay { Name = "EBM Mapping" });
+            NavigationViewModelTypesDM.Add(new TypeAndDisplay { Name = "PEG Mapping" });
         }
 
-        if (groups.Contains("ETGSymm", StringComparer.OrdinalIgnoreCase))
-        {
-            NavigationViewModelTypes.Add(new TypeAndDisplay { Name = "ETG Fact Symmetry", VMType = typeof(ETGFactSymmetryListingViewModel) });
-        }
-
-        NavigationViewModelTypes.Add(new TypeAndDisplay { Name = "EBM Mapping" });
-        NavigationViewModelTypes.Add( new TypeAndDisplay { Name = "PEG Mapping" });
     }
 
 

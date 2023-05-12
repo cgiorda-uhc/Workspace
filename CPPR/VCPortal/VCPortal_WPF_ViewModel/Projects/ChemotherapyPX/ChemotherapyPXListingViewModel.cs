@@ -105,6 +105,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
         }
         else
         {
+            UserMessageViewModel.IsError = true;
             UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
             _logger.Error($"No Config found for ChemotherapyPX");
         }

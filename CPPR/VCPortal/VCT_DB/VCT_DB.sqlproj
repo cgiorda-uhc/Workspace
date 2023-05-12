@@ -133,4 +133,14 @@
     <None Include="VCT_DB.publish.xml" />
     <None Include="VCT_DB_DEV.publish.xml" />
   </ItemGroup>
+  <ItemGroup>
+    <SqlCmdVariable Include="ChemoPXRefresh">
+      <DefaultValue>0</DefaultValue>
+      <Value>$(SqlCmdVar__2)</Value>
+    </SqlCmdVariable>
+    <SqlCmdVariable Include="ETGSymmRefresh">
+      <DefaultValue>0</DefaultValue>
+      <Value>$(SqlCmdVar__1)</Value>
+    </SqlCmdVariable>
+  </ItemGroup>
 </Project>
