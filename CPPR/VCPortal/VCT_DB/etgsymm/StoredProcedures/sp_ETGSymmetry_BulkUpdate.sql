@@ -7,19 +7,19 @@ AS
 
 UPDATE Track
 SET 
-Track.[Has_Commercial_Previous] = CASE WHEN ISNULL(Track.[Has_Commercial],'') <> ISNULL(ETG.[Has_Commercial],'') THEN ETG.[Has_Commercial] ELSE Track.[Has_Commercial_Previous] END,
-Track.[Has_Medicare_Previous] = CASE WHEN ISNULL(Track.[Has_Medicare],'') <> ISNULL(ETG.[Has_Medicare],'') THEN ETG.[Has_Medicare] ELSE Track.[Has_Medicare_Previous] END,
-Track.[Has_Medicaid_Previous] = CASE WHEN ISNULL(Track.[Has_Medicaid],'') <>  ISNULL(ETG.[Has_Medicaid],'') THEN ETG.[Has_Medicaid]  ELSE  Track.[Has_Medicaid_Previous]  END,
-Track.[Has_NRX_Previous] = CASE WHEN ISNULL(Track.[Has_NRX],'') <> ISNULL(ETG.[Has_NRX],'') THEN ETG.[Has_NRX]  ELSE Track.[Has_NRX_Previous] END,
-Track.[Has_RX_Previous] = CASE WHEN ISNULL(Track.[Has_RX],'') <> ISNULL(ETG.[Has_RX],'') THEN ETG.[Has_RX]  ELSE Track.[Has_RX_Previous]  END,
-Track.[PC_Treatment_Indicator_Previous] = CASE WHEN ISNULL(Track.[PC_Treatment_Indicator],'') <> ISNULL(ETG.[PC_Treatment_Indicator],'') THEN ETG.[PC_Treatment_Indicator]  ELSE Track.[PC_Treatment_Indicator_Previous] END,
-Track.[PC_Attribution_Previous] = CASE WHEN ISNULL(Track.[PC_Attribution],'') <> ISNULL(ETG.[PC_Attribution],'') THEN ETG.[PC_Attribution] ELSE Track.[PC_Attribution_Previous] END,
-Track.[PC_Change_Comments_Previous] = CASE WHEN ISNULL(Track.[PC_Change_Comments],'') NOT LIKE ISNULL(ETG.[PC_Change_Comments],'') THEN ETG.[PC_Change_Comments] ELSE Track.[PC_Change_Comments_Previous] END,
-Track.[Patient_Centric_Mapping_Previous] = CASE WHEN ISNULL(Track.[Patient_Centric_Mapping],'') <> ISNULL(ETG.[Patient_Centric_Mapping],'')  THEN ETG.[Patient_Centric_Mapping]  ELSE Track.[Patient_Centric_Mapping_Previous] END,
-Track.[EC_Mapping_Previous] = CASE WHEN ISNULL(Track.[EC_Mapping],'') <> ISNULL(ETG.[EC_Mapping],'') THEN ISNULL(ETG.[EC_Mapping],'')  ELSE Track.[EC_Mapping_Previous] END,
-Track.[EC_Treatment_Indicator_Previous] = CASE WHEN ISNULL(Track.[EC_Treatment_Indicator],'') <> ISNULL(ETG.[EC_Treatment_Indicator],'') THEN ETG.[EC_Treatment_Indicator]  ELSE  Track.[EC_Treatment_Indicator_Previous] END,
-Track.[EC_Change_Comments_Previous] = CASE WHEN ISNULL(Track.[EC_Change_Comments],'') NOT LIKE ISNULL(ETG.[EC_Change_Comments],'')  THEN ETG.[EC_Change_Comments]   ELSE Track.[EC_Change_Comments_Previous] END,
-Track.[Patient_Centric_Change_Comments_Previous] = CASE WHEN ISNULL(Track.[Patient_Centric_Change_Comments],'') NOT LIKE ISNULL(ETG.[Patient_Centric_Change_Comments],'') THEN ETG.[Patient_Centric_Change_Comments]  ELSE  Track.[Patient_Centric_Change_Comments_Previous] END
+Track.[Has_Commercial_Previous] = CASE WHEN ISNULL(Track.[Has_Commercial],'') <> ISNULL(ETG.[Has_Commercial],'') OR Track.[Has_Commercial_Previous] IS NULL THEN ETG.[Has_Commercial] ELSE Track.[Has_Commercial_Previous] END,
+Track.[Has_Medicare_Previous] = CASE WHEN ISNULL(Track.[Has_Medicare],'') <> ISNULL(ETG.[Has_Medicare],'') OR Track.[Has_Medicare_Previous] IS NULL THEN ETG.[Has_Medicare] ELSE Track.[Has_Medicare_Previous] END,
+Track.[Has_Medicaid_Previous] = CASE WHEN ISNULL(Track.[Has_Medicaid],'') <>  ISNULL(ETG.[Has_Medicaid],'')OR Track.[Has_Medicaid_Previous] IS NULL  THEN ETG.[Has_Medicaid]  ELSE  Track.[Has_Medicaid_Previous]  END,
+Track.[Has_NRX_Previous] = CASE WHEN ISNULL(Track.[Has_NRX],'') <> ISNULL(ETG.[Has_NRX],'') OR Track.[Has_NRX_Previous] IS NULL THEN ETG.[Has_NRX]  ELSE Track.[Has_NRX_Previous] END,
+Track.[Has_RX_Previous] = CASE WHEN ISNULL(Track.[Has_RX],'') <> ISNULL(ETG.[Has_RX],'')OR Track.[Has_RX_Previous] IS NULL  THEN ETG.[Has_RX]  ELSE Track.[Has_RX_Previous]  END,
+Track.[PC_Treatment_Indicator_Previous] = CASE WHEN ISNULL(Track.[PC_Treatment_Indicator],'') <> ISNULL(ETG.[PC_Treatment_Indicator],'')OR Track.[PC_Treatment_Indicator_Previous] IS NULL  THEN ETG.[PC_Treatment_Indicator]  ELSE Track.[PC_Treatment_Indicator_Previous] END,
+Track.[PC_Attribution_Previous] = CASE WHEN ISNULL(Track.[PC_Attribution],'') <> ISNULL(ETG.[PC_Attribution],'') OR Track.[PC_Attribution_Previous] IS NULL THEN ETG.[PC_Attribution] ELSE Track.[PC_Attribution_Previous] END,
+Track.[PC_Change_Comments_Previous] = CASE WHEN ISNULL(Track.[PC_Change_Comments],'') NOT LIKE ISNULL(ETG.[PC_Change_Comments],'') OR Track.[PC_Change_Comments_Previous] IS NULL  THEN ETG.[PC_Change_Comments] ELSE Track.[PC_Change_Comments_Previous] END,
+Track.[Patient_Centric_Mapping_Previous] = CASE WHEN ISNULL(Track.[Patient_Centric_Mapping],'') <> ISNULL(ETG.[Patient_Centric_Mapping],'') OR Track.[Patient_Centric_Mapping_Previous] IS NULL   THEN ETG.[Patient_Centric_Mapping]  ELSE Track.[Patient_Centric_Mapping_Previous] END,
+Track.[EC_Mapping_Previous] = CASE WHEN ISNULL(Track.[EC_Mapping],'') <> ISNULL(ETG.[EC_Mapping],'') OR Track.[EC_Mapping_Previous] IS NULL  THEN ETG.[EC_Mapping]  ELSE Track.[EC_Mapping_Previous] END,
+Track.[EC_Treatment_Indicator_Previous] = CASE WHEN ISNULL(Track.[EC_Treatment_Indicator],'') <> ISNULL(ETG.[EC_Treatment_Indicator],'') OR Track.[EC_Treatment_Indicator_Previous] IS NULL  THEN ETG.[EC_Treatment_Indicator]  ELSE  Track.[EC_Treatment_Indicator_Previous] END,
+Track.[EC_Change_Comments_Previous] = CASE WHEN ISNULL(Track.[EC_Change_Comments],'') NOT LIKE ISNULL(ETG.[EC_Change_Comments],'') OR Track.[EC_Change_Comments_Previous] IS NULL   THEN ETG.[EC_Change_Comments]   ELSE Track.[EC_Change_Comments_Previous] END,
+Track.[Patient_Centric_Change_Comments_Previous] = CASE WHEN ISNULL(Track.[Patient_Centric_Change_Comments],'') NOT LIKE ISNULL(ETG.[Patient_Centric_Change_Comments],'') OR Track.[Patient_Centric_Change_Comments_Previous] IS NULL THEN ETG.[Patient_Centric_Change_Comments]  ELSE  Track.[Patient_Centric_Change_Comments_Previous] END
 FROM [etgsymm].[ETG_Fact_Symmetry_Update_Tracker] Track
 INNER JOIN 
 [etgsymm].[ETG_Fact_Symmetry] ETG

@@ -1,9 +1,13 @@
 ﻿
+using ActiveDirectoryLibrary;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DocumentFormat.OpenXml.Office2010.Excel;
+using SharedFunctionsLibrary;
 using System.ComponentModel;
 using VCPortal_Models.Dtos.ChemoPx;
 using VCPortal_Models.Dtos.ETGFactSymmetry;
+using VCPortal_Models.Models.ActiveDirectory;
+using VCPortal_Models.Shared;
 using VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
 using VCPortal_WPF_ViewModel.Shared;
 
@@ -254,8 +258,12 @@ public partial class ETGFactSymmetryViewModel : ObservableObject
         var etg = SharedETGSymmObjects.ETGFactSymmetry_Tracking_List.FirstOrDefault(x => x.ETG_Fact_Symmetry_id == _etg.ETG_Fact_Symmetry_Id);
         if (etg == null)
         {
-            etg = new ETGFactSymmetry_Tracking_UpdateDto();
-            etg.ETG_Fact_Symmetry_id = _etg.ETG_Fact_Symmetry_Id;
+            //etg = new ETGFactSymmetry_Tracking_UpdateDto();
+            // etg.ETG_Fact_Symmetry_id = _etg.ETG_Fact_Symmetry_Id;
+            etg = AutoMapping<ETGFactSymmetry_ReadDto, ETGFactSymmetry_Tracking_UpdateDto>.Map(_etg);
+            //VCAutoMapper.AutoMapUserAccess<ETGFactSymmetry_ReadDto, ETGFactSymmetry_Tracking_UpdateDto>(_etg);
+
+            //etg = _etg;
             SharedETGSymmObjects.ETGFactSymmetry_Tracking_List.Add(etg);
         }
 

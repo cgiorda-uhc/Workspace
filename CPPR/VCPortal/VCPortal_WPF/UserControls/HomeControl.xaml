@@ -45,7 +45,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="10"/>
         </Grid.RowDefinitions>
-        <TextBlock DataContext="{Binding UserMessageViewModel}" Text="{Binding Message}" FontWeight="ExtraBold"  Grid.Row="1" Grid.Column="1" >
+        <TextBlock DataContext="{Binding UserMessageViewModel}" Text="{Binding Message}" Grid.Row="1" Grid.Column="1" >
             <TextBlock.Style>
                 <Style TargetType="TextBlock">
                     <!-- Set the default value here (if any). 

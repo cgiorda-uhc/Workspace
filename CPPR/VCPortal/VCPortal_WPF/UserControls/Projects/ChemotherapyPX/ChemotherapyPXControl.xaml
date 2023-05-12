@@ -98,7 +98,7 @@
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" FontSize="19" Background="LightGray" FontFamily="Verdana"  FontWeight="ExtraBold" Text="Chemotherapy PX"></TextBlock>
             <!--<TextBlock DataContext="{Binding UserMessageViewModel}" Foreground="{Binding MessageColor}" Text="{Binding Message}" FontWeight="ExtraBold"  Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="3" ></TextBlock>-->
-            <TextBlock DataContext="{Binding UserMessageViewModel}" Text="{Binding Message}" FontFamily="Verdana" FontWeight="Bold"  Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="3" >
+            <TextBlock DataContext="{Binding UserMessageViewModel}" Text="{Binding Message}"  Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="3" >
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
                         <!-- Set the default value here (if any). 
