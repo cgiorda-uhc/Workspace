@@ -26,11 +26,19 @@ public partial class ChemotherapyPXViewModel : ObservableObject
         {
 
             if (value == null)
+            {
                 return;
-
+            }
 
             if (value.Contains("-"))
             {
+
+                //ONLY NEW ROWS CAN SET A CODE
+                if (_chmpx.Id != null)
+                {
+                    return;
+                }
+
                 _code = value.Split('-')[0].Trim();
                 var proc = SharedObjects.ProcCodes.Where(x => x.Proc_Cd == _code).FirstOrDefault();
 
