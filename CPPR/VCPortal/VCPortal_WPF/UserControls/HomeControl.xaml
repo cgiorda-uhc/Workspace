@@ -61,19 +61,25 @@
             </TextBlock.Style>
         </TextBlock>
 
-        <TextBlock VerticalAlignment="Center" Height="40" Padding="10" FontFamily="Verdana" Text="Value Creation Portal Home" FontWeight="ExtraBold"  Grid.Row="2" Grid.Column="1" Background="LightSkyBlue" />
+        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Left"   FontFamily="Verdana" Text="Value Creation Portal" FontWeight="ExtraBold"  Grid.Row="2" Grid.Column="1" />
 
-       
 
-        <TextBlock VerticalAlignment="Center" Height="30" FontFamily="Verdana" Padding="20 3 0 10" Text="Current User" Margin="0 0 0 -17"  Grid.Row="3" Grid.Column="1" Background="CornflowerBlue" />
+
+        <TextBlock VerticalAlignment="Center" Height="30" FontFamily="Verdana" Padding="20 3 0 10" TextAlignment="Center"  Text="Current User" Margin="0 0 0 -17"  Grid.Row="3" Grid.Column="1" Background="CornflowerBlue" />
 
         <telerik:RadDataForm Background="LightBlue" x:Name="RadDataFormUser" CommandButtonsVisibility="None" VerticalAlignment="Top" Grid.Row="4" Grid.Column="1" CurrentItem="{Binding Path=CurrentUser}" AutoGenerateFields="False"  ReadOnlyTemplate="{StaticResource FormTemplate}">
         </telerik:RadDataForm>
 
 
-        <TextBlock VerticalAlignment="Center" Height="30" FontFamily="Verdana" Padding="20 3 0 10" Text="Current Access" Margin="0 0 0 0"  Grid.Row="5" Grid.Column="1" Background="CornflowerBlue" />
+        <TextBlock VerticalAlignment="Center" Height="30" FontFamily="Verdana" Padding="20 3 0 10" TextAlignment="Center" Text="Current Access" Margin="0 0 0 -17" Grid.Row="5" Grid.Column="1" Background="CornflowerBlue" />
 
-
+        <ItemsControl Background="LightBlue"  Height="123" ItemsSource="{Binding CurrentAccess}" VerticalAlignment="Top" Grid.Row="6" Grid.Column="1" >
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" Padding="7 10 0 7"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
 
 
     </Grid>

@@ -3,11 +3,14 @@ using FileParsingLibrary.MSExcel;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using VCPortal_Models.Configuration.HeaderInterfaces.Abstract;
 using VCPortal_Models.Models.ActiveDirectory;
+using VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
+using VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;
 using VCPortal_WPF_ViewModel.Shared;
 
 namespace VCPortal_WPF_ViewModel.Projects.Home;
@@ -22,6 +25,9 @@ public partial class HomeViewModel : ObservableObject
 
     [ObservableProperty]
     private UserAccessModel currentUser;
+
+    [ObservableProperty]
+    private List<string> currentAccess;
 
     public HomeViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
     {
@@ -38,7 +44,21 @@ public partial class HomeViewModel : ObservableObject
             _logger.Error("Authenitcation Failed  for {CurrentUser}", Authentication.UserName);
         }
 
-        currentUser = Authentication.CurrentUser;
+        CurrentUser = Authentication.CurrentUser;
+        currentAccess = new List<string>();
+        var groups = CurrentUser.Groups.ToList();
+
+        if (groups.Contains("ms\\chemopx", StringComparer.OrdinalIgnoreCase))
+        {
+            currentAccess.Add("MS\\ChemoPX");
+        }
+
+        if (groups.Contains("ms\\etgsymm", StringComparer.OrdinalIgnoreCase))
+        {
+            currentAccess.Add("MS\\ETGSymm");
+        }
+
+
 
     }
 }
