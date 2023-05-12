@@ -34,8 +34,15 @@ public partial class App : Application
         var appsettings = "appsettings.json";
 
         var configuration = new ConfigurationBuilder().AddJsonFile(appsettings).AddEnvironmentVariables().Build();
+
         logger = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
         logger.Information("Starting up VC Portal...");
+
+
+        logger.Information("Authicating user...");
+        getAuthentication(configuration);
+
+
         AppHost = Host.CreateDefaultBuilder()
             .UseSerilog()
                 .ConfigureAppConfiguration((context, builder) =>
@@ -51,8 +58,6 @@ public partial class App : Application
 
                 }).Build();
 
-        logger.Information("Authicating user...");
-        getAuthentication(configuration);
 
 
     }

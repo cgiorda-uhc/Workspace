@@ -30,7 +30,7 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
     public Task<IEnumerable<ETGFactSymmetry_ReadDto>> GetETGFactSymmetryDisplayAsync(CancellationToken token)
     {
 
-        string strSQL = "SELECT * FROM [dbo].[VW_ETG_Symmetry_Main_Interface] ORDER BY Premium_Specialty, ETG_Description;";
+        string strSQL = "SELECT * FROM [etgsymm].[VW_ETG_Symmetry_Main_Interface] ORDER BY Premium_Specialty, ETG_Description;";
 
         var results = _db.LoadData<ETGFactSymmetry_ReadDto>(sql: strSQL, token, connectionId: "VCT_DB");
 
@@ -42,7 +42,7 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
     public Task<IEnumerable<ETGFactSymmetry_Tracking_ReadDto>> GetETGTrackingAsync(CancellationToken token)
     {
 
-        string strSQL = "SELECT * FROM [dbo].[vw_GetETGSymmetryTracking] v ORDER BY  v.Tracker_Id;";
+        string strSQL = "SELECT * FROM [etgsymm].[vw_GetETGSymmetryTracking] v ORDER BY  v.Tracker_Id;";
 
         var results = _db.LoadData<ETGFactSymmetry_Tracking_ReadDto>(sql: strSQL, token, connectionId: "VCT_DB");
 
@@ -53,7 +53,7 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
     public Task<IEnumerable<ETGPatientCentricConfig>> GetETGPatientCentricConfigAsync(CancellationToken token)
     {
 
-        string strSQL = "SELECT * FROM [dbo].[VW_ETG_Symmetry_PATIENT_CENTRIC_CONFIG] v ORDER BY  v.[Base_ETG],v.[Premium_Specialty];";
+        string strSQL = "SELECT * FROM [etgsymm].[VW_ETG_Symmetry_PATIENT_CENTRIC_CONFIG] v ORDER BY  v.[Base_ETG],v.[Premium_Specialty];";
 
         var results = _db.LoadData<ETGPatientCentricConfig>(sql: strSQL, token, connectionId: "VCT_DB");
 
@@ -63,7 +63,7 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
     public Task<IEnumerable<ETGPopEpisodeConfig>> GetETGPopEpisodeConfigAsync(CancellationToken token)
     {
 
-        string strSQL = "SELECT * FROM [dbo].[VW_ETG_Symmetry_POP_EPISODE_CONFIG] v  ORDER BY  v.[Base_ETG],v.[Premium_Specialty];";
+        string strSQL = "SELECT * FROM [etgsymm].[VW_ETG_Symmetry_POP_EPISODE_CONFIG] v  ORDER BY  v.[Base_ETG],v.[Premium_Specialty];";
 
         var results = _db.LoadData<ETGPopEpisodeConfig>(sql: strSQL, token, connectionId: "VCT_DB");
 
@@ -74,7 +74,7 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
     public Task<IEnumerable<ETGRxNrxConfig>> GetETGRxNrxConfigAsync(CancellationToken token)
     {
 
-        string strSQL = "SELECT * FROM [dbo].[VW_ETG_Symmetry_RX_NRX_CONFIG] v  ORDER BY  v.[Base_ETG],v.[Premium_Specialty];";
+        string strSQL = "SELECT * FROM [etgsymm].[VW_ETG_Symmetry_RX_NRX_CONFIG] v  ORDER BY  v.[Base_ETG],v.[Premium_Specialty];";
 
         var results = _db.LoadData<ETGRxNrxConfig>(sql: strSQL, token, connectionId: "VCT_DB");
 
@@ -86,13 +86,13 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
     public async Task InsertETGFactSymmetryTracking(List<ETGFactSymmetry_Tracking_UpdateDto> ETG, string connectionId)
     {
         string[] columns = typeof(ETGFactSymmetry_Tracking_UpdateDto).GetProperties().Select(p => p.Name).ToArray();
-        await _db.BulkSave<ETGFactSymmetry_Tracking_UpdateDto>("dbo.ETG_Fact_Symmetry_Update_Tracker", ETG, columns, connectionId : connectionId);
+        await _db.BulkSave<ETGFactSymmetry_Tracking_UpdateDto>("etgsymm.ETG_Fact_Symmetry_Update_Tracker", ETG, columns, connectionId : connectionId);
 
         var param = ETG.FirstOrDefault();
         var update_date = param.update_date;
         var username = param.username;
 
-        await _db.SaveData<dynamic>(storedProcedure: "dbo.sp_ETGFactSymmetry_BulkUpdate", new
+        await _db.SaveData<dynamic>(storedProcedure: "etgsymm.sp_ETGFactSymmetry_BulkUpdate", new
         {
             username,
             update_date
@@ -103,7 +103,7 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
 
 
     public Task UpdateETGFactSymmetry(ETGFactSymmetry_UpdateDto etg) =>
-        _db.SaveData<dynamic>(storedProcedure: "dbo.sp_ETGSymmetry_Update", new
+        _db.SaveData<dynamic>(storedProcedure: "etgsymm.sp_ETGSymmetry_Update", new
         {
             etg.ETG_Fact_Symmetry_id,
             etg.Current_Patient_Centric_Mapping,

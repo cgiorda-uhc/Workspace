@@ -16,7 +16,7 @@ using VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;
 using VCPortal_WPF_ViewModel.Shared;
 
 namespace VCPortal_WPF_ViewModel.Projects.MHP;
-public partial class MHPViewModel : ObservableObject, ViewModelBase
+public partial class MHPViewModel : ObservableObject
 {
     private readonly IExcelFunctions _excelFunctions;
     private readonly IETGFactSymmetryConfig? _config;
@@ -38,7 +38,7 @@ public partial class MHPViewModel : ObservableObject, ViewModelBase
     {
         _excelFunctions = excelFunctions;
         //_config = prepareConfig(config);
-        IsModalOpen = false;
+
 
         populateFilters();
 
@@ -47,40 +47,22 @@ public partial class MHPViewModel : ObservableObject, ViewModelBase
 
     private async Task populateFilters()
     {
-        WebAPIConsume.BaseURI = "https://localhost:7129";
-        var response = WebAPIConsume.GetCall("/mhpstates");
-        if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            var reponseStream = await response.Result.Content.ReadAsStreamAsync();
-            var result = await JsonSerializer.DeserializeAsync<List<string>>(reponseStream, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
-            States = new ObservableCollection<string>();
-            result.ForEach(x => { States.Add(x); });
+        //WebAPIConsume.BaseURI = "https://localhost:7129";
+        //var response = WebAPIConsume.GetCall("/mhpstates");
+        //if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
+        //{
+        //    var reponseStream = await response.Result.Content.ReadAsStreamAsync();
+        //    var result = await JsonSerializer.DeserializeAsync<List<string>>(reponseStream, new JsonSerializerOptions
+        //    {
+        //        PropertyNameCaseInsensitive = true
+        //    });
+        //    States = new ObservableCollection<string>();
+        //    result.ForEach(x => { States.Add(x); });
 
-            //States = result;
-        }
+        //    //States = result;
+        //}
     }
 
 
-    bool disposed;
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!disposed)
-        {
-            if (disposing)
-            {
-                //dispose managed resources
-            }
-        }
-        //dispose unmanaged resources
-        disposed = true;
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
+   
 }

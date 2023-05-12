@@ -128,7 +128,7 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
     [RelayCommand]
     private async Task ExportConfigsCall()
     {
-
+        UserMessageViewModel.Message = "";
         Mouse.OverrideCursor = Cursors.Wait;
         await Task.Run(() => worker.RunWorkerAsync("ExportConfigs"));
         Mouse.OverrideCursor = null;

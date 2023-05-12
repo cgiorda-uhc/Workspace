@@ -141,7 +141,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
     private async Task ExportDataCall()
     {
         //ProgressMessageViewModel.HasMessage = true;
-
+        UserMessageViewModel.Message = "";
         Mouse.OverrideCursor = Cursors.Wait;
         await Task.Run(() => worker.RunWorkerAsync("ExportData"));
         Mouse.OverrideCursor = null;
@@ -324,7 +324,6 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
         try
         {
 
-            UserMessageViewModel.Message = "";
             OC_ChemotherapyPXViewModel.Clear();
 
             _logger.Information("Running getChemotherapyPXData() for {CurrentUser}...", Authentication.UserName);
@@ -373,6 +372,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
             {
                 UserMessageViewModel.IsError = true;
                 UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                await Task.Delay(TimeSpan.FromSeconds(1));
                 _logger.Error("getChemotherapyPXData threw an error for {CurrentUser}..." + response.Result.StatusCode.ToString(), Authentication.UserName);
             }
 
@@ -382,6 +382,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
         {
             UserMessageViewModel.IsError = true;
             UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            await Task.Delay(TimeSpan.FromSeconds(1));
             _logger.Fatal(ex, "getChemotherapyPXData.WebAPIConsume.GetCall threw an error for {CurrentUser}", Authentication.UserName);
         }
         finally

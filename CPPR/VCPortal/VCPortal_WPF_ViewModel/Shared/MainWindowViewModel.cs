@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using DocumentFormat.OpenXml.Spreadsheet;
 using FileParsingLibrary.MSExcel;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -35,6 +36,8 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
         CurrentViewModel = Activator.CreateInstance(typeof(HomeViewModel), _config, _excelFunctions, _logger);
 
+        populateNavigation();
+
         //if (header == "ETG Fact Symmetry")
         //{
         //    currentViewModel = new ETGFactSymmetryListingViewModel(config, excelFunctions, logger);
@@ -49,16 +52,43 @@ public class MainWindowViewModel : INotifyPropertyChanged
         //}
     }
 
-    public ObservableCollection<TypeAndDisplay> NavigationViewModelTypes { get; set; } = new ObservableCollection<TypeAndDisplay>
-    (
-        new List<TypeAndDisplay>
+
+
+
+    public ObservableCollection<TypeAndDisplay> NavigationViewModelTypes { get; set; }
+    //public ObservableCollection<TypeAndDisplay> NavigationViewModelTypes { get; set; } = new ObservableCollection<TypeAndDisplay>
+    //(
+
+    //    new List<TypeAndDisplay>
+    //    {
+    //        new TypeAndDisplay{ Name="Chemotherapy PX", VMType= typeof(ChemotherapyPXListingViewModel) },
+    //         new TypeAndDisplay{ Name="ETG Fact Symmetry", VMType= typeof(ETGFactSymmetryListingViewModel) },
+    //         new TypeAndDisplay{ Name="EBM Mapping" },
+    //         new TypeAndDisplay{ Name="PEG Mapping" }
+    //    }
+
+
+
+    //);
+
+    private void populateNavigation()
+    {
+        var groups = Authentication.CurrentUser.Groups.ToList();
+
+        NavigationViewModelTypes = new ObservableCollection<TypeAndDisplay>();
+        if(groups.Contains("ChemoPX", StringComparer.OrdinalIgnoreCase))
         {
-            new TypeAndDisplay{ Name="Chemotherapy PX", VMType= typeof(ChemotherapyPXListingViewModel) },
-             new TypeAndDisplay{ Name="ETG Fact Symmetry", VMType= typeof(ETGFactSymmetryListingViewModel) },
-             new TypeAndDisplay{ Name="EBM Mapping" },
-             new TypeAndDisplay{ Name="PEG Mapping" }
+            NavigationViewModelTypes.Add(new TypeAndDisplay { Name = "Chemotherapy PX", VMType = typeof(ChemotherapyPXListingViewModel) });
         }
-    );
+
+        if (groups.Contains("ETGSymm", StringComparer.OrdinalIgnoreCase))
+        {
+            NavigationViewModelTypes.Add(new TypeAndDisplay { Name = "ETG Fact Symmetry", VMType = typeof(ETGFactSymmetryListingViewModel) });
+        }
+
+        NavigationViewModelTypes.Add(new TypeAndDisplay { Name = "EBM Mapping" });
+        NavigationViewModelTypes.Add( new TypeAndDisplay { Name = "PEG Mapping" });
+    }
 
 
     public ObservableCollection<TypeAndDisplay> NavigationViewModelTypesReports { get; set; } = new ObservableCollection<TypeAndDisplay>

@@ -1,5 +1,11 @@
-﻿--ETG LOADS
-IF NOT EXISTS (SELECT 1 from  [vct].[ETG_Dim_Master])
+﻿
+--ETG LOADS
+IF '$(ETGSymmRefresh)' = '1'
+BEGIN 
+    TRUNCATE TABLE  [vct].[ETG_Dim_Master]
+END
+
+IF NOT EXISTS (SELECT 1 from  [vct].[ETG_Dim_Master]) 
 BEGIN 
 INSERT INTO [vct].[ETG_Dim_Master]
            ([ETG_Base_Class]
@@ -12,8 +18,11 @@ SELECT  [ETG_Base_Class]
 END
 
 
-
-IF NOT EXISTS (SELECT 1 from  [vct].[ETG_Dim_Premium_Spec_Master])
+IF '$(ETGSymmRefresh)' = '1'
+BEGIN 
+    TRUNCATE TABLE  [vct].[ETG_Dim_Premium_Spec_Master]
+END
+IF NOT EXISTS (SELECT 1 from  [vct].[ETG_Dim_Premium_Spec_Master]) 
 BEGIN 
 INSERT INTO [vct].[ETG_Dim_Premium_Spec_Master]
            ([Premium_Specialty_id]
@@ -24,8 +33,11 @@ SELECT  [Premium_Specialty_id]
 END
 
 
-
-IF NOT EXISTS (SELECT 1 from  [etgsymm].[ETG_Fact_Symmetry])
+IF '$(ETGSymmRefresh)' = '1'
+BEGIN 
+    TRUNCATE TABLE  [etgsymm].[ETG_Fact_Symmetry]
+END
+IF NOT EXISTS (SELECT 1 from  [etgsymm].[ETG_Fact_Symmetry]) 
 BEGIN 
 INSERT INTO [etgsymm].[ETG_Fact_Symmetry]
            ([ETG_Fact_Symmetry_id]
@@ -123,8 +135,11 @@ INSERT INTO [etgsymm].[ETG_Fact_Symmetry]
   FROM [deploy].[ETG_Fact_Symmetry]
 END
 
+IF '$(ETGSymmRefresh)' = '1'
+BEGIN 
+    Truncate table [etgsymm].[ETG_Fact_Symmetry_Update_Tracker];
+END
 
-Truncate table [etgsymm].[ETG_Fact_Symmetry_Update_Tracker];
 
 
 
@@ -132,15 +147,22 @@ Truncate table [etgsymm].[ETG_Fact_Symmetry_Update_Tracker];
 
 
 --CHEMO PX LOADS
-IF NOT EXISTS (SELECT 1 from  [vct].[Proc_Codes])
+IF '$(ChemoPXRefresh)' = '1'
+BEGIN 
+    TRUNCATE TABLE  [etgsymm].[ETG_Fact_Symmetry]
+END
+IF NOT EXISTS (SELECT 1 from  [vct].[Proc_Codes]) OR '$(ChemoPXRefresh)' = '1'
 BEGIN 
 INSERT INTO [vct].[Proc_Codes] ( [Proc_Cd], [Proc_Desc],[Proc_Cd_Type], [Proc_Cd_Date]) 
 SELECT [PROC_CD],[PROC_DESC],[PROC_CD_Type], [Proc_CD_Date]  FROM [deploy].[Proc_Codes]
 END
 
 
-
-IF NOT EXISTS (SELECT 1 from  [chemopx].[Code_Category])
+IF '$(ChemoPXRefresh)' = '1'
+BEGIN 
+    TRUNCATE TABLE  [chemopx].[Code_Category]
+END
+IF NOT EXISTS (SELECT 1 from  [chemopx].[Code_Category]) 
 BEGIN 
 	INSERT INTO [chemopx].[Code_Category] ( [Code_Category]) 
 	SELECT DISTINCT Code_Category  FROM [deploy].[ChemotherapyPXCodes]
@@ -161,8 +183,11 @@ BEGIN
 	--('PROTECTIVE AND SUPPORTIVE CARE')
 END
 
-
-IF NOT EXISTS (SELECT 1 from  [chemopx].[ASP_Category])
+IF '$(ChemoPXRefresh)' = '1'
+BEGIN 
+    TRUNCATE TABLE [chemopx].[ASP_Category]
+END
+IF NOT EXISTS (SELECT 1 from  [chemopx].[ASP_Category]) 
 BEGIN 
 	INSERT INTO [chemopx].[ASP_Category] ( [ASP_Category]) 
 	SELECT DISTINCT ASP_Category  FROM [deploy].[ChemotherapyPXCodes]
@@ -173,7 +198,10 @@ BEGIN
 END
 
 
-
+IF '$(ChemoPXRefresh)' = '1'
+BEGIN 
+    TRUNCATE TABLE  [chemopx].[Drug_Adm_Mode]
+END
 IF NOT EXISTS (SELECT 1 from  [chemopx].[Drug_Adm_Mode])
 BEGIN 
 	INSERT INTO [chemopx].[Drug_Adm_Mode] ( [DRUG_ADM_MODE]) 
@@ -187,7 +215,11 @@ BEGIN
 
 END
 
-IF NOT EXISTS (SELECT 1 from  [chemopx].[PA_Drugs])
+IF '$(ChemoPXRefresh)' = '1'
+BEGIN 
+    TRUNCATE TABLE  [chemopx].[PA_Drugs]
+END
+IF NOT EXISTS (SELECT 1 from  [chemopx].[PA_Drugs]) 
 BEGIN 
 	INSERT INTO [chemopx].[PA_Drugs] ( [PA_Drugs]) 
 	SELECT DISTINCT PA_Drugs  FROM [deploy].[ChemotherapyPXCodes]
@@ -201,8 +233,11 @@ BEGIN
 
 END
 
-
-IF NOT EXISTS (SELECT 1 from  [chemopx].[CEP_Pay_Cd])
+IF '$(ChemoPXRefresh)' = '1'
+BEGIN 
+    TRUNCATE TABLE  [chemopx].[CEP_Pay_Cd]
+END
+IF NOT EXISTS (SELECT 1 from  [chemopx].[CEP_Pay_Cd]) 
 BEGIN 
 	INSERT INTO [chemopx].[CEP_Pay_Cd] ( [CEP_Pay_Cd]) 
 	SELECT DISTINCT CEP_Pay_Cd  FROM [deploy].[ChemotherapyPXCodes]
@@ -213,8 +248,11 @@ BEGIN
 
 END
 
-
-IF NOT EXISTS (SELECT 1 from  [chemopx].[CEP_Enroll_Cd])
+IF '$(ChemoPXRefresh)' = '1'
+BEGIN 
+    TRUNCATE TABLE  [chemopx].[CEP_Enroll_Cd]
+END
+IF NOT EXISTS (SELECT 1 from  [chemopx].[CEP_Enroll_Cd]) 
 BEGIN 
 	INSERT INTO [chemopx].[CEP_Enroll_Cd] ( [CEP_Enroll_Cd]) 
 	SELECT DISTINCT CEP_Enroll_Cd FROM [deploy].[ChemotherapyPXCodes]
@@ -226,7 +264,10 @@ BEGIN
 
 END
 
-
+IF '$(ChemoPXRefresh)' = '1'
+BEGIN 
+    TRUNCATE TABLE  [chemopx].[ChemotherapyPX]
+END
 IF NOT EXISTS (SELECT 1 from  [chemopx].[ChemotherapyPX])
 BEGIN 
 INSERT INTO [chemopx].[ChemotherapyPX] ( [CODE], [CODE_DESC], [GENERIC_NAME], [TRADE_NAME], [CKPT_INHIB_IND], [ANTI_EMETIC_IND], [CODE_TYPE], [CODE_EFF_DT], [CODE_END_DT], [NHNR_CANCER_THERAPY], [CODE_CATEGORY_ID],[ASP_CATEGORY_ID],[DRUG_ADM_MODE_ID], [PA_DRUGS_ID] ,[PA_EFF_DT], [PA_END_DT], [CEP_PAY_CD_ID],[CEP_ENROLL_CD_ID], [CEP_ENROLL_EXCL_DESC], [NOVEL_STATUS_IND], [FIRST_NOVEL_MNTH], [SOURCE],[UPDATE_DT]) 
@@ -234,6 +275,9 @@ INSERT INTO [chemopx].[ChemotherapyPX] ( [CODE], [CODE_DESC], [GENERIC_NAME], [T
 SELECT px.[CODE], px.[CODE_DESC], px.[GENERIC_NAME], px.[TRADE_NAME], CASE WHEN px.[CKPT_INHIB_IND] = 'Y' THEN 1 ELSE 0 END, CASE WHEN px.[ANTI_EMETIC_IND] = 'Y' THEN 1 ELSE 0 END, px.[CODE_TYPE], px.[CODE_EFF_DT], px.[CODE_END_DT], CASE WHEN px.[NHNR_CANCER_THERAPY] = 'Y' THEN 1 ELSE 0 END, cc.[CODE_CATEGORY_ID],  asp.[ASP_CATEGORY_ID], da.[DRUG_ADM_MODE_ID],  pa.[PA_DRUGS_ID], px.[PA_EFF_DT], px.[PA_END_DT], cp.[CEP_PAY_CD_ID],  ce.[CEP_ENROLL_CD_ID], px.[CEP_ENROLL_EXCL_DESC], CASE WHEN px.[NOVEL_STATUS_IND] = 'Y' THEN 1 ELSE 0 END, px.[FIRST_NOVEL_MNTH], px.[SOURCE], px.[UPDATE_DT] FROM [deploy].[ChemotherapyPXCodes] px LEFT JOIN [chemopx].[Code_Category] cc ON cc.Code_Category = px.CODE_CATEGORY LEFT JOIN [chemopx].[ASP_Category] asp ON asp.ASP_CATEGORY = px.[ASP_CATEGORY] LEFT JOIN [chemopx].[Drug_Adm_Mode] da ON da.DRUG_ADM_MODE = px.[DRUG_ADM_MODE] LEFT JOIN [chemopx].[PA_Drugs] pa ON pa.PA_DRUGS = px.[PA_DRUGS] LEFT JOIN [chemopx].[CEP_Pay_Cd] cp ON cp.CEP_PAY_CD = px.[CEP_PAY_CD] LEFT JOIN [chemopx].[CEP_Enroll_Cd] ce ON ce.CEP_Enroll_Cd = px.[CEP_ENROLL_CD]
 END
 
+IF '$(ChemoPXRefresh)' = '1'
+BEGIN 
+    Truncate table [chemopx].[ChemotherapyPX_Tracking];
+END
 
-Truncate table [chemopx].[ChemotherapyPX_Tracking];
 

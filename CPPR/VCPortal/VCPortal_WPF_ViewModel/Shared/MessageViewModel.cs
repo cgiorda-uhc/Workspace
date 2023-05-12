@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace VCPortal_WPF_ViewModel.Shared;
-public partial class MessageViewModel : ObservableObject, ViewModelBase
+public partial class MessageViewModel : ObservableObject
 {
 
 
@@ -20,8 +20,5 @@ public partial class MessageViewModel : ObservableObject, ViewModelBase
     [ObservableProperty]
     private bool isError;
 
-    public void Dispose()
-    {
-        throw new NotImplementedException();
-    }
+   
 }

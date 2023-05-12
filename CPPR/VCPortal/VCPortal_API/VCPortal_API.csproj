@@ -22,7 +22,6 @@
     <ProjectReference Include="..\..\ActiveDirectoryLibrary\ActiveDirectoryLibrary.csproj" />
     <ProjectReference Include="..\..\DataAccessLibrary\DataAccessLibrary.csproj" />
     <ProjectReference Include="..\VCPortal_Models\VCPortal_Models.csproj" />
-    <ProjectReference Include="..\VCPortal_Shared\VCPortal_Shared.csproj" />
   </ItemGroup>
 
 </Project>
