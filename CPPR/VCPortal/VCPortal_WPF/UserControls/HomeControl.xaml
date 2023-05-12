@@ -5,14 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VCPortal_WPF.UserControls" xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800" Background="LightGray">
     <Grid>
 
         <Grid.Resources>
             <DataTemplate x:Key="FormTemplate">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -21,12 +20,11 @@
                         <RowDefinition/>
                         <RowDefinition/>
                         <RowDefinition/>
-                        <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <telerik:DataFormDataField Grid.Row="4" Grid.Column="1" Label="First Name" DataMemberBinding="{Binding FirstName, Mode=TwoWay}" />
-                    <telerik:DataFormDataField Grid.Row="5" Grid.Column="1" Label="Last Name" DataMemberBinding="{Binding LastName, Mode=TwoWay}" />
-                    <telerik:DataFormDataField Grid.Row="6" Grid.Column="1" Label="Login Name" DataMemberBinding="{Binding LoginName, Mode=TwoWay}" />
-                    <telerik:DataFormDataField Grid.Row="7" Grid.Column="1" Label="Email Address" DataMemberBinding="{Binding EmailAddress, Mode=TwoWay}" />
+                    <telerik:DataFormDataField Grid.Row="1" Grid.Column="1" Label="First Name" DataMemberBinding="{Binding FirstName, Mode=TwoWay}" />
+                    <telerik:DataFormDataField Grid.Row="2" Grid.Column="1" Label="Last Name" DataMemberBinding="{Binding LastName, Mode=TwoWay}" />
+                    <telerik:DataFormDataField Grid.Row="3" Grid.Column="1" Label="Login Name" DataMemberBinding="{Binding LoginName, Mode=TwoWay}" />
+                    <telerik:DataFormDataField Grid.Row="4" Grid.Column="1" Label="Email Address" DataMemberBinding="{Binding EmailAddress, Mode=TwoWay}" />
                 </Grid>
             </DataTemplate>
         </Grid.Resources>
@@ -40,6 +38,10 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="10"/>
             <RowDefinition Height="20"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="170"/>
+            <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="10"/>
         </Grid.RowDefinitions>
@@ -59,10 +61,19 @@
             </TextBlock.Style>
         </TextBlock>
 
-        <TextBlock  Text="Value Creation Assistant Home" FontWeight="ExtraBold"  Grid.Row="2" Grid.Column="1" />
+        <TextBlock VerticalAlignment="Center" Height="40" Padding="10" FontFamily="Verdana" Text="Value Creation Portal Home" FontWeight="ExtraBold"  Grid.Row="2" Grid.Column="1" Background="LightSkyBlue" />
 
-        <telerik:RadDataForm x:Name="RadDataForm1" Grid.Row="3" Grid.Column="1" CurrentItem="{Binding Path=CurrentUser}" AutoGenerateFields="False"  ReadOnlyTemplate="{StaticResource FormTemplate}">
+       
+
+        <TextBlock VerticalAlignment="Center" Height="30" FontFamily="Verdana" Padding="20 3 0 10" Text="Current User" Margin="0 0 0 -17"  Grid.Row="3" Grid.Column="1" Background="CornflowerBlue" />
+
+        <telerik:RadDataForm Background="LightBlue" x:Name="RadDataFormUser" CommandButtonsVisibility="None" VerticalAlignment="Top" Grid.Row="4" Grid.Column="1" CurrentItem="{Binding Path=CurrentUser}" AutoGenerateFields="False"  ReadOnlyTemplate="{StaticResource FormTemplate}">
         </telerik:RadDataForm>
+
+
+        <TextBlock VerticalAlignment="Center" Height="30" FontFamily="Verdana" Padding="20 3 0 10" Text="Current Access" Margin="0 0 0 0"  Grid.Row="5" Grid.Column="1" Background="CornflowerBlue" />
+
+
 
 
     </Grid>
