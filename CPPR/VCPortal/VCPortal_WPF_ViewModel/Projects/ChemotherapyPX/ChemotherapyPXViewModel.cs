@@ -24,7 +24,6 @@ public partial class ChemotherapyPXViewModel : ObservableObject
         }
         set
         {
-
             if (value == null)
             {
                 return;

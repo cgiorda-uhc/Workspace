@@ -3,10 +3,35 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:VCPortal_WPF.UserControls"
+             xmlns:local="clr-namespace:VCPortal_WPF.UserControls" xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
+
+        <Grid.Resources>
+            <DataTemplate x:Key="FormTemplate">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <telerik:DataFormDataField Grid.Row="4" Grid.Column="1" Label="First Name" DataMemberBinding="{Binding FirstName, Mode=TwoWay}" />
+                    <telerik:DataFormDataField Grid.Row="5" Grid.Column="1" Label="Last Name" DataMemberBinding="{Binding LastName, Mode=TwoWay}" />
+                    <telerik:DataFormDataField Grid.Row="6" Grid.Column="1" Label="Login Name" DataMemberBinding="{Binding LoginName, Mode=TwoWay}" />
+                    <telerik:DataFormDataField Grid.Row="7" Grid.Column="1" Label="Email Address" DataMemberBinding="{Binding EmailAddress, Mode=TwoWay}" />
+                </Grid>
+            </DataTemplate>
+        </Grid.Resources>
+
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10"/>
             <ColumnDefinition Width="*"/>
@@ -33,20 +58,12 @@
                 </Style>
             </TextBlock.Style>
         </TextBlock>
-        <FlowDocumentReader Grid.Column="1" Grid.Row="2">
-            <FlowDocument>
-                <Paragraph FontSize="20" FontWeight="Bold">Value Creation Assistant Home</Paragraph>
-                <Section>
-                    <Paragraph FontSize="18">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</Paragraph>
-                    <Section>
-                        <Paragraph FontSize="16">Lorem ipsum...</Paragraph>
-                    </Section>
-                </Section>
-                <Section>
-                    <Paragraph FontSize="20">Lorem ipsum...</Paragraph>
-                </Section>
-            </FlowDocument>
-            </FlowDocumentReader>
+
+        <TextBlock  Text="Value Creation Assistant Home" FontWeight="ExtraBold"  Grid.Row="2" Grid.Column="1" />
+
+        <telerik:RadDataForm x:Name="RadDataForm1" Grid.Row="3" Grid.Column="1" CurrentItem="{Binding Path=CurrentUser}" AutoGenerateFields="False"  ReadOnlyTemplate="{StaticResource FormTemplate}">
+        </telerik:RadDataForm>
+
 
     </Grid>
 </UserControl>
