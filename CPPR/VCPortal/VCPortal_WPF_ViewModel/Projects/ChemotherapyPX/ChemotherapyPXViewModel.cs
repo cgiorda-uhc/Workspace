@@ -533,57 +533,75 @@ public partial class ChemotherapyPXViewModel : ObservableObject
                 break;
             case "GENERIC_NAME":
                 chemo.GENERIC_NAME = newValue.ToString();
+                _chmpx.GENERIC_NAME = chemo.GENERIC_NAME;
                 break;
             case "TRADE_NAME":
                 chemo.TRADE_NAME = newValue.ToString();
+                _chmpx.TRADE_NAME = chemo.TRADE_NAME;
                 break;
             case "CKPT_INHIB_IND":
                 chemo.CKPT_INHIB_IND = newValue as bool?;
+                _chmpx.CKPT_INHIB_IND = chemo.CKPT_INHIB_IND;
                 break;
             case "ANTI_EMETIC_IND":
                 chemo.ANTI_EMETIC_IND = newValue as bool?;
+                _chmpx.ANTI_EMETIC_IND = chemo.ANTI_EMETIC_IND;
                 break;
             case "CODE_EFF_DT":
                 chemo.CODE_EFF_DT = newValue as DateTime?;
+                _chmpx.CODE_EFF_DT = chemo.CODE_EFF_DT;
                 break;
             case "NHNR_CANCER_THERAPY":
                 chemo.NHNR_CANCER_THERAPY = newValue as bool?;
+                _chmpx.NHNR_CANCER_THERAPY = chemo.NHNR_CANCER_THERAPY;
                 break;
             case "CODE_CATEGORY_ID":
                 chemo.CODE_CATEGORY_ID = newValue as short?;
+                _chmpx.CODE_CATEGORY_ID = chemo.CODE_CATEGORY_ID;
                 break;
             case "ASP_CATEGORY_ID":
                 chemo.ASP_CATEGORY_ID = newValue as short?;
+                _chmpx.ASP_CATEGORY_ID = chemo.ASP_CATEGORY_ID;
                 break;
             case "DRUG_ADM_MODE_ID":
                 chemo.DRUG_ADM_MODE_ID = newValue as short?;
+                _chmpx.DRUG_ADM_MODE_ID = chemo.DRUG_ADM_MODE_ID;
                 break;
             case "PA_DRUGS_ID":
                 chemo.PA_DRUGS_ID = newValue as short?;
+                _chmpx.PA_DRUGS_ID = chemo.PA_DRUGS_ID;
                 break;
             case "PA_EFF_DT":
                 chemo.PA_EFF_DT = newValue as DateTime?;
+                _chmpx.PA_EFF_DT = chemo.PA_EFF_DT;
                 break;
             case "PA_END_DT":
                 chemo.PA_END_DT = newValue as DateTime?;
+                _chmpx.PA_END_DT = chemo.PA_END_DT;
                 break;
             case "CEP_PAY_CD_ID":
                 chemo.CEP_PAY_CD_ID = newValue as short?;
+                _chmpx.CEP_PAY_CD_ID = chemo.CEP_PAY_CD_ID;
                 break;
             case "CEP_ENROLL_CD_ID":
                 chemo.CEP_ENROLL_CD_ID = newValue as short?;
+                _chmpx.CEP_ENROLL_CD_ID = chemo.CEP_ENROLL_CD_ID;
                 break;
             case "CEP_ENROLL_EXCL_DESC":
                 chemo.CEP_ENROLL_EXCL_DESC = newValue.ToString();
+                _chmpx.CEP_ENROLL_EXCL_DESC = chemo.CEP_ENROLL_EXCL_DESC;
                 break;
             case "NOVEL_STATUS_IND":
                 chemo.NOVEL_STATUS_IND = newValue as bool?;
+                _chmpx.NOVEL_STATUS_IND = chemo.NOVEL_STATUS_IND;
                 break;
             case "FIRST_NOVEL_MNTH":
                 chemo.FIRST_NOVEL_MNTH = newValue as short?;
+                _chmpx.FIRST_NOVEL_MNTH = chemo.FIRST_NOVEL_MNTH;
                 break;
             case "SOURCE":
                 chemo.SOURCE = newValue.ToString();
+                _chmpx.SOURCE = chemo.SOURCE;
                 break;
             default:
                 // code block

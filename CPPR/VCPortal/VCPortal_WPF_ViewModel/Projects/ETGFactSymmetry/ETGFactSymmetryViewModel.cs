@@ -273,34 +273,47 @@ public partial class ETGFactSymmetryViewModel : ObservableObject
                 etg.Has_Commercial = (newValue.ToString().ToLower().Contains("not mapped") ? null :( newValue.ToString().ToLower().Contains("commercial")  || newValue.ToString().ToLower().Contains("all") ? true : false));
                 etg.Has_Medicare = (newValue.ToString().ToLower().Contains("not mapped") ? null : (newValue.ToString().ToLower().Contains("medicare") || newValue.ToString().ToLower().Contains("all") ? true : false));
                 etg.Has_Medicaid = (newValue.ToString().ToLower().Contains("not mapped") ? null : (newValue.ToString().ToLower().Contains("medicaid") || newValue.ToString().ToLower().Contains("all") ? true : false));
+                _etg.Has_Commercial = etg.Has_Commercial;
+                _etg.Has_Medicare = etg.Has_Medicare;
+                _etg.Has_Medicaid = etg.Has_Medicaid;
                 break;
             case "RX_NRX":
                 etg.Has_RX = (newValue.ToString().ToLower().Contains("rx: y /") ? true : (newValue.ToString().ToLower().Contains("rx: n /") ? false : null));
                 etg.Has_NRX = (newValue.ToString().ToLower().Contains("/ nrx: y") ? true : (newValue.ToString().ToLower().Contains("/ nrx: n") ? false : null));
+                _etg.Has_RX = etg.Has_RX;
+                _etg.Has_NRX = etg.Has_NRX;
                 break;
             case "PC_Treatment_Indicator":
                 etg.PC_Treatment_Indicator = (newValue.ToString().ToLower().Contains("not mapped") ? null : newValue.ToString());
+                _etg.PC_Treatment_Indicator = etg.PC_Treatment_Indicator;
                 break;
             case "PC_Attribution":
                 etg.PC_Attribution = (newValue.ToString().ToLower().Contains("not mapped") ? null : newValue.ToString());
+                _etg.PC_Attribution = etg.PC_Attribution;
                 break;
             case "PC_Change_Comments":
                 etg.PC_Change_Comments = newValue.ToString();
+                _etg.PC_Change_Comments = etg.PC_Change_Comments;
                 break;
             case "Patient_Centric_Mapping":
                 etg.Patient_Centric_Mapping = (newValue.ToString().ToLower().Contains("not mapped") ? null : newValue.ToString());
+                _etg.Patient_Centric_Mapping = etg.Patient_Centric_Mapping;
                 break;
             case "Patient_Centric_Change_Comments":
                 etg.Patient_Centric_Change_Comments = newValue.ToString();
+                _etg.Patient_Centric_Change_Comments = etg.Patient_Centric_Change_Comments;
                 break;
             case "EC_Treatment_Indicator":
                 etg.EC_Treatment_Indicator = newValue.ToString();
+                _etg.EC_Treatment_Indicator = etg.EC_Treatment_Indicator;
                 break;
             case "EC_Mapping":
                 etg.EC_Mapping = newValue.ToString();
+                _etg.EC_Mapping =etg.EC_Mapping;
                 break;
             case "EC_Change_Comments":
                 etg.EC_Change_Comments = newValue.ToString();
+                _etg.EC_Change_Comments = etg.EC_Change_Comments;
                 break;
             default:
                 // code block
