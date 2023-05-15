@@ -1,7 +1,10 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
+using NPOI.SS.Formula.PTG;
+using SharedFunctionsLibrary;
 using System.ComponentModel.DataAnnotations;
 using VCPortal_Models.Dtos.ChemoPx;
+using VCPortal_Models.Dtos.ETGFactSymmetry;
 using VCPortal_WPF_ViewModel.Shared;
 
 namespace VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
@@ -418,13 +421,14 @@ public partial class ChemotherapyPXViewModel : ObservableObject
         }
         set
         {
-            var oldvalue = _FIRST_NOVEL_MNTH;
-            _FIRST_NOVEL_MNTH = value;
+            var oldvalue = (_FIRST_NOVEL_MNTH == 0 ? null : _FIRST_NOVEL_MNTH);
+            _FIRST_NOVEL_MNTH = (value == 0 ? null : value);
 
             if (oldvalue == null && _action != "INSERT")
                 return;
 
-            trackChanges(value, "FIRST_NOVEL_MNTH");
+            //trackChanges((value == 0 ? null : value), "FIRST_NOVEL_MNTH");
+            trackChanges( value, "FIRST_NOVEL_MNTH");
         }
     }
 
@@ -503,7 +507,10 @@ public partial class ChemotherapyPXViewModel : ObservableObject
         var chemo = SharedChemoObjects.ChemotherapyPX_Tracking_List.FirstOrDefault(x => x.CODE == _code);
         if (chemo == null)
         {
-            chemo = new ChemotherapyPX_Tracking_CUD_Dto();
+            //chemo = new ChemotherapyPX_Tracking_CUD_Dto();
+
+            chemo = AutoMapping<ChemotherapyPX_ReadDto, ChemotherapyPX_Tracking_CUD_Dto>.Map(_chmpx);
+
             SharedChemoObjects.ChemotherapyPX_Tracking_List.Add(chemo);
         }
 
@@ -530,6 +537,7 @@ public partial class ChemotherapyPXViewModel : ObservableObject
         {
             case "CODE":
                 chemo.CODE = newValue.ToString();
+                _chmpx.CODE = chemo.CODE;
                 break;
             case "GENERIC_NAME":
                 chemo.GENERIC_NAME = newValue.ToString();
@@ -596,7 +604,8 @@ public partial class ChemotherapyPXViewModel : ObservableObject
                 _chmpx.NOVEL_STATUS_IND = chemo.NOVEL_STATUS_IND;
                 break;
             case "FIRST_NOVEL_MNTH":
-                chemo.FIRST_NOVEL_MNTH = newValue as short?;
+                chemo.FIRST_NOVEL_MNTH = newValue as int?;
+                //chemo.FIRST_NOVEL_MNTH = (chemo.FIRST_NOVEL_MNTH == 0 ? null : chemo.FIRST_NOVEL_MNTH);
                 _chmpx.FIRST_NOVEL_MNTH = chemo.FIRST_NOVEL_MNTH;
                 break;
             case "SOURCE":

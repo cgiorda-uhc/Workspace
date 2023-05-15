@@ -310,7 +310,19 @@
 
                 <telerik:GridViewDataColumn DataMemberBinding="{Binding NOVEL_STATUS_IND}" IsReadOnly="True" Width="100" Header="NOVEL STATUS IND" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}"/>
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding FIRST_NOVEL_MNTH}" IsReadOnly="True" Width="100" Header="FIRST NOVEL MNTH" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}"/>
+                <!--<telerik:GridViewDataColumn DataMemberBinding="{Binding FIRST_NOVEL_MNTH}" IsReadOnly="True" Width="100" Header="FIRST NOVEL MNTH" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}"/>-->
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding FIRST_NOVEL_MNTH}" Width="100" Header="FIRST NOVEL MNTH" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}">
+                    <telerik:GridViewDataColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding FIRST_NOVEL_MNTH}" />
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellTemplate>
+                </telerik:GridViewDataColumn>
+
+
+
+
 
                 <telerik:GridViewDataColumn DataMemberBinding="{Binding SOURCE}" Width="1000" Header="SOURCE" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}">
                     <telerik:GridViewDataColumn.CellTemplate>

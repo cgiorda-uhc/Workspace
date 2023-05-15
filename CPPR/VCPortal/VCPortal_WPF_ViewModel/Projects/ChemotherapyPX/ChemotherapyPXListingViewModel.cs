@@ -277,6 +277,15 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
                 t.UPDATE_USER = "cgiorda";
             }
 
+
+            //HORRIBLE HACK FIX THIS!!!!!!!
+            //HORRIBLE HACK FIX THIS!!!!!!!
+            foreach (var t in tracked)
+            {
+                if (t.FIRST_NOVEL_MNTH == 0)
+                    t.FIRST_NOVEL_MNTH = null;
+            }
+
             var api = _config.APIS.Where(x => x.Name == "MainData").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
             var response = WebAPIConsume.PostCall<ObservableCollection<ChemotherapyPX_Tracking_CUD_Dto>>(api.Url, tracked);
