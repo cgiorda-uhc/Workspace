@@ -31,7 +31,6 @@ namespace VCPortal_WPF.UserControls.Projects.ChemotherapyPX;
 /// </summary>
 public partial class ChemotherapyPXControl : UserControl
 {
-
     //private ChemotherapyPXListingViewModel _viewModel => (ChemotherapyPXListingViewModel)DataContext;
     public ChemotherapyPXControl()
     {
@@ -102,6 +101,8 @@ public partial class ChemotherapyPXControl : UserControl
     private void btnSave_Click(object sender, RoutedEventArgs e)
     {
         //btnSave.IsEnabled = false;
+
+
     }
 
     private object _value;
@@ -124,6 +125,5 @@ public partial class ChemotherapyPXControl : UserControl
             this.Cursor = Cursors.Arrow;
         }
     }
-
 
 }

@@ -8,7 +8,7 @@ using VCPortal_Models.Dtos.ETGFactSymmetry;
 using VCPortal_WPF_ViewModel.Shared;
 
 namespace VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
-public partial class ChemotherapyPXViewModel : ObservableObject
+public partial class ChemotherapyPXViewModel :ModelBase
 {
     
     private ChemotherapyPX_ReadDto _chmpx;
@@ -501,9 +501,12 @@ public partial class ChemotherapyPXViewModel : ObservableObject
         {
             return;
         }
-        
-        
-        
+
+        //FIX VALIDATION public class ValidationBase
+        //ValidateProperty(newValue, propName);
+        //base.NotifyPropertyChanged(propName);
+
+
         var chemo = SharedChemoObjects.ChemotherapyPX_Tracking_List.FirstOrDefault(x => x.CODE == _code);
         if (chemo == null)
         {
@@ -616,6 +619,8 @@ public partial class ChemotherapyPXViewModel : ObservableObject
                 // code block
                 break;
         }
+
+        _action = null;
 
     }
 

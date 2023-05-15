@@ -113,6 +113,7 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
+
             <telerik:RadButton x:Name="btnSave" Width="130" Grid.Row="0" Grid.Column="5" Click="btnSave_Click" Command="{Binding SaveCallCommand}" IsEnabled="{Binding CanSave}" Content="Save"></telerik:RadButton>
             <telerik:RadButton x:Name="btnNew" Width="130" Grid.Row="0" Grid.Column="6" Command="{Binding addNewRowCommand}" Content="New Row"></telerik:RadButton>
             <telerik:RadButton x:Name="btnExporData" Width="130" Grid.Row="0" Grid.Column="7" Command="{Binding ExportDataCallCommand}" Click="btnExporData_Click"  Content="Export Data"></telerik:RadButton>
@@ -214,7 +215,7 @@
                     </telerik:GridViewDataColumn.CellTemplate>
                     <telerik:GridViewDataColumn.CellEditTemplate>
                         <DataTemplate>
-                            <CheckBox IsChecked="{Binding Path=ANTI_EMETIC_IND, Mode=TwoWay}"/>
+                            <CheckBox IsChecked="{Binding Path=ANTI_EMETIC_IND, Mode=TwoWay, NotifyOnValidationError=True,ValidatesOnNotifyDataErrors=True,UpdateSourceTrigger=PropertyChanged}"/>
                         </DataTemplate>
                     </telerik:GridViewDataColumn.CellEditTemplate>
                 </telerik:GridViewDataColumn>
@@ -230,7 +231,7 @@
                     </telerik:GridViewDataColumn.CellTemplate>
                     <telerik:GridViewDataColumn.CellEditTemplate>
                         <DataTemplate>
-                            <DatePicker SelectedDate="{Binding CODE_EFF_DT,  Mode=TwoWay}"/>
+                            <DatePicker SelectedDate="{Binding CODE_EFF_DT,  Mode=TwoWay, NotifyOnValidationError=True,ValidatesOnNotifyDataErrors=True,UpdateSourceTrigger=PropertyChanged}"/>
                         </DataTemplate>
                     </telerik:GridViewDataColumn.CellEditTemplate>
                 </telerik:GridViewDataColumn>
