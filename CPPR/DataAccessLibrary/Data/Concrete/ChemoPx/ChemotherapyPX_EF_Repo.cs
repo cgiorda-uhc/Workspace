@@ -31,7 +31,7 @@ public class ChemotherapyPX_EF_Repo : IChemotherapyPX_Repo
         return results;
     }
 
-    public async Task<int> InsertChemotherapyPX(ChemotherapyPXModel chemPX)
+    public async Task<int?> InsertChemotherapyPX(ChemotherapyPXModel chemPX)
     {
         if (chemPX == null)
         {

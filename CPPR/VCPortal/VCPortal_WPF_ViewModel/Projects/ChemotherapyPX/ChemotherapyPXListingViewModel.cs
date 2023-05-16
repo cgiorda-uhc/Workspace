@@ -8,6 +8,7 @@ using SharedFunctionsLibrary;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -158,6 +159,23 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
     }
 
 
+    [RelayCommand]
+    private async Task EditEndCall()
+    {
+        foreach (var t in SharedChemoObjects.ChemotherapyPX_Tracking_List)
+        {
+            if (t.IsValid == false)
+            {
+                //UserMessageViewModel.IsError = true;
+                //UserMessageViewModel.Message = "Data is invalid. Please update before saving.";
+                CanSave = false;
+                return;
+            }
+        }
+        CanSave = true;
+    }
+
+
     private void worker_DoWork(object sender, DoWorkEventArgs e)
     {
         _sbStatus.Clear();
@@ -201,14 +219,9 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
     private void listChanged(object sender, NotifyCollectionChangedEventArgs args)
     {
         // list changed
-        CanSave = true;
+        //CanSave = true;
     }
 
-
-
-
-
-    
 
     [RelayCommand]
     private void addNewRow()
@@ -260,6 +273,33 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
     {
         try
         {
+
+            foreach(var t in SharedChemoObjects.ChemotherapyPX_Tracking_List)
+            {
+                if(t.IsValid == false)
+                {
+                    UserMessageViewModel.IsError = true;
+                    UserMessageViewModel.Message = "Data is invalid. Please update before saving.";
+                    return;
+                }
+            }
+
+
+            //ValidationContext context = new ValidationContext(OC_ChemotherapyPXViewModel, null, null);
+            //List<ValidationResult> validationResults = new List<ValidationResult>();
+            //bool valid = Validator.TryValidateObject(OC_ChemotherapyPXViewModel, context, validationResults, true);
+            //if (!valid)
+            //{
+            //    foreach (ValidationResult validationResult in validationResults)
+            //    {
+            //        Console.WriteLine("{0}", validationResult.ErrorMessage);
+            //    }
+            //}
+
+
+
+
+
             SharedChemoObjects.ChemotherapyPX_Tracking_List.Remove(x => x.CODE == null);
 
 
@@ -303,6 +343,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
                 UserMessageViewModel.IsError = false;
                 UserMessageViewModel.Message = "ChemotherapyPXData.Save sucessfully completed";
                 _logger.Information("ChemotherapyPXData.Save sucessfully completed for {CurrentUser}...", Authentication.UserName);
+                CanSave = false;
             }
 
             try
@@ -323,10 +364,10 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
             UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
             _logger.Fatal(ex, "ChemotherapyPXData.save threw an error for {CurrentUser}", Authentication.UserName);
         }
-        finally
-        {
-            CanSave = false;
-        }
+        //finally
+        //{
+        //    CanSave = false;
+        //}
     }
 
 

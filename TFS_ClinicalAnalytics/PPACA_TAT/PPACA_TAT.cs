@@ -30,11 +30,11 @@ namespace PPACA_TAT
 
             
             DataRow dr;
-            DataTable dt = DBConnection64.getMSSQLDataTable(strConnectionString, strSQL);
+            DataTable dt = DBConnection32.getMSSQLDataTable(strConnectionString, strSQL);
 
 
             strSQL = "select top 1 file_month, [file_year],file_date FROM [IL_UCA].[stg].[EviCore_TAT] where file_date = (select max(file_date) from[IL_UCA].[stg].[EviCore_TAT])";
-            DataTable dtDate = DBConnection64.getMSSQLDataTable(strConnectionString, strSQL);
+            DataTable dtDate = DBConnection32.getMSSQLDataTable(strConnectionString, strSQL);
             string fileSearch = "United_Enterprise_Wide_Routine_TAT_UHC_Enterprise_"+ dtDate.Rows[0]["file_year"] + "_" + dtDate.Rows[0]["file_month"] + ".xlsx";
             DateTime fileDate = (DateTime)dtDate.Rows[0]["file_date"];
             string filePath = @"\\NASGWFTP03\Care_Core_FTP_Files\Radiology";
@@ -135,7 +135,7 @@ namespace PPACA_TAT
 
             //            sbEmail.Append("</div>");
 
-            var manual = @"C:\Users\cgiorda\Desktop\Projects\PPACA_TAT\Archive\United_Enterprise_Wide_Urgent_TAT_UHC_Enterprise_2023_03.xlsx";
+            var manual = @"C:\Users\cgiorda\Desktop\Projects\PPACA_TAT\Archive\United_Enterprise_Wide_Urgent_TAT_UHC_Enterprise_2023_04.xlsx";
 
 
             HelperFunctions.HelperFunctions.Email(recipients, from, subject, body, cc, manual);

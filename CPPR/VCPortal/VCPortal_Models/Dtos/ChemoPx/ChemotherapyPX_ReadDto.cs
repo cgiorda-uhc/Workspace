@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ public class ChemotherapyPX_ReadDto
     public string CODE_DESC { get; set; }
     public string GENERIC_NAME { get; set; }
     public string TRADE_NAME { get; set; }
+
     public bool? CKPT_INHIB_IND { get; set; }
     public bool? ANTI_EMETIC_IND { get; set; }
     public string CODE_TYPE { get; set; }

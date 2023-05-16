@@ -5,11 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
              xmlns:local="clr-namespace:VCPortal_WPF.UserControls.Projects.ChemotherapyPX" 
-            xmlns:modalcontrol="clr-namespace:ModalControl;assembly=ModalControl"
+            xmlns:modalcontrol="clr-namespace:ModalControl;assembly=ModalControl" xmlns:converters="clr-namespace:VCPortal_WPF.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
+
+        <!--<converters:BooleanAndConverter x:Key="booleanAndConverter" />
+        <converters:InverseBooleanConverter x:Key="inverseBooleanConverter" />-->
 
         <SolidColorBrush x:Key="editableColor" Color="LightYellow" />
 
@@ -114,14 +117,39 @@
                 </TextBlock.Style>
             </TextBlock>
 
-            <telerik:RadButton x:Name="btnSave" Width="130" Grid.Row="0" Grid.Column="5" Click="btnSave_Click" Command="{Binding SaveCallCommand}" IsEnabled="{Binding CanSave}" Content="Save"></telerik:RadButton>
+            <telerik:RadButton x:Name="btnSave" Width="130" Grid.Row="0" Grid.Column="5" Click="btnSave_Click" IsEnabled="{Binding CanSave}" Command="{Binding SaveCallCommand}"  Content="Save">
+
+                <!--<telerik:RadButton.IsEnabled>
+                    <MultiBinding Converter="{StaticResource booleanAndConverter}">
+                        <Binding Path="CanSave" />
+                        <Binding Path="HasErrors" Converter="{StaticResource inverseBooleanConverter}"  />
+                    </MultiBinding>
+                </telerik:RadButton.IsEnabled>-->
+
+                <!--<telerik:RadButton.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="IsEnabled" Value="False"/>
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding CanSave}" Value="False"/>
+                                    --><!--<Condition Binding="{Binding Path=(Validation.HasError)}" Value="False" />--><!--
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="IsEnabled" Value="True"/>
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </telerik:RadButton.Style>-->
+
+
+            </telerik:RadButton>
             <telerik:RadButton x:Name="btnNew" Width="130" Grid.Row="0" Grid.Column="6" Command="{Binding addNewRowCommand}" Content="New Row"></telerik:RadButton>
             <telerik:RadButton x:Name="btnExporData" Width="130" Grid.Row="0" Grid.Column="7" Command="{Binding ExportDataCallCommand}" Click="btnExporData_Click"  Content="Export Data"></telerik:RadButton>
             <telerik:RadButton Grid.Row="0" Grid.Column="8" Width="130" Command="{Binding getChemotherapyPXDataCallCommand}" Content="Refresh Data"></telerik:RadButton>
         </Grid>
 
 
-        <telerik:RadGridView x:Name="ChemotherapyPXGridView"  Grid.Row="1" ItemsSource="{Binding OC_ChemotherapyPXViewModel, Mode=TwoWay, IsAsync=True}" AutoGenerateColumns="False"  ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectedItem="{Binding SelectedRow, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" ScrollViewer.VerticalScrollBarVisibility="Visible"  FrozenColumnCount="4" CanUserDeleteRows="True" IsSynchronizedWithCurrentItem="True" CellEditEnded="ChemotherapyPXGridView_CellEditEnded"  BeginningEdit="ChemotherapyPXGridView_BeginningEdit"  ScrollMode="RealTime" >
+        <telerik:RadGridView x:Name="ChemotherapyPXGridView"  Grid.Row="1" ItemsSource="{Binding OC_ChemotherapyPXViewModel, Mode=TwoWay, IsAsync=True}" AutoGenerateColumns="False"  ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectedItem="{Binding SelectedRow, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" ScrollViewer.VerticalScrollBarVisibility="Visible"  FrozenColumnCount="4" CanUserDeleteRows="True" IsSynchronizedWithCurrentItem="True"  CellEditEnded="ChemotherapyPXGridView_CellEditEnded"  BeginningEdit="ChemotherapyPXGridView_BeginningEdit"  ScrollMode="RealTime" >
 
 
             <telerik:RadGridView.Columns>
@@ -194,7 +222,7 @@
                     </telerik:GridViewDataColumn.CellEditTemplate>
                 </telerik:GridViewDataColumn>
 
-                <telerik:GridViewDataColumn Width="100" Header="CKPT INHIB IND"  DataMemberBinding="{Binding CKPT_INHIB_IND}" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}">
+                <telerik:GridViewDataColumn Width="100" Header="CKPT INHIB IND"  DataMemberBinding="{Binding CKPT_INHIB_IND, Mode=TwoWay}" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}">
                     <telerik:GridViewDataColumn.CellTemplate>
                         <DataTemplate>
                             <CheckBox IsChecked="{Binding Path=CKPT_INHIB_IND}"/>
@@ -207,7 +235,7 @@
                     </telerik:GridViewDataColumn.CellEditTemplate>
                 </telerik:GridViewDataColumn>
 
-                <telerik:GridViewDataColumn Width="100" Header="ANTI EMETIC IND" DataMemberBinding="{Binding ANTI_EMETIC_IND}" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}">
+                <telerik:GridViewDataColumn Width="100" Header="ANTI EMETIC IND" DataMemberBinding="{Binding ANTI_EMETIC_IND, Mode=TwoWay}" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}">
                     <telerik:GridViewDataColumn.CellTemplate>
                         <DataTemplate>
                             <CheckBox IsChecked="{Binding Path=ANTI_EMETIC_IND}"/>

@@ -24,6 +24,7 @@ using System.Data;
 using VCPortal_WPF.UserControls.Shared;
 using VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;
 using VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
+using VCPortal_WPF_ViewModel.Projects.MHP;
 
 namespace VCPortal_WPF.UserControls.Projects.ChemotherapyPX;
 /// <summary>
@@ -60,7 +61,9 @@ public partial class ChemotherapyPXControl : UserControl
 
     private void ChemotherapyPXGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
     {
-
+        var viewModel = (ChemotherapyPXListingViewModel)DataContext;
+        if (viewModel.EditEndCallCommand.CanExecute(null))
+            viewModel.EditEndCallCommand.Execute(null);
         //var objType = ((GridViewEditorPresenter)e.Cell.Content).Content.GetType();
         //object newvalue;
 

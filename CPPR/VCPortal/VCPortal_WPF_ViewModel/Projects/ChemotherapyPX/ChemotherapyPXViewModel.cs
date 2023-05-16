@@ -1,5 +1,6 @@
 ﻿
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Office.Interop.Excel;
 using NPOI.SS.Formula.PTG;
 using SharedFunctionsLibrary;
 using System.ComponentModel.DataAnnotations;
@@ -8,15 +9,16 @@ using VCPortal_Models.Dtos.ETGFactSymmetry;
 using VCPortal_WPF_ViewModel.Shared;
 
 namespace VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
-public partial class ChemotherapyPXViewModel :ModelBase
+public partial class ChemotherapyPXViewModel : ObservableValidator
 {
     
     private ChemotherapyPX_ReadDto _chmpx;
 
 
-    public int? Id => _chmpx.Id;
+    //[ObservableProperty]
+    //private bool is_Valid;
 
-    private string _action = null;
+    public int? Id => _chmpx.Id;
 
     private string _code;
     public string CODE
@@ -83,11 +85,12 @@ public partial class ChemotherapyPXViewModel :ModelBase
             //Validator.ValidateProperty(value, validationContext);
 
 
-            var oldvalue = _GENERIC_NAME;
-            _GENERIC_NAME = value;
+            //var oldvalue = _GENERIC_NAME;
+            SetProperty(ref _GENERIC_NAME, value, true);
+            //_GENERIC_NAME = value;
 
-            if (oldvalue == null && _action != "INSERT")
-                return;
+            //if (oldvalue == null && _action != "INSERT")
+            //    return;
 
             trackChanges(value, "GENERIC_NAME");
         }
@@ -103,11 +106,12 @@ public partial class ChemotherapyPXViewModel :ModelBase
         }
         set
         {
-            var oldvalue = _TRADE_NAME;
-            _TRADE_NAME = value;
+            //var oldvalue = _TRADE_NAME;
+            SetProperty(ref _TRADE_NAME, value, true);
+           // _TRADE_NAME = value;
 
-            if (oldvalue == null && _action != "INSERT")
-                return;
+            //if (oldvalue == null && _action != "INSERT")
+            //    return;
 
             trackChanges(value, "TRADE_NAME");
         }
@@ -122,11 +126,12 @@ public partial class ChemotherapyPXViewModel :ModelBase
         }
         set
         {
-            var oldvalue = _CKPT_INHIB_IND;
-            _CKPT_INHIB_IND = value;
+            //var oldvalue = _CKPT_INHIB_IND;
+            SetProperty(ref _CKPT_INHIB_IND, value, true); 
+            //_CKPT_INHIB_IND = value;
 
-            if (oldvalue == null && _action != "INSERT")
-                return;
+            //if (oldvalue == null && _action != "INSERT")
+                //return;
 
             trackChanges(value, "CKPT_INHIB_IND");
         }
@@ -141,11 +146,12 @@ public partial class ChemotherapyPXViewModel :ModelBase
         }
         set
         {
-            var oldvalue = _ANTI_EMETIC_IND;
-            _ANTI_EMETIC_IND = value;
+            //var oldvalue = _ANTI_EMETIC_IND;
+            SetProperty(ref _ANTI_EMETIC_IND, value, true); 
+            //_ANTI_EMETIC_IND = value;
 
-            if (oldvalue == null && _action != "INSERT")
-                return;
+            //if (oldvalue == null && _action != "INSERT")
+                //return;
 
             trackChanges(value, "ANTI_EMETIC_IND");
         }
@@ -164,11 +170,12 @@ public partial class ChemotherapyPXViewModel :ModelBase
         }
         set
         {
-            var oldvalue = _CODE_EFF_DT;
-            _CODE_EFF_DT = value;
+            //var oldvalue = _CODE_EFF_DT;
+            SetProperty(ref _CODE_EFF_DT, value, true); 
+            //_CODE_EFF_DT = value;
 
-            if (oldvalue == null && _action != "INSERT")
-                return;
+            //if (oldvalue == null && _action != "INSERT")
+            //    return;
 
             trackChanges(value, "CODE_EFF_DT");
         }
@@ -188,11 +195,12 @@ public partial class ChemotherapyPXViewModel :ModelBase
         }
         set
         {
-            var oldvalue = _NHNR_CANCER_THERAPY;
-            _NHNR_CANCER_THERAPY = value;
+            //var oldvalue = _NHNR_CANCER_THERAPY;
+            SetProperty(ref _NHNR_CANCER_THERAPY, value, true); 
+            //_NHNR_CANCER_THERAPY = value;
 
-            if (oldvalue == null && _action != "INSERT")
-                return;
+            //if (oldvalue == null && _action != "INSERT")
+            //    return;
 
             trackChanges(value, "NHNR_CANCER_THERAPY");
         }
@@ -210,11 +218,12 @@ public partial class ChemotherapyPXViewModel :ModelBase
         }
         set
         {
-            var oldvalue = _CODE_CATEGORY_ID;
-            _CODE_CATEGORY_ID = value;
+            //var oldvalue = _CODE_CATEGORY_ID;
+            SetProperty(ref _CODE_CATEGORY_ID, value, true); 
+            //_CODE_CATEGORY_ID = value;
 
-            if (oldvalue == null && _action != "INSERT")
-                return;
+            //if (oldvalue == null && _action != "INSERT")
+            //    return;
 
             trackChanges(value, "CODE_CATEGORY_ID");
         }
@@ -222,7 +231,7 @@ public partial class ChemotherapyPXViewModel :ModelBase
 
     public string ASP_CATEGORY { get; set; }
 
-    private Int16? _ASP_CATEGORY_ID { get; set; }
+    private Int16? _ASP_CATEGORY_ID;
     public Int16? ASP_CATEGORY_ID
     {
         get
@@ -231,11 +240,12 @@ public partial class ChemotherapyPXViewModel :ModelBase
         }
         set
         {
-            var oldvalue = _ASP_CATEGORY_ID;
-            _ASP_CATEGORY_ID = value;
+            //var oldvalue = _ASP_CATEGORY_ID;
+            SetProperty(ref _ASP_CATEGORY_ID, value, true);
+            //_ASP_CATEGORY_ID = value;
 
-            if (oldvalue == null && _action != "INSERT")
-                return;
+            //if (oldvalue == null && _action != "INSERT")
+            //    return;
 
             trackChanges(value, "ASP_CATEGORY_ID");
         }
@@ -254,11 +264,12 @@ public partial class ChemotherapyPXViewModel :ModelBase
         }
         set
         {
-            var oldvalue = _DRUG_ADM_MODE_ID;
-            _DRUG_ADM_MODE_ID = value;
+            //var oldvalue = _DRUG_ADM_MODE_ID;
+            SetProperty(ref _DRUG_ADM_MODE_ID, value, true); 
+            //_DRUG_ADM_MODE_ID = value;
 
-            if (oldvalue == null && _action != "INSERT")
-                return;
+            //if (oldvalue == null && _action != "INSERT")
+            //    return;
 
             trackChanges(value, "DRUG_ADM_MODE_ID");
         }
@@ -277,11 +288,12 @@ public partial class ChemotherapyPXViewModel :ModelBase
         }
         set
         {
-            var oldvalue = _PA_DRUGS_ID;
-            _PA_DRUGS_ID = value;
+            //var oldvalue = _PA_DRUGS_ID;
+            SetProperty(ref _PA_DRUGS_ID, value, true); 
+            //_PA_DRUGS_ID = value;
 
-            if (oldvalue == null && _action != "INSERT")
-                return;
+            //if (oldvalue == null && _action != "INSERT")
+                //return;
 
             trackChanges(value, "PA_DRUGS_ID");
         }
@@ -297,11 +309,12 @@ public partial class ChemotherapyPXViewModel :ModelBase
         }
         set
         {
-            var oldvalue = _PA_EFF_DT;
-            _PA_EFF_DT = value;
+            //var oldvalue = _PA_EFF_DT;
+            SetProperty(ref _PA_EFF_DT, value, true); 
+            //_PA_EFF_DT = value;
 
-            if (oldvalue == null && _action != "INSERT")
-                return;
+            //if (oldvalue == null && _action != "INSERT")
+            //    return;
 
             trackChanges(value, "PA_EFF_DT");
         }
@@ -317,11 +330,12 @@ public partial class ChemotherapyPXViewModel :ModelBase
         }
         set
         {
-            var oldvalue = _PA_END_DT;
-            _PA_END_DT = value;
+            //var oldvalue = _PA_END_DT;
+            SetProperty(ref _PA_END_DT, value, true); 
+            //_PA_END_DT = value;
 
-            if (oldvalue == null && _action != "INSERT")
-                return;
+            //if (oldvalue == null && _action != "INSERT")
+                //return;
 
             trackChanges(value, "PA_END_DT");
         }
@@ -340,11 +354,12 @@ public partial class ChemotherapyPXViewModel :ModelBase
         }
         set
         {
-            var oldvalue = _CEP_PAY_CD_ID;
-            _CEP_PAY_CD_ID = value;
+            //var oldvalue = _CEP_PAY_CD_ID;
+            SetProperty(ref _CEP_PAY_CD_ID, value, true); 
+            //_CEP_PAY_CD_ID = value;
 
-            if (oldvalue == null && _action != "INSERT")
-                return;
+            //if (oldvalue == null && _action != "INSERT")
+            //    return;
 
             trackChanges(value, "CEP_PAY_CD_ID");
         }
@@ -363,11 +378,12 @@ public partial class ChemotherapyPXViewModel :ModelBase
         }
         set
         {
-            var oldvalue = _CEP_ENROLL_CD_ID;
-            _CEP_ENROLL_CD_ID = value;
+            //var oldvalue = _CEP_ENROLL_CD_ID;
+            SetProperty(ref _CEP_ENROLL_CD_ID, value, true); 
+            //_CEP_ENROLL_CD_ID = value;
 
-            if (oldvalue == null && _action != "INSERT")
-                return;
+            //if (oldvalue == null && _action != "INSERT")
+            //    return;
 
             trackChanges(value, "CEP_ENROLL_CD_ID");
         }
@@ -383,11 +399,12 @@ public partial class ChemotherapyPXViewModel :ModelBase
         }
         set
         {
-            var oldvalue = _CEP_ENROLL_EXCL_DESC;
-            _CEP_ENROLL_EXCL_DESC = value;
+           // var oldvalue = _CEP_ENROLL_EXCL_DESC;
+            SetProperty(ref _CEP_ENROLL_EXCL_DESC, value, true); 
+            //_CEP_ENROLL_EXCL_DESC = value;
 
-            if (oldvalue == null && _action != "INSERT")
-                return;
+            //if (oldvalue == null && _action != "INSERT")
+            //    return;
 
             trackChanges(value, "CEP_ENROLL_EXCL_DESC");
         }
@@ -402,11 +419,12 @@ public partial class ChemotherapyPXViewModel :ModelBase
         }
         set
         {
-            var oldvalue = _NOVEL_STATUS_IND;
-            _NOVEL_STATUS_IND = value;
+            //var oldvalue = _NOVEL_STATUS_IND;
+            SetProperty(ref _NOVEL_STATUS_IND, value, true); 
+            //_NOVEL_STATUS_IND = value;
 
-            if (oldvalue == null && _action != "INSERT")
-                return;
+            //if (oldvalue == null && _action != "INSERT")
+            //    return;
 
             trackChanges(value, "NOVEL_STATUS_IND");
         }
@@ -421,11 +439,12 @@ public partial class ChemotherapyPXViewModel :ModelBase
         }
         set
         {
-            var oldvalue = (_FIRST_NOVEL_MNTH == 0 ? null : _FIRST_NOVEL_MNTH);
-            _FIRST_NOVEL_MNTH = (value == 0 ? null : value);
+            //var oldvalue = (_FIRST_NOVEL_MNTH == 0 ? null : _FIRST_NOVEL_MNTH);
+            SetProperty(ref _FIRST_NOVEL_MNTH, value, true); 
+            //_FIRST_NOVEL_MNTH = (value == 0 ? null : value);
 
-            if (oldvalue == null && _action != "INSERT")
-                return;
+            //if (oldvalue == null && _action != "INSERT")
+            //    return;
 
             //trackChanges((value == 0 ? null : value), "FIRST_NOVEL_MNTH");
             trackChanges( value, "FIRST_NOVEL_MNTH");
@@ -442,11 +461,12 @@ public partial class ChemotherapyPXViewModel :ModelBase
         }
         set
         {
-            var oldvalue = _SOURCE;
-            _SOURCE = value;
+            //var oldvalue = _SOURCE;
+            SetProperty(ref _SOURCE, value, true);
+            //_SOURCE = value;
 
-            if (oldvalue == null && _action != "INSERT")
-                return;
+            //if (oldvalue == null && _action != "INSERT")
+            //    return;
 
             trackChanges(value, "SOURCE");
         }
@@ -458,6 +478,7 @@ public partial class ChemotherapyPXViewModel :ModelBase
     {
         _chmpx = chmpx;
 
+        //Is_Valid = true;
 
         _code = chmpx.CODE;
         CODE_DESC = chmpx.CODE_DESC;
@@ -502,6 +523,7 @@ public partial class ChemotherapyPXViewModel :ModelBase
             return;
         }
 
+
         //FIX VALIDATION public class ValidationBase
         //ValidateProperty(newValue, propName);
         //base.NotifyPropertyChanged(propName);
@@ -514,26 +536,29 @@ public partial class ChemotherapyPXViewModel :ModelBase
 
             chemo = AutoMapping<ChemotherapyPX_ReadDto, ChemotherapyPX_Tracking_CUD_Dto>.Map(_chmpx);
 
-            SharedChemoObjects.ChemotherapyPX_Tracking_List.Add(chemo);
-        }
 
+            if(chemo.CODE == null)
+            {
+                chemo.CODE = _code;
+            }
 
-        if (_action == null)
-        {
             if (Id == null)
             {
                 //chemo.CODE = _code;
-                _action = "INSERT";
+                chemo.UPDATE_ACTION = "INSERT";
             }
             else
             {
                 chemo.ChemoPX_Id = Id;
                 chemo.CODE = _code;
-                _action = "UPDATE";
+                chemo.UPDATE_ACTION = "UPDATE";
             }
 
-            chemo.UPDATE_ACTION = _action;
+            
+            SharedChemoObjects.ChemotherapyPX_Tracking_List.Add(chemo);
         }
+
+
 
 
         switch (propName)
@@ -620,7 +645,16 @@ public partial class ChemotherapyPXViewModel :ModelBase
                 break;
         }
 
-        _action = null;
+        ValidationContext context = new ValidationContext(chemo, null, null);
+        List<ValidationResult> validationResults = new List<ValidationResult>();
+        chemo.IsValid = Validator.TryValidateObject(chemo, context, validationResults, true);
+        if (!chemo.IsValid)
+        {
+            foreach (ValidationResult validationResult in validationResults)
+            {
+                Console.WriteLine("{0}", validationResult.ErrorMessage);
+            }
+        }
 
     }
 

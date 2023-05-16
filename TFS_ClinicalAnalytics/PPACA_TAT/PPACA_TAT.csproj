@@ -54,6 +54,10 @@
       <Project>{e5edb312-1379-4ca3-8c1c-5e0bd7cb1554}</Project>
       <Name>DBConnection64</Name>
     </ProjectReference>
+    <ProjectReference Include="..\DBConnection\DBConnection32.csproj">
+      <Project>{4fa67d78-012d-4194-b55b-c208d5a0c3c6}</Project>
+      <Name>DBConnection32</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HelperFunctions\HelperFunctions.csproj">
       <Project>{ea02859a-d77f-4b27-b731-c53d292f119a}</Project>
       <Name>HelperFunctions</Name>
