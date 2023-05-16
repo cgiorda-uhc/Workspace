@@ -645,16 +645,25 @@ public partial class ChemotherapyPXViewModel : ObservableValidator
                 break;
         }
 
-        ValidationContext context = new ValidationContext(chemo, null, null);
-        List<ValidationResult> validationResults = new List<ValidationResult>();
-        chemo.IsValid = Validator.TryValidateObject(chemo, context, validationResults, true);
-        if (!chemo.IsValid)
+        if(chemo.UPDATE_ACTION != "DELETE")
         {
-            foreach (ValidationResult validationResult in validationResults)
+            ValidationContext context = new ValidationContext(chemo, null, null);
+            List<ValidationResult> validationResults = new List<ValidationResult>();
+            chemo.IsValid = Validator.TryValidateObject(chemo, context, validationResults, true);
+            if (!chemo.IsValid)
             {
-                Console.WriteLine("{0}", validationResult.ErrorMessage);
+                foreach (ValidationResult validationResult in validationResults)
+                {
+                    Console.WriteLine("{0}", validationResult.ErrorMessage);
+                }
             }
         }
+        else
+        {
+            chemo.IsValid = true;
+        }
+
+        
 
     }
 
