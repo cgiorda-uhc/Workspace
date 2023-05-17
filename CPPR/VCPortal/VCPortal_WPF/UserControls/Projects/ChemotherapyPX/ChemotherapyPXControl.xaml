@@ -10,9 +10,9 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
     <UserControl.Resources>
-
-        <!--<converters:BooleanAndConverter x:Key="booleanAndConverter" />
-        <converters:InverseBooleanConverter x:Key="inverseBooleanConverter" />-->
+        <converters:InverseBooleanConverter x:Key="inverseBooleanConverter" />
+        <converters:BooleanAndConverter x:Key="booleanAndConverter" />
+        
 
         <SolidColorBrush x:Key="editableColor" Color="LightYellow" />
 
@@ -90,9 +90,9 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="133"/>
-                <ColumnDefinition Width="133"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="110"/>
                 <ColumnDefinition Width="133"/>
                 <ColumnDefinition Width="133"/>
             </Grid.ColumnDefinitions>
@@ -101,7 +101,7 @@
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" FontSize="19" Background="LightGray" FontFamily="Verdana"  FontWeight="ExtraBold" Text="Chemotherapy PX"></TextBlock>
             <!--<TextBlock DataContext="{Binding UserMessageViewModel}" Foreground="{Binding MessageColor}" Text="{Binding Message}" FontWeight="ExtraBold"  Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="3" ></TextBlock>-->
-            <TextBlock DataContext="{Binding UserMessageViewModel}" Text="{Binding Message}"  Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="3" >
+            <TextBlock DataContext="{Binding UserMessageViewModel}" Text="{Binding Message}"  Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="3" >
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
                         <!-- Set the default value here (if any). 
@@ -117,7 +117,9 @@
                 </TextBlock.Style>
             </TextBlock>
 
-            <telerik:RadButton x:Name="btnSave" Width="130" Grid.Row="0" Grid.Column="5" Click="btnSave_Click" IsEnabled="{Binding CanSave}" Command="{Binding SaveCallCommand}"  Content="Save">
+            <telerik:RadButton x:Name="btnInvalid" Width="100" Grid.Row="0" Grid.Column="4" IsEnabled="{Binding IsValid, Converter={StaticResource inverseBooleanConverter}}" Content="Invalid">
+            </telerik:RadButton>
+            <telerik:RadButton x:Name="btnSave" Width="100" Grid.Row="0" Grid.Column="5" Click="btnSave_Click" IsEnabled="{Binding CanSave}" Command="{Binding SaveCallCommand}"  Content="Save">
 
                 <!--<telerik:RadButton.IsEnabled>
                     <MultiBinding Converter="{StaticResource booleanAndConverter}">
@@ -143,13 +145,27 @@
 
 
             </telerik:RadButton>
-            <telerik:RadButton x:Name="btnNew" Width="130" Grid.Row="0" Grid.Column="6" Command="{Binding addNewRowCommand}" Content="New Row"></telerik:RadButton>
-            <telerik:RadButton x:Name="btnExporData" Width="130" Grid.Row="0" Grid.Column="7" Command="{Binding ExportDataCallCommand}" Click="btnExporData_Click"  Content="Export Data"></telerik:RadButton>
-            <telerik:RadButton Grid.Row="0" Grid.Column="8" Width="130" Command="{Binding getChemotherapyPXDataCallCommand}" Content="Refresh Data"></telerik:RadButton>
+            <telerik:RadButton x:Name="btnNew" Width="110" Grid.Row="0" Grid.Column="6" Command="{Binding addNewRowCommand}" IsEnabled="{Binding IsValid}" Content="New Row"></telerik:RadButton>
+            <telerik:RadButton x:Name="btnExporData" Width="130" Grid.Row="0" Grid.Column="7" Command="{Binding ExportDataCallCommand}" Click="btnExporData_Click"  Content="Export Data">
+                <telerik:RadButton.IsEnabled>
+                    <MultiBinding Converter="{StaticResource booleanAndConverter}">
+                        <Binding Path="CanSave"  Converter="{StaticResource inverseBooleanConverter}"/>
+                        <Binding Path="IsValid" />
+                    </MultiBinding>
+                </telerik:RadButton.IsEnabled>
+            </telerik:RadButton>
+            <telerik:RadButton Grid.Row="0" Grid.Column="8" Width="130" Command="{Binding getChemotherapyPXDataCallCommand}" Content="Refresh Data">
+                <telerik:RadButton.IsEnabled>
+                    <MultiBinding Converter="{StaticResource booleanAndConverter}">
+                        <Binding Path="CanSave"  Converter="{StaticResource inverseBooleanConverter}"/>
+                        <Binding Path="IsValid" />
+                    </MultiBinding>
+                </telerik:RadButton.IsEnabled>
+            </telerik:RadButton>
         </Grid>
 
 
-        <telerik:RadGridView x:Name="ChemotherapyPXGridView"  Grid.Row="1" ItemsSource="{Binding OC_ChemotherapyPXViewModel, Mode=TwoWay, IsAsync=True}" AutoGenerateColumns="False"  ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectedItem="{Binding SelectedRow, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" ScrollViewer.VerticalScrollBarVisibility="Visible"  FrozenColumnCount="4" CanUserDeleteRows="True" IsSynchronizedWithCurrentItem="True"  CellEditEnded="ChemotherapyPXGridView_CellEditEnded"  BeginningEdit="ChemotherapyPXGridView_BeginningEdit"  ScrollMode="RealTime" >
+        <telerik:RadGridView x:Name="ChemotherapyPXGridView"  Grid.Row="1" ItemsSource="{Binding OC_ChemotherapyPXViewModel, Mode=TwoWay, IsAsync=True}" AutoGenerateColumns="False"  ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectedItem="{Binding SelectedRow, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" ScrollViewer.VerticalScrollBarVisibility="Visible"  FrozenColumnCount="4" CanUserDeleteRows="True" IsSynchronizedWithCurrentItem="True" ValidationType="DataAnnotations"  CellEditEnded="ChemotherapyPXGridView_CellEditEnded"  BeginningEdit="ChemotherapyPXGridView_BeginningEdit"  ScrollMode="RealTime" >
 
 
             <telerik:RadGridView.Columns>

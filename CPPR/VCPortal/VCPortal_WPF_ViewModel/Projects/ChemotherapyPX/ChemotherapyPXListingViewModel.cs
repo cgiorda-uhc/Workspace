@@ -41,6 +41,9 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
     private bool canSave;
 
     [ObservableProperty]
+    private bool isValid;
+
+    [ObservableProperty]
     private ObservableCollection<ChemotherapyPXViewModel> oC_ChemotherapyPXViewModel;
 
     [ObservableProperty]
@@ -82,6 +85,8 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
         _logger = logger;
         _excelFunctions = excelFunctions;
         _config = prepareConfig(config);
+
+        IsValid = true;
 
         UserMessageViewModel = new MessageViewModel();
         ProgressMessageViewModel= new MessageViewModel();
@@ -162,7 +167,8 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
     [RelayCommand]
     private async Task EditEndCall()
     {
-        CanSave = isValid();
+        IsValid = isThisValid();
+        CanSave = IsValid;
 
         //foreach (var t in SharedChemoObjects.ChemotherapyPX_Tracking_List)
         //{
@@ -228,7 +234,8 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
     [RelayCommand]
     private void addNewRow()
     {
-        if (!isValid())
+        IsValid = isThisValid();
+        if (!IsValid)
         {
             UserMessageViewModel.IsError = true;
             UserMessageViewModel.Message = "Data is invalid. Please update before adding new row.";
@@ -284,8 +291,9 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
         try
         {
 
-            if(!isValid())
-            {
+            IsValid = isThisValid();
+            if (!IsValid)
+            { 
                 UserMessageViewModel.IsError = true;
                 UserMessageViewModel.Message = "Data is invalid. Please update before saving.";
                 return;
@@ -731,7 +739,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
     }
 
 
-    private bool isValid()
+    private bool isThisValid()
     {
         foreach (var t in SharedChemoObjects.ChemotherapyPX_Tracking_List)
         {

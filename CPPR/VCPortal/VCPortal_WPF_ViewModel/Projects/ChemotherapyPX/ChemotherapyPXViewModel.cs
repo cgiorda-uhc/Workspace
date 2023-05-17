@@ -15,8 +15,8 @@ public partial class ChemotherapyPXViewModel : ObservableValidator
     private ChemotherapyPX_ReadDto _chmpx;
 
 
-    //[ObservableProperty]
-    //private bool is_Valid;
+    [ObservableProperty]
+    private List<ValidationResult> validationResults;
 
     public int? Id => _chmpx.Id;
 
@@ -473,6 +473,8 @@ public partial class ChemotherapyPXViewModel : ObservableValidator
     }
 
 
+    private bool? _isFirstPass = true;
+
 
     public ChemotherapyPXViewModel(ChemotherapyPX_ReadDto chmpx)
     {
@@ -528,6 +530,12 @@ public partial class ChemotherapyPXViewModel : ObservableValidator
         //ValidateProperty(newValue, propName);
         //base.NotifyPropertyChanged(propName);
 
+        //RESET VALIDATION
+        if(SharedChemoObjects.ChemotherapyPX_Tracking_List.Count == 0)
+        {
+            ValidationResults = null;
+        }
+
 
         var chemo = SharedChemoObjects.ChemotherapyPX_Tracking_List.FirstOrDefault(x => x.CODE == _code);
         if (chemo == null)
@@ -537,24 +545,27 @@ public partial class ChemotherapyPXViewModel : ObservableValidator
             chemo = AutoMapping<ChemotherapyPX_ReadDto, ChemotherapyPX_Tracking_CUD_Dto>.Map(_chmpx);
 
 
-            if(chemo.CODE == null)
-            {
-                chemo.CODE = _code;
-            }
+            
 
-            if (Id == null)
+            if (Id == null && _isFirstPass == true)
             {
                 //chemo.CODE = _code;
                 chemo.UPDATE_ACTION = "INSERT";
             }
-            else
+            else 
             {
                 chemo.ChemoPX_Id = Id;
-                chemo.CODE = _code;
                 chemo.UPDATE_ACTION = "UPDATE";
             }
+            _isFirstPass = false;
 
-            
+
+            if (chemo.CODE == null)
+            {
+                chemo.CODE = _code;
+            }
+
+
             SharedChemoObjects.ChemotherapyPX_Tracking_List.Add(chemo);
         }
 
@@ -652,10 +663,13 @@ public partial class ChemotherapyPXViewModel : ObservableValidator
             chemo.IsValid = Validator.TryValidateObject(chemo, context, validationResults, true);
             if (!chemo.IsValid)
             {
-                foreach (ValidationResult validationResult in validationResults)
-                {
-                    Console.WriteLine("{0}", validationResult.ErrorMessage);
-                }
+                ValidationResults = validationResults;
+                //foreach (ValidationResult validationResult in validationResults)
+                //{
+                //    //Console.WriteLine("{0}", validationResult.ErrorMessage);
+
+                //    ValidationErrors.Add(validationResult.ErrorMessage);
+                //}
             }
         }
         else
