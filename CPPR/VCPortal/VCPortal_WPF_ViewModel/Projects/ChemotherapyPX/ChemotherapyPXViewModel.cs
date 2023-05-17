@@ -15,8 +15,8 @@ public partial class ChemotherapyPXViewModel : ObservableValidator
     private ChemotherapyPX_ReadDto _chmpx;
 
 
-    [ObservableProperty]
-    private List<ValidationResult> validationResults;
+    //[ObservableProperty]
+    //private List<ValidationResult> validationResults;
 
     public int? Id => _chmpx.Id;
 
@@ -533,7 +533,7 @@ public partial class ChemotherapyPXViewModel : ObservableValidator
         //RESET VALIDATION
         if(SharedChemoObjects.ChemotherapyPX_Tracking_List.Count == 0)
         {
-            ValidationResults = null;
+            //ValidationResults = null;
         }
 
 
@@ -663,7 +663,7 @@ public partial class ChemotherapyPXViewModel : ObservableValidator
             chemo.IsValid = Validator.TryValidateObject(chemo, context, validationResults, true);
             if (!chemo.IsValid)
             {
-                ValidationResults = validationResults;
+                //ValidationResults = validationResults;
                 //foreach (ValidationResult validationResult in validationResults)
                 //{
                 //    //Console.WriteLine("{0}", validationResult.ErrorMessage);

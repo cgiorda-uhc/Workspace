@@ -89,12 +89,14 @@
                 <ColumnDefinition Width="20"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="100"/>
-                <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="110"/>
-                <ColumnDefinition Width="133"/>
-                <ColumnDefinition Width="133"/>
+                <ColumnDefinition Width="110"/>
+                <ColumnDefinition Width="15"/>
+                <ColumnDefinition Width="130"/>
+                <ColumnDefinition Width="130"/>
+                <ColumnDefinition Width="15"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -117,9 +119,29 @@
                 </TextBlock.Style>
             </TextBlock>
 
-            <telerik:RadButton x:Name="btnInvalid" Width="100" Grid.Row="0" Grid.Column="4" IsEnabled="{Binding IsValid, Converter={StaticResource inverseBooleanConverter}}" Content="Invalid">
+
+           
+            <telerik:RadButton x:Name="btnNew" Width="110" Grid.Row="0" Grid.Column="3" Command="{Binding addNewRowCommand}" IsEnabled="{Binding IsValid}" Content="Add Row"></telerik:RadButton>
+            <telerik:RadButton x:Name="btnDelete" Width="110" Grid.Row="0" Grid.Column="4" Command="{Binding DeleteRowCallCommand}"  Content="Delete Row"></telerik:RadButton>
+            
+            
+            <telerik:RadButton Grid.Row="0" Grid.Column="6" Width="130" Command="{Binding getChemotherapyPXDataCallCommand}" Content="Refresh Data">
+                <telerik:RadButton.IsEnabled>
+                    <MultiBinding Converter="{StaticResource booleanAndConverter}">
+                        <Binding Path="IsValid" />
+                    </MultiBinding>
+                </telerik:RadButton.IsEnabled>
             </telerik:RadButton>
-            <telerik:RadButton x:Name="btnSave" Width="100" Grid.Row="0" Grid.Column="5" Click="btnSave_Click" IsEnabled="{Binding CanSave}" Command="{Binding SaveCallCommand}"  Content="Save">
+            <telerik:RadButton x:Name="btnExporData" Width="130" Grid.Row="0" Grid.Column="7" Command="{Binding ExportDataCallCommand}" Click="btnExporData_Click"  Content="Export Data">
+                <telerik:RadButton.IsEnabled>
+                    <MultiBinding Converter="{StaticResource booleanAndConverter}">
+                        <Binding Path="CanSave"  Converter="{StaticResource inverseBooleanConverter}"/>
+                        <Binding Path="IsValid" />
+                    </MultiBinding>
+                </telerik:RadButton.IsEnabled>
+            </telerik:RadButton>
+
+            <telerik:RadButton x:Name="btnSave" Width="100" Grid.Row="0" Grid.Column="9" Click="btnSave_Click" IsEnabled="{Binding CanSave}" Command="{Binding SaveCallCommand}"  Content="Save">
 
                 <!--<telerik:RadButton.IsEnabled>
                     <MultiBinding Converter="{StaticResource booleanAndConverter}">
@@ -135,7 +157,9 @@
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
                                     <Condition Binding="{Binding CanSave}" Value="False"/>
-                                    --><!--<Condition Binding="{Binding Path=(Validation.HasError)}" Value="False" />--><!--
+                                    -->
+                <!--<Condition Binding="{Binding Path=(Validation.HasError)}" Value="False" />-->
+                <!--
                                 </MultiDataTrigger.Conditions>
                                 <Setter Property="IsEnabled" Value="True"/>
                             </MultiDataTrigger>
@@ -145,22 +169,7 @@
 
 
             </telerik:RadButton>
-            <telerik:RadButton x:Name="btnNew" Width="110" Grid.Row="0" Grid.Column="6" Command="{Binding addNewRowCommand}" IsEnabled="{Binding IsValid}" Content="New Row"></telerik:RadButton>
-            <telerik:RadButton x:Name="btnExporData" Width="130" Grid.Row="0" Grid.Column="7" Command="{Binding ExportDataCallCommand}" Click="btnExporData_Click"  Content="Export Data">
-                <telerik:RadButton.IsEnabled>
-                    <MultiBinding Converter="{StaticResource booleanAndConverter}">
-                        <Binding Path="CanSave"  Converter="{StaticResource inverseBooleanConverter}"/>
-                        <Binding Path="IsValid" />
-                    </MultiBinding>
-                </telerik:RadButton.IsEnabled>
-            </telerik:RadButton>
-            <telerik:RadButton Grid.Row="0" Grid.Column="8" Width="130" Command="{Binding getChemotherapyPXDataCallCommand}" Content="Refresh Data">
-                <telerik:RadButton.IsEnabled>
-                    <MultiBinding Converter="{StaticResource booleanAndConverter}">
-                        <Binding Path="CanSave"  Converter="{StaticResource inverseBooleanConverter}"/>
-                        <Binding Path="IsValid" />
-                    </MultiBinding>
-                </telerik:RadButton.IsEnabled>
+            <telerik:RadButton x:Name="btnInvalid" Width="100" Grid.Row="0" Grid.Column="10" IsEnabled="{Binding IsValid, Converter={StaticResource inverseBooleanConverter}}" Content="Invalid">
             </telerik:RadButton>
         </Grid>
 
@@ -172,7 +181,7 @@
 
 
 
-                <telerik:GridViewColumn  HeaderCellStyle="{StaticResource mainHeader}">
+                <!--<telerik:GridViewColumn  HeaderCellStyle="{StaticResource mainHeader}">
                     <telerik:GridViewColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="Delete" />
@@ -185,7 +194,7 @@
                     CommandParameter="{Binding}"  />
                         </DataTemplate>
                     </telerik:GridViewColumn.CellEditTemplate>
-                </telerik:GridViewColumn>
+                </telerik:GridViewColumn>-->
 
 
                 <telerik:GridViewDataColumn DataMemberBinding="{Binding Id}" IsVisible="False"/>

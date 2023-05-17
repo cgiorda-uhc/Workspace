@@ -86,8 +86,6 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
         _excelFunctions = excelFunctions;
         _config = prepareConfig(config);
 
-        IsValid = true;
-
         UserMessageViewModel = new MessageViewModel();
         ProgressMessageViewModel= new MessageViewModel();
 
@@ -163,6 +161,18 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
         save();
     }
 
+    [RelayCommand]
+    private async Task DeleteRowCall()
+    {
+        _sbStatus.Clear();
+        Mouse.OverrideCursor = Cursors.Wait;
+        UserMessageViewModel.Message = "";
+        deleteRow();
+        Mouse.OverrideCursor = null;
+    }
+
+
+
 
     [RelayCommand]
     private async Task EditEndCall()
@@ -234,7 +244,6 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
     [RelayCommand]
     private void addNewRow()
     {
-        IsValid = isThisValid();
         if (!IsValid)
         {
             UserMessageViewModel.IsError = true;
@@ -245,16 +254,26 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
         OC_ChemotherapyPXViewModel.Insert(0, new ChemotherapyPXViewModel(new ChemotherapyPX_ReadDto()));
     }
 
-    [RelayCommand]
+
     private void deleteRow()
     {
 
         try
         {
 
+            var row = SelectedRow;
+
+            if(row == null) 
+            {
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "Select row to delete.";
+                return;
+            }
+
+
             _logger.Information("Running ChemotherapyPX.deleteRow for {CurrentUser}...", Authentication.UserName);
 
-            var row = SelectedRow;
+          
 
             //UPDATE OBSERVED COLLECTION
             OC_ChemotherapyPXViewModel.Remove(row);
@@ -271,9 +290,13 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
             {
                 SharedChemoObjects.ChemotherapyPX_Tracking_List.Remove(chemo);
             }
+            IsValid = isThisValid();
+            CanSave = IsValid;
             SharedChemoObjects.ChemotherapyPX_Tracking_List.Add(new ChemotherapyPX_Tracking_CUD_Dto() { ChemoPX_Id = row.Id, CODE = row.CODE, UPDATE_ACTION = "DELETE" });
             SharedObjects.ProcCodes.Add(new ProcCodesModel() { Proc_Cd = row.CODE, Proc_Desc = row.CODE_DESC_REF, Proc_Cd_Type = row.CODE_TYPE_REF, Proc_Cd_Date = row.CODE_END_DT_REF });
 
+
+            
             _logger.Information("ChemotherapyPX.deleteRow sucessfully completed for {CurrentUser}...", Authentication.UserName);
         }
         catch (Exception ex)
@@ -291,7 +314,6 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
         try
         {
 
-            IsValid = isThisValid();
             if (!IsValid)
             { 
                 UserMessageViewModel.IsError = true;
@@ -458,6 +480,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
         }
         finally
         {
+            IsValid = true;
             CanSave = false;
         }
 
@@ -743,7 +766,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
     {
         foreach (var t in SharedChemoObjects.ChemotherapyPX_Tracking_List)
         {
-            if (t.IsValid == false)
+            if (t.IsValid == false && t.UPDATE_ACTION != "DELETE")
             {
                 return false;
             }
