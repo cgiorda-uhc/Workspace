@@ -440,7 +440,7 @@ public partial class ChemotherapyPXViewModel : ObservableValidator
         set
         {
             //var oldvalue = (_FIRST_NOVEL_MNTH == 0 ? null : _FIRST_NOVEL_MNTH);
-            SetProperty(ref _FIRST_NOVEL_MNTH, value, true); 
+            SetProperty(ref _FIRST_NOVEL_MNTH, (value == 0 ? null : value), true); 
             //_FIRST_NOVEL_MNTH = (value == 0 ? null : value);
 
             //if (oldvalue == null && _action != "INSERT")

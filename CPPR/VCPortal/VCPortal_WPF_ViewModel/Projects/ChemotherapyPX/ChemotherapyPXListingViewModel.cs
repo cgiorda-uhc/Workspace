@@ -162,17 +162,19 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
     [RelayCommand]
     private async Task EditEndCall()
     {
-        foreach (var t in SharedChemoObjects.ChemotherapyPX_Tracking_List)
-        {
-            if (t.IsValid == false)
-            {
-                //UserMessageViewModel.IsError = true;
-                //UserMessageViewModel.Message = "Data is invalid. Please update before saving.";
-                CanSave = false;
-                return;
-            }
-        }
-        CanSave = true;
+        CanSave = isValid();
+
+        //foreach (var t in SharedChemoObjects.ChemotherapyPX_Tracking_List)
+        //{
+        //    if (t.IsValid == false)
+        //    {
+        //        //UserMessageViewModel.IsError = true;
+        //        //UserMessageViewModel.Message = "Data is invalid. Please update before saving.";
+        //        CanSave = false;
+        //        return;
+        //    }
+        //}
+        //CanSave = true;
     }
 
 
@@ -226,6 +228,13 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
     [RelayCommand]
     private void addNewRow()
     {
+        if (!isValid())
+        {
+            UserMessageViewModel.IsError = true;
+            UserMessageViewModel.Message = "Data is invalid. Please update before adding new row.";
+            return;
+        }
+
         OC_ChemotherapyPXViewModel.Insert(0, new ChemotherapyPXViewModel(new ChemotherapyPX_ReadDto()));
     }
 
@@ -235,6 +244,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
 
         try
         {
+
             _logger.Information("Running ChemotherapyPX.deleteRow for {CurrentUser}...", Authentication.UserName);
 
             var row = SelectedRow;
@@ -274,16 +284,13 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
         try
         {
 
-            foreach(var t in SharedChemoObjects.ChemotherapyPX_Tracking_List)
+            if(!isValid())
             {
-                if(t.IsValid == false)
-                {
-                    UserMessageViewModel.IsError = true;
-                    UserMessageViewModel.Message = "Data is invalid. Please update before saving.";
-                    return;
-                }
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "Data is invalid. Please update before saving.";
+                return;
             }
-
+          
 
             //ValidationContext context = new ValidationContext(OC_ChemotherapyPXViewModel, null, null);
             //List<ValidationResult> validationResults = new List<ValidationResult>();
@@ -427,6 +434,10 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
                 await Task.Delay(TimeSpan.FromSeconds(1));
                 _logger.Error("getChemotherapyPXData threw an error for {CurrentUser}..." + response.Result.StatusCode.ToString(), Authentication.UserName);
             }
+
+            //FIND WAY TO IGNORE LOADING THESE WHENEVER REFRESHED
+            //DONT NEED TO TRACK LOADING OF DATA!!!!!
+            SharedChemoObjects.ChemotherapyPX_Tracking_List.Clear();
 
             //SelectedRow = OC_ChemotherapyPXViewModel[0];
         }
@@ -717,6 +728,19 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
             _logger.Fatal(ex, "loadGridLists.WebAPIConsume.GetCall threw an error for {CurrentUser}", Authentication.UserName);
         }
 
+    }
+
+
+    private bool isValid()
+    {
+        foreach (var t in SharedChemoObjects.ChemotherapyPX_Tracking_List)
+        {
+            if (t.IsValid == false)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
 
