@@ -15,7 +15,11 @@ public class ChemotherapyPX_Tracking_ReadDto
     public string CODE_DESC { get; set; }
 
     public DateTime CODE_END_DT { get; set; }
+
+    public DateTime CODE_END_DT_PREVIOUS { get; set; }
     public string CODE_TYPE { get; set; }
+
+    public string CODE_TYPE_PREVIOUS { get; set; }
 
     public string GENERIC_NAME { get; set; }
     public string GENERIC_NAME_PREVIOUS { get; set; }

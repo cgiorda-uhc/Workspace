@@ -59,11 +59,17 @@ public partial class ChemotherapyPXControl : UserControl
     //    modalContentControl.DataContext = this.DataContext;
     //}
 
-    private void ChemotherapyPXGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
+    //NOT IDEAL FOR MVVM BUT TIME IS LIMITED
+    private void notifyVM()
     {
         var viewModel = (ChemotherapyPXListingViewModel)DataContext;
         if (viewModel.EditEndCallCommand.CanExecute(null))
             viewModel.EditEndCallCommand.Execute(null);
+    }
+
+    private void ChemotherapyPXGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
+    {
+        notifyVM();
         //var objType = ((GridViewEditorPresenter)e.Cell.Content).Content.GetType();
         //object newvalue;
 

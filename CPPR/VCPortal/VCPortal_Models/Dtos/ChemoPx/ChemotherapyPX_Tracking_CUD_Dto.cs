@@ -13,6 +13,12 @@ public class ChemotherapyPX_Tracking_CUD_Dto
     public int? ChemoPX_Id { get; set; }
     public string CODE { get; set; }
 
+    [Required]
+    public string CODE_TYPE { get; set; }
+
+    [Required]
+    public DateTime? CODE_END_DT { get; set; }
+
     [MaxLength(100, ErrorMessage = "The field {0}'s length must not be greater than {1} chars.")]
     public string GENERIC_NAME { get; set; }
 

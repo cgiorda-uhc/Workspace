@@ -47,13 +47,13 @@ public partial class ChemotherapyPXViewModel : ObservableValidator
                 var proc = SharedObjects.ProcCodes.Where(x => x.Proc_Cd == _code).FirstOrDefault();
 
                 CODE_DESC = proc.Proc_Desc;
-                CODE_END_DT = proc.Proc_Cd_Date;
-                CODE_TYPE = proc.Proc_Cd_Type;
+                //CODE_END_DT = proc.Proc_Cd_Date;
+                //CODE_TYPE = proc.Proc_Cd_Type;
                 //_code = value;
 
                 trackChanges(_code, "CODE");
 
-                SharedObjects.ProcCodes.Remove(SharedObjects.ProcCodes.Where(x => x.Proc_Cd == _code).FirstOrDefault());
+                //SharedObjects.ProcCodes.Remove(SharedObjects.ProcCodes.Where(x => x.Proc_Cd == _code).FirstOrDefault());
             }
             else
             {
@@ -157,8 +157,31 @@ public partial class ChemotherapyPXViewModel : ObservableValidator
         }
     }
 
-    [ObservableProperty]
-    private string cODE_TYPE;
+    //[ObservableProperty]
+    //private string cODE_TYPE;
+
+    private string _CODE_TYPE;
+    [Required]
+    public string CODE_TYPE
+    {
+        get
+        {
+            return _CODE_TYPE;
+        }
+        set
+        {
+            //var oldvalue = _TRADE_NAME;
+            SetProperty(ref _CODE_TYPE, value, true);
+            // _TRADE_NAME = value;
+
+            //if (oldvalue == null && _action != "INSERT")
+            //    return;
+
+            trackChanges(value, "CODE_TYPE");
+        }
+    }
+
+
     public string CODE_TYPE_REF { get; set; }
 
     private DateTime? _CODE_EFF_DT;
@@ -181,8 +204,31 @@ public partial class ChemotherapyPXViewModel : ObservableValidator
         }
     }
 
-    [ObservableProperty]
-    private DateTime? cODE_END_DT;
+    //[ObservableProperty]
+    //private DateTime? cODE_END_DT;
+    private DateTime? _CODE_END_DT;
+    [Required]
+    public DateTime? CODE_END_DT
+    {
+        get
+        {
+            return _CODE_END_DT;
+        }
+        set
+        {
+            //var oldvalue = _CODE_EFF_DT;
+            SetProperty(ref _CODE_END_DT, value, true);
+            //_CODE_EFF_DT = value;
+
+            //if (oldvalue == null && _action != "INSERT")
+            //    return;
+
+            trackChanges(value, "CODE_END_DT");
+        }
+    }
+
+
+
     public DateTime? CODE_END_DT_REF { get; set; }
 
     private bool? _NHNR_CANCER_THERAPY;
@@ -570,13 +616,21 @@ public partial class ChemotherapyPXViewModel : ObservableValidator
         }
 
 
-
+        //CODE_TYPE
 
         switch (propName)
         {
             case "CODE":
                 chemo.CODE = newValue.ToString();
                 _chmpx.CODE = chemo.CODE;
+                break;
+            case "CODE_END_DT":
+                chemo.CODE_END_DT = newValue as DateTime?;
+                _chmpx.CODE_END_DT = chemo.CODE_END_DT;
+                break;
+            case "CODE_TYPE":
+                chemo.CODE_TYPE = newValue.ToString();
+                _chmpx.CODE_TYPE = chemo.CODE_TYPE;
                 break;
             case "GENERIC_NAME":
                 chemo.GENERIC_NAME = newValue.ToString();

@@ -59,7 +59,7 @@ adHoc.ConnectionStringMSSQL = "data source=IL_UCA;server=wn000005325;Persist Sec
 adHoc.TableMHP = "stg.MHP_Yearly_Universes";
 adHoc.ConnectionStringTD = "Data Source=UDWPROD;User ID=cgiorda;Password=BooWooDooFoo2023!!;Authentication Mechanism=LDAP;Session Mode=TERADATA;Session Character Set=ASCII;Persist Security Info=true;Connection Timeout=99999;";
 adHoc.TableUGAP = "stg.MHP_Yearly_Universes_UGAP";
-adHoc.Limit = 3000;
+adHoc.Limit = 20;
 
 List<string> files_loaded = new List<string>();
 files_loaded.Add("United PCP- Rad & Card_April_2023.xlsx");

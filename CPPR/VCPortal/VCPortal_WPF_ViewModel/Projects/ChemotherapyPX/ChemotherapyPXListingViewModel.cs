@@ -71,6 +71,10 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
     private List<CEP_Enroll_Cd_Model> cEPEnrollCds;
 
     [ObservableProperty]
+    private List<string> procTypeList;
+
+
+    [ObservableProperty]
     private List<string> sources;
 
     [ObservableProperty]
@@ -250,8 +254,16 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
             UserMessageViewModel.Message = "Data is invalid. Please update before adding new row.";
             return;
         }
+        var q = OC_ChemotherapyPXViewModel.Where(X => X.CODE == null).FirstOrDefault();
+        if (q != null)
+        {
+            UserMessageViewModel.IsError = true;
+            UserMessageViewModel.Message = "A new row already exists, you must complete this first.";
+            return;
+        }
 
         OC_ChemotherapyPXViewModel.Insert(0, new ChemotherapyPXViewModel(new ChemotherapyPX_ReadDto()));
+
     }
 
 
@@ -285,18 +297,18 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
             }
 
             //UPDATE TRACKING
-            var chemo = SharedChemoObjects.ChemotherapyPX_Tracking_List.FirstOrDefault(x => x.CODE == row.CODE);
+            var chemo = SharedChemoObjects.ChemotherapyPX_Tracking_List.FirstOrDefault(x => x.CODE == row.CODE && x.CODE_END_DT == row.CODE_END_DT);
             if (chemo != null)
             {
                 SharedChemoObjects.ChemotherapyPX_Tracking_List.Remove(chemo);
             }
             IsValid = isThisValid();
             CanSave = IsValid;
-            SharedChemoObjects.ChemotherapyPX_Tracking_List.Add(new ChemotherapyPX_Tracking_CUD_Dto() { ChemoPX_Id = row.Id, CODE = row.CODE, UPDATE_ACTION = "DELETE" });
-            SharedObjects.ProcCodes.Add(new ProcCodesModel() { Proc_Cd = row.CODE, Proc_Desc = row.CODE_DESC_REF, Proc_Cd_Type = row.CODE_TYPE_REF, Proc_Cd_Date = row.CODE_END_DT_REF });
+            SharedChemoObjects.ChemotherapyPX_Tracking_List.Add(new ChemotherapyPX_Tracking_CUD_Dto() { ChemoPX_Id = row.Id, CODE = row.CODE, CODE_END_DT = row.CODE_END_DT, UPDATE_ACTION = "DELETE" });
+            //SharedObjects.ProcCodes.Add(new ProcCodesModel() { Proc_Cd = row.CODE, Proc_Desc = row.CODE_DESC_REF, Proc_Cd_Type = row.CODE_TYPE_REF, Proc_Cd_Date = row.CODE_END_DT_REF });
+            //SharedObjects.ProcCodes.Add(new ProcCodesModel() { Proc_Cd = row.CODE, Proc_Desc = row.CODE_DESC_REF});
 
 
-            
             _logger.Information("ChemotherapyPX.deleteRow sucessfully completed for {CurrentUser}...", Authentication.UserName);
         }
         catch (Exception ex)
@@ -352,7 +364,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
             foreach (var t in tracked)
             {
                 t.UPDATE_DT = date;
-                t.UPDATE_USER = "cgiorda";
+                t.UPDATE_USER = Authentication.UserName;
             }
 
 
@@ -499,13 +511,21 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
 
             List<ExcelExport> export = new List<ExcelExport>();
 
-            export.Add(new ExcelExport() { ExportList = OC_ChemotherapyPXViewModel.ToList<object>(), SheetName = "ChemotherapyPX_Data" });
+            //export.Add(new ExcelExport() { ExportList = OC_ChemotherapyPXViewModel.ToList<object>(), SheetName = "ChemotherapyPX_Data" });
 
-            var api = _config.APIS.Where(x => x.Name == "Tracking").FirstOrDefault();
-            var tracking = await VM_Functions.APIGetResultAsync<ChemotherapyPX_Tracking_ReadDto>(api.BaseUrl, api.Url);
-            if (tracking.Count > 0)
+            var api = _config.APIS.Where(x => x.Name == "MainData").FirstOrDefault();
+            var chemo = await VM_Functions.APIGetResultAsync<ChemotherapyPX_ReadDto>(api.BaseUrl, api.Url);
+            if (chemo.Count > 0)
             {
-                export.Add(new ExcelExport() { ExportList = tracking.ToList<object>(), SheetName = "Tracking"});
+                export.Add(new ExcelExport() { ExportList = chemo.ToList<object>(), SheetName = "ChemotherapyPX_Data" });
+            }
+
+
+            api = _config.APIS.Where(x => x.Name == "Tracking").FirstOrDefault();
+            var track = await VM_Functions.APIGetResultAsync<ChemotherapyPX_Tracking_ReadDto>(api.BaseUrl, api.Url);
+            if (track.Count > 0)
+            {
+                export.Add(new ExcelExport() { ExportList = track.ToList<object>(), SheetName = "Tracking"});
             }
 
 
@@ -721,6 +741,14 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
                 UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
                 _logger.Error("loadGridLists.CEPEnrExcl threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
             }
+
+
+            ProcTypeList = new List<string>();
+            ProcTypeList.Add("ICD10");
+            ProcTypeList.Add("HCPCS");
+            ProcTypeList.Add("CPT-4");
+
+
 
 
             if (SharedObjects.ProcCodes == null)

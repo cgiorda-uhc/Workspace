@@ -166,6 +166,15 @@ public class SqlDataAccess : IRelationalDataAccess
             bcp.BatchSize = batchSize;
             bcp.DestinationTableName = table;
             await bcp.WriteToServerAsync(reader);
+            //try
+            //{
+                
+            //}
+            //catch(Exception e)
+            //{
+            //    var s = e;
+            //}
+
         }
     }
 

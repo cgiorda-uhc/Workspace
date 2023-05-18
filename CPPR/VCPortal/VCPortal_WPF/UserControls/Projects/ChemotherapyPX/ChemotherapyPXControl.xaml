@@ -174,7 +174,7 @@
         </Grid>
 
 
-        <telerik:RadGridView x:Name="ChemotherapyPXGridView"  Grid.Row="1" ItemsSource="{Binding OC_ChemotherapyPXViewModel, Mode=TwoWay, IsAsync=True}" AutoGenerateColumns="False"  ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectedItem="{Binding SelectedRow, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" ScrollViewer.VerticalScrollBarVisibility="Visible"  FrozenColumnCount="4" CanUserDeleteRows="True" IsSynchronizedWithCurrentItem="True" ValidationType="DataAnnotations"  CellEditEnded="ChemotherapyPXGridView_CellEditEnded"  BeginningEdit="ChemotherapyPXGridView_BeginningEdit"  ScrollMode="RealTime" >
+        <telerik:RadGridView x:Name="ChemotherapyPXGridView"  Grid.Row="1" ItemsSource="{Binding OC_ChemotherapyPXViewModel, Mode=TwoWay, IsAsync=True}" AutoGenerateColumns="False"  ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectedItem="{Binding SelectedRow, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" ScrollViewer.VerticalScrollBarVisibility="Visible"  FrozenColumnCount="4" CanUserDeleteRows="True" IsSynchronizedWithCurrentItem="True" ValidationType="DataAnnotations" CellEditEnded="ChemotherapyPXGridView_CellEditEnded"  BeginningEdit="ChemotherapyPXGridView_BeginningEdit"  ScrollMode="RealTime" >
 
 
             <telerik:RadGridView.Columns>
@@ -247,7 +247,11 @@
                     </telerik:GridViewDataColumn.CellEditTemplate>
                 </telerik:GridViewDataColumn>
 
-                <telerik:GridViewDataColumn Width="100" Header="CKPT INHIB IND"  DataMemberBinding="{Binding CKPT_INHIB_IND, Mode=TwoWay}" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}">
+
+                <telerik:GridViewCheckBoxColumn Width="100" Header="CKPT INHIB IND"  DataMemberBinding="{Binding CKPT_INHIB_IND, Mode=TwoWay}"  HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}"/>
+
+
+                <!--<telerik:GridViewDataColumn Width="100" Header="CKPT INHIB IND"  DataMemberBinding="{Binding CKPT_INHIB_IND, Mode=TwoWay}" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}">
                     <telerik:GridViewDataColumn.CellTemplate>
                         <DataTemplate>
                             <CheckBox IsChecked="{Binding Path=CKPT_INHIB_IND}"/>
@@ -258,9 +262,12 @@
                             <CheckBox IsChecked="{Binding Path=CKPT_INHIB_IND, Mode=TwoWay}"/>
                         </DataTemplate>
                     </telerik:GridViewDataColumn.CellEditTemplate>
-                </telerik:GridViewDataColumn>
+                </telerik:GridViewDataColumn>-->
 
-                <telerik:GridViewDataColumn Width="100" Header="ANTI EMETIC IND" DataMemberBinding="{Binding ANTI_EMETIC_IND, Mode=TwoWay}" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}">
+
+                <telerik:GridViewCheckBoxColumn Width="100" Header="ANTI EMETIC IND"  DataMemberBinding="{Binding ANTI_EMETIC_IND, Mode=TwoWay}"  HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}"/>
+
+                <!--<telerik:GridViewDataColumn Width="100" Header="ANTI EMETIC IND" DataMemberBinding="{Binding ANTI_EMETIC_IND, Mode=TwoWay}" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}">
                     <telerik:GridViewDataColumn.CellTemplate>
                         <DataTemplate>
                             <CheckBox IsChecked="{Binding Path=ANTI_EMETIC_IND}"/>
@@ -271,10 +278,15 @@
                             <CheckBox IsChecked="{Binding Path=ANTI_EMETIC_IND, Mode=TwoWay, NotifyOnValidationError=True,ValidatesOnNotifyDataErrors=True,UpdateSourceTrigger=PropertyChanged}"/>
                         </DataTemplate>
                     </telerik:GridViewDataColumn.CellEditTemplate>
-                </telerik:GridViewDataColumn>
+                </telerik:GridViewDataColumn>-->
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding CODE_TYPE, Mode=TwoWay}" Header="CODE TYPE" Width="100"  IsReadOnly="True" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}"/>
-                
+                <!--<telerik:GridViewDataColumn DataMemberBinding="{Binding CODE_TYPE, Mode=TwoWay}" Header="CODE TYPE" Width="100"  IsReadOnly="True" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}"/>-->
+
+
+                <telerik:GridViewComboBoxColumn IsLightweightModeEnabled="True"  Width="100"  Header="CODE TYPE" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}" DataMemberBinding="{Binding CODE_TYPE}" ItemsSource="{Binding DataContext.ProcTypeList, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"  />
+
+
+
 
                 <telerik:GridViewDataColumn Width="100" Header="CODE EFF DT" DataMemberBinding="{Binding CODE_EFF_DT}" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}">
                     <telerik:GridViewDataColumn.CellTemplate>
@@ -289,9 +301,27 @@
                     </telerik:GridViewDataColumn.CellEditTemplate>
                 </telerik:GridViewDataColumn>
 
-                <telerik:GridViewDataColumn Width="100" DataMemberBinding="{Binding CODE_END_DT, Mode=TwoWay, StringFormat=d}" Header="CODE END DT" IsReadOnly="True" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}" />
+                <!--<telerik:GridViewDataColumn Width="100" DataMemberBinding="{Binding CODE_END_DT, Mode=TwoWay, StringFormat=d}" Header="CODE END DT" IsReadOnly="True" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}" />-->
 
-                <telerik:GridViewDataColumn  Width="100" Header="NHNR CANCER THERAPY" DataMemberBinding="{Binding NHNR_CANCER_THERAPY}" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}">
+
+                <telerik:GridViewDataColumn Width="100" Header="CODE END DT" DataMemberBinding="{Binding CODE_END_DT}" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}">
+                    <telerik:GridViewDataColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding CODE_END_DT, StringFormat=d}"></TextBlock>
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellTemplate>
+                    <telerik:GridViewDataColumn.CellEditTemplate>
+                        <DataTemplate>
+                            <DatePicker SelectedDate="{Binding CODE_END_DT,  Mode=TwoWay, NotifyOnValidationError=True,ValidatesOnNotifyDataErrors=True,UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellEditTemplate>
+                </telerik:GridViewDataColumn>
+
+
+
+                <telerik:GridViewCheckBoxColumn Width="100" Header="NHNR CANCER THERAPY"  DataMemberBinding="{Binding NHNR_CANCER_THERAPY, Mode=TwoWay}"  HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}"/>
+
+                <!--<telerik:GridViewDataColumn  Width="100" Header="NHNR CANCER THERAPY"  DataMemberBinding="{Binding NHNR_CANCER_THERAPY}" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}">
                     <telerik:GridViewDataColumn.CellTemplate>
                         <DataTemplate>
                             <CheckBox IsChecked="{Binding Path=NHNR_CANCER_THERAPY}"/>
@@ -302,7 +332,7 @@
                             <CheckBox IsChecked="{Binding Path=NHNR_CANCER_THERAPY, Mode=TwoWay}"/>
                         </DataTemplate>
                     </telerik:GridViewDataColumn.CellEditTemplate>
-                </telerik:GridViewDataColumn>
+                </telerik:GridViewDataColumn>-->
 
 
                 <telerik:GridViewComboBoxColumn IsLightweightModeEnabled="True"  Width="350"  Header="CODE CATEGORY" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}" DataMemberBinding="{Binding CODE_CATEGORY_ID}" ItemsSource="{Binding DataContext.CodeCategories, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" DisplayMemberPath="CODE_CATEGORY" SelectedValueMemberPath="CODE_CATEGORY_ID" />

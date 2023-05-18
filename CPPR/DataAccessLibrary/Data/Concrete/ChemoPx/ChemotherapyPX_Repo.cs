@@ -32,7 +32,8 @@ public class ChemotherapyPX_Repo : IChemotherapyPX_Repo
 
     public async Task InsertChemotherapyPXTracking( List<ChemotherapyPX_Tracking_CUD_Dto> chemPX)
     {
-        string[] columns = typeof(ChemotherapyPX_Tracking_CUD_Dto).GetProperties().Select(p => p.Name).ToArray();
+        string[] columns = typeof(ChemotherapyPX_Tracking_CUD_Dto).GetProperties().Select(p => p.Name).ToArray().Where(x => x != "IsValid").ToArray();
+        //string[] columns = typeof(ChemotherapyPX_Tracking_CUD_Dto).GetProperties().Select(p => p.Name).ToArray();
         await _db.BulkSave<ChemotherapyPX_Tracking_CUD_Dto>("chemopx.ChemotherapyPX_Tracking", chemPX, columns);
 
         var param = chemPX.FirstOrDefault();
