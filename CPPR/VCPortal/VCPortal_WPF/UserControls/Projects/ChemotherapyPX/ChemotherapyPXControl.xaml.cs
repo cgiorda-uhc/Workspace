@@ -25,6 +25,8 @@ using VCPortal_WPF.UserControls.Shared;
 using VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;
 using VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
 using VCPortal_WPF_ViewModel.Projects.MHP;
+using NPOI.SS.Formula.Functions;
+using Telerik.Windows.Documents.Fixed.Model.Annotations;
 
 namespace VCPortal_WPF.UserControls.Projects.ChemotherapyPX;
 /// <summary>
@@ -32,7 +34,7 @@ namespace VCPortal_WPF.UserControls.Projects.ChemotherapyPX;
 /// </summary>
 public partial class ChemotherapyPXControl : UserControl
 {
-    //private ChemotherapyPXListingViewModel _viewModel => (ChemotherapyPXListingViewModel)DataContext;
+    private ChemotherapyPXListingViewModel _viewModel => (ChemotherapyPXListingViewModel)DataContext;
     public ChemotherapyPXControl()
     {
         //logger.Information("Initializing ChemotherapyPXControl for  for {CurrentUser}...", Authentication.UserName);
@@ -60,16 +62,93 @@ public partial class ChemotherapyPXControl : UserControl
     //}
 
     //NOT IDEAL FOR MVVM BUT TIME IS LIMITED
+
     private void notifyVM()
     {
-        var viewModel = (ChemotherapyPXListingViewModel)DataContext;
-        if (viewModel.EditEndCallCommand.CanExecute(null))
-            viewModel.EditEndCallCommand.Execute(null);
+        //if (_viewModel == null)
+        //{
+        //    _viewModel = (ChemotherapyPXListingViewModel)DataContext;
+        //}
+        if (_viewModel.EditEndCallCommand.CanExecute(null))
+            _viewModel.EditEndCallCommand.Execute(null);
     }
+
+
+    private void runValidation()
+    {
+        var rows = this.ChemotherapyPXGridView.ChildrenOfType<GridViewRow>();
+
+        foreach (var row in rows)
+        {
+            if (row is GridViewNewRow)
+                continue;
+
+
+            string code = "";
+            var objType = row.Cells[0].Content.GetType();
+
+            if (objType == typeof(RadAutoCompleteBox))
+            {
+                code = ((RadAutoCompleteBox)((GridViewEditorPresenter)row.Cells[0].Content).Content).SearchText;
+            }
+            else if (objType == typeof(TextBox))
+            {
+
+                code = ((TextBox)((GridViewEditorPresenter)row.Cells[0].Content).Content).Text;
+            }
+            else if (objType == typeof(TextBlock))
+            {
+
+                code = ((TextBlock)(row.Cells[0].Content)).Text;
+            }
+            else
+            {
+                return;
+            }
+
+
+            if (_viewModel.OC_ChemotherapyPXViewModel.Where(x => x.CODE == (code == "" ? null : code)).FirstOrDefault().ValidationResults != null)
+            {
+                row.Cells[0].ToolTip = "Test";
+            }
+
+            //foreach (var cell in row.Cells)
+            //{
+            //    e.Cell.ParentRow.Cells[0].ToolTip = "Test";
+            //}
+        }
+    }
+
+    
 
     private void ChemotherapyPXGridView_CellEditEnded(object sender, GridViewCellEditEndedEventArgs e)
     {
+
         notifyVM();
+        runValidation();
+
+
+
+        //foreach (var item in ChemotherapyPXGridView.Items)
+        //{
+        //    string itemValue = item["CODE"].Text; // unique name of the column
+
+        //    if (_viewModel.OC_ChemotherapyPXViewModel.Where(x => x.CODE == itemValue).FirstOrDefault().ValidationResults != null)
+        //    {
+        //        e.Cell.ParentRow.Cells[0].ToolTip = "Test";
+        //    }
+
+
+        //}
+
+        //var val =dc.
+
+        //if(dc.)
+
+
+
+
+
         //var objType = ((GridViewEditorPresenter)e.Cell.Content).Content.GetType();
         //object newvalue;
 

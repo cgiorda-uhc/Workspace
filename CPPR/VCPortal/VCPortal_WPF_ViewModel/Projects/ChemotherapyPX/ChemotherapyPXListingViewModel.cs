@@ -744,6 +744,7 @@ public partial class ChemotherapyPXListingViewModel : ObservableObject
 
 
             ProcTypeList = new List<string>();
+            ProcTypeList.Add(null);
             ProcTypeList.Add("ICD10");
             ProcTypeList.Add("HCPCS");
             ProcTypeList.Add("CPT-4");

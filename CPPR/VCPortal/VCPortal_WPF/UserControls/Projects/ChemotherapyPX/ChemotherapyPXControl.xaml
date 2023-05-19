@@ -174,7 +174,7 @@
         </Grid>
 
 
-        <telerik:RadGridView x:Name="ChemotherapyPXGridView"  Grid.Row="1" ItemsSource="{Binding OC_ChemotherapyPXViewModel, Mode=TwoWay, IsAsync=True}" AutoGenerateColumns="False"  ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectedItem="{Binding SelectedRow, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" ScrollViewer.VerticalScrollBarVisibility="Visible"  FrozenColumnCount="4" CanUserDeleteRows="True" IsSynchronizedWithCurrentItem="True" ValidationType="DataAnnotations" CellEditEnded="ChemotherapyPXGridView_CellEditEnded"  BeginningEdit="ChemotherapyPXGridView_BeginningEdit"  ScrollMode="RealTime" >
+        <telerik:RadGridView x:Name="ChemotherapyPXGridView"  Grid.Row="1" ItemsSource="{Binding OC_ChemotherapyPXViewModel, Mode=TwoWay, IsAsync=True}" AutoGenerateColumns="False"  ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectedItem="{Binding SelectedRow, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" ScrollViewer.VerticalScrollBarVisibility="Visible"  FrozenColumnCount="4" CanUserDeleteRows="True" IsSynchronizedWithCurrentItem="True" ValidationType="None" CellEditEnded="ChemotherapyPXGridView_CellEditEnded"  BeginningEdit="ChemotherapyPXGridView_BeginningEdit"  ScrollMode="RealTime" >
 
 
             <telerik:RadGridView.Columns>
@@ -283,7 +283,34 @@
                 <!--<telerik:GridViewDataColumn DataMemberBinding="{Binding CODE_TYPE, Mode=TwoWay}" Header="CODE TYPE" Width="100"  IsReadOnly="True" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}"/>-->
 
 
-                <telerik:GridViewComboBoxColumn IsLightweightModeEnabled="True"  Width="100"  Header="CODE TYPE" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}" DataMemberBinding="{Binding CODE_TYPE}" ItemsSource="{Binding DataContext.ProcTypeList, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"  />
+                <!--<telerik:GridViewDataColumn DataMemberBinding="{Binding CODE_TYPE}"  Width="100" Header="CODE TYPE"  HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}">
+                    <telerik:GridViewDataColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding CODE_TYPE, StringFormat=d}"></TextBlock>
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellTemplate>
+                    <telerik:GridViewDataColumn.CellEditTemplate>
+                        <DataTemplate>
+                            <telerik:RadMaskedTextInput Width="100" >
+                                <telerik:RadMaskedTextInput.Value>
+                                    <Binding Path="=CODE_TYPE" UpdateSourceTrigger="PropertyChanged"
+                        NotifyOnValidationError="True" ValidatesOnExceptions="True">
+                                        <Binding.ValidationRules>
+                                            <valid:RequiredValidationRule />
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </telerik:RadMaskedTextInput.Value>
+
+
+                            </telerik:RadMaskedTextInput>
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellEditTemplate>
+                </telerik:GridViewDataColumn>-->
+
+
+
+
+                <telerik:GridViewComboBoxColumn IsLightweightModeEnabled="True"  Width="100"  Header="CODE TYPE" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}" DataMemberBinding="{Binding CODE_TYPE}" ItemsSource="{Binding DataContext.ProcTypeList, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}"></telerik:GridViewComboBoxColumn>
 
 
 
