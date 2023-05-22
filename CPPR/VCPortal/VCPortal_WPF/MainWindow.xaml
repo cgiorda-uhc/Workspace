@@ -10,9 +10,9 @@
         xmlns:etgvml="clr-namespace:VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;assembly=VCPortal_WPF_ViewModel"
         xmlns:chemouc="clr-namespace:VCPortal_WPF.UserControls.Projects.ChemotherapyPX" 
         xmlns:chemovml="clr-namespace:VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;assembly=VCPortal_WPF_ViewModel"
-        xmlns:modalcontrol="clr-namespace:ModalControl;assembly=ModalControl" xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+        xmlns:modalcontrol="clr-namespace:ModalControl;assembly=ModalControl" xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation" xmlns:components="clr-namespace:VCPortal_WPF.Components"
         mc:Ignorable="d" 
-        Title="MainWindow" Height="450" Width="800" WindowState="Maximized"  FontFamily="Segoe UI Light" FontSize="18" >
+        Title="MainWindow" Height="450" Width="800" WindowState="Maximized"  FontFamily="Segoe UI Light" FontSize="18" Closing="Window_Closing" >
 
 
     <Window.Resources>
@@ -55,9 +55,12 @@
                     <telerik:RadMenuItem.ItemTemplate>
                         <DataTemplate>
                             <TextBlock>
-                                    <Hyperlink TextDecorations="None" Click="MainMenuLink_Click" Foreground="Black" Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" CommandParameter="{Binding VMType}">
+                                    <!--<components:YesNoHyperlink TextDecorations="None" Click="MainMenuLink_Click" Foreground="Black" Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" CommandParameter="{Binding VMType}" CheckSaves="{Binding CheckSaves}" Question="{Binding Question}"   >
                                         <TextBlock Text="{Binding Name}"/>
-                                    </Hyperlink>
+                                    </components:YesNoHyperlink>-->
+                                    <components:YesNoHyperlink TextDecorations="None" Click="MainMenuLink_Click" Foreground="Black" Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" CommandParameter="{Binding VMType}"  >
+                                        <TextBlock Text="{Binding Name}"/>
+                                    </components:YesNoHyperlink>
                             </TextBlock>
                             <!--<TextBlock Text="{Binding Name}" />-->
                             <!--<Button Content="{Binding Name}" Command="{Binding DataContext.NavigateCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}" CommandParameter="{Binding VMType}"/>-->

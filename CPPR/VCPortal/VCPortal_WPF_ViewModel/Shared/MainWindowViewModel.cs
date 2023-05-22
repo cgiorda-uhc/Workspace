@@ -80,12 +80,12 @@ public class MainWindowViewModel : INotifyPropertyChanged
             NavigationViewModelTypesDM = new ObservableCollection<TypeAndDisplay>();
             if (groups.Contains("ms\\chemopx", StringComparer.OrdinalIgnoreCase))
             {
-                NavigationViewModelTypesDM.Add(new TypeAndDisplay { Name = "Chemotherapy PX", VMType = typeof(ChemotherapyPXListingViewModel) });
+                NavigationViewModelTypesDM.Add(new TypeAndDisplay { Name = "Chemotherapy PX", VMType = typeof(ChemotherapyPXListingViewModel), Question= "You have unsaved changes. Continue anyway?", CheckSaves=true });
             }
 
             if (groups.Contains("ms\\etgsymm", StringComparer.OrdinalIgnoreCase))
             {
-                NavigationViewModelTypesDM.Add(new TypeAndDisplay { Name = "ETG Fact Symmetry", VMType = typeof(ETGFactSymmetryListingViewModel) });
+                NavigationViewModelTypesDM.Add(new TypeAndDisplay { Name = "ETG Fact Symmetry", VMType = typeof(ETGFactSymmetryListingViewModel), Question = "You have unsaved changes. Continue anyway?", CheckSaves = true });
             }
 
             NavigationViewModelTypesDM.Add(new TypeAndDisplay { Name = "EBM Mapping" });

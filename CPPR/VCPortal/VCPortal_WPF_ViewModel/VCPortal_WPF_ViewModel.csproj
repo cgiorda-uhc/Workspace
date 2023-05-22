@@ -23,10 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="PresentationCore">
       <HintPath>bin\Release\net7.0\PresentationCore.dll</HintPath>
     </Reference>

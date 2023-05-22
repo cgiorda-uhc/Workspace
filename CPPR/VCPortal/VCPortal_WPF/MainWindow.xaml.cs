@@ -18,6 +18,8 @@ using VCPortal_WPF.UserControls;
 using VCPortal_WPF.UserControls.Projects.ChemotherapyPX;
 using VCPortal_WPF.UserControls.Projects.ETGFactSymmetry;
 using VCPortal_WPF.UserControls.Shared;
+using VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
+using VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;
 using VCPortal_WPF_ViewModel.Shared;
 
 namespace VCPortal_WPF;
@@ -62,5 +64,23 @@ public partial class MainWindow : Window
     private void MainMenuLink_Click(object sender, RoutedEventArgs e)
     {
         Keyboard.ClearFocus();
+    }
+
+    private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+    {
+
+        int cnt = (SharedETGSymmObjects.ETGFactSymmetry_Tracking_List != null ? SharedETGSymmObjects.ETGFactSymmetry_Tracking_List.Count : 0);
+        cnt += (SharedChemoObjects.ChemotherapyPX_Tracking_List != null ? SharedChemoObjects.ChemotherapyPX_Tracking_List.Count : 0);
+
+        if (cnt > 0)
+        {
+            MessageBoxResult messageBoxResult = System.Windows.MessageBox.Show("You have unsaved changes. Exit without saving?", "Exit Confirmation", System.Windows.MessageBoxButton.YesNo);
+            if (messageBoxResult == MessageBoxResult.No)
+            {
+                e.Cancel = true;
+            }
+        }
+        
+
     }
 }
