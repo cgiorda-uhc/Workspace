@@ -27,6 +27,7 @@ using VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
 using VCPortal_WPF_ViewModel.Projects.MHP;
 using NPOI.SS.Formula.Functions;
 using Telerik.Windows.Documents.Fixed.Model.Annotations;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace VCPortal_WPF.UserControls.Projects.ChemotherapyPX;
 /// <summary>
@@ -76,50 +77,105 @@ public partial class ChemotherapyPXControl : UserControl
 
     private void runValidation()
     {
+        List<System.ComponentModel.DataAnnotations.ValidationResult> validationResults = null;
+        string code = null;
 
         foreach (var item in this.ChemotherapyPXGridView.Items)
         {
             foreach (var column in this.ChemotherapyPXGridView.Columns.OfType<GridViewBoundColumnBase>())
             {
 
-                var code = column.GetValueForItem(item).ToString();
-
-                code = (code == "" ? null : code);
-                var chemo = _viewModel.OC_ChemotherapyPXViewModel.Where(x => x.CODE == code).FirstOrDefault();
-
-                var validation = chemo.ValidationResults;
-                if (validation != null)
+                if (column.Header.ToString().ToLower().Equals("id"))
                 {
-                    var sb = new StringBuilder();
-                    foreach (var v in validation)
+                    continue;
+                }
+
+
+                if (column.Header.ToString().ToLower().Equals("proc code"))
+                {
+                    code = column.GetValueForItem(item).ToString();
+
+                    code = (code == "" ? null : code);
+                    var chemo = _viewModel.OC_ChemotherapyPXViewModel.Where(x => x.CODE == code).FirstOrDefault();
+
+                    validationResults = chemo.ValidationResults;
+                }
+
+                //var code = column.GetValueForItem(item).ToString();
+
+                //code = (code == "" ? null : code);
+                //var chemo = _viewModel.OC_ChemotherapyPXViewModel.Where(x => x.CODE == code).FirstOrDefault();
+
+                //var validation = chemo.ValidationResults;
+                var sb = new StringBuilder();
+                if (validationResults != null)
+                {
+                    foreach (var v in validationResults)
                     {
                         sb.AppendLine(v.ErrorMessage);
                     }
+                }
 
-                    foreach (var cell in item.Cells)
-                    {
-                        cell.ToolTip = sb.ToString();
-                    }
-                    item.BorderBrush = Brushes.Red;
-                    item.BorderThickness = new Thickness(2);
+                //var rows = this.ChemotherapyPXGridView.ChildrenOfType<GridViewRow>();
+
+                //foreach (var row in rows)
+                //{
+                //    if (row is GridViewNewRow)
+                //        continue;
+
+                //    var content = row.Cells[0].Content;
+                //    var objType = content.GetType();
+
+                //    string code2 = null;
+                //    if (objType == typeof(GridViewEditorPresenter))
+                //    {
+                //        code2 = ((RadAutoCompleteBox)((GridViewEditorPresenter)content).Content).SearchText;
+                //    }
+                //    else if (objType == typeof(TextBlock))
+                //    {
+
+                //        code2 = ((TextBlock)(content)).Text;
+                //    }
+
+                //    if (code2 != code)
+                //    {
+                //        continue;
+                //    }
+
+
+                //    if (validationResults != null)
+                //    {
+                //        foreach (var cell in row.Cells)
+                //        {
+                //            cell.ToolTip = sb.ToString();
+                //        }
+                //        row.BorderBrush = Brushes.Red;
+                //        row.BorderThickness = new Thickness(2);
+                //    }
+                //    else
+                //    {
+                //        foreach (var cell in row.Cells)
+                //        {
+                //            cell.ToolTip = null;
+                //        }
+                //        row.BorderBrush = Brushes.Black;
+                //        row.BorderThickness = new Thickness(0);
+                //    }
+
+
+
                 }
-                else
-                {
-                    foreach (var cell in item.Cells)
-                    {
-                        cell.ToolTip = null;
-                    }
-                    item.BorderBrush = Brushes.Black;
-                    item.BorderThickness = new Thickness(0);
-                }
+
+
+
+
             }
-        }
+      
 
 
 
 
-
-        //var rows = this.ChemotherapyPXGridView.ChildrenOfType<GridViewRow>();
+       // var rows = this.ChemotherapyPXGridView.ChildrenOfType<GridViewRow>();
 
         //foreach (var row in rows)
         //{
@@ -148,7 +204,7 @@ public partial class ChemotherapyPXControl : UserControl
 
         //    code = (code == "" ? null : code);
         //    var chemo = _viewModel.OC_ChemotherapyPXViewModel.Where(x => x.CODE == code).FirstOrDefault();
-        //    if(chemo == null)
+        //    if (chemo == null)
         //    {
         //        var g = row.Cells[0].Value;
 
@@ -158,38 +214,38 @@ public partial class ChemotherapyPXControl : UserControl
 
 
 
-        //    var validation = chemo.ValidationResults;
-        //    if (validation != null)
-        //    {
-        //        var sb = new StringBuilder();
-        //        foreach(var v in validation)
-        //        {
-        //            sb.AppendLine(v.ErrorMessage);
-        //        }
+            //    var validation = chemo.ValidationResults;
+            //    if (validation != null)
+            //    {
+            //        var sb = new StringBuilder();
+            //        foreach(var v in validation)
+            //        {
+            //            sb.AppendLine(v.ErrorMessage);
+            //        }
 
-        //        foreach (var cell in row.Cells)
-        //        {
-        //            cell.ToolTip = sb.ToString();
-        //        }
-        //        row.BorderBrush = Brushes.Red;
-        //        row.BorderThickness = new Thickness(2);
-        //    }
-        //    else
-        //    {
-        //        foreach (var cell in row.Cells)
-        //        {
-        //            cell.ToolTip = null;
-        //        }
-        //        row.BorderBrush = Brushes.Black;
-        //        row.BorderThickness = new Thickness(0);
-        //    }
+            //        foreach (var cell in row.Cells)
+            //        {
+            //            cell.ToolTip = sb.ToString();
+            //        }
+            //        row.BorderBrush = Brushes.Red;
+            //        row.BorderThickness = new Thickness(2);
+            //    }
+            //    else
+            //    {
+            //        foreach (var cell in row.Cells)
+            //        {
+            //            cell.ToolTip = null;
+            //        }
+            //        row.BorderBrush = Brushes.Black;
+            //        row.BorderThickness = new Thickness(0);
+            //    }
 
-        //    //foreach (var cell in row.Cells)
-        //    //{
-        //    //    e.Cell.ParentRow.Cells[0].ToolTip = "Test";
-        //    //}
-        //}
-    }
+            //    //foreach (var cell in row.Cells)
+            //    //{
+            //    //    e.Cell.ParentRow.Cells[0].ToolTip = "Test";
+            //    //}
+            //}
+        }
 
     
 

@@ -3223,7 +3223,7 @@ DROP TABLE stg.Check_Evicore_Cache;
             string[] files;
             //files = Directory.GetFiles(strFileFolderPath, "UHC_Scorecard_*_*-final.xlsx", SearchOption.AllDirectories);
             //files = Directory.GetFiles(strFileFolderPath, "UHC_Scorecard_*_*.xlsx", SearchOption.AllDirectories);
-            files = new string[] { strFileFolderPath + "\\UHC_Scorecard_2023_03.xlsx" };
+            files = new string[] { strFileFolderPath + "\\UHC_Scorecard_2023_04.xlsx" };
 
             intFileCnt = 1;
             string[] strFileNameArr;
@@ -3297,6 +3297,15 @@ DROP TABLE stg.Check_Evicore_Cache;
 
                 strSumRadiologyLOB = OpenXMLExcel.OpenXMLExcel.GetCellValue(OpenXMLExcel.OpenXMLExcel.GetCell(OpenXMLExcel.OpenXMLExcel.sheetData, "C3"), OpenXMLExcel.OpenXMLExcel.workbookPart);
 
+
+
+                for (int i = dtRadiology.Rows.Count - 1; i >= 0; i--)
+                {
+                    DataRow dr = dtRadiology.Rows[i];
+                    if (dr["Column1"] + "" == "Case Status")
+                        dr.Delete();
+                }
+                dtRadiology.AcceptChanges();
 
 
                 foreach (DataColumn c in dtRadiology.Columns)
@@ -3448,6 +3457,17 @@ DROP TABLE stg.Check_Evicore_Cache;
                 Console.WriteLine("\r File:" + strFileName + ",  Sheet:" + strSheetname);
                 dtCardiology = OpenXMLExcel.OpenXMLExcel.ReadAsDataTable(wbCurrentExcelFile, strSheetname, 10, 11, 3, blNullColumns: true);
                 strSumCardiologyLOB = OpenXMLExcel.OpenXMLExcel.GetCellValue(OpenXMLExcel.OpenXMLExcel.GetCell(OpenXMLExcel.OpenXMLExcel.sheetData, "C3"), OpenXMLExcel.OpenXMLExcel.workbookPart);
+
+
+                for (int i = dtCardiology.Rows.Count - 1; i >= 0; i--)
+                {
+                    DataRow dr = dtCardiology.Rows[i];
+                    if (dr["Column1"] + "" == "Case Status")
+                        dr.Delete();
+                }
+                dtCardiology.AcceptChanges();
+
+
                 foreach (DataColumn c in dtCardiology.Columns)
                 {
                     if (c.ColumnName.ToLower() == "total" || c.ColumnName.ToLower().StartsWith("column")) //IGNORE THESE COLUMNS
@@ -3642,6 +3662,17 @@ DROP TABLE stg.Check_Evicore_Cache;
                 Console.WriteLine("\r File:" + strFileName + ",  Sheet:" + strSheetname);
                 dtRadiologyCS = OpenXMLExcel.OpenXMLExcel.ReadAsDataTable(wbCurrentExcelFile, strSheetname, 7, 8, 3, blNullColumns: true);
                 strSumRadiologyCSLOB = OpenXMLExcel.OpenXMLExcel.GetCellValue(OpenXMLExcel.OpenXMLExcel.GetCell(OpenXMLExcel.OpenXMLExcel.sheetData, "D3"), OpenXMLExcel.OpenXMLExcel.workbookPart);
+
+
+                for (int i = dtRadiologyCS.Rows.Count - 1; i >= 0; i--)
+                {
+                    DataRow dr = dtRadiologyCS.Rows[i];
+                    if (dr["Column1"] + "" == "Case Status")
+                        dr.Delete();
+                }
+                dtRadiologyCS.AcceptChanges();
+
+
                 foreach (DataColumn c in dtRadiologyCS.Columns)
                 {
                     if (c.ColumnName.ToLower() == "total" || c.ColumnName.ToLower().StartsWith("column")) //IGNORE THESE COLUMNS
@@ -3791,6 +3822,16 @@ DROP TABLE stg.Check_Evicore_Cache;
                 Console.WriteLine("\r File:" + strFileName + ",  Sheet:" + strSheetname);
                 dtCardiologyCS = OpenXMLExcel.OpenXMLExcel.ReadAsDataTable(wbCurrentExcelFile, strSheetname, 7, 8, 3, blNullColumns: true);
                 strSumCardiologyCSLOB = OpenXMLExcel.OpenXMLExcel.GetCellValue(OpenXMLExcel.OpenXMLExcel.GetCell(OpenXMLExcel.OpenXMLExcel.sheetData, "D3"), OpenXMLExcel.OpenXMLExcel.workbookPart);
+
+                for (int i = dtCardiologyCS.Rows.Count - 1; i >= 0; i--)
+                {
+                    DataRow dr = dtCardiologyCS.Rows[i];
+                    if (dr["Column1"] + "" == "Case Status")
+                        dr.Delete();
+                }
+                dtCardiologyCS.AcceptChanges();
+
+
                 foreach (DataColumn c in dtCardiologyCS.Columns)
                 {
                     if (c.ColumnName.ToLower() == "total" || c.ColumnName.ToLower().StartsWith("column")) //IGNORE THESE COLUMNS
