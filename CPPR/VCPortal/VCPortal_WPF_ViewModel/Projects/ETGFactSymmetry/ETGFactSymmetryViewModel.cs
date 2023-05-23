@@ -38,6 +38,22 @@ public partial class ETGFactSymmetryViewModel : ObservableObject
     }
     public string LOBPrevious => _etg.LOBPrevious;
 
+    private bool? _is_mapped;
+    public bool? Is_Mapped
+    {
+        get
+        {
+            return _is_mapped;
+        }
+        set
+        {
+            _is_mapped = value;
+
+            trackChanges(value, "Is_Mapped");
+        }
+    }
+    public bool? Is_Mapped_Previous { get; set; }
+
     public bool? Has_Commercial { get; set; }
     public bool? Has_Medicare { get; set; }
     public bool? Has_Medicaid { get; set; }
@@ -106,6 +122,10 @@ public partial class ETGFactSymmetryViewModel : ObservableObject
     public float PC_Normalized_Pricing_Episode_Count => _etg.PC_Normalized_Pricing_Episode_Count;
     public float PC_Normalized_Pricing_Total_Cost => _etg.PC_Normalized_Pricing_Total_Cost;
     public float PC_Spec_Episode_Count => _etg.PC_Spec_Episode_Count;
+
+    public float PC_Spec_Episode_Count_Previous => _etg.PC_Spec_Episode_Count_Previous;
+
+
     public float PC_Spec_Episode_Distribution => _etg.PC_Spec_Episode_Distribution;
     public float PC_Spec_Percent_of_Episodes => _etg.PC_Spec_Percent_of_Episodes;
     public float PC_Spec_Total_Cost => _etg.PC_Spec_Total_Cost;
@@ -183,6 +203,10 @@ public partial class ETGFactSymmetryViewModel : ObservableObject
     public float EC_Spec_Average_Cost => _etg.EC_Spec_Average_Cost;
     public float EC_Coefficients_of_Variation => _etg.EC_Coefficients_of_Variation;
     public float EC_Episode_Count => _etg.EC_Episode_Count;
+
+    public float EC_Episode_Count_Previous => _etg.EC_Episode_Count_Previous;
+
+
     public float EC_Normalized_Pricing_Total_Cost => _etg.EC_Normalized_Pricing_Total_Cost;
     public float EC_Spec_Episode_Count => _etg.EC_Spec_Episode_Count;
     public float EC_Total_Cost => _etg.EC_Total_Cost;
@@ -244,6 +268,8 @@ public partial class ETGFactSymmetryViewModel : ObservableObject
         PC_Change_Comments = etg.PC_Change_Comments;
         EC_Change_Comments = etg.EC_Change_Comments;
         Patient_Centric_Change_Comments = etg.Patient_Centric_Change_Comments;
+        Is_Mapped = etg.Is_Mapped;
+        Is_Mapped_Previous = etg.Is_Mapped_Previous;
 
 }
 
@@ -314,6 +340,10 @@ public partial class ETGFactSymmetryViewModel : ObservableObject
             case "EC_Change_Comments":
                 etg.EC_Change_Comments = newValue.ToString();
                 _etg.EC_Change_Comments = etg.EC_Change_Comments;
+                break;
+            case "Is_Mapped":
+                etg.Is_Mapped = newValue as bool?;
+                _etg.Is_Mapped = etg.Is_Mapped;
                 break;
             default:
                 // code block

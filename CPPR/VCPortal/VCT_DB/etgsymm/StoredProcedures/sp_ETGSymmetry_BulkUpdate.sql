@@ -7,6 +7,7 @@ AS
 
 UPDATE Track
 SET 
+Track.[Is_Mapped_Previous] = CASE WHEN ISNULL(Track.[Is_Mapped],'') <> ISNULL(ETG.[Is_Mapped],'') OR Track.[Is_Mapped_Previous] IS NULL THEN ETG.[Is_Mapped] ELSE Track.[Is_Mapped_Previous] END,
 Track.[Has_Commercial_Previous] = CASE WHEN ISNULL(Track.[Has_Commercial],'') <> ISNULL(ETG.[Has_Commercial],'') OR Track.[Has_Commercial_Previous] IS NULL THEN ETG.[Has_Commercial] ELSE Track.[Has_Commercial_Previous] END,
 Track.[Has_Medicare_Previous] = CASE WHEN ISNULL(Track.[Has_Medicare],'') <> ISNULL(ETG.[Has_Medicare],'') OR Track.[Has_Medicare_Previous] IS NULL THEN ETG.[Has_Medicare] ELSE Track.[Has_Medicare_Previous] END,
 Track.[Has_Medicaid_Previous] = CASE WHEN ISNULL(Track.[Has_Medicaid],'') <>  ISNULL(ETG.[Has_Medicaid],'')OR Track.[Has_Medicaid_Previous] IS NULL  THEN ETG.[Has_Medicaid]  ELSE  Track.[Has_Medicaid_Previous]  END,
@@ -32,6 +33,7 @@ WHERE Track.[username] = @username AND Track.update_date =@update_date
 
 UPDATE ETG
 SET 
+ETG.[Is_Mapped] = CASE WHEN ISNULL(Track.[Is_Mapped],'') <> ISNULL(ETG.[Is_Mapped],'') THEN Track.[Is_Mapped] ELSE ETG.[Is_Mapped] END,
 ETG.[Has_Commercial] = CASE WHEN ISNULL(Track.[Has_Commercial],'') <> ISNULL(ETG.[Has_Commercial],'') THEN Track.[Has_Commercial] ELSE ETG.[Has_Commercial] END,
 ETG.[Has_Medicare] = CASE WHEN ISNULL(Track.[Has_Medicare],'') <> ISNULL(ETG.[Has_Medicare],'') THEN Track.[Has_Medicare] ELSE ETG.[Has_Medicare] END,
 ETG.[Has_Medicaid] = CASE WHEN ISNULL(Track.[Has_Medicaid],'') <>  ISNULL(ETG.[Has_Medicaid],'') THEN Track.[Has_Medicaid]  ELSE  ETG.[Has_Medicaid]  END,

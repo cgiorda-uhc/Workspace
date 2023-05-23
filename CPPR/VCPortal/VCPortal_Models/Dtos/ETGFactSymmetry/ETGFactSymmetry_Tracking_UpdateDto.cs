@@ -9,7 +9,10 @@ public class ETGFactSymmetry_Tracking_UpdateDto
 {
 
     public long ETG_Fact_Symmetry_id { get; set; }
-    
+
+
+    public bool? Is_Mapped { get; set; }
+
     public bool? Has_Commercial { get; set; }
     public bool? Has_Medicare { get; set; }
     public bool? Has_Medicaid { get; set; }

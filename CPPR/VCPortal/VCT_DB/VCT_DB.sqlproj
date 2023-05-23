@@ -143,4 +143,7 @@
       <Value>$(SqlCmdVar__1)</Value>
     </SqlCmdVariable>
   </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="VCT_DB.refactorlog" />
+  </ItemGroup>
 </Project>

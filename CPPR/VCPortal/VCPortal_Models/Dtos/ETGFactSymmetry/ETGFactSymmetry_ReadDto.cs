@@ -18,6 +18,11 @@ public class ETGFactSymmetry_ReadDto
     public string LOB { get; set; }
     public string LOBPrevious { get; set; }
 
+    public bool? Is_Mapped { get; set; }
+    public bool? Is_Mapped_Previous { get; set; }
+
+
+
     public bool? Has_Commercial { get; set; }
     public bool? Has_Medicare { get; set; }
     public bool? Has_Medicaid { get; set; }
@@ -47,6 +52,7 @@ public class ETGFactSymmetry_ReadDto
     public float PC_Normalized_Pricing_Episode_Count { get; set; }
     public float PC_Normalized_Pricing_Total_Cost { get; set; }
     public float PC_Spec_Episode_Count { get; set; }
+    public float PC_Spec_Episode_Count_Previous { get; set; }
     public float PC_Spec_Episode_Distribution { get; set; }
     public float PC_Spec_Percent_of_Episodes { get; set; }
     public float PC_Spec_Total_Cost { get; set; }
@@ -66,6 +72,7 @@ public class ETGFactSymmetry_ReadDto
     public float EC_Spec_Average_Cost { get; set; }
     public float EC_Coefficients_of_Variation { get; set; }
     public float EC_Episode_Count { get; set; }
+    public float EC_Episode_Count_Previous { get; set; }
     public float EC_Normalized_Pricing_Total_Cost { get; set; }
     public float EC_Spec_Episode_Count { get; set; }
     public float EC_Total_Cost { get; set; }
