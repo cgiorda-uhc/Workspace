@@ -100,7 +100,12 @@ f.PC_Normalized_Pricing_Total_Cost,
 
 CASE WHEN f.PC_Spec_Episode_Count IS NOT NULL THEN f.PC_Spec_Episode_Count ELSE 0 END as PC_Spec_Episode_Count,
 CASE WHEN fp.PC_Spec_Episode_Count IS NOT NULL THEN fp.PC_Spec_Episode_Count ELSE 0 END as PC_Spec_Episode_Count_Previous,
-
+CASE WHEN fp.PC_Spec_Episode_Count <> 0 THEN
+ROUND(((f.PC_Spec_Episode_Count - fp.PC_Spec_Episode_Count)/ fp.PC_Spec_Episode_Count), 1) 
+ELSE 
+NULL
+END
+as PC_Spec_Episode_Count_Diff,
 
 
 
@@ -159,7 +164,7 @@ f.[EC_Spec_Average_Cost],
 f.[EC_Coefficients_of_Variation],
 
 f.[EC_Normalized_Pricing_Episode_Count] as EC_Episode_Count,
-fp.[EC_Normalized_Pricing_Episode_Count] as EC_Episode_Count_Previous,
+
 
 
 
@@ -167,6 +172,20 @@ f.[EC_Normalized_Pricing_Total_Cost],
 
 
 CASE WHEN f.EC_Episode_Count IS NOT NULL THEN f.EC_Episode_Count ELSE 0 END as EC_Spec_Episode_Count,
+
+CASE WHEN fp.EC_Episode_Count IS NOT NULL THEN fp.EC_Episode_Count ELSE 0 END as EC_Spec_Episode_Count_Previous,
+
+CASE WHEN fp.EC_Episode_Count <> 0 THEN
+ROUND(((f.EC_Episode_Count - fp.EC_Episode_Count)/ fp.EC_Episode_Count), 1) 
+ELSE 
+NULL
+END
+as EC_Spec_Episode_Count_Diff,
+
+
+
+
+
 f.[EC_Total_Cost],
 f.[EC_Average_Cost],
 f.[EC_Spec_CV],

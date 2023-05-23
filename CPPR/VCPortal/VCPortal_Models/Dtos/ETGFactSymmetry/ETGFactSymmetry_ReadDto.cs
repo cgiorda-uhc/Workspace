@@ -53,6 +53,9 @@ public class ETGFactSymmetry_ReadDto
     public float PC_Normalized_Pricing_Total_Cost { get; set; }
     public float PC_Spec_Episode_Count { get; set; }
     public float PC_Spec_Episode_Count_Previous { get; set; }
+
+    public float? PC_Spec_Episode_Count_Diff { get; set; }
+
     public float PC_Spec_Episode_Distribution { get; set; }
     public float PC_Spec_Percent_of_Episodes { get; set; }
     public float PC_Spec_Total_Cost { get; set; }
@@ -72,9 +75,14 @@ public class ETGFactSymmetry_ReadDto
     public float EC_Spec_Average_Cost { get; set; }
     public float EC_Coefficients_of_Variation { get; set; }
     public float EC_Episode_Count { get; set; }
-    public float EC_Episode_Count_Previous { get; set; }
+
     public float EC_Normalized_Pricing_Total_Cost { get; set; }
+
+
     public float EC_Spec_Episode_Count { get; set; }
+    public float EC_Spec_Episode_Count_Previous { get; set; }
+    public float? EC_Spec_Episode_Count_Diff { get; set; }
+
     public float EC_Total_Cost { get; set; }
     public float EC_Average_Cost { get; set; }
     public float EC_Spec_CV { get; set; }

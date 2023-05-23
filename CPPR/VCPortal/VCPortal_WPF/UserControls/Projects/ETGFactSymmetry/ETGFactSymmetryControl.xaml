@@ -296,6 +296,25 @@
                 <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_Episode_Count, StringFormat={}{0:N0}}" Width="100" x:Name="PC_Spec_Episode_Count" Header="PC Spec Episode Cnt" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}" CellStyleSelector="{StaticResource EpisodeCountConditionalFormatStyle}"/>
 
 
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_Episode_Count_Diff, StringFormat={}{0:P2}}" Width="100" x:Name="PC_Spec_Episode_Count_Diff" Header="PC Spec Episode Cnt Diff" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                    <telerik:GridViewDataColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock  Text="{Binding PC_Spec_Episode_Count_Diff, StringFormat={}{0:P2}}">
+                                <TextBlock.ToolTip>
+                                    <ToolTip 
+                                  Content="{Binding PC_Spec_Episode_Count_Previous}"
+                                  ContentStringFormat="{}{0:N0}"
+                                  />
+                                </TextBlock.ToolTip>
+                            </TextBlock>
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellTemplate>
+                </telerik:GridViewDataColumn>
 
 
                 <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_Episode_Distribution, StringFormat={}{0:N4}}" Width="120" Header="PC Spec Episode Distribution" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
@@ -437,7 +456,25 @@
                 <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_Episode_Count, StringFormat={}{0:N0}}" x:Name="EC_Spec_Episode_Count" Width="100" Header="EC Spec Episode Cnt" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}" CellStyleSelector="{StaticResource EpisodeCountConditionalFormatStyle}"/>
 
 
-
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_Episode_Count_Diff, StringFormat={}{0:P2}}" Width="100" x:Name="EC_Spec_Episode_Count_Diff" Header="EC Spec Episode Cnt Diff" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                    <telerik:GridViewDataColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock  Text="{Binding EC_Spec_Episode_Count_Diff, StringFormat={}{0:P2}}">
+                                <TextBlock.ToolTip>
+                                <ToolTip 
+                                  Content="{Binding EC_Spec_Episode_Count_Previous}"
+                                  ContentStringFormat="{}{0:N0}"
+                                  />
+                              </TextBlock.ToolTip>
+                            </TextBlock>
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellTemplate>
+                </telerik:GridViewDataColumn>
 
 
 

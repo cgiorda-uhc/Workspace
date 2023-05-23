@@ -125,6 +125,8 @@ public partial class ETGFactSymmetryViewModel : ObservableObject
 
     public float PC_Spec_Episode_Count_Previous => _etg.PC_Spec_Episode_Count_Previous;
 
+    public float? PC_Spec_Episode_Count_Diff => _etg.PC_Spec_Episode_Count_Diff;
+
 
     public float PC_Spec_Episode_Distribution => _etg.PC_Spec_Episode_Distribution;
     public float PC_Spec_Percent_of_Episodes => _etg.PC_Spec_Percent_of_Episodes;
@@ -204,11 +206,20 @@ public partial class ETGFactSymmetryViewModel : ObservableObject
     public float EC_Coefficients_of_Variation => _etg.EC_Coefficients_of_Variation;
     public float EC_Episode_Count => _etg.EC_Episode_Count;
 
-    public float EC_Episode_Count_Previous => _etg.EC_Episode_Count_Previous;
+
 
 
     public float EC_Normalized_Pricing_Total_Cost => _etg.EC_Normalized_Pricing_Total_Cost;
     public float EC_Spec_Episode_Count => _etg.EC_Spec_Episode_Count;
+
+    public float EC_Spec_Episode_Count_Previous => _etg.EC_Spec_Episode_Count_Previous;
+    public float? EC_Spec_Episode_Count_Diff => _etg.EC_Spec_Episode_Count_Diff;
+
+
+
+
+
+
     public float EC_Total_Cost => _etg.EC_Total_Cost;
     public float EC_Average_Cost => _etg.EC_Average_Cost;
     public float EC_Spec_CV => _etg.EC_Spec_CV;
