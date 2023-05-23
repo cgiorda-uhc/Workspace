@@ -174,7 +174,7 @@
         </Grid>
 
 
-        <telerik:RadGridView x:Name="ChemotherapyPXGridView"  Grid.Row="1" ItemsSource="{Binding OC_ChemotherapyPXViewModel, Mode=TwoWay, IsAsync=True}" AutoGenerateColumns="False"  ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectedItem="{Binding SelectedRow, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" ScrollViewer.VerticalScrollBarVisibility="Visible"  FrozenColumnCount="4" CanUserDeleteRows="True" IsSynchronizedWithCurrentItem="True" ValidationType="None" Filtered="ChemotherapyPXGridView_Filtered" Sorted="ChemotherapyPXGridView_Sorted" CellEditEnded="ChemotherapyPXGridView_CellEditEnded"  BeginningEdit="ChemotherapyPXGridView_BeginningEdit"  ScrollMode="RealTime" >
+        <telerik:RadGridView x:Name="ChemotherapyPXGridView"  Grid.Row="1" ItemsSource="{Binding OC_ChemotherapyPXViewModel, Mode=TwoWay, IsAsync=True}" AutoGenerateColumns="False"  ScrollViewer.HorizontalScrollBarVisibility="Visible" SelectedItem="{Binding SelectedRow, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" ScrollViewer.VerticalScrollBarVisibility="Visible"  FrozenColumnCount="4" CanUserDeleteRows="True" IsSynchronizedWithCurrentItem="True" ValidationType="None" CellEditEnded="ChemotherapyPXGridView_CellEditEnded"  BeginningEdit="ChemotherapyPXGridView_BeginningEdit" RowValidating="ChemotherapyPXGridView_RowValidating" ScrollMode="RealTime" >
 
 
             <telerik:RadGridView.Columns>

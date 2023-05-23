@@ -717,12 +717,10 @@ public partial class ChemotherapyPXViewModel : ObservableValidator
             if (!chemo.IsValid)
             {
                 ValidationResults = validationResults;
-                //foreach (ValidationResult validationResult in validationResults)
-                //{
-                //    //Console.WriteLine("{0}", validationResult.ErrorMessage);
-
-                //    ValidationErrors.Add(validationResult.ErrorMessage);
-                //}
+            }
+            else
+            {
+                ValidationResults = null;
             }
         }
         else
