@@ -19,7 +19,8 @@ namespace VCPortal_WPF_ViewModel.Projects.MHP;
 public partial class MHPViewModel : ObservableObject
 {
     private readonly IExcelFunctions _excelFunctions;
-    private readonly IETGFactSymmetryConfig? _config;
+    private readonly IConfiguration? _config;
+    private readonly Serilog.ILogger _logger;
 
 
 
@@ -32,12 +33,15 @@ public partial class MHPViewModel : ObservableObject
     [ObservableProperty]
     private bool isModalOpen;
 
+    public MessageViewModel UserMessageViewModel { get; }
 
-
-    public MHPViewModel(IConfiguration config, IExcelFunctions excelFunctions)
+    public MHPViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
     {
+        _logger = logger;
         _excelFunctions = excelFunctions;
-        //_config = prepareConfig(config);
+        _config = config;
+
+        UserMessageViewModel = new MessageViewModel();
 
 
         populateFilters();

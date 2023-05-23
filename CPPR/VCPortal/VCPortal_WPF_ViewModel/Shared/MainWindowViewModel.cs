@@ -56,6 +56,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
 
     public ObservableCollection<TypeAndDisplay> NavigationViewModelTypesDM { get; set; }
+    public ObservableCollection<TypeAndDisplay> NavigationViewModelTypesReports { get; set; }
     //public ObservableCollection<TypeAndDisplay> NavigationViewModelTypes { get; set; } = new ObservableCollection<TypeAndDisplay>
     //(
 
@@ -88,21 +89,19 @@ public class MainWindowViewModel : INotifyPropertyChanged
                 NavigationViewModelTypesDM.Add(new TypeAndDisplay { Name = "ETG Fact Symmetry", VMType = typeof(ETGFactSymmetryListingViewModel), Question = "You have unsaved changes. Continue anyway?", CheckSaves = true });
             }
 
+
             NavigationViewModelTypesDM.Add(new TypeAndDisplay { Name = "EBM Mapping" });
             NavigationViewModelTypesDM.Add(new TypeAndDisplay { Name = "PEG Mapping" });
+
+
+            NavigationViewModelTypesReports = new ObservableCollection<TypeAndDisplay>();
+            NavigationViewModelTypesReports.Add(new TypeAndDisplay { Name = "MHP", VMType = typeof(MHPViewModel) });
+            NavigationViewModelTypesReports.Add(new TypeAndDisplay { Name = "Compliance Reporting" });
+
         }
 
     }
-
-
-    public ObservableCollection<TypeAndDisplay> NavigationViewModelTypesReports { get; set; } = new ObservableCollection<TypeAndDisplay>
-(
-    new List<TypeAndDisplay>
-    {
-             new TypeAndDisplay{ Name="MHP" },
-             new TypeAndDisplay{ Name="Compliance Reporting" }
-    }
-);
+    
 
 
     private object currentViewModel;

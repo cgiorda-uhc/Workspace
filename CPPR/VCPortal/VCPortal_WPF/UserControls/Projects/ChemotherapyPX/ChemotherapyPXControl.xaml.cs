@@ -71,12 +71,6 @@ public partial class ChemotherapyPXControl : UserControl
 
     }
 
-    private object _value;
-    private void ChemotherapyPXGridView_BeginningEdit(object sender, GridViewBeginningEditRoutedEventArgs e)
-    {
-
-        //_value = ((TextBlock)e.Cell.Content).Text;
-    }
 
     private void btnExporData_Click(object sender, RoutedEventArgs e)
     {

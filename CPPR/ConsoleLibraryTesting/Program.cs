@@ -54,20 +54,20 @@ using DocumentFormat.OpenXml.Math;
 using DocumentFormat.OpenXml.Drawing.Charts;
 using Microsoft.Extensions.Primitives;
 
-var adHoc = new AdHoc();
-adHoc.ConnectionStringMSSQL = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
-adHoc.TableMHP = "stg.MHP_Yearly_Universes";
-adHoc.ConnectionStringTD = "Data Source=UDWPROD;User ID=cgiorda;Password=BooWooDooFoo2023!!;Authentication Mechanism=LDAP;Session Mode=TERADATA;Session Character Set=ASCII;Persist Security Info=true;Connection Timeout=99999;";
-adHoc.TableUGAP = "stg.MHP_Yearly_Universes_UGAP";
-adHoc.Limit = 3000;
+//var adHoc = new AdHoc();
+//adHoc.ConnectionStringMSSQL = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
+//adHoc.TableMHP = "stg.MHP_Yearly_Universes";
+//adHoc.ConnectionStringTD = "Data Source=UDWPROD;User ID=cgiorda;Password=BooWooDooFoo2023!!;Authentication Mechanism=LDAP;Session Mode=TERADATA;Session Character Set=ASCII;Persist Security Info=true;Connection Timeout=99999;";
+//adHoc.TableUGAP = "stg.MHP_Yearly_Universes_UGAP";
+//adHoc.Limit = 3000;
 
-List<string> files_loaded = new List<string>();
-files_loaded.Add("United PCP- Rad & Card_April_2023.xlsx");
-files_loaded.Add("Americhoice April -Radiology Cardiology Universe 2023.xlsx");
-files_loaded.Add("Oxford  April -Radiology Cardiology Universe 2023.xlsx");
-await adHoc.cleanupMemberDataAsync(files_loaded);
+//List<string> files_loaded = new List<string>();
+//files_loaded.Add("United PCP- Rad & Card_April_2023.xlsx");
+//files_loaded.Add("Americhoice April -Radiology Cardiology Universe 2023.xlsx");
+//files_loaded.Add("Oxford  April -Radiology Cardiology Universe 2023.xlsx");
+//await adHoc.cleanupMemberDataAsync(files_loaded);
 
-return;
+//return;
 
 
 char chrDelimiter = '|';
