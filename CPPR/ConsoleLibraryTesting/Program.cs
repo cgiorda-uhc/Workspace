@@ -88,7 +88,7 @@ System.Data.DataTable dtTransfer = new System.Data.DataTable();
 System.Data.DataRow? drCurrent = null;
 string filename;
 
-
+//2 GENERTATE FINAL OUTPUT
 strSQL = "Select distinct ETG_BAS_CLSS_NBR, MPC_NBR from CLODM001.ETG_NUMBER";
 var mcp = await db_td.LoadData<UGAPMPCNBRModel>(connectionString: tdConnectionString, strSQL);
 
@@ -152,7 +152,7 @@ return;
 
 
 
-
+//1 GET FILES
 
 foreach (var strFile in strLstFiles)
 {
