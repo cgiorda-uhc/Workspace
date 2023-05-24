@@ -592,7 +592,7 @@ namespace FileParsingLibrary.MSExcel
 
                     ws.Columns().AdjustToContents(1, 20);
                 }
-                sbStatus.Append( "--Opening spreadsheet..." );
+                sbStatus.Append( "--Opening spreadsheet..." + Environment.NewLine + Environment.NewLine);
                 setterStatus(sbStatus.ToString());
 
                 //save file to memory stream and return it as byte array

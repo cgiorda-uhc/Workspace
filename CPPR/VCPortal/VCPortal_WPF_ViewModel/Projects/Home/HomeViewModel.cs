@@ -42,6 +42,7 @@ public partial class HomeViewModel : ObservableObject
             UserMessageViewModel.IsError = true;
             UserMessageViewModel.Message = "Authentication Failed. Please contact the system admin.";
             _logger.Error("Authenitcation Failed  for {CurrentUser}", Authentication.UserName);
+            return;
         }
 
         CurrentUser = Authentication.CurrentUser;

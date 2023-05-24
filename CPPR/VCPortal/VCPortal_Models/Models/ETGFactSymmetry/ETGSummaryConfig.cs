@@ -11,6 +11,11 @@ public class ETGSummaryConfig
     public string ETG_Base_Class { get; set; }
     public string ETG_Description { get; set; }
     public string Premium_Specialty { get; set; }
+
+    public char Is_Mapped { get; set; }
+
+    public char Is_Mapped_Previous { get; set; }
+
     public string Previous_Rx_NRx { get; set; }
     public string Current_Rx_NRx { get; set; }
     public string Previous_LOB { get; set; }

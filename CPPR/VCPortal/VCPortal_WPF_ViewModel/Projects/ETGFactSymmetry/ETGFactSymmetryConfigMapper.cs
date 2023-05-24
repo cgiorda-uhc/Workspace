@@ -21,6 +21,8 @@ public static class ETGFactSymmetryConfigMapper
             ETG_Base_Class = x.ETG_Base_Class,
             ETG_Description = x.ETG_Description,
             Premium_Specialty = x.Premium_Specialty,
+            Is_Mapped = (x.Is_Mapped == true ? 'Y' :'N'),
+            Is_Mapped_Previous = (x.Is_Mapped_Previous == true ? 'Y' : 'N'),
             Previous_Rx_NRx = x.RX_NRXPrevious,
             Current_Rx_NRx = x.RX_NRX,
             Previous_LOB = x.LOBPrevious,

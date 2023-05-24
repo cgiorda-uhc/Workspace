@@ -114,6 +114,15 @@ public partial class ETGFactSymmetryControl : UserControl
 
     }
 
+    private void ETGGridView_Filtered(object sender, GridViewFilteredEventArgs e)
+    {
+        _viewModel.ETGFactSymmetryFilterItems.Clear();
+        foreach (var i in ETGGridView.Items)
+        {
+            _viewModel.ETGFactSymmetryFilterItems.Add((ETGFactSymmetryViewModel)i as ETGFactSymmetryViewModel);
+        }
+    }
+
     //private void uc_etgfact_Unloaded(object sender, RoutedEventArgs e)
     //{
     //    ETGGridView.ItemsSource = null;

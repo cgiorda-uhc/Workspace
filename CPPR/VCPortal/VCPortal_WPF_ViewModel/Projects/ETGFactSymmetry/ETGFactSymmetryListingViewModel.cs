@@ -35,6 +35,11 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
     [ObservableProperty]
     private ObservableCollection<ETGFactSymmetryViewModel> oC_ETGFactSymmetryViewModel;
 
+
+    [ObservableProperty]
+    private List<ETGFactSymmetryViewModel> eTGFactSymmetryFilterItems;
+
+
     private readonly BackgroundWorker worker = new BackgroundWorker();
 
     [ObservableProperty]
@@ -76,6 +81,9 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
         _sbStatus = new StringBuilder();
 
         OC_ETGFactSymmetryViewModel = new ObservableCollection<ETGFactSymmetryViewModel>();
+        ETGFactSymmetryFilterItems = new List<ETGFactSymmetryViewModel>();
+
+
 
         if (_config != null)
         {
@@ -95,8 +103,6 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
             UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
             _logger.Error($"No Config found for ETGFactSymmetry");
         }
-
-
     }
 
     private async void InitialLoadData()
@@ -110,6 +116,16 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
         await getETGFactSymmetryData();
         Mouse.OverrideCursor = null;
         ProgressMessageViewModel.HasMessage = false;
+
+        //StringBuilder stringBuilder = new StringBuilder();
+        //for (int i = 0; i < 100; i++)
+        //{
+        //    stringBuilder.AppendLine(i + "testing....");
+        //    ProgressMessageViewModel.Message = stringBuilder.ToString();
+        //    await Task.Delay(500);
+        //}
+        //ProgressMessageViewModel.Message = stringBuilder.ToString();
+        //ProgressMessageViewModel.HasMessage = true;
     }
 
     [RelayCommand]
@@ -340,6 +356,13 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
             var etgsum = ETGFactSymmetryConfigMapper.getETGSummaryConfig(OC_ETGFactSymmetryViewModel);
             export.Add(new ExcelExport() { ExportList = etgsum.ToList<object>(), SheetName = sheet.SheetName });
 
+
+            if(ETGFactSymmetryFilterItems.Count>0)
+            {
+                sheet = excel.Sheets.Where(x => x.Name == "ETGFiltered").FirstOrDefault();
+                var etgfil = ETGFactSymmetryConfigMapper.getETGSummaryConfig(ETGFactSymmetryFilterItems);
+                export.Add(new ExcelExport() { ExportList = etgfil.ToList<object>(), SheetName = sheet.SheetName });
+            }
 
             sheet = excel.Sheets.Where(x => x.Name == "ETGEpisodeCost").FirstOrDefault();
             var etgec = ETGFactSymmetryConfigMapper.getETGEpisodeCostConfig(OC_ETGFactSymmetryViewModel);

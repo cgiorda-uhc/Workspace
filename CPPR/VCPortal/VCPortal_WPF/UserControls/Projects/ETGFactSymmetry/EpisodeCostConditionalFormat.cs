@@ -52,6 +52,20 @@ public class EpisodeCountConditionalFormat : StyleSelector
                     return FlaggedStyle;
                 }
             }
+            else if (cell.Column.Name == "PC_Spec_Episode_Count_Diff")
+            {
+                if (etg.PC_Spec_Episode_Count_Diff >= .1 || etg.PC_Spec_Episode_Count_Diff <= -.1)
+                {
+                    return FlaggedStyle;
+                }
+            }
+            else if (cell.Column.Name == "EC_Spec_Episode_Count_Diff")
+            {
+                if (etg.EC_Spec_Episode_Count_Diff >= .1 || etg.EC_Spec_Episode_Count_Diff <= -.1)
+                {
+                    return FlaggedStyle;
+                }
+            }
 
         }
         return DefaultStyle;
