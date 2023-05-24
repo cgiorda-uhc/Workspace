@@ -123,6 +123,11 @@ public partial class ETGFactSymmetryControl : UserControl
         }
     }
 
+    private void btnClearFilters_Click(object sender, RoutedEventArgs e)
+    {
+        ETGGridView.FilterDescriptors.Clear();
+    }
+
     //private void uc_etgfact_Unloaded(object sender, RoutedEventArgs e)
     //{
     //    ETGGridView.ItemsSource = null;

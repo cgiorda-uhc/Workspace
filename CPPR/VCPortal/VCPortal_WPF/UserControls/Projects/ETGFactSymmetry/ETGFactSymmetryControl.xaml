@@ -148,9 +148,10 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
-            <telerik:RadButton x:Name="btnSave" Grid.Row="0" Grid.Column="6" Width="130" Click="btnSave_Click" Command="{Binding SaveCallCommand}" IsEnabled="{Binding CanSave}" Content="Save"></telerik:RadButton>
-            <telerik:RadButton x:Name="btnExporConfig" Grid.Row="0" Grid.Column="7" Width="130" Command="{Binding ExportConfigsCallCommand}" Click="btnExporConfig_Click"  Content="Export Configs"></telerik:RadButton>
-            <telerik:RadButton Grid.Row="0" Grid.Column="8" Width="130" Command="{Binding GetETGFactSymmetryDataCallCommand}" Content="Refresh Data"></telerik:RadButton>
+            <telerik:RadButton x:Name="btnSave" Grid.Row="0" Grid.Column="5" Width="130" Click="btnSave_Click" Command="{Binding SaveCallCommand}" IsEnabled="{Binding CanSave}" Content="Save"></telerik:RadButton>
+            <telerik:RadButton x:Name="btnExporConfig" Grid.Row="0" Grid.Column="6" Width="130" Command="{Binding ExportConfigsCallCommand}" Click="btnExporConfig_Click"  Content="Export Configs"></telerik:RadButton>
+            <telerik:RadButton Grid.Row="0" Grid.Column="7" Width="130" Command="{Binding GetETGFactSymmetryDataCallCommand}" Content="Refresh Data"></telerik:RadButton>
+            <telerik:RadButton x:Name="btnClearFilters" Grid.Row="0" Grid.Column="8" Width="130" Click="btnClearFilters_Click"  Content="Clear Filters"></telerik:RadButton>
         </Grid>
 
 

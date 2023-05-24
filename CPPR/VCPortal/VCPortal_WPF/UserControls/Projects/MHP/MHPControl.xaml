@@ -16,10 +16,25 @@
 
     <Grid>
         <Grid.Resources>
+
+            <Style x:Key="ValidLabel" TargetType="{x:Type Label}">
+                <Setter Property="FontFamily" Value="Calibri" />
+                <Setter Property="Foreground" Value="DarkBlue" />
+                <Setter Property="FontWeight" Value="Normal" />
+            </Style>
+
+            <Style x:Key="InvalidLabel" TargetType="{x:Type Label}">
+                <Setter Property="FontFamily" Value="Calibri" />
+                <Setter Property="Foreground" Value="Red" />
+                <Setter Property="FontWeight" Value="Bold" />
+            </Style>
+
+
+
             <Style x:Key="DefaultBorder" TargetType="{x:Type Border}">
-                <Setter Property="BorderBrush" Value="Orange" />
+                <Setter Property="BorderBrush" Value="Blue" />
                 <Setter Property="BorderThickness" Value="2 2 2 2" />
-                <Setter Property="Background" Value="White" />
+                <Setter Property="Background" Value="LightBlue" />
             </Style>
 
             <Style x:Key="EIBorder" TargetType="{x:Type Border}">
@@ -74,7 +89,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" FontSize="19" Background="LightGray" FontFamily="Verdana"  FontWeight="ExtraBold" Text="MHP"></TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" FontSize="19" Background="LightGray" FontFamily="Verdana"  FontWeight="ExtraBold" Text="MHP EI Reporting"></TextBlock>
             <TextBlock DataContext="{Binding UserMessageViewModel}"  Text="{Binding Message}" Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="3" >
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
@@ -121,19 +136,49 @@
 
 
             <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
-            <telerik:Label Grid.Row="1"   Grid.Column="1" Content="* Select State(s):" Foreground="DarkBlue" FontWeight="Bold" Margin="4" HorizontalAlignment="Left"  />
+            <telerik:Label Grid.Row="1"   Grid.Column="1" Content="* Select State(s):" Margin="4" HorizontalAlignment="Left" Style="{StaticResource ValidLabel}"  />
             <components:SelectAllCheckComboBox x:Name="cbxStateFilter" Grid.Row="2"  Margin="10 10 10 10" Grid.Column="1"  >
                 </components:SelectAllCheckComboBox>
 
             <!--Command="{Binding StateChangedCommand}"  Grid.Row="2"   Grid.Column="1"  Margin="5" Padding="5"  Width="460"  Margin="4"  HorizontalAlignment="Left" ItemsSource="{Binding Path=States}" ItemSelectionChanged="CbxStateFilter_ItemSelectionChanged" Loaded="CbxStateFilter_Loaded"-->
 
             <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
-            <telerik:Label  Grid.Row="1"    Grid.Column="2" Content="* Start Date:" Foreground="DarkBlue"  FontWeight="Bold" Margin="4"  HorizontalAlignment="Left"   />
+            <telerik:Label  Grid.Row="1"    Grid.Column="2" Content="* Start Date:" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"   />
             <telerik:RadDatePicker x:Name="dtStartDate"  Grid.Row="2"   Grid.Column="2"   Margin="10 10 10 10"  VerticalAlignment="Top" HorizontalAlignment="Left" SelectedValue="01/01/2022"/>
 
             <Border Grid.Column="3" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
-            <telerik:Label  Grid.Row="1"    Grid.Column="3" Content="* End Date:" Foreground="DarkBlue"  FontWeight="Bold" Margin="4"  HorizontalAlignment="Left"  />
+            <telerik:Label  Grid.Row="1"    Grid.Column="3" Content="* End Date:" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"  />
             <telerik:RadDatePicker x:Name="dtEndDate"  Grid.Row="2"   Grid.Column="3"   Margin="10 10 10 10"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="115" SelectedValue="12/31/2022"/>
+
+
+
+
+
+
+            <Border Grid.Column="1" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
+            <telerik:Label Grid.Row="3"   Grid.Column="1" Content="* Select Legal Entity(s):" Style="{StaticResource ValidLabel}" Margin="4" HorizontalAlignment="Left"  />
+            <components:SelectAllCheckComboBoxTilde x:Name="cbxLegalEntityFilter"  Grid.Column="1"  Grid.Row="4" Width="460"  Margin="10 10 10 10"  HorizontalAlignment="Left"  >
+            </components:SelectAllCheckComboBoxTilde>
+
+            <!-- ItemsSource="{Binding Path=LEG_ENTY}" ItemSelectionChanged="CbxLegalEntityFilter_ItemSelectionChanged" Loaded="CbxLegalEntityFilter_Loaded"-->
+
+            <Border Grid.Column="2" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
+            <telerik:Label  Grid.Row="3"    Grid.Column="2" Content="* Select FINC ARNG DESC(s):" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"   />
+            <components:SelectAllCheckComboBox x:Name="cbxFINC_ARNG_CDFilter" Grid.Row="4"  Margin="10 10 10 10" Grid.Column="2"  >
+            </components:SelectAllCheckComboBox>
+
+            <!--ItemsSource="{Binding Path=FINC_ARNG_DESC}" ItemSelectionChanged="CbxFINC_ARNG_CDFilter_ItemSelectionChanged" Loaded="CbxFINC_ARNG_CDFilter_Loaded"-->
+            
+            <Border Grid.Column="3" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
+            <telerik:Label  Grid.Row="3"    Grid.Column="3" Content="* Select MKT SEG RLLP DESC(s):" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"  />
+            <components:SelectAllCheckComboBox x:Name="cbxMKT_SEG_RLLP_DESCFilter" Grid.Row="4"  Margin="10 10 10 10" Grid.Column="3"  >
+            </components:SelectAllCheckComboBox>
+            
+            <!--ItemsSource="{Binding Path=MKT_SEG_RLLP_DESC}" ItemSelectionChanged="CbxMKT_SEG_RLLP_DESCFilter_ItemSelectionChanged" Loaded="CbxMKT_SEG_RLLP_DESCFilter_Loaded"-->
+
+
+
+
 
 
             <!--<telerik:Label  Grid.Row="1"    Grid.Column="3" Content="* Select CUST SEG(s):" Foreground="DarkBlue"  FontWeight="Bold" Margin="4"  HorizontalAlignment="Left"  />
