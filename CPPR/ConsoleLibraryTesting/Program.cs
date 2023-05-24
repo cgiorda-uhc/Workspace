@@ -93,6 +93,67 @@ strSQL = "Select distinct ETG_BAS_CLSS_NBR, MPC_NBR from CLODM001.ETG_NUMBER";
 var mcp = await db_td.LoadData<UGAPMPCNBRModel>(connectionString: tdConnectionString, strSQL);
 
 
+
+strSQL = "SELECT [MPC_NBR] ,[ETG_BAS_CLSS_NBR] ,[ALWAYS] ,[ATTRIBUTED] ,[ERG_SPCL_CATGY_CD] ,[TRT_CD] ,[RX] ,[NRX] ,[RISK_Model] ,[LOW_MONTH] ,[HIGH_MONTH] FROM [IL_UCA].[dbo].[VW_UGAPCFG_FINAL]";
+
+var etg = await db_sql.LoadData<UGAPETGModel>(connectionString: connectionString, strSQL);
+
+
+foreach (var item in etg)
+{
+    var m = mcp.Where(x => x.ETG_BAS_CLSS_NBR == item.ETG_BAS_CLSS_NBR).Select(x => x.MPC_NBR).FirstOrDefault();
+    item.MPC_NBR = m;
+}
+
+
+List<UGAPETGModel> etg_final = etg.OrderBy(o => o.RISK_Model).ThenBy(o => o.MPC_NBR).ToList();
+StringBuilder sb = new StringBuilder();
+
+filename = "C:\\Users\\cgiorda\\Desktop\\Projects\\UGAP Configuration\\output\\UGAP_Config_Automated.txt";
+if (File.Exists(filename))
+{
+    File.Delete(filename);
+}
+
+using (var file = File.CreateText(filename))
+{
+    string[] columns = typeof(UGAPETGModel).GetProperties().Select(p => p.Name).ToArray();
+    foreach (var column in columns)
+    {
+        sb.Append(column + "|");
+
+    }
+    file.WriteLine(sb.ToString().TrimEnd('|'));
+    file.Flush();
+    sb.Clear();
+
+    foreach (var e in etg_final)
+    {
+        sb.Append((e.MPC_NBR == null ? "" : e.MPC_NBR) + "|");
+        sb.Append((e.ETG_BAS_CLSS_NBR == null ? "" : e.ETG_BAS_CLSS_NBR) + "|");
+        sb.Append((e.ALWAYS == null ? "" : e.ALWAYS) + "|");
+        sb.Append((e.ATTRIBUTED == null ? "" : e.ATTRIBUTED) + "|");
+        sb.Append((e.ERG_SPCL_CATGY_CD == null ? "" : e.ERG_SPCL_CATGY_CD) + "|");
+        sb.Append((e.TRT_CD == null ? "" : e.TRT_CD) + "|");
+        sb.Append((e.RX == null ? "" : e.RX) + "|");
+        sb.Append((e.NRX == null ? "" : e.NRX) + "|");
+        sb.Append((e.RISK_Model == null ? "" : e.RISK_Model) + "|");
+        sb.Append((e.LOW_MONTH == null ? "" : e.LOW_MONTH) + "|");
+        sb.Append((e.HIGH_MONTH == null ? "" : e.HIGH_MONTH) );
+        file.WriteLine(sb.ToString());
+        sb.Clear();
+    }
+    file.Flush();
+}
+
+
+return;
+
+
+
+
+
+
 foreach (var strFile in strLstFiles)
 {
     filename = "ugapcfg_" + Path.GetFileName(strFile).Replace(".txt", "");
@@ -169,55 +230,55 @@ foreach (var strFile in strLstFiles)
     ///////////////////////////////////////////////////////////////
 
 
-    strSQL = "SELECT [SPECIALTY] as ERG_SPCL_CATGY_CD ,[BASEETG] as ETG_BAS_CLSS_NBR ,[TREATMENT_IND] as TRT_CD ,[IF_ALWAYS] as [ALWAYS] ,[IF_ATTRIB] as ATTRIBUTED ,[RISK_MODEL] as RISK_MDL ,[RX] ,[NRX] FROM [IL_UCA].[stg].["+ table + "]";
+    //strSQL = "SELECT [SPECIALTY] as ERG_SPCL_CATGY_CD ,[BASEETG] as ETG_BAS_CLSS_NBR ,[TREATMENT_IND] as TRT_CD ,[IF_ALWAYS] as [ALWAYS] ,[IF_ATTRIB] as ATTRIBUTED ,[RISK_MODEL] as RISK_MDL ,[RX] ,[NRX] FROM [IL_UCA].[stg].["+ table + "]";
 
-    var etg = await db_sql.LoadData<UGAPETGModel>(connectionString: connectionString, strSQL);
-
-
-    foreach (var item in etg)
-    {
-        var m = mcp.Where(x => x.ETG_BAS_CLSS_NBR == item.ETG_BAS_CLSS_NBR).Select(x => x.MPC_NBR).FirstOrDefault();
-        item.MPC_NBR = m;
-    }
+    //var etg = await db_sql.LoadData<UGAPETGModel>(connectionString: connectionString, strSQL);
 
 
-    List<UGAPETGModel> etg_final = etg.OrderBy(o => o.MPC_NBR).ToList();
-    StringBuilder sb = new StringBuilder();
+    //foreach (var item in etg)
+    //{
+    //    var m = mcp.Where(x => x.ETG_BAS_CLSS_NBR == item.ETG_BAS_CLSS_NBR).Select(x => x.MPC_NBR).FirstOrDefault();
+    //    item.MPC_NBR = m;
+    //}
 
-    filename = "C:\\Users\\cgiorda\\Desktop\\Projects\\UGAP Configuration\\output\\"+ table + ".txt";
-    if (File.Exists(filename))
-    {
-        File.Delete(filename);
-    }
 
-    using (var file = File.CreateText(filename))
-    {
-        string[] columns = typeof(UGAPETGModel).GetProperties().Select(p => p.Name).ToArray();
-        foreach (var column in columns)
-        {
-            sb.Append(column + "|");
+    //List<UGAPETGModel> etg_final = etg.OrderBy(o => o.MPC_NBR).ToList();
+    //StringBuilder sb = new StringBuilder();
 
-        }
-        file.WriteLine(sb.ToString().TrimEnd('|'));
-        file.Flush();
-        sb.Clear();
+    //filename = "C:\\Users\\cgiorda\\Desktop\\Projects\\UGAP Configuration\\output\\"+ table + ".txt";
+    //if (File.Exists(filename))
+    //{
+    //    File.Delete(filename);
+    //}
 
-        foreach (var e in etg_final)
-        {
-            sb.Append((e.MPC_NBR == null ? "" : e.MPC_NBR )+ "|");
-            sb.Append((e.ETG_BAS_CLSS_NBR == null ? "" : e.ETG_BAS_CLSS_NBR) + "|");
-            sb.Append((e.ALWAYS == null ? "" : e.ALWAYS) + "|");
-            sb.Append((e.ATTRIBUTED == null ? "" : e.ATTRIBUTED) + "|");
-            sb.Append((e.ERG_SPCL_CATGY_CD == null ? "" : e.ERG_SPCL_CATGY_CD) + "|");
-            sb.Append((e.TRT_CD == null ? "" : e.TRT_CD) + "|");
-            sb.Append((e.RX == null ? "" : e.RX) + "|");
-            sb.Append((e.NRX == null ? "" : e.NRX) + "|");
-            sb.Append((e.RISK_MDL == null ? "" : e.RISK_MDL));
-            file.WriteLine(sb.ToString());
-            sb.Clear();
-        }
-        file.Flush();
-    }
+    //using (var file = File.CreateText(filename))
+    //{
+    //    string[] columns = typeof(UGAPETGModel).GetProperties().Select(p => p.Name).ToArray();
+    //    foreach (var column in columns)
+    //    {
+    //        sb.Append(column + "|");
+
+    //    }
+    //    file.WriteLine(sb.ToString().TrimEnd('|'));
+    //    file.Flush();
+    //    sb.Clear();
+
+    //    foreach (var e in etg_final)
+    //    {
+    //        sb.Append((e.MPC_NBR == null ? "" : e.MPC_NBR )+ "|");
+    //        sb.Append((e.ETG_BAS_CLSS_NBR == null ? "" : e.ETG_BAS_CLSS_NBR) + "|");
+    //        sb.Append((e.ALWAYS == null ? "" : e.ALWAYS) + "|");
+    //        sb.Append((e.ATTRIBUTED == null ? "" : e.ATTRIBUTED) + "|");
+    //        sb.Append((e.ERG_SPCL_CATGY_CD == null ? "" : e.ERG_SPCL_CATGY_CD) + "|");
+    //        sb.Append((e.TRT_CD == null ? "" : e.TRT_CD) + "|");
+    //        sb.Append((e.RX == null ? "" : e.RX) + "|");
+    //        sb.Append((e.NRX == null ? "" : e.NRX) + "|");
+    //        sb.Append((e.RISK_MDL == null ? "" : e.RISK_MDL));
+    //        file.WriteLine(sb.ToString());
+    //        sb.Clear();
+    //    }
+    //    file.Flush();
+    //}
 
 
 

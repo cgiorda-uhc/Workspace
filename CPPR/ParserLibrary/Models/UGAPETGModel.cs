@@ -22,7 +22,11 @@ namespace ProjectManagerLibrary.Models
         public char? RX { get; set; }
         public char? NRX { get; set; }
 
-        public string RISK_MDL { get; set; }
+        public string RISK_Model { get; set; }
+
+        public Int16? LOW_MONTH { get; set; }
+
+        public Int16? HIGH_MONTH { get; set; }
 
     }
 
