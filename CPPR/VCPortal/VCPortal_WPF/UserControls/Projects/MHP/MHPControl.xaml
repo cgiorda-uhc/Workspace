@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VCPortal_WPF.UserControls.Projects.MHP"
              xmlns:vml="clr-namespace:VCPortal_WPF_ViewModel.Projects.MHP;assembly=VCPortal_WPF_ViewModel" 
-             xmlns:modalcontrol="clr-namespace:ModalControl;assembly=ModalControl" xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:modalcontrol="clr-namespace:ModalControl;assembly=ModalControl" xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation" xmlns:components="clr-namespace:VCPortal_WPF.Components"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -16,6 +16,29 @@
 
     <Grid>
         <Grid.Resources>
+            <Style x:Key="DefaultBorder" TargetType="{x:Type Border}">
+                <Setter Property="BorderBrush" Value="Orange" />
+                <Setter Property="BorderThickness" Value="2 2 2 2" />
+                <Setter Property="Background" Value="White" />
+            </Style>
+
+            <Style x:Key="EIBorder" TargetType="{x:Type Border}">
+                <Setter Property="BorderBrush" Value="Orange" />
+                <Setter Property="BorderThickness" Value="2 2 2 2" />
+                <Setter Property="Background" Value="White" />
+            </Style>
+
+            <Style x:Key="IFPBorder" TargetType="{x:Type Border}">
+                <Setter Property="BorderBrush" Value="Orange" />
+                <Setter Property="BorderThickness" Value="2 2 2 2" />
+                <Setter Property="Background" Value="White" />
+            </Style>
+
+            <Style x:Key="CSBorder" TargetType="{x:Type Border}">
+                <Setter Property="BorderBrush" Value="Orange" />
+                <Setter Property="BorderThickness" Value="2 2 2 2" />
+                <Setter Property="Background" Value="White" />
+            </Style>
         </Grid.Resources>
 
         <Grid.ColumnDefinitions>
@@ -43,9 +66,9 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="133"/>
-                <ColumnDefinition Width="133"/>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="50"/>
                 <ColumnDefinition Width="133"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -67,13 +90,58 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
-            <telerik:RadButton x:Name="btnEI" Grid.Row="0" Grid.Column="6" Width="130" Click="btnSwitchReport_Click" Content="EI"></telerik:RadButton>
-            <telerik:RadButton x:Name="btnIFP" Grid.Row="0" Grid.Column="7" Width="130" Click="btnSwitchReport_Click"  Content="IFP"></telerik:RadButton>
-            <telerik:RadButton x:Name="btnCS" Grid.Row="0" Grid.Column="7" Width="130" Click="btnSwitchReport_Click"  Content="CS"></telerik:RadButton>
+            <telerik:RadButton x:Name="btnEI" Grid.Row="0" Grid.Column="5" Width="50" Click="btnSwitchReport_Click" Content="EI"></telerik:RadButton>
+            <telerik:RadButton x:Name="btnIFP" Grid.Row="0" Grid.Column="6" Width="50" Click="btnSwitchReport_Click"  Content="IFP"></telerik:RadButton>
+            <telerik:RadButton x:Name="btnCS" Grid.Row="0" Grid.Column="7" Width="50" Click="btnSwitchReport_Click"  Content="CS"></telerik:RadButton>
             <telerik:RadButton Grid.Row="0" Grid.Column="8" Width="130" Command="{Binding GetETGFactSymmetryDataCallCommand}" Content="Generate Report"></telerik:RadButton>
         </Grid>
 
+        <Grid Grid.Row="1" Background="LightGray">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="20"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="20"/>
+            </Grid.RowDefinitions>
 
-        
+
+            <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
+            <telerik:Label Grid.Row="1"   Grid.Column="1" Content="* Select State(s):" Foreground="DarkBlue" FontWeight="Bold" Margin="4" HorizontalAlignment="Left"  />
+            <components:SelectAllCheckComboBox x:Name="cbxStateFilter" Grid.Row="2"  Margin="10 10 10 10" Grid.Column="1"  >
+                </components:SelectAllCheckComboBox>
+
+            <!--Command="{Binding StateChangedCommand}"  Grid.Row="2"   Grid.Column="1"  Margin="5" Padding="5"  Width="460"  Margin="4"  HorizontalAlignment="Left" ItemsSource="{Binding Path=States}" ItemSelectionChanged="CbxStateFilter_ItemSelectionChanged" Loaded="CbxStateFilter_Loaded"-->
+
+            <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
+            <telerik:Label  Grid.Row="1"    Grid.Column="2" Content="* Start Date:" Foreground="DarkBlue"  FontWeight="Bold" Margin="4"  HorizontalAlignment="Left"   />
+            <telerik:RadDatePicker x:Name="dtStartDate"  Grid.Row="2"   Grid.Column="2"   Margin="10 10 10 10"  VerticalAlignment="Top" HorizontalAlignment="Left" SelectedValue="01/01/2022"/>
+
+            <Border Grid.Column="3" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
+            <telerik:Label  Grid.Row="1"    Grid.Column="3" Content="* End Date:" Foreground="DarkBlue"  FontWeight="Bold" Margin="4"  HorizontalAlignment="Left"  />
+            <telerik:RadDatePicker x:Name="dtEndDate"  Grid.Row="2"   Grid.Column="3"   Margin="10 10 10 10"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="115" SelectedValue="12/31/2022"/>
+
+
+            <!--<telerik:Label  Grid.Row="1"    Grid.Column="3" Content="* Select CUST SEG(s):" Foreground="DarkBlue"  FontWeight="Bold" Margin="4"  HorizontalAlignment="Left"  />
+            <TextBox Name="txtCUST_SEGFilter"  Grid.Row="2"   Grid.Column="3"    Margin="5" Padding="5" Width="460" Height="60px"  HorizontalAlignment="Left" >
+            </TextBox>-->
+
+        </Grid>
+
+
     </Grid>
 </UserControl>
