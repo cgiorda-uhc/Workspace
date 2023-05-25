@@ -29,7 +29,11 @@
                 <Setter Property="FontWeight" Value="Bold" />
             </Style>
 
-
+            <Style x:Key="OptionalLabel" TargetType="{x:Type Label}">
+                <Setter Property="FontFamily" Value="Calibri" />
+                <Setter Property="Foreground" Value="DarkGreen" />
+                <Setter Property="FontWeight" Value="Bold" />
+            </Style>
 
             <Style x:Key="DefaultBorder" TargetType="{x:Type Border}">
                 <Setter Property="BorderBrush" Value="Blue" />
@@ -81,15 +85,15 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="50"/>
-                <ColumnDefinition Width="50"/>
-                <ColumnDefinition Width="50"/>
-                <ColumnDefinition Width="133"/>
+                <ColumnDefinition Width="55"/>
+                <ColumnDefinition Width="55"/>
+                <ColumnDefinition Width="55"/>
+                <ColumnDefinition Width="155"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" FontSize="19" Background="LightGray" FontFamily="Verdana"  FontWeight="ExtraBold" Text="MHP EI Reporting"></TextBlock>
+            <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" FontSize="19" Background="LightGray" FontFamily="Verdana"  FontWeight="ExtraBold" Text="{Binding CurrentTitle}"></TextBlock>
             <TextBlock DataContext="{Binding UserMessageViewModel}"  Text="{Binding Message}" Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="3" >
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
@@ -105,13 +109,13 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
-            <telerik:RadButton x:Name="btnEI" Grid.Row="0" Grid.Column="5" Width="50" Click="btnSwitchReport_Click" Content="EI"></telerik:RadButton>
-            <telerik:RadButton x:Name="btnIFP" Grid.Row="0" Grid.Column="6" Width="50" Click="btnSwitchReport_Click"  Content="IFP"></telerik:RadButton>
-            <telerik:RadButton x:Name="btnCS" Grid.Row="0" Grid.Column="7" Width="50" Click="btnSwitchReport_Click"  Content="CS"></telerik:RadButton>
-            <telerik:RadButton Grid.Row="0" Grid.Column="8" Width="130" Command="{Binding GetETGFactSymmetryDataCallCommand}" Content="Generate Report"></telerik:RadButton>
+            <telerik:RadButton x:Name="btnEI" Grid.Row="0" Grid.Column="5" Width="50" Command="{Binding EISectionCallCommand}" Click="btnSwitchReport_Click" Content="EI"></telerik:RadButton>
+            <telerik:RadButton x:Name="btnIFP" Grid.Row="0" Grid.Column="6" Width="50" Command="{Binding IFPSectionCallCommand}" Click="btnSwitchReport_Click"  Content="IFP"></telerik:RadButton>
+            <telerik:RadButton x:Name="btnCS" Grid.Row="0" Grid.Column="7" Width="50" Command="{Binding CSSectionCallCommand}" Click="btnSwitchReport_Click"  Content="CS"></telerik:RadButton>
+            <telerik:RadButton Grid.Row="0" Grid.Column="8" Width="145" Command="{Binding GetETGFactSymmetryDataCallCommand}" Content="Generate Report"></telerik:RadButton>
         </Grid>
 
-        <Grid Grid.Row="1" Background="LightGray">
+        <Grid Grid.Row="1" Background="GhostWhite">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="20"/>
                 <ColumnDefinition Width="*"/>
@@ -123,12 +127,6 @@
                 <RowDefinition Height="20"/>
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="50"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="*"/>
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="20"/>
@@ -152,38 +150,120 @@
 
 
 
+            <Grid x:Name="EIFilters" Visibility="{Binding EIFormVisibility}" Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="50"/>
+                </Grid.RowDefinitions>
 
 
 
-            <Border Grid.Column="1" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
-            <telerik:Label Grid.Row="3"   Grid.Column="1" Content="* Select Legal Entity(s):" Style="{StaticResource ValidLabel}" Margin="4" HorizontalAlignment="Left"  />
-            <components:SelectAllCheckComboBoxTilde x:Name="cbxLegalEntityFilter"  Grid.Column="1"  Grid.Row="4" Width="460"  Margin="10 10 10 10"  HorizontalAlignment="Left"  >
-            </components:SelectAllCheckComboBoxTilde>
+                <Border Grid.Column="0" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
+                <telerik:Label Grid.Row="1"   Grid.Column="0" Content="* Select Legal Entity(s):" Style="{StaticResource ValidLabel}" Margin="4" HorizontalAlignment="Left"  />
+                <components:SelectAllCheckComboBoxTilde x:Name="cbxLegalEntityFilter"  Grid.Column="0"  Grid.Row="2" Width="460"  Margin="10 10 10 10"  HorizontalAlignment="Left"  >
+                </components:SelectAllCheckComboBoxTilde>
 
-            <!-- ItemsSource="{Binding Path=LEG_ENTY}" ItemSelectionChanged="CbxLegalEntityFilter_ItemSelectionChanged" Loaded="CbxLegalEntityFilter_Loaded"-->
+                <!-- ItemsSource="{Binding Path=LEG_ENTY}" ItemSelectionChanged="CbxLegalEntityFilter_ItemSelectionChanged" Loaded="CbxLegalEntityFilter_Loaded"-->
 
-            <Border Grid.Column="2" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
-            <telerik:Label  Grid.Row="3"    Grid.Column="2" Content="* Select FINC ARNG DESC(s):" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"   />
-            <components:SelectAllCheckComboBox x:Name="cbxFINC_ARNG_CDFilter" Grid.Row="4"  Margin="10 10 10 10" Grid.Column="2"  >
-            </components:SelectAllCheckComboBox>
+                <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
+                <telerik:Label  Grid.Row="1"    Grid.Column="1" Content="* Select FINC ARNG DESC(s):" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"   />
+                <components:SelectAllCheckComboBox x:Name="cbxFINC_ARNG_CDFilter" Grid.Row="2"  Margin="10 10 10 10" Grid.Column="1"  >
+                </components:SelectAllCheckComboBox>
 
-            <!--ItemsSource="{Binding Path=FINC_ARNG_DESC}" ItemSelectionChanged="CbxFINC_ARNG_CDFilter_ItemSelectionChanged" Loaded="CbxFINC_ARNG_CDFilter_Loaded"-->
-            
-            <Border Grid.Column="3" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
-            <telerik:Label  Grid.Row="3"    Grid.Column="3" Content="* Select MKT SEG RLLP DESC(s):" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"  />
-            <components:SelectAllCheckComboBox x:Name="cbxMKT_SEG_RLLP_DESCFilter" Grid.Row="4"  Margin="10 10 10 10" Grid.Column="3"  >
-            </components:SelectAllCheckComboBox>
-            
-            <!--ItemsSource="{Binding Path=MKT_SEG_RLLP_DESC}" ItemSelectionChanged="CbxMKT_SEG_RLLP_DESCFilter_ItemSelectionChanged" Loaded="CbxMKT_SEG_RLLP_DESCFilter_Loaded"-->
+                <!--ItemsSource="{Binding Path=FINC_ARNG_DESC}" ItemSelectionChanged="CbxFINC_ARNG_CDFilter_ItemSelectionChanged" Loaded="CbxFINC_ARNG_CDFilter_Loaded"-->
+
+                <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
+                <telerik:Label  Grid.Row="1"    Grid.Column="2" Content="* Select MKT SEG RLLP DESC(s):" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"  />
+                <components:SelectAllCheckComboBox x:Name="cbxMKT_SEG_RLLP_DESCFilter" Grid.Row="2"  Margin="10 10 10 10" Grid.Column="2"  >
+                </components:SelectAllCheckComboBox>
+
+                <!--ItemsSource="{Binding Path=MKT_SEG_RLLP_DESC}" ItemSelectionChanged="CbxMKT_SEG_RLLP_DESCFilter_ItemSelectionChanged" Loaded="CbxMKT_SEG_RLLP_DESCFilter_Loaded"-->
+
+                <Border Grid.Column="0" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
+                <telerik:Label  Grid.Row="3"  Grid.Column="0" Content="Select MKT TYP DESC(s):" Style="{StaticResource OptionalLabel}" Margin="4"  HorizontalAlignment="Left"   />
+                <components:SelectAllCheckComboBox x:Name="cbMKT_TYP_DESCFilter" Grid.Column="0" Grid.Row="4"  Margin="10 10 10 10"  >
+                </components:SelectAllCheckComboBox>
+
+                <!--ItemsSource="{Binding Path=MKT_TYP_DESC}" ItemSelectionChanged="CbxMKT_TYP_DESCFilter_ItemSelectionChanged" Loaded="CbxMKT_TYP_DESCFilter_Loaded"-->
+
+                <Border Grid.Column="1" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
+                <telerik:Label Grid.Row="3"   Grid.Column="1" Content="Select CUST SEG(s):" Style="{StaticResource OptionalLabel}" Margin="4" HorizontalAlignment="Left"  />
+                <TextBox Name="txtCUST_SEGFilter"  Grid.Column="1"  Grid.Row="4" Margin="10 10 10 10"   >
+                </TextBox>
+
+                <Border Grid.Column="2" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
+                <!-- ItemsSource="{Binding Path=LEG_ENTY}" ItemSelectionChanged="CbxLegalEntityFilter_ItemSelectionChanged" Loaded="CbxLegalEntityFilter_Loaded"-->
+            </Grid>
 
 
 
+            <Grid x:Name="IFPFilters" Visibility="{Binding IFPFormVisibility}" Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
 
 
 
-            <!--<telerik:Label  Grid.Row="1"    Grid.Column="3" Content="* Select CUST SEG(s):" Foreground="DarkBlue"  FontWeight="Bold" Margin="4"  HorizontalAlignment="Left"  />
-            <TextBox Name="txtCUST_SEGFilter"  Grid.Row="2"   Grid.Column="3"    Margin="5" Padding="5" Width="460" Height="60px"  HorizontalAlignment="Left" >
-            </TextBox>-->
+                <Border Grid.Column="0" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
+                <telerik:Label Grid.Row="1"   Grid.Column="0" Content="* Select Product(s):" Style="{StaticResource ValidLabel}" Margin="4" HorizontalAlignment="Left"  />
+                <components:SelectAllCheckComboBox x:Name="cbxProductCode"  Grid.Column="0"  Grid.Row="2" Width="460"  Margin="10 10 10 10"  HorizontalAlignment="Left"  >
+                </components:SelectAllCheckComboBox>
+
+                <Border Grid.Column="1" Grid.Row="3" Grid.RowSpan="3" />
+
+                <Border Grid.Column="2" Grid.Row="3" Grid.RowSpan="3"/>
+                <!-- ItemsSource="{Binding Path=LEG_ENTY}" ItemSelectionChanged="CbxLegalEntityFilter_ItemSelectionChanged" Loaded="CbxLegalEntityFilter_Loaded"-->
+            </Grid>
+
+
+            <Grid x:Name="CSFilters" Visibility="{Binding CSFormVisibility}"  Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
+
+
+
+                <Border Grid.Column="0" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
+                <telerik:Label Grid.Row="1"   Grid.Column="0" Content="* Select CS TADM PRDCT MAP(s):" Style="{StaticResource ValidLabel}" Margin="4" HorizontalAlignment="Left"  />
+                <components:SelectAllCheckComboBox x:Name="cbxCS_TADM_PRDCT_MAP"  Grid.Column="0"  Grid.Row="2" Width="460"  Margin="10 10 10 10"  HorizontalAlignment="Left"  >
+                </components:SelectAllCheckComboBox>
+
+                <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
+                <telerik:Label Grid.Row="1"   Grid.Column="1" Content="Select PRDCT CD DESC(s):" Style="{StaticResource OptionalLabel}" Margin="4" HorizontalAlignment="Left"  />
+                <components:SelectAllCheckComboBox x:Name="cbxGroupNumbers"  Grid.Column="1"  Grid.Row="2" Width="460"  Margin="10 10 10 10"  HorizontalAlignment="Left"  >
+                </components:SelectAllCheckComboBox>
+
+                <Border Grid.Column="2" Grid.Row="3" Grid.RowSpan="3"/>
+                <!-- ItemsSource="{Binding Path=LEG_ENTY}" ItemSelectionChanged="CbxLegalEntityFilter_ItemSelectionChanged" Loaded="CbxLegalEntityFilter_Loaded"-->
+            </Grid>
 
         </Grid>
 

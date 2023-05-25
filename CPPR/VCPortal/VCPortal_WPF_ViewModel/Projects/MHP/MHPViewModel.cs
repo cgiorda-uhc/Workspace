@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using FileParsingLibrary.MSExcel;
 using Microsoft.Extensions.Configuration;
 using SharedFunctionsLibrary;
@@ -10,6 +11,8 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Input;
 using VCPortal_Models.Configuration.HeaderInterfaces.Abstract;
 using VCPortal_Models.Dtos.ETGFactSymmetry;
 using VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;
@@ -29,6 +32,20 @@ public partial class MHPViewModel : ObservableObject
     // public IEnumerable<ETGFactSymmetryViewModel> OC_ETGFactSymmetryViewModel => _oc_ETGFactSymmetryViewModel;
 
 
+    [ObservableProperty]
+    private string currentTitle;
+
+
+    [ObservableProperty]
+    private Visibility eIFormVisibility;
+    [ObservableProperty]
+    private Visibility cSFormVisibility;
+    [ObservableProperty]
+    private Visibility iFPFormVisibility;
+
+
+
+
 
     [ObservableProperty]
     private bool isModalOpen;
@@ -43,11 +60,49 @@ public partial class MHPViewModel : ObservableObject
 
         UserMessageViewModel = new MessageViewModel();
 
+        CurrentTitle = "MHP EI Reporting";
+        EIFormVisibility = Visibility.Visible;
+        CSFormVisibility = Visibility.Hidden;
+        IFPFormVisibility = Visibility.Hidden;
+
+
+
+
 
         populateFilters();
 
 
     }
+
+
+    [RelayCommand]
+    private async Task EISectionCall()
+    {
+        CurrentTitle = "MHP EI Reporting";
+        EIFormVisibility = Visibility.Visible;
+        CSFormVisibility = Visibility.Hidden;
+        IFPFormVisibility = Visibility.Hidden;
+    }
+
+
+    [RelayCommand]
+    private async Task IFPSectionCall()
+    {
+        CurrentTitle = "MHP IFP Reporting";
+        EIFormVisibility = Visibility.Hidden;
+        CSFormVisibility = Visibility.Hidden;
+        IFPFormVisibility = Visibility.Visible;
+    }
+
+    [RelayCommand]
+    private async Task CSSectionCall()
+    {
+        CurrentTitle = "MHP CS Reporting";
+        EIFormVisibility =  Visibility.Hidden;
+        CSFormVisibility = Visibility.Visible;
+        IFPFormVisibility = Visibility.Hidden;
+    }
+
 
     private async Task populateFilters()
     {

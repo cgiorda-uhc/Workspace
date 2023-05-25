@@ -43,7 +43,7 @@ public class NICEUHCWestEligibility : INICEUHCWestEligibility
 
             Log.Information($"Searching for new files...");
             //COMPARE LAST DATE WITH NEW FILESD
-            var newFiles = getNewFiles(_config.FileLists, lastestFileDate);
+           var newFiles = getNewFiles(_config.FileLists, lastestFileDate);
             if (newFiles.Count == 0)
             {
                 Log.Information($"No results found for NICEUHCWestEligibility. Will try again next time");

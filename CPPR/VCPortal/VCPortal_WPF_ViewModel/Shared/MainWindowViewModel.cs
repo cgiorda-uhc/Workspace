@@ -95,7 +95,15 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
 
             NavigationViewModelTypesReports = new ObservableCollection<TypeAndDisplay>();
-            NavigationViewModelTypesReports.Add(new TypeAndDisplay { Name = "MHP", VMType = typeof(MHPViewModel) });
+
+
+            if (groups.Contains("ms\\mhp_universe", StringComparer.OrdinalIgnoreCase))
+            {
+                NavigationViewModelTypesReports.Add(new TypeAndDisplay { Name = "MHP", VMType = typeof(MHPViewModel) });
+            }
+
+
+
             NavigationViewModelTypesReports.Add(new TypeAndDisplay { Name = "Compliance Reporting" });
 
         }

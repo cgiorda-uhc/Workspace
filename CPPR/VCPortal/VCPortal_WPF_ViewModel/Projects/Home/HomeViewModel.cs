@@ -59,7 +59,10 @@ public partial class HomeViewModel : ObservableObject
             currentAccess.Add("MS\\ETGSymm");
         }
 
-
+        if (groups.Contains("ms\\mhp_universe", StringComparer.OrdinalIgnoreCase))
+        {
+            currentAccess.Add("MS\\MHP_Universe");
+        }
 
     }
 }
