@@ -175,7 +175,15 @@
 
 
 
-                <telerik:GridViewCheckBoxColumn Width="100" Header="Never Map"  DataMemberBinding="{Binding Never_Mapped, Mode=TwoWay}"  HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}"/>
+                <telerik:GridViewCheckBoxColumn Width="100" Header="Never Map"  DataMemberBinding="{Binding Never_Mapped, Mode=TwoWay}"  HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}">
+
+                    <telerik:GridViewCheckBoxColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
+                        </Style>
+                    </telerik:GridViewCheckBoxColumn.CellStyle>
+
+                </telerik:GridViewCheckBoxColumn>
 
 
                 <telerik:GridViewDataColumn DataMemberBinding="{Binding LOBPrevious}" Header="Prev LOB" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}"/>

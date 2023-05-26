@@ -81,7 +81,7 @@ public partial class ETGFactSymmetryViewModel : ObservableObject
             trackChanges(value, "RX_NRX");
         }
     }
-    public string RX_NRXPrevious { get; set; }
+    public string RX_NRXPrevious => _etg.RX_NRXPrevious;
 
     public char Is_Config => _etg.Is_Config;
     private string _PC_Treatment_Indicator;
