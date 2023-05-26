@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [etgsymm].[ETG_Fact_Symmetry](
-       [ETG_Fact_Symmetry_Id] [bigint] NOT NULL,
+       [ETG_Fact_Symmetry_Id] [bigint] NOT NULL IDENTITY,
        [ETG_Base_Class] [varchar](15) NULL,
        [Premium_Specialty_Id] [smallint] NULL,
        [Has_Commercial] [bit] NULL,
@@ -54,5 +54,7 @@ CONSTRAINT [PK_ETG_Fact_Symmetry] PRIMARY KEY CLUSTERED
 (
        [ETG_Fact_Symmetry_Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 80) ON [PRIMARY], 
-    [Is_Mapped] BIT NULL DEFAULT 1
+    [Never_Mapped] BIT NULL DEFAULT 0, 
+    [PD_Version] SMALLINT NULL, 
+    [Measure_Status] VARCHAR(255) NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]

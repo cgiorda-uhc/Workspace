@@ -32,8 +32,8 @@
 
 	[username] [varchar](10) NULL,
 	[update_date] [datetime] NULL,
-[Is_Mapped] BIT NULL, 
-    [Is_Mapped_Previous] BIT NULL, 
+[Never_Mapped] BIT NULL, 
+    [Never_Mapped_Previous] BIT NULL, 
     CONSTRAINT [PK_ETG_Fact_Symmetry_Update_Tracker] PRIMARY KEY CLUSTERED 
 (
 	[ETG_Fact_Symmetry_UT_id] ASC

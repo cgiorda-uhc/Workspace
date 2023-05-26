@@ -368,16 +368,16 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
             var etgec = ETGFactSymmetryConfigMapper.getETGEpisodeCostConfig(OC_ETGFactSymmetryViewModel);
             export.Add(new ExcelExport() { ExportList = etgec.ToList<object>(), SheetName = sheet.SheetName });
 
-            sheet = excel.Sheets.Where(x => x.Name == "ETGPatientCentricConfig").FirstOrDefault();
-            var api = _config.APIS.Where(x => x.Name == "ETGPatientCentricConfig").FirstOrDefault();
-            var etgpc = await VM_Functions.APIGetResultAsync<ETGPatientCentricConfig>(api.BaseUrl, api.Url);
-            if (etgpc.Count > 0)
-            {
-                export.Add(new ExcelExport() { ExportList = etgpc.ToList<object>(), SheetName = sheet.SheetName });
-            }
+            //sheet = excel.Sheets.Where(x => x.Name == "ETGPatientCentricConfig").FirstOrDefault();
+            //var api = _config.APIS.Where(x => x.Name == "ETGPatientCentricConfig").FirstOrDefault();
+            //var etgpc = await VM_Functions.APIGetResultAsync<ETGPatientCentricConfig>(api.BaseUrl, api.Url);
+            //if (etgpc.Count > 0)
+            //{
+            //    export.Add(new ExcelExport() { ExportList = etgpc.ToList<object>(), SheetName = sheet.SheetName });
+            //}
 
             sheet = excel.Sheets.Where(x => x.Name == "ETGPopEpisodeConfig").FirstOrDefault();
-            api = _config.APIS.Where(x => x.Name == "ETGPopEpisodeConfig").FirstOrDefault();
+            var api = _config.APIS.Where(x => x.Name == "ETGPopEpisodeConfig").FirstOrDefault();
             var etgpe = await VM_Functions.APIGetResultAsync<ETGPopEpisodeConfig>(api.BaseUrl, api.Url);
             if (etgpe.Count > 0)
             {

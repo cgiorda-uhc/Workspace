@@ -175,7 +175,7 @@
 
 
 
-                <telerik:GridViewCheckBoxColumn Width="100" Header="Is Mapped"  DataMemberBinding="{Binding Is_Mapped, Mode=TwoWay}"  HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}"/>
+                <telerik:GridViewCheckBoxColumn Width="100" Header="Never Map"  DataMemberBinding="{Binding Never_Mapped, Mode=TwoWay}"  HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}"/>
 
 
                 <telerik:GridViewDataColumn DataMemberBinding="{Binding LOBPrevious}" Header="Prev LOB" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}"/>

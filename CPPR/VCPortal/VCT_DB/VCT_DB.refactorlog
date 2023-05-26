@@ -7,4 +7,25 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="Is_Mapped" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="2c083254-19b7-45b6-b43c-f4e1238eb96f" ChangeDateTime="05/26/2023 16:25:47">
+    <Property Name="ElementName" Value="[deploy].[ETG_Fact_Symmetry].[ETG_Fact_Symmetry_id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[deploy].[ETG_Fact_Symmetry]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Deploy_Id" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="a8acd733-f9bb-4aff-ab6f-49b8d1e326e4" ChangeDateTime="05/26/2023 17:17:52">
+    <Property Name="ElementName" Value="[deploy].[ETG_Fact_Symmetry_Final].[Premium_Specialty]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[deploy].[ETG_Fact_Symmetry_Final]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Premium_Specialty_id" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="ab3f7f3e-6248-4640-a4ac-fd44c611bfb8" ChangeDateTime="05/26/2023 17:34:47">
+    <Property Name="ElementName" Value="[etgsymm].[ETG_Fact_Symmetry].[[Measure_Status]]]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[etgsymm].[ETG_Fact_Symmetry]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="Measure_Status" />
+  </Operation>
 </Operations>

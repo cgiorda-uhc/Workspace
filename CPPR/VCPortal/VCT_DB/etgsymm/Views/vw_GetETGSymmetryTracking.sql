@@ -4,8 +4,8 @@
 ,f.ETG_Base_Class
 ,m.[ETG_Description]
 , p.Premium_Specialty
-	,CASE WHEN t.[Is_Mapped] = 0 THEN 'N' ELSE CASE WHEN t.[Is_Mapped] = 1 THEN 'Y' ELSE NULL END END AS [Is_Mapped]
-	,CASE WHEN t.[Is_Mapped_Previous] = 0 THEN 'N' ELSE CASE WHEN t.[Is_Mapped_Previous] = 1 THEN 'Y' ELSE NULL END END AS [Is_Mapped_Previous]
+	,CASE WHEN t.[Never_Mapped] = 0 THEN 'N' ELSE CASE WHEN t.[Never_Mapped] = 1 THEN 'Y' ELSE NULL END END AS [Never_Mapped]
+	,CASE WHEN t.[Never_Mapped_Previous] = 0 THEN 'N' ELSE CASE WHEN t.[Never_Mapped_Previous] = 1 THEN 'Y' ELSE NULL END END AS [Never_Mapped_Previous]
 	,CASE WHEN t.[Has_Commercial] = 0 THEN 'N' ELSE CASE WHEN t.[Has_Commercial] = 1 THEN 'Y' ELSE NULL END END AS [Has_Commercial]
 	,CASE WHEN t.[Has_Commercial_Previous] = 0 THEN 'N' ELSE CASE WHEN t.[Has_Commercial_Previous] = 1 THEN 'Y' ELSE NULL END END AS [Has_Commercial_Previous]
 	,CASE WHEN t.[Has_Medicare] = 0 THEN 'N' ELSE CASE WHEN t.[Has_Medicare] = 1 THEN 'Y' ELSE NULL END END AS [Has_Medicare]

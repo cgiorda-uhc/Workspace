@@ -15,8 +15,8 @@ public class ETGFactSymmetry_Tracking_ReadDto
 
     public string Premium_Specialty { get; set; }
 
-    public char? Is_Mapped { get; set; }
-    public char? Is_Mapped_Previous { get; set; }
+    public char? Never_Mapped { get; set; }
+    public char? Never_Mapped_Previous { get; set; }
 
     public char? Has_Commercial { get; set; }
     public char? Has_Commercial_Previous { get; set; }

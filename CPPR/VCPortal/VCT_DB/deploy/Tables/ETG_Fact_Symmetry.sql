@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [deploy].[ETG_Fact_Symmetry](
-	[ETG_Fact_Symmetry_id] [bigint] NOT NULL,
+	[Deploy_Id] [bigint] NOT NULL IDENTITY,
 	[ETG_Base_Class] [varchar](15) NULL,
 	[Premium_Specialty_id] [smallint] NULL,
 	[has_Commercial] [bit] NULL,
@@ -51,5 +51,7 @@
 	[Data_Date] [date] NULL,
 	[username] [varchar](10) NULL,
 	[update_date] [datetime] NULL,
-	[Symmetry_Version] [float] NULL
+	[Symmetry_Version] [float] NULL,
+	[PD_Version] SMALLINT NULL, 
+    [Never_Map] BIT NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]

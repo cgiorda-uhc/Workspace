@@ -9,8 +9,8 @@ f.Premium_Specialty_Id,
 p.Premium_Specialty,
 
 
-f.Is_Mapped,
-fp.Is_Mapped as Is_Mapped_Previous,
+f.Never_Mapped,
+fp.Never_Mapped as Never_Mapped_Previous,
 
 f.Has_Commercial,
 f.Has_Medicare,

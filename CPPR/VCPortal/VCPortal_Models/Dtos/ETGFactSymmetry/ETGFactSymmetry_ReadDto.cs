@@ -18,8 +18,8 @@ public class ETGFactSymmetry_ReadDto
     public string LOB { get; set; }
     public string LOBPrevious { get; set; }
 
-    public bool? Is_Mapped { get; set; }
-    public bool? Is_Mapped_Previous { get; set; }
+    public bool? Never_Mapped { get; set; }
+    public bool? Never_Mapped_Previous { get; set; }
 
 
 

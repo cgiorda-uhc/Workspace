@@ -106,6 +106,7 @@
     <Build Include="etgsymm\etgsymm.sql" />
     <Build Include="deploy\deploy.sql" />
     <Build Include="vct\vct.sql" />
+    <Build Include="deploy\Tables\ETG_Fact_Symmetry_Final.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Cd_GetAll.sql" />

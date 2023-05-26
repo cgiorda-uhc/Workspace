@@ -38,21 +38,21 @@ public partial class ETGFactSymmetryViewModel : ObservableObject
     }
     public string LOBPrevious => _etg.LOBPrevious;
 
-    private bool? _is_mapped;
-    public bool? Is_Mapped
+    private bool? _never_mapped;
+    public bool? Never_Mapped
     {
         get
         {
-            return _is_mapped;
+            return _never_mapped;
         }
         set
         {
-            _is_mapped = value;
+            _never_mapped = value;
 
-            trackChanges(value, "Is_Mapped");
+            trackChanges(value, "Never_Mapped");
         }
     }
-    public bool? Is_Mapped_Previous { get; set; }
+    public bool? Never_Mapped_Previous { get; set; }
 
     public bool? Has_Commercial { get; set; }
     public bool? Has_Medicare { get; set; }
@@ -279,8 +279,8 @@ public partial class ETGFactSymmetryViewModel : ObservableObject
         PC_Change_Comments = etg.PC_Change_Comments;
         EC_Change_Comments = etg.EC_Change_Comments;
         Patient_Centric_Change_Comments = etg.Patient_Centric_Change_Comments;
-        Is_Mapped = etg.Is_Mapped;
-        Is_Mapped_Previous = etg.Is_Mapped_Previous;
+        Never_Mapped = etg.Never_Mapped;
+        Never_Mapped_Previous = etg.Never_Mapped_Previous;
 
 }
 
@@ -352,9 +352,9 @@ public partial class ETGFactSymmetryViewModel : ObservableObject
                 etg.EC_Change_Comments = newValue.ToString();
                 _etg.EC_Change_Comments = etg.EC_Change_Comments;
                 break;
-            case "Is_Mapped":
-                etg.Is_Mapped = newValue as bool?;
-                _etg.Is_Mapped = etg.Is_Mapped;
+            case "Never_Mapped":
+                etg.Never_Mapped = newValue as bool?;
+                _etg.Never_Mapped = etg.Never_Mapped;
                 break;
             default:
                 // code block
