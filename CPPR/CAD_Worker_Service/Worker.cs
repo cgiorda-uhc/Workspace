@@ -136,15 +136,15 @@ namespace CAD_Worker_Service
             }
 
 
-            var cfg = options.Find(p => p.Name == "NICEUHCWestEligibility");
+            var cfg = options.Find(p => p.Name == "DataSourceVerification");
             if (cfg != null && _tasksManager != null)
             {
                 schedule = cfg.Schedule;
 
                 //CREATE NEW TIMER TASK
-                timer = new CronosTimer("13 10 * * *");
+                timer = new CronosTimer("14 9 * * *");
                 //USING TOKEN FROM EVENT
-                timer.Elapsed += HandleTimerElapsed(_tasksManager.NICEUHCWestEligibilityAppendAsync);
+                timer.Elapsed += HandleTimerElapsed(_tasksManager.CheckDataSourcesAsync);
                 // USING STOPPINGTOKEN
                 //timer.Elapsed += HandleTimerElapsed(_ => _tasksManager.CheckDataSourcesAsync(cancellationToken));
                 //ADD TO LIST FOR EASY DISPOSE ON STOP

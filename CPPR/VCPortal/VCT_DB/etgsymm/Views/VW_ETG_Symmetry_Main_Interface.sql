@@ -227,3 +227,4 @@ LEFT OUTER JOIN vct.ETG_Dim_Premium_Spec_Master AS p ON f.Premium_Specialty_id =
 
 
 WHERE f.ETG_Base_Class <> 000000
+AND f.Premium_Specialty_Id IS NOT NULL

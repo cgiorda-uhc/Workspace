@@ -153,6 +153,85 @@ public static class ETGFactSymmetry_Calls
 
 
 
+        app.MapGet(pattern: "/etgnrxexclconfig", async (IETGFactSymmetry_Repo repo, CancellationToken token) =>
+        {
+            try
+            {
+                _log.Information("Requesting API GetETG_CNFG_ETG_NRX_EXCLD()...");
+                ////RETURN HTTP 200
+                ///
+                var results = await repo.GetETG_CNFG_ETG_NRX_EXCLD(token);
+
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetETG_CNFG_ETG_NRX_EXCLD() 404, not found");
+                return Results.NotFound(); //404
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, "API GetETG_CNFG_ETG_NRX_EXCLD threw an error");
+                //RETURN ERROR
+                return Results.Problem(ex.Message);
+
+            }
+        });
+
+
+        app.MapGet(pattern: "/etgspclconfig", async (IETGFactSymmetry_Repo repo, CancellationToken token) =>
+        {
+            try
+            {
+                _log.Information("Requesting API GetETG_CNFG_ETG_SPCL()...");
+                ////RETURN HTTP 200
+                ///
+                var results = await repo.GetETG_CNFG_ETG_SPCL(token);
+
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetETG_CNFG_ETG_SPCL() 404, not found");
+                return Results.NotFound(); //404
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, "API GetETG_CNFG_ETG_SPCL threw an error");
+                //RETURN ERROR
+                return Results.Problem(ex.Message);
+
+            }
+        });
+
+        app.MapGet(pattern: "/etgpcnrxconfig", async (IETGFactSymmetry_Repo repo, CancellationToken token) =>
+        {
+            try
+            {
+                _log.Information("Requesting API GetETG_CNFG_PC_ETG_NRX()...");
+                ////RETURN HTTP 200
+                ///
+                var results = await repo.GetETG_CNFG_PC_ETG_NRX(token);
+
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetETG_CNFG_PC_ETG_NRX() 404, not found");
+                return Results.NotFound(); //404
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, "API GetETG_CNFG_PC_ETG_NRX threw an error");
+                //RETURN ERROR
+                return Results.Problem(ex.Message);
+
+            }
+        });
+
         app.MapPost(pattern: "/etginsert", async (List<ETGFactSymmetry_Tracking_UpdateDto> etg, IETGFactSymmetry_Repo repo) =>
         {
             try

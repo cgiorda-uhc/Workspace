@@ -16,6 +16,14 @@ public interface IETGFactSymmetry_Repo
 
     Task<IEnumerable<ETGRxNrxConfig>> GetETGRxNrxConfigAsync(CancellationToken token);
 
+    Task<IEnumerable<ETG_CNFG_ETG_NRX_EXCLD>> GetETG_CNFG_ETG_NRX_EXCLD(CancellationToken token);
+
+    Task<IEnumerable<ETG_CNFG_ETG_SPCL>> GetETG_CNFG_ETG_SPCL(CancellationToken token);
+
+
+    Task<IEnumerable<ETG_CNFG_PC_ETG_NRX>> GetETG_CNFG_PC_ETG_NRX(CancellationToken token);
+
+
     Task UpdateETGFactSymmetry(ETGFactSymmetry_UpdateDto etg);
 
     Task InsertETGFactSymmetryTracking(List<ETGFactSymmetry_Tracking_UpdateDto> ETG, string connectionId);

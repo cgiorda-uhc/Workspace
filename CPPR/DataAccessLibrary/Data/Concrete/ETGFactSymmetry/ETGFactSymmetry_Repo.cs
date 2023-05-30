@@ -5,6 +5,7 @@ using DataAccessLibrary.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using MongoDB.Driver.Core.Connections;
+using Newtonsoft.Json.Linq;
 using System.Data;
 using System.Text;
 using VCPortal_Models.Dtos.ChemoPx;
@@ -82,8 +83,40 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
     }
 
 
+    public Task<IEnumerable<ETG_CNFG_ETG_NRX_EXCLD>> GetETG_CNFG_ETG_NRX_EXCLD(CancellationToken token)
+    {
 
-    public async Task InsertETGFactSymmetryTracking(List<ETGFactSymmetry_Tracking_UpdateDto> ETG, string connectionId)
+        string strSQL = "SELECT * FROM [etgsymm].[VW_ETG_Symmetry_CNFG_ETG_NRX_EXCLD] v;";
+
+        var results = _db.LoadData<ETG_CNFG_ETG_NRX_EXCLD>(sql: strSQL, token, connectionId: "VCT_DB");
+
+        return results;
+    }
+
+    public Task<IEnumerable<ETG_CNFG_ETG_SPCL>> GetETG_CNFG_ETG_SPCL(CancellationToken token)
+    {
+
+        string strSQL = "SELECT * FROM [etgsymm].[VW_ETG_Symmetry_CNFG_ETG_SPCL] v;";
+
+        var results = _db.LoadData<ETG_CNFG_ETG_SPCL>(sql: strSQL, token, connectionId: "VCT_DB");
+
+        return results;
+    }
+
+    public Task<IEnumerable<ETG_CNFG_PC_ETG_NRX>> GetETG_CNFG_PC_ETG_NRX(CancellationToken token)
+    {
+
+        string strSQL = "SELECT * FROM [etgsymm].[VW_ETG_Symmetry_CNFG_PC_ETG_NRX] v;";
+
+        var results = _db.LoadData<ETG_CNFG_PC_ETG_NRX>(sql: strSQL, token, connectionId: "VCT_DB");
+
+        return results;
+    }
+
+
+
+
+public async Task InsertETGFactSymmetryTracking(List<ETGFactSymmetry_Tracking_UpdateDto> ETG, string connectionId)
     {
         string[] columns = typeof(ETGFactSymmetry_Tracking_UpdateDto).GetProperties().Select(p => p.Name).ToArray();
         await _db.BulkSave<ETGFactSymmetry_Tracking_UpdateDto>("etgsymm.ETG_Fact_Symmetry_Update_Tracker", ETG, columns, connectionId : connectionId);

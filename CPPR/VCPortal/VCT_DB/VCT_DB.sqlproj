@@ -107,6 +107,9 @@
     <Build Include="deploy\deploy.sql" />
     <Build Include="vct\vct.sql" />
     <Build Include="deploy\Tables\ETG_Fact_Symmetry_Final.sql" />
+    <Build Include="etgsymm\Views\VW_ETG_Symmetry_CNFG_ETG_NRX_EXCLD.sql" />
+    <Build Include="etgsymm\Views\VW_ETG_Symmetry_CNFG_ETG_SPCL.sql" />
+    <Build Include="etgsymm\Views\VW_ETG_Symmetry_CNFG_PC_ETG_NRX.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Cd_GetAll.sql" />
