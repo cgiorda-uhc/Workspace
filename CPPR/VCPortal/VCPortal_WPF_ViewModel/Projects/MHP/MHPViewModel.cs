@@ -44,7 +44,7 @@ public partial class MHPViewModel : ObservableObject
     private Visibility iFPFormVisibility;
 
 
-
+    public MessageViewModel ProgressMessageViewModel { get; }
 
 
     [ObservableProperty]
@@ -59,6 +59,7 @@ public partial class MHPViewModel : ObservableObject
         _config = config;
 
         UserMessageViewModel = new MessageViewModel();
+        ProgressMessageViewModel = new MessageViewModel();
 
         CurrentTitle = "MHP EI Reporting";
         EIFormVisibility = Visibility.Visible;

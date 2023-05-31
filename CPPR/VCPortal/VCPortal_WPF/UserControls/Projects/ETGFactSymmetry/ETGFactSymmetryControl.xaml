@@ -7,10 +7,13 @@
              xmlns:local="clr-namespace:VCPortal_WPF.UserControls.Projects.ETGFactSymmetry" 
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
             xmlns:vml="clr-namespace:VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;assembly=VCPortal_WPF_ViewModel"
-            xmlns:modalcontrol="clr-namespace:ModalControl;assembly=ModalControl" xmlns:Collections="clr-namespace:System.Collections;assembly=System.Runtime.Extensions" xmlns:specialized="clr-namespace:System.Collections.Specialized;assembly=System"
+            xmlns:modalcontrol="clr-namespace:ModalControl;assembly=ModalControl" xmlns:Collections="clr-namespace:System.Collections;assembly=System.Runtime.Extensions" xmlns:specialized="clr-namespace:System.Collections.Specialized;assembly=System" xmlns:components="clr-namespace:VCPortal_WPF.Components" xmlns:converters="clr-namespace:VCPortal_WPF.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
+
+        <converters:BooleanAndConverter x:Key="booleanAndConverter" />
+        <converters:InverseBooleanConverter x:Key="inverseBooleanConverter" />
 
         <SolidColorBrush x:Key="editableColor" Color="LightYellow" />
 
@@ -149,8 +152,26 @@
                 </TextBlock.Style>
             </TextBlock>
             <telerik:RadButton x:Name="btnSave" Grid.Row="0" Grid.Column="5" Width="130" Click="btnSave_Click" Command="{Binding SaveCallCommand}" IsEnabled="{Binding CanSave}" Content="Save"></telerik:RadButton>
-            <telerik:RadButton x:Name="btnExporConfig" Grid.Row="0" Grid.Column="6" Width="130" Command="{Binding ExportConfigsCallCommand}" Click="btnExporConfig_Click"  Content="Export Configs"></telerik:RadButton>
-            <telerik:RadButton Grid.Row="0" Grid.Column="7" Width="130" Command="{Binding GetETGFactSymmetryDataCallCommand}" Content="Refresh Data"></telerik:RadButton>
+            <!--<telerik:RadButton x:Name="btnExporConfig" Grid.Row="0" Grid.Column="6" Width="130" Command="{Binding ExportConfigsCallCommand}" Click="btnExporConfig_Click"  Content="Export Configs"></telerik:RadButton>-->
+
+
+            <telerik:RadButton x:Name="btnExporConfig" Grid.Row="0" Grid.Column="6" Width="130" Command="{Binding ExportConfigsCallCommand}" Click="btnExporConfig_Click"  Content="Export Data">
+                <telerik:RadButton.IsEnabled>
+                    <MultiBinding Converter="{StaticResource booleanAndConverter}">
+                        <Binding Path="CanSave"  Converter="{StaticResource inverseBooleanConverter}" />
+                    </MultiBinding>
+                </telerik:RadButton.IsEnabled>
+            </telerik:RadButton>
+
+
+
+            <!--<telerik:RadButton Grid.Row="0" Grid.Column="7" Width="130" Command="{Binding GetETGFactSymmetryDataCallCommand}" Content="Refresh Data"></telerik:RadButton>-->
+
+            <components:YesNoButton Grid.Row="0" Grid.Column="7" Width="130" Command="{Binding GetETGFactSymmetryDataCallCommand}" CheckSaves="True" Question="You have unsaved changes. Refresh anyway?" Content="Refresh Data">
+            </components:YesNoButton>
+
+
+
             <telerik:RadButton x:Name="btnClearFilters" Grid.Row="0" Grid.Column="8" Width="130" Click="btnClearFilters_Click"  Content="Clear Filters"></telerik:RadButton>
         </Grid>
 

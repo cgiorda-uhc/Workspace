@@ -171,12 +171,12 @@ f.[EC_Normalized_Pricing_Episode_Count] as EC_Episode_Count,
 f.[EC_Normalized_Pricing_Total_Cost],
 
 
-CASE WHEN f.EC_Episode_Count IS NOT NULL THEN f.EC_Episode_Count ELSE 0 END as EC_Spec_Episode_Count,
+CASE WHEN f.EC_Spec_Episode_Count IS NOT NULL THEN f.EC_Spec_Episode_Count ELSE 0 END as EC_Spec_Episode_Count,
 
-CASE WHEN fp.EC_Episode_Count IS NOT NULL THEN fp.EC_Episode_Count ELSE 0 END as EC_Spec_Episode_Count_Previous,
+CASE WHEN fp.EC_Spec_Episode_Count IS NOT NULL THEN fp.EC_Spec_Episode_Count ELSE 0 END as EC_Spec_Episode_Count_Previous,
 
-CASE WHEN fp.EC_Episode_Count <> 0 THEN
-ROUND(((f.EC_Episode_Count - fp.EC_Episode_Count)/ fp.EC_Episode_Count), 1) 
+CASE WHEN fp.EC_Spec_Episode_Count <> 0 THEN
+ROUND(((f.EC_Spec_Episode_Count - fp.EC_Spec_Episode_Count)/ fp.EC_Spec_Episode_Count), 1) 
 ELSE 
 NULL
 END

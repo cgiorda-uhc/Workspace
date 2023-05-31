@@ -70,6 +70,8 @@
     <Folder Include="etgsymm\Views" />
     <Folder Include="deploy" />
     <Folder Include="deploy\Tables" />
+    <Folder Include="mhp" />
+    <Folder Include="mhp\Tables" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\Views\vw_GetChemoTracking.sql" />
@@ -110,6 +112,10 @@
     <Build Include="etgsymm\Views\VW_ETG_Symmetry_CNFG_ETG_NRX_EXCLD.sql" />
     <Build Include="etgsymm\Views\VW_ETG_Symmetry_CNFG_ETG_SPCL.sql" />
     <Build Include="etgsymm\Views\VW_ETG_Symmetry_CNFG_PC_ETG_NRX.sql" />
+    <Build Include="mhp\Tables\MHP_Yearly_Universes.sql" />
+    <Build Include="mhp\Tables\MHP_Yearly_Universes_UGAP.sql" />
+    <Build Include="mhp\Tables\MHP_Group_State.sql" />
+    <Build Include="mhp\Tables\MHP_Universes_Filter_Cache.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Cd_GetAll.sql" />
@@ -136,6 +142,8 @@
   <ItemGroup>
     <None Include="VCT_DB.publish.xml" />
     <None Include="VCT_DB_DEV.publish.xml" />
+    <Build Include="mhp\mhp.sql" />
+    <Build Include="mhp\mhp_index.sql" />
   </ItemGroup>
   <ItemGroup>
     <SqlCmdVariable Include="ChemoPXRefresh">
