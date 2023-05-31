@@ -113,10 +113,18 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
         return results;
     }
 
+    public Task<IEnumerable<ETG_PTC_Modeling_Model>> GetETG_PTC_Modeling_Model(CancellationToken token)
+    {
+
+        string strSQL = "SELECT * FROM [VCT_DB].[etgsymm].[VW_ETG_PTC_Modeling] v;";
+
+        var results = _db.LoadData<ETG_PTC_Modeling_Model>(sql: strSQL, token, connectionId: "VCT_DB");
+
+        return results;
+    }
 
 
-
-public async Task InsertETGFactSymmetryTracking(List<ETGFactSymmetry_Tracking_UpdateDto> ETG, string connectionId)
+    public async Task InsertETGFactSymmetryTracking(List<ETGFactSymmetry_Tracking_UpdateDto> ETG, string connectionId)
     {
         string[] columns = typeof(ETGFactSymmetry_Tracking_UpdateDto).GetProperties().Select(p => p.Name).ToArray();
         await _db.BulkSave<ETGFactSymmetry_Tracking_UpdateDto>("etgsymm.ETG_Fact_Symmetry_Update_Tracker", ETG, columns, connectionId : connectionId);

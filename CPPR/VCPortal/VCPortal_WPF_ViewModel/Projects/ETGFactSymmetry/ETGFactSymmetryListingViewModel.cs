@@ -376,23 +376,34 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
             //    export.Add(new ExcelExport() { ExportList = etgpc.ToList<object>(), SheetName = sheet.SheetName });
             //}
 
-            sheet = excel.Sheets.Where(x => x.Name == "ETGPopEpisodeConfig").FirstOrDefault();
-            var api = _config.APIS.Where(x => x.Name == "ETGPopEpisodeConfig").FirstOrDefault();
-            var etgpe = await VM_Functions.APIGetResultAsync<ETGPopEpisodeConfig>(api.BaseUrl, api.Url);
-            if (etgpe.Count > 0)
-            {
-                export.Add(new ExcelExport() { ExportList = etgpe.ToList<object>(), SheetName = sheet.SheetName });
-            }
+            //sheet = excel.Sheets.Where(x => x.Name == "ETGPopEpisodeConfig").FirstOrDefault();
+            //var api = _config.APIS.Where(x => x.Name == "ETGPopEpisodeConfig").FirstOrDefault();
+            //var etgpe = await VM_Functions.APIGetResultAsync<ETGPopEpisodeConfig>(api.BaseUrl, api.Url);
+            //if (etgpe.Count > 0)
+            //{
+            //    export.Add(new ExcelExport() { ExportList = etgpe.ToList<object>(), SheetName = sheet.SheetName });
+            //}
 
 
 
             sheet = excel.Sheets.Where(x => x.Name == "ETGNrxExclConfig").FirstOrDefault();
-            api = _config.APIS.Where(x => x.Name == "ETGNrxExclConfig").FirstOrDefault();
+           var api = _config.APIS.Where(x => x.Name == "ETGNrxExclConfig").FirstOrDefault();
             var etgnxe = await VM_Functions.APIGetResultAsync<ETG_CNFG_ETG_NRX_EXCLD>(api.BaseUrl, api.Url);
             if (etgnxe.Count > 0)
             {
                 export.Add(new ExcelExport() { ExportList = etgnxe.ToList<object>(), SheetName = sheet.SheetName });
             }
+
+
+            sheet = excel.Sheets.Where(x => x.Name == "ETGPTCModelConfig").FirstOrDefault();
+            api = _config.APIS.Where(x => x.Name == "ETGPTCModelConfig").FirstOrDefault();
+            var etgptc = await VM_Functions.APIGetResultAsync<ETG_PTC_Modeling_Model>(api.BaseUrl, api.Url);
+            if (etgptc.Count > 0)
+            {
+                export.Add(new ExcelExport() { ExportList = etgptc.ToList<object>(), SheetName = sheet.SheetName });
+            }
+
+
 
 
             sheet = excel.Sheets.Where(x => x.Name == "ETGSpclConfig").FirstOrDefault();

@@ -232,6 +232,36 @@ public static class ETGFactSymmetry_Calls
             }
         });
 
+
+        app.MapGet(pattern: "/etgptcmodelingcgf", async (IETGFactSymmetry_Repo repo, CancellationToken token) =>
+        {
+            try
+            {
+                _log.Information("Requesting API GetETG_PTC_Modeling_Model()...");
+                ////RETURN HTTP 200
+                ///
+                var results = await repo.GetETG_PTC_Modeling_Model(token);
+
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetETG_PTC_Modeling_Model() 404, not found");
+                return Results.NotFound(); //404
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, "API GetETG_PTC_Modeling_Model threw an error");
+                //RETURN ERROR
+                return Results.Problem(ex.Message);
+
+            }
+        });
+
+
+
+
         app.MapPost(pattern: "/etginsert", async (List<ETGFactSymmetry_Tracking_UpdateDto> etg, IETGFactSymmetry_Repo repo) =>
         {
             try

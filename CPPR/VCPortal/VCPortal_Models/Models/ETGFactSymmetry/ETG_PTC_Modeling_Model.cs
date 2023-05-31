@@ -1,0 +1,29 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace VCPortal_Models.Models.ETGFactSymmetry;
+public class ETG_PTC_Modeling_Model
+{
+    public string ETG_Base_Class { get; set; }
+    public string ETG_Description { get; set; }
+    public string Premium_Specialty { get; set; }
+
+
+    public string PC_Modeling_Specialty { get; set; }
+
+
+    public string Always_Attributed { get; set; }
+
+    public string If_Attributed { get; set; }
+
+    public string TRT_CD { get; set; }
+
+    public string Rx { get; set; }
+    public string NRx { get; set; }
+
+    public string Risk_Model { get; set; }
+
+}

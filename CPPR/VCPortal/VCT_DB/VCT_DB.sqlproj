@@ -116,6 +116,8 @@
     <Build Include="mhp\Tables\MHP_Yearly_Universes_UGAP.sql" />
     <Build Include="mhp\Tables\MHP_Group_State.sql" />
     <Build Include="mhp\Tables\MHP_Universes_Filter_Cache.sql" />
+    <Build Include="vct\Tables\Premium_Mapping.sql" />
+    <Build Include="etgsymm\Views\VW_ETG_PTC_Modeling.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Cd_GetAll.sql" />

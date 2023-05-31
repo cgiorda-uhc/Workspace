@@ -23,6 +23,7 @@ public interface IETGFactSymmetry_Repo
 
     Task<IEnumerable<ETG_CNFG_PC_ETG_NRX>> GetETG_CNFG_PC_ETG_NRX(CancellationToken token);
 
+    Task<IEnumerable<ETG_PTC_Modeling_Model>> GetETG_PTC_Modeling_Model(CancellationToken token);
 
     Task UpdateETGFactSymmetry(ETGFactSymmetry_UpdateDto etg);
 
