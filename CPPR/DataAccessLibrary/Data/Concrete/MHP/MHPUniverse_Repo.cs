@@ -77,8 +77,8 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
                 sbSQL.Append("'" + strLegalEntity + "' as LegalEntity ");
                 sbSQL.Append("FROM( ");
                 sbSQL.Append("SELECT count(Distinct u.[Authorization]) cnt, u.[Par_NonPar_Site], u.[Inpatient_Outpatient] ");
-                sbSQL.Append("FROM[IL_UCA].[stg].[MHP_Yearly_Universes] u ");
-                sbSQL.Append("INNER JOIN [IL_UCA].[stg].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
+                sbSQL.Append("FROM[VCT_DB].[mhp].[MHP_Yearly_Universes] u ");
+                sbSQL.Append("INNER JOIN [VCT_DB].[mhp].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
                 sbSQL.Append("WHERE u.[State_of_Issue]  in ('" + String.Join(",", strState).Replace(",", "','") + "')  AND u.[Request_Date] >= '" + strStartDate + "' AND  u.[Request_Date] <= '" + strEndDate + "' "); //
                 sbSQL.Append("AND c.[MKT_SEG_RLLP_DESC] in ('" + String.Join(",", strMKT_SEG_RLLP_DESC).Replace(",", "','") + "') AND  c.[FINC_ARNG_DESC] in ('" + String.Join(",", strFINC_ARNG_DESC).Replace(",", "','") + "')  AND [Authorization] IS NOT NULL AND (file_name LIKE 'UnitedPCP%') AND [sheet_name]<> 'U12'  "); //
                 sbSQL.Append("AND c.[LEG_ENTY_NBR] = '" + legalNbr + "' "); //
@@ -94,7 +94,7 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
         }
 
 
-        var results = _db.LoadData<MHP_EI_Model>(sql: sbSQL.ToString().TrimEnd(' ', 'U', 'N', 'I', 'O', 'N', ' ', 'A', 'L', 'L', ' '), token, connectionId: "ILUCA");
+        var results = _db.LoadData<MHP_EI_Model>(sql: sbSQL.ToString().TrimEnd(' ', 'U', 'N', 'I', 'O', 'N', ' ', 'A', 'L', 'L', ' '), token, connectionId: "VCT_DB");
 
         return results;
     }
@@ -164,8 +164,8 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
             sbSQL.Append("'" + strEndDate + "' as EndDate ");
             sbSQL.Append("FROM( ");
             sbSQL.Append("SELECT count(Distinct u.[Authorization]) cnt, u.[Par_NonPar_Site], u.[Inpatient_Outpatient] ");
-            sbSQL.Append("FROM[IL_UCA].[stg].[MHP_Yearly_Universes] u ");
-            sbSQL.Append("INNER JOIN [IL_UCA].[stg].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
+            sbSQL.Append("FROM[VCT_DB].[mhp].[MHP_Yearly_Universes] u ");
+            sbSQL.Append("INNER JOIN [VCT_DB].[mhp].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
             sbSQL.Append("INNER JOIN [IL_UCA].[dbo].[CS_PRODUCT_MAP] m ON m.PLAN_ST = c.CS_CO_CD_ST AND m.PRDCT_SYS_ID = c.PRDCT_SYS_ID AND m.CS_PRDCT_CD_SYS_ID = c.CS_PRDCT_CD_SYS_ID AND m.CS_CO_CD = c.CS_CO_CD ");
             sbSQL.Append("WHERE u.[State_of_Issue]  in ('" + String.Join(",", strState).Replace(",", "','") + "') AND u.[Request_Date] >= '" + strStartDate + "' AND  u.[Request_Date] <= '" + strEndDate + "' "); //
             sbSQL.Append("AND [Authorization] IS NOT NULL  AND [file_name] LIKE 'C&S%' AND m.CS_TADM_PRDCT_MAP  in ('" + String.Join(",", strCS_TADM_PRDCT_MAP).Replace(",", "','") + "') "); //
@@ -176,7 +176,7 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
 
         }
 
-        var results = _db.LoadData<MHP_CS_Model>(sql: sbSQL.ToString().TrimEnd(' ', 'U', 'N', 'I', 'O', 'N', ' ', 'A', 'L', 'L', ' '), token, connectionId: "ILUCA");
+        var results = _db.LoadData<MHP_CS_Model>(sql: sbSQL.ToString().TrimEnd(' ', 'U', 'N', 'I', 'O', 'N', ' ', 'A', 'L', 'L', ' '), token, connectionId: "VCT_DB");
 
         return results;
     }
@@ -240,8 +240,8 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
                 sbSQL.Append("'" + strLegalEntity + "' as LegalEntity ");
                 sbSQL.Append("FROM( ");
                 sbSQL.Append("SELECT count(Distinct u.[Authorization]) cnt, u.[Par_NonPar_Site], u.[Inpatient_Outpatient] ");
-                sbSQL.Append("FROM[IL_UCA].[stg].[MHP_Yearly_Universes] u ");
-                sbSQL.Append("INNER JOIN [IL_UCA].[stg].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
+                sbSQL.Append("FROM[VCT_DB].[mhp].[MHP_Yearly_Universes] u ");
+                sbSQL.Append("INNER JOIN [VCT_DB].[mhp].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
                 sbSQL.Append("WHERE u.[State_of_Issue]  in ('" + String.Join(",", strState).Replace(",", "','") + "')  AND u.[Request_Date] >= '" + strStartDate + "' AND  u.[Request_Date] <= '" + strEndDate + "' "); //
                 sbSQL.Append("AND c.[MKT_SEG_RLLP_DESC] in ('" + String.Join(",", strMKT_SEG_RLLP_DESC).Replace(",", "','") + "') AND  c.[FINC_ARNG_DESC] in ('" + String.Join(",", strFINC_ARNG_DESC).Replace(",", "','") + "')  AND [Authorization] IS NOT NULL AND (file_name LIKE 'UnitedPCP%') AND [sheet_name] = 'U12'  "); //
                 sbSQL.Append("AND c.[LEG_ENTY_NBR] = '" + legalNbr + "' "); //
@@ -258,7 +258,7 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
         }
 
 
-        var results = _db.LoadData<MHP_IFP_Model>(sql: sbSQL.ToString().TrimEnd(' ', 'U', 'N', 'I', 'O', 'N', ' ', 'A', 'L', 'L', ' '), token, connectionId: "ILUCA");
+        var results = _db.LoadData<MHP_IFP_Model>(sql: sbSQL.ToString().TrimEnd(' ', 'U', 'N', 'I', 'O', 'N', ' ', 'A', 'L', 'L', ' '), token, connectionId: "VCT_DB");
 
         return results;
     }
@@ -291,8 +291,8 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
             sbSQL.Append("CONVERT(VARCHAR(10), u.[Member_Date_of_Birth], 101) as Member_Date_of_Birth, ");
             sbSQL.Append("u.[Procedure_Code_Description], ");
             sbSQL.Append("u.[Primary_Diagnosis_Code] ");
-            sbSQL.Append("FROM[IL_UCA].[stg].[MHP_Yearly_Universes] u ");
-            sbSQL.Append("INNER JOIN [IL_UCA].[stg].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
+            sbSQL.Append("FROM[VCT_DB].[mhp].[MHP_Yearly_Universes] u ");
+            sbSQL.Append("INNER JOIN [VCT_DB].[mhp].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
             sbSQL.Append("WHERE u.[State_of_Issue]  in ('" + String.Join(",", strState).Replace(",", "','") + "')  AND u.[Request_Date] >= '" + strStartDate + "' AND  u.[Request_Date] <= '" + strEndDate + "' "); //
             sbSQL.Append("AND c.[MKT_SEG_RLLP_DESC] in ('" + String.Join(",", strMKT_SEG_RLLP_DESC).Replace(",", "','") + "') AND  c.[FINC_ARNG_DESC] in ('" + String.Join(",", strFINC_ARNG_DESC).Replace(",", "','") + "')  AND [Authorization] IS NOT NULL AND (file_name LIKE 'UnitedPCP%') AND [sheet_name]<> 'U12'  "); //
             sbSQL.Append("AND c.[LEG_ENTY_NBR] = '" + legalNbr + "' "); //
@@ -301,7 +301,7 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
             sbSQL.Append("UNION ALL ");
         }
 
-        var results = _db.LoadData<MPHUniverseDetails_Model>(sql: sbSQL.ToString().TrimEnd(' ', 'U', 'N', 'I', 'O', 'N', ' ', 'A', 'L', 'L', ' '), token, connectionId: "ILUCA");
+        var results = _db.LoadData<MPHUniverseDetails_Model>(sql: sbSQL.ToString().TrimEnd(' ', 'U', 'N', 'I', 'O', 'N', ' ', 'A', 'L', 'L', ' '), token, connectionId: "VCT_DB");
 
         return results;
     }
@@ -311,13 +311,21 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
     public Task<IEnumerable<MHP_Reporting_Filters>> GetMHP_Filters_Async(CancellationToken token)
     {
 
-        string strSQL = "SELECT Filter_Value,Filter_Type, Report_Type FROM stg.MHP_Universes_Filter_Cache;";
+        string strSQL = "SELECT [Filter_Value],[Filter_Type],[Report_Type] FROM [VCT_DB].[mhp].[MHP_Universes_Filter_Cache];";
 
-        var results = _db.LoadData<MHP_Reporting_Filters>(sql: strSQL, token, connectionId: "ILUCA");
+        var results = _db.LoadData<MHP_Reporting_Filters>(sql: strSQL, token, connectionId: "VCT_DB");
 
         return results;
     }
 
+    public Task<IEnumerable<MHP_Group_State_Model>> GetMHP_Group_State_Async(CancellationToken token)
+    {
 
+        string strSQL = "SELECT [State_of_Issue],[Group_Number] FROM [VCT_DB].[mhp].[MHP_Group_State];";
+
+        var results = _db.LoadData<MHP_Group_State_Model>(sql: strSQL, token, connectionId: "VCT_DB");
+
+        return results;
+    }
 
 }

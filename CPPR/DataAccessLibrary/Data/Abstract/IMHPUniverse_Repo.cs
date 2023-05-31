@@ -18,5 +18,7 @@ namespace DataAccessLibrary.Data.Abstract
 
 
         Task<IEnumerable<MHP_Reporting_Filters>> GetMHP_Filters_Async(CancellationToken token);
+
+        Task<IEnumerable<MHP_Group_State_Model>> GetMHP_Group_State_Async(CancellationToken token);
     }
 }

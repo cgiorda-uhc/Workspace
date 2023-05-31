@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FileParsingLibrary.MSExcel;
+using MathNet.Numerics.Providers.SparseSolver;
 using Microsoft.Extensions.Configuration;
 using SharedFunctionsLibrary;
 using System;
@@ -13,8 +14,12 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Xml.Linq;
 using VCPortal_Models.Configuration.HeaderInterfaces.Abstract;
+using VCPortal_Models.Configuration.HeaderInterfaces.Concrete;
 using VCPortal_Models.Dtos.ETGFactSymmetry;
+using VCPortal_Models.Models.ChemoPx;
+using VCPortal_Models.Parameters.MHP;
 using VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;
 using VCPortal_WPF_ViewModel.Shared;
 
@@ -22,20 +27,16 @@ namespace VCPortal_WPF_ViewModel.Projects.MHP;
 public partial class MHPViewModel : ObservableObject
 {
     private readonly IExcelFunctions _excelFunctions;
-    private readonly IConfiguration? _config;
+    private readonly IMHPUniverseConfig ? _config;
     private readonly Serilog.ILogger _logger;
+    private StringBuilder _sbStatus;
+    private List<MHP_Reporting_Filters> _mhpReportingFilters { get; set; }
 
-
-
-    [ObservableProperty]
-    private ObservableCollection<string> states;
-    // public IEnumerable<ETGFactSymmetryViewModel> OC_ETGFactSymmetryViewModel => _oc_ETGFactSymmetryViewModel;
+    private List<MHP_Group_State_Model> _mhpGroupState { get; set; }
 
 
     [ObservableProperty]
     private string currentTitle;
-
-
     [ObservableProperty]
     private Visibility eIFormVisibility;
     [ObservableProperty]
@@ -43,20 +44,35 @@ public partial class MHPViewModel : ObservableObject
     [ObservableProperty]
     private Visibility iFPFormVisibility;
 
-
-    public MessageViewModel ProgressMessageViewModel { get; }
-
-
     [ObservableProperty]
     private bool isModalOpen;
 
+    public MessageViewModel ProgressMessageViewModel { get; }
     public MessageViewModel UserMessageViewModel { get; }
+
+
+    public List<string> States { get; set; }
+   
+    public List<string> MKT_SEG_RLLP_DESC { get; set; }
+  
+    public List<string> FINC_ARNG_DESC { get; set; }
+    
+    public List<string> LEG_ENTY { get; set; }
+  
+    public List<string> CS_TADM_PRDCT_MAP { get; set; }
+    public List<string> MKT_TYP_DESC { get; set; }
+    public List<string> CUST_SEG { get; set; }
+
+    public ObservableCollection<string> GroupNumbers { get; set; }
+
+    public List<string> ProductCode { get; set; }
+
 
     public MHPViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
     {
         _logger = logger;
         _excelFunctions = excelFunctions;
-        _config = config;
+        _config = prepareConfig(config);
 
         UserMessageViewModel = new MessageViewModel();
         ProgressMessageViewModel = new MessageViewModel();
@@ -66,14 +82,42 @@ public partial class MHPViewModel : ObservableObject
         CSFormVisibility = Visibility.Hidden;
         IFPFormVisibility = Visibility.Hidden;
 
+        _sbStatus = new StringBuilder();
 
 
 
+        if (_config != null)
+        {
+            //Task.Run(async () => await loadGridLists());
+            //worker.RunWorkerAsync("InitialLoadData");
+            InitialLoadData();
 
-        populateFilters();
+            //Task.Run(async () => await getChemotherapyPXData());
+        }
+        else
+        {
+            UserMessageViewModel.IsError = true;
+            UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            _logger.Error($"No Config found for MHP Universe Reporting");
+        }
 
 
     }
+
+
+    private async void InitialLoadData()
+    {
+        _sbStatus.Clear();
+        Mouse.OverrideCursor = Cursors.Wait;
+        UserMessageViewModel.Message = "";
+        ProgressMessageViewModel.Message = "";
+        ProgressMessageViewModel.HasMessage = true;
+        await populateFilters();
+        Mouse.OverrideCursor = null;
+        ProgressMessageViewModel.HasMessage = false;
+    }
+
+
 
 
     [RelayCommand]
@@ -107,22 +151,111 @@ public partial class MHPViewModel : ObservableObject
 
     private async Task populateFilters()
     {
-        //WebAPIConsume.BaseURI = "https://localhost:7129";
-        //var response = WebAPIConsume.GetCall("/mhpstates");
-        //if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
-        //{
-        //    var reponseStream = await response.Result.Content.ReadAsStreamAsync();
-        //    var result = await JsonSerializer.DeserializeAsync<List<string>>(reponseStream, new JsonSerializerOptions
-        //    {
-        //        PropertyNameCaseInsensitive = true
-        //    });
-        //    States = new ObservableCollection<string>();
-        //    result.ForEach(x => { States.Add(x); });
+        try
+        {
+            var api = _config.APIS.Where(x => x.Name == "MHP_Filters").FirstOrDefault();
+            WebAPIConsume.BaseURI = api.BaseUrl;
+            _sbStatus.Append("--Getting Cached Filters..." + Environment.NewLine);
+            ProgressMessageViewModel.Message = _sbStatus.ToString();
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            var response = WebAPIConsume.GetCall(api.Url);
+            if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var reponseStream = await response.Result.Content.ReadAsStreamAsync();
+                var result = await JsonSerializer.DeserializeAsync<List<MHP_Reporting_Filters>>(reponseStream, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
 
-        //    //States = result;
-        //}
+                _mhpReportingFilters = result;
+            }
+            else
+            {
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                _logger.Error("populateFilters.MHP_Filters threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
+            }
+
+
+
+            api = _config.APIS.Where(x => x.Name == "MHP_GroupState").FirstOrDefault();
+            WebAPIConsume.BaseURI = api.BaseUrl;
+            _sbStatus.Append("--Getting Group/State Mapping..." + Environment.NewLine);
+            ProgressMessageViewModel.Message = _sbStatus.ToString();
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            response = WebAPIConsume.GetCall(api.Url);
+            if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var reponseStream = await response.Result.Content.ReadAsStreamAsync();
+                var result = await JsonSerializer.DeserializeAsync<List<MHP_Group_State_Model>>(reponseStream, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                _mhpGroupState = result;
+            }
+            else
+            {
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                _logger.Error("populateFilters.MHP_GroupState threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
+            }
+
+
+            States = new List<string>(_mhpReportingFilters.Where(x=> x.Filter_Type == "State_of_Issue").GroupBy(s => s.Filter_Value).Select(g => g.First()).OrderBy(s => s.Filter_Value).Select(g => g.Filter_Value).ToList() as List<string>);
+            States.Insert(0, "--All--");
+
+            //MKT_SEG_RLLP_DESC = ; 
+            //FINC_ARNG_DESC  = ;
+            //LEG_ENTY = ;
+            //CS_TADM_PRDCT_MAP = ;
+            //MKT_TYP_DESC = ;
+            //CUST_SEG  = ; 
+            GroupNumbers = new ObservableCollection<string>(_mhpGroupState.GroupBy(s => s.Group_Number).Select(g => g.First()).OrderBy(s => s.Group_Number).Select(g => g.Group_Number).ToList() as List<string>);
+            GroupNumbers.Insert(0, "--All--");
+            //ProductCode = ;
+
+
+
+
+
+
+
+
+
+        }
+        catch (Exception ex)
+        {
+            UserMessageViewModel.IsError = true;
+            UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            _logger.Fatal(ex, "populateFilters.WebAPIConsume.GetCall threw an error for {CurrentUser}", Authentication.UserName);
+        }
     }
 
+    private IMHPUniverseConfig prepareConfig(IConfiguration config)
+    {
 
-   
+        var project = "MHP";
+        var section = "Projects";
+
+        ///EXTRACT IConfiguration INTO ETGFactSymmetryConfig 
+        var cfg = config.GetSection(section).Get<List<MHPUniverseConfig>>();
+        IMHPUniverseConfig mhp = new MHPUniverseConfig();
+        if (cfg == null)
+        {
+            return null;
+            //throw new OperationCanceledException();
+        }
+        mhp = cfg.Find(p => p.Name == project);
+        if (mhp != null)
+        {
+            //Microsoft.Extensions.Configuration.Binder
+            var e = config.GetSection(section + ":" + project + ":APIS").Get<APIConfig[]>();
+            if (e != null)
+            {
+                mhp.APIS = e.ToList();
+            }
+        }
+        return mhp;
+    }
 }

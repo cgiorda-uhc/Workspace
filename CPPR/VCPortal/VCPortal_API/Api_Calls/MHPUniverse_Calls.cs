@@ -31,7 +31,7 @@ public static class MHPUniverse_Calls
     {
 
         //ALL OF MY API ENDPOINT MAPPING
-        app.MapGet(pattern: "/mhpstates", GetStates).Produces<IEnumerable<string>>(StatusCodes.Status200OK, "application/json").Produces(StatusCodes.Status404NotFound);
+        //app.MapGet(pattern: "/mhpstates", GetStates).Produces<IEnumerable<string>>(StatusCodes.Status200OK, "application/json").Produces(StatusCodes.Status404NotFound);
         //app.MapGet(pattern: "/mhpstates", async ([FromBody] IMHPData_Repo repo, CancellationToken token) =>
         //{
         //    try
@@ -130,38 +130,24 @@ public static class MHPUniverse_Calls
             }
         });
 
-    }
-
-    private static async Task<IResult> GetStates(IMHPData_Repo repo, CancellationToken token)
-    {
-        try
+        app.MapGet(pattern: "/mhp_groupstate", async (IMHPUniverse_Repo repo, CancellationToken token) =>
         {
-
-            var results = await repo.GetStatesAsync(token);
-
-            if (results != null)
+            try
             {
-                return Results.Ok(results);//200 SUCCESS
+                ////RETURN HTTP 200
+                return Results.Ok(await repo.GetMHP_Group_State_Async(token));//200 SUCCESS
 
             }
+            catch (Exception ex)
+            {
+                //RETURN ERROR
+                return Results.Problem(ex.Message);
 
-            return Results.NotFound(); //404
+            }
+        });
 
 
-            //RETURN HTTP 200
-            //return Results.Ok(_mapper.Map<IEnumerable<ChemotherapyPX_ReadDto>>(await repo.GetAllChemotherapyPX()));//200 SUCCESS
-            //return Results.Ok(await repo.GetAllChemotherapyPX());
-        }
-        catch (Exception ex)
-        {
-            //RETURN ERROR
-            return Results.Problem(ex.Message);
-
-        }
     }
-
-
-
 
 
     //CANT PLUG IN CANCELLATION TOKEN VIA THIS ROUTE. 'SHORTHAND' ABOVE
