@@ -205,15 +205,29 @@ public partial class MHPViewModel : ObservableObject
             States = new List<string>(_mhpReportingFilters.Where(x=> x.Filter_Type == "State_of_Issue").GroupBy(s => s.Filter_Value).Select(g => g.First()).OrderBy(s => s.Filter_Value).Select(g => g.Filter_Value).ToList() as List<string>);
             States.Insert(0, "--All--");
 
-            //MKT_SEG_RLLP_DESC = ; 
-            //FINC_ARNG_DESC  = ;
-            //LEG_ENTY = ;
-            //CS_TADM_PRDCT_MAP = ;
-            //MKT_TYP_DESC = ;
-            //CUST_SEG  = ; 
+            MKT_SEG_RLLP_DESC = new List<string>(_mhpReportingFilters.Where(x=> x.Filter_Type == "MKT_SEG_RLLP_DESC").GroupBy(s => s.Filter_Value).Select(g => g.First()).OrderBy(s => s.Filter_Value).Select(g => g.Filter_Value).ToList() as List<string>);
+            MKT_SEG_RLLP_DESC.Insert(0, "--All--");
+
+            FINC_ARNG_DESC = new List<string>(_mhpReportingFilters.Where(x=> x.Filter_Type == "FINC_ARNG_DESC").GroupBy(s => s.Filter_Value).Select(g => g.First()).OrderBy(s => s.Filter_Value).Select(g => g.Filter_Value).ToList() as List<string>);
+            FINC_ARNG_DESC.Insert(0, "--All--");
+
+            LEG_ENTY = new List<string>(_mhpReportingFilters.Where(x=> x.Filter_Type == "LEG_ENTY").GroupBy(s => s.Filter_Value).Select(g => g.First()).OrderBy(s => s.Filter_Value).Select(g => g.Filter_Value).ToList() as List<string>);
+            LEG_ENTY.Insert(0, "--All--");
+
+            CS_TADM_PRDCT_MAP = new List<string>(_mhpReportingFilters.Where(x=> x.Filter_Type == "CS_TADM_PRDCT_MAP").GroupBy(s => s.Filter_Value).Select(g => g.First()).OrderBy(s => s.Filter_Value).Select(g => g.Filter_Value).ToList() as List<string>);
+            CS_TADM_PRDCT_MAP.Insert(0, "--All--");
+
+            MKT_TYP_DESC = new List<string>(_mhpReportingFilters.Where(x=> x.Filter_Type == "MKT_TYP_DESC").GroupBy(s => s.Filter_Value).Select(g => g.First()).OrderBy(s => s.Filter_Value).Select(g => g.Filter_Value).ToList() as List<string>);
+            MKT_TYP_DESC.Insert(0, "--All--");
+
+            CUST_SEG  = new List<string>(_mhpReportingFilters.Where(x=> x.Filter_Type == "CUST_SEG").GroupBy(s => s.Filter_Value).Select(g => g.First()).OrderBy(s => s.Filter_Value).Select(g => g.Filter_Value).ToList() as List<string>);
+            CUST_SEG.Insert(0, "--All--");
+
+            ProductCode = new List<string>(_mhpReportingFilters.Where(x=> x.Filter_Type == "PRDCT_CD").GroupBy(s => s.Filter_Value).Select(g => g.First()).OrderBy(s => s.Filter_Value).Select(g => g.Filter_Value).ToList() as List<string>);
+            ProductCode.Insert(0, "--All--");
+
             GroupNumbers = new ObservableCollection<string>(_mhpGroupState.GroupBy(s => s.Group_Number).Select(g => g.First()).OrderBy(s => s.Group_Number).Select(g => g.Group_Number).ToList() as List<string>);
             GroupNumbers.Insert(0, "--All--");
-            //ProductCode = ;
 
 
 
