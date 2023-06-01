@@ -50,22 +50,25 @@ public partial class MHPViewModel : ObservableObject
     public MessageViewModel ProgressMessageViewModel { get; }
     public MessageViewModel UserMessageViewModel { get; }
 
+    [ObservableProperty]
+    public List<string> _states;
+    [ObservableProperty]
+    public List<string> _mKT_SEG_RLLP_DESC;
+    [ObservableProperty]
+    public List<string> _fINC_ARNG_DESC;
+    [ObservableProperty]
+    public List<string> _lEG_ENTY;
+    [ObservableProperty]
+    public List<string> _cS_TADM_PRDCT_MAP;
+    [ObservableProperty]
+    public List<string> _mKT_TYP_DESC;
+    [ObservableProperty]
+    public List<string> _cUST_SEG;
 
-    public List<string> States { get; set; }
-   
-    public List<string> MKT_SEG_RLLP_DESC { get; set; }
-  
-    public List<string> FINC_ARNG_DESC { get; set; }
-    
-    public List<string> LEG_ENTY { get; set; }
-  
-    public List<string> CS_TADM_PRDCT_MAP { get; set; }
-    public List<string> MKT_TYP_DESC { get; set; }
-    public List<string> CUST_SEG { get; set; }
-
-    public ObservableCollection<string> GroupNumbers { get; set; }
-
-    public List<string> ProductCode { get; set; }
+    [ObservableProperty]
+    public ObservableCollection<string> _groupNumbers;
+    [ObservableProperty]
+    public List<string> _productCode;
 
 
     public MHPViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
@@ -118,7 +121,52 @@ public partial class MHPViewModel : ObservableObject
     }
 
 
+    private List<string> _selected_states;
+    [RelayCommand]
+    private void StateChanged(object item)
+    {
+        string strItem = item.ToString();
 
+
+        if (_selected_states == null)
+            _selected_states = new List<string>();
+
+        if (strItem == "--All--")
+        {
+
+            _selected_states.Clear();
+        }
+        else if (_selected_states.Contains(strItem))
+        {
+            _selected_states.Remove(strItem);
+        }
+        else
+        {
+            _selected_states.Add(strItem);
+        }
+
+        cleanGroups();
+      
+
+    }
+
+    private void cleanGroups()
+    {
+
+        List<string> tmp;
+        this.GroupNumbers.Clear();
+
+        if (_selected_states.Count() > 0)
+            tmp = _mhpGroupState.Where(x => _selected_states.Contains(x.State_of_Issue)).GroupBy(s => s.Group_Number).Select(g => g.First()).OrderBy(s => s.Group_Number).Select(g => g.Group_Number).ToList();
+        else
+            tmp = _mhpGroupState.GroupBy(s => s.Group_Number).Select(g => g.First()).OrderBy(s => s.Group_Number).Select(g => g.Group_Number).ToList();
+
+        foreach (string s in tmp)
+        {
+            this.GroupNumbers.Add(s);
+        }
+        this.GroupNumbers.Insert(0, "--All--");
+    }
 
     [RelayCommand]
     private async Task EISectionCall()

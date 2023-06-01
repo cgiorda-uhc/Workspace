@@ -142,7 +142,7 @@ namespace CAD_Worker_Service
                 schedule = cfg.Schedule;
 
                 //CREATE NEW TIMER TASK
-                timer = new CronosTimer("15 11 * * *");
+                timer = new CronosTimer("30 9 * * *");
                 //USING TOKEN FROM EVENT
                 timer.Elapsed += HandleTimerElapsed(_tasksManager.ADDirectReportAlertsLRAsync);
                 // USING STOPPINGTOKEN
