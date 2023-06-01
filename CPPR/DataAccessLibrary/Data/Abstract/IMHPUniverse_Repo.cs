@@ -12,7 +12,7 @@ namespace DataAccessLibrary.Data.Abstract
         Task<IEnumerable<MHP_CS_Model>> GetMHP_CS_Async(List<string> strState, string strStartDate, string strEndDate, List<string> strCS_TADM_PRDCT_MAP, CancellationToken token);
 
 
-        Task<IEnumerable<MHP_IFP_Model>> GetMHP_IFP_Async(List<string> strState, string strStartDate, string strEndDate, List<string> strFINC_ARNG_DESC, List<string> strMKT_SEG_RLLP_DESC, List<string> lstLegalEntities, List<string> strMKT_TYP_DESC, CancellationToken token);
+        Task<IEnumerable<MHP_IFP_Model>> GetMHP_IFP_Async(List<string> strState, string strStartDate, string strEndDate, List<string> ProductCodes, CancellationToken token);
 
         Task<IEnumerable<MPHUniverseDetails_Model>> GetMHPEIDetailsAsync(List<string> strState, string strStartDate, string strEndDate, List<string> strFINC_ARNG_DESC, List<string> strMKT_SEG_RLLP_DESC, List<string> lstLegalEntities, List<string> strMKT_TYP_DESC, CancellationToken token);
 

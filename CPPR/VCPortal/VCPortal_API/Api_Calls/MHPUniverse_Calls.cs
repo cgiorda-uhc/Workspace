@@ -54,7 +54,7 @@ public static class MHPUniverse_Calls
             try
             {
                 ////RETURN HTTP 200
-                return Results.Ok(await repo.GetMHP_EI_Async(param.State, param.StartDate.ToShortDateString(), param.EndDate.ToShortDateString(), param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, token));//200 SUCCESS
+                return Results.Ok(await repo.GetMHP_EI_Async(param.State, param.StartDate, param.EndDate, param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, token));//200 SUCCESS
             }
             catch (Exception ex)
             {
@@ -70,7 +70,7 @@ public static class MHPUniverse_Calls
             try
             {
                 ////RETURN HTTP 200
-                return Results.Ok(await repo.GetMHP_IFP_Async(param.State, param.StartDate.ToShortDateString(), param.EndDate.ToShortDateString(), param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, token));//200 SUCCESS
+                return Results.Ok(await repo.GetMHP_IFP_Async(param.State, param.StartDate, param.EndDate, param.ProductCodes, token));//200 SUCCESS
             }
             catch (Exception ex)
             {
@@ -86,7 +86,7 @@ public static class MHPUniverse_Calls
             try
             {
                 ////RETURN HTTP 200
-                return Results.Ok(await repo.GetMHP_CS_Async(param.State, param.StartDate.ToShortDateString(), param.EndDate.ToShortDateString(), param.CS_Tadm_Prdct_Map , token));//200 SUCCESS
+                return Results.Ok(await repo.GetMHP_CS_Async(param.State, param.StartDate, param.EndDate, param.CS_Tadm_Prdct_Map , token));//200 SUCCESS
                                                                                                                                                                                                  
             }
             catch (Exception ex)
@@ -103,7 +103,7 @@ public static class MHPUniverse_Calls
             try
             {
                 ////RETURN HTTP 200
-                return Results.Ok(await repo.GetMHPEIDetailsAsync(param.State, param.StartDate.ToShortDateString(), param.EndDate.ToShortDateString(), param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, token));//200 SUCCESS
+                return Results.Ok(await repo.GetMHPEIDetailsAsync(param.State, param.StartDate, param.EndDate, param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, token));//200 SUCCESS
             }
             catch (Exception ex)
             {
@@ -156,7 +156,7 @@ public static class MHPUniverse_Calls
         try
         {
             ////RETURN HTTP 200
-            return Results.Ok(await repo.GetMHP_EI_Async(param.State, param.StartDate.ToShortDateString(), param.EndDate.ToShortDateString(), param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, token));//200 SUCCESS
+            return Results.Ok(await repo.GetMHP_EI_Async(param.State, param.StartDate, param.EndDate, param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, token));//200 SUCCESS
                                                                                                                                                                                                    
         }
         catch (Exception ex)

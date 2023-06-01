@@ -183,7 +183,7 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
 
 
 
-    public Task<IEnumerable<MHP_IFP_Model>> GetMHP_IFP_Async(List<string> strState, string strStartDate, string strEndDate, List<string> strFINC_ARNG_DESC, List<string> strMKT_SEG_RLLP_DESC, List<string> lstLegalEntities, List<string> strMKT_TYP_DESC, CancellationToken token)
+    public Task<IEnumerable<MHP_IFP_Model>> GetMHP_IFP_Async(List<string> strState, string strStartDate, string strEndDate, List<string> ProductCodes, CancellationToken token)
 
     {
 
@@ -192,7 +192,7 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
         string strWhere = null;
         string strExcelRow = null;
 
-        foreach (string strLegalEntity in lstLegalEntities)
+        foreach (string strLegalEntity in ProductCodes)
         {
             var legalNbr = strLegalEntity.Split('-')[0].Trim();
             for (int i = 0; i < 6; i++)
@@ -243,11 +243,11 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
                 sbSQL.Append("FROM[VCT_DB].[mhp].[MHP_Yearly_Universes] u ");
                 sbSQL.Append("INNER JOIN [VCT_DB].[mhp].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
                 sbSQL.Append("WHERE u.[State_of_Issue]  in ('" + String.Join(",", strState).Replace(",", "','") + "')  AND u.[Request_Date] >= '" + strStartDate + "' AND  u.[Request_Date] <= '" + strEndDate + "' "); //
-                sbSQL.Append("AND c.[MKT_SEG_RLLP_DESC] in ('" + String.Join(",", strMKT_SEG_RLLP_DESC).Replace(",", "','") + "') AND  c.[FINC_ARNG_DESC] in ('" + String.Join(",", strFINC_ARNG_DESC).Replace(",", "','") + "')  AND [Authorization] IS NOT NULL AND (file_name LIKE 'UnitedPCP%') AND [sheet_name] = 'U12'  "); //
-                sbSQL.Append("AND c.[LEG_ENTY_NBR] = '" + legalNbr + "' "); //
-                if (strMKT_TYP_DESC != null)
-                    sbSQL.Append("AND c.[MKT_TYP_DESC] in ('" + String.Join(",", strMKT_TYP_DESC).Replace(",", "','") + "') ");
-                sbSQL.Append(strWhere);
+                //sbSQL.Append("AND c.[MKT_SEG_RLLP_DESC] in ('" + String.Join(",", strMKT_SEG_RLLP_DESC).Replace(",", "','") + "') AND  c.[FINC_ARNG_DESC] in ('" + String.Join(",", strFINC_ARNG_DESC).Replace(",", "','") + "')  AND [Authorization] IS NOT NULL AND (file_name LIKE 'UnitedPCP%') AND [sheet_name] = 'U12'  "); //
+                //sbSQL.Append("AND c.[LEG_ENTY_NBR] = '" + legalNbr + "' "); //
+                //if (strMKT_TYP_DESC != null)
+                //    sbSQL.Append("AND c.[MKT_TYP_DESC] in ('" + String.Join(",", strMKT_TYP_DESC).Replace(",", "','") + "') ");
+                //sbSQL.Append(strWhere);
                 sbSQL.Append("GROUP BY [State_of_Issue], [Par_NonPar_Site], [Inpatient_Outpatient] ");
                 sbSQL.Append(") tmp ");
                 sbSQL.Append("UNION ALL ");

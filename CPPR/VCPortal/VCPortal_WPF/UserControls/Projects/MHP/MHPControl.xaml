@@ -138,7 +138,6 @@
                         <Binding Path="SelectedValue" ElementName="cbxMKT_SEG_RLLP_DESCFilter"/>
                         <Binding Path="SelectedValue" ElementName="cbMKT_TYP_DESCFilter"/>
                         <Binding Path="Items" ElementName="lstSelectedCustSeg"/>
-                        <!--<Binding Path="SelectedValue" ElementName="Symmetry_VerionFilter"/>-->
                     </MultiBinding>
                 </Button.CommandParameter>
 

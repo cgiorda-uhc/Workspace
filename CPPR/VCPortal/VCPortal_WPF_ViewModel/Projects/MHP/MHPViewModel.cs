@@ -159,37 +159,72 @@ public partial class MHPViewModel : ObservableObject
     {
         object[] parameters = item as object[];
 
-        List<string> stateFilters = (string.IsNullOrEmpty(parameters[0].ToString()) ? null : new List<string>(parameters[0].ToString().Split(',')));
-        string startDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
-        string endDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
-        List<string> legalEntityFilters;
-        List<string> FINC_ARNG_CDFilters = (string.IsNullOrEmpty(parameters[4].ToString()) ? null : new List<string>(parameters[4].ToString().Split(',')));
-        List<string> MKT_SEG_RLLP_DESCFilters = (string.IsNullOrEmpty(parameters[5].ToString()) ? null : new List<string>(parameters[5].ToString().Split(',')));
-        List<string> MKT_TYP_DESCFilters =  (string.IsNullOrEmpty(parameters[6].ToString()) ? null : new List<string>(parameters[6].ToString().Split(',')));
-        List<string> selectedCustSegFilters = (string.IsNullOrEmpty(parameters[7].ToString()) ? null : new List<string>(parameters[7].ToString().Split(',')));
+
+
        
+
+
+        MHP_EI_Parameters ei_param = new MHP_EI_Parameters();
+
+        ei_param.State = (string.IsNullOrEmpty(parameters[0].ToString()) ? null : new List<string>(parameters[0].ToString().Replace("--All--,", "").Split(',')));
+        ei_param.StartDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
+        ei_param.EndDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
+
+        var le = parameters[3].ToString().Replace("--All--~", "").Split('~');
+        foreach (var e in le)
+        {
+            if (ei_param.LegalEntities == null)
+            {
+                ei_param.LegalEntities = new List<string>();
+            }
+            ei_param.LegalEntities.Add(e.ToString().Replace(" ", "").Split('-')[0]);
+        }
+
+        ei_param.Finc_Arng_Desc = (string.IsNullOrEmpty(parameters[4].ToString()) ? null : new List<string>(parameters[4].ToString().Replace("--All--,", "").Split(',')));
+        ei_param.Mkt_Seg_Rllp_Desc = (string.IsNullOrEmpty(parameters[5].ToString()) ? null : new List<string>(parameters[5].ToString().Replace("--All--,", "").Split(',')));
+        ei_param.Mkt_Typ_Desc = (string.IsNullOrEmpty(parameters[6].ToString()) ? null : new List<string>(parameters[6].ToString().Replace("--All--,", "").Split(',')));
+        // ei_param.Cust_Seg = (string.IsNullOrEmpty(parameters[7].ToString()) ? null : new List<string>(parameters[7]));
+        System.Collections.IList items = (System.Collections.IList)parameters[7];
+        foreach (var i in items)
+        {
+
+
+            if (ei_param.Cust_Seg == null)
+            {
+                ei_param.Cust_Seg = new List<string>();
+            }
+
+            ei_param.Cust_Seg.Add(i);
+        }
+
     }
     [RelayCommand]
     private void GenerateCSReport(object item)
     {
         object[] parameters = item as object[];
 
-        List<string> stateFilters = (string.IsNullOrEmpty(parameters[0].ToString()) ? null : new List<string>(parameters[0].ToString().Split(',')));
-        string startDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
-        string endDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
-        List<string> CS_TADM_PRDCT_MAPFilters = (string.IsNullOrEmpty(parameters[4].ToString()) ? null : new List<string>(parameters[4].ToString().Split(',')));
-        List<string> GroupNumbersFilters = (string.IsNullOrEmpty(parameters[5].ToString()) ? null : new List<string>(parameters[5].ToString().Split(',')));
+        MHP_CS_Parameters cs_param = new MHP_CS_Parameters();
+
+        cs_param.State = (string.IsNullOrEmpty(parameters[0].ToString()) ? null : new List<string>(parameters[0].ToString().Split(',')));
+        cs_param.StartDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
+        cs_param.EndDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
+        cs_param.CS_Tadm_Prdct_Map = (string.IsNullOrEmpty(parameters[4].ToString()) ? null : new List<string>(parameters[4].ToString().Replace("--All--", "").Split(',')));
+        cs_param.GroupNumbers = (string.IsNullOrEmpty(parameters[5].ToString()) ? null : new List<string>(parameters[5].ToString().Replace("--All--", "").Split(',')));
         
+
     }
     [RelayCommand]
     private void GenerateIFPReport(object item)
     {
         object[] parameters = item as object[];
 
-        List<string> stateFilters = (string.IsNullOrEmpty(parameters[0].ToString()) ? null : new List<string>(parameters[0].ToString().Split(',')));
-        string startDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
-        string endDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
-        List<string> ProductCodeFilters = (string.IsNullOrEmpty(parameters[3].ToString()) ? null : new List<string>(parameters[3].ToString().Split(',')));
+        MHP_IFP_Parameters ifp_param = new MHP_IFP_Parameters();
+
+        ifp_param.State = (string.IsNullOrEmpty(parameters[0].ToString()) ? null : new List<string>(parameters[0].ToString().Split(',')));
+        ifp_param.StartDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
+        ifp_param.EndDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
+        ifp_param.ProductCodes = (string.IsNullOrEmpty(parameters[3].ToString()) ? null : new List<string>(parameters[3].ToString().Replace("--All--", "").Split(',')));
+
         
     }
 
