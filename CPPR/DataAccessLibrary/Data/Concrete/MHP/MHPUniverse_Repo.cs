@@ -20,8 +20,7 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
         _db = db;
     }
 
-    public Task<IEnumerable<MHP_EI_Model>> GetMHP_EI_Async(List<string> strState, string strStartDate, string strEndDate, List<string> strFINC_ARNG_DESC, List<string> strMKT_SEG_RLLP_DESC, List<string> lstLegalEntities, List<string> strMKT_TYP_DESC, CancellationToken token)
-
+    public Task<IEnumerable<MHP_EI_Model>> GetMHP_EI_Async(string strState, string strStartDate, string strEndDate, string strFINC_ARNG_DESC, string strMKT_SEG_RLLP_DESC, List<string> lstLegalEntities, string strMKT_TYP_DESC, string strCUST_SEG,  CancellationToken token)
     {
 
         StringBuilder sbSQL = new StringBuilder();
@@ -65,13 +64,16 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
                 }
 
 
+                //AND (file_name LIKE 'Oxford%') AND [sheet_name]<> 'U12 
+
+
                 sbSQL.Append("SELECT ");
                 sbSQL.Append(strExcelRow + " as ExcelRow, ");//4 AND
-                sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('Site is PAR', 'N/A')  AND tmp.[Inpatient_Outpatient] = 'Inpatient' THEN cnt ELSE NULL END) cnt_in_ip, ");
-                sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] = 'NonPar Site' AND tmp.[Inpatient_Outpatient] = 'Inpatient' THEN cnt ELSE NULL END) cnt_on_ip, ");
-                sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('Site is PAR', 'N/A')  AND tmp.[Inpatient_Outpatient] = 'Outpatient' THEN cnt ELSE NULL END) cnt_in_op, ");
-                sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] = 'NonPar Site' AND tmp.[Inpatient_Outpatient] = 'Outpatient' THEN cnt ELSE NULL END)  cnt_on_op, ");
-                sbSQL.Append("'" + String.Join(",", strState) + "' as State , ");
+                sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('Site is PAR','Par', 'N/A')  AND tmp.[Inpatient_Outpatient] = 'Inpatient' THEN cnt ELSE NULL END) cnt_in_ip, ");
+                sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('NonPar Site','Non-Par') AND tmp.[Inpatient_Outpatient] = 'Inpatient' THEN cnt ELSE NULL END) cnt_on_ip, ");
+                sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('Site is PAR','Par', 'N/A')  AND tmp.[Inpatient_Outpatient] = 'Outpatient' THEN cnt ELSE NULL END) cnt_in_op, ");
+                sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('NonPar Site','Non-Par') AND tmp.[Inpatient_Outpatient] = 'Outpatient' THEN cnt ELSE NULL END)  cnt_on_op, ");
+                sbSQL.Append("'" + strState.Replace("'", "") + "' as State , ");
                 sbSQL.Append("'" + strStartDate + "' as StartDate, ");
                 sbSQL.Append("'" + strEndDate + "' as EndDate, ");
                 sbSQL.Append("'" + strLegalEntity + "' as LegalEntity ");
@@ -79,11 +81,14 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
                 sbSQL.Append("SELECT count(Distinct u.[Authorization]) cnt, u.[Par_NonPar_Site], u.[Inpatient_Outpatient] ");
                 sbSQL.Append("FROM[VCT_DB].[mhp].[MHP_Yearly_Universes] u ");
                 sbSQL.Append("INNER JOIN [VCT_DB].[mhp].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
-                sbSQL.Append("WHERE u.[State_of_Issue]  in ('" + String.Join(",", strState).Replace(",", "','") + "')  AND u.[Request_Date] >= '" + strStartDate + "' AND  u.[Request_Date] <= '" + strEndDate + "' "); //
-                sbSQL.Append("AND c.[MKT_SEG_RLLP_DESC] in ('" + String.Join(",", strMKT_SEG_RLLP_DESC).Replace(",", "','") + "') AND  c.[FINC_ARNG_DESC] in ('" + String.Join(",", strFINC_ARNG_DESC).Replace(",", "','") + "')  AND [Authorization] IS NOT NULL AND (file_name LIKE 'UnitedPCP%') AND [sheet_name]<> 'U12'  "); //
+                sbSQL.Append("WHERE u.[State_of_Issue]  in (" + strState + ")  AND u.[Request_Date] >= '" + strStartDate + "' AND  u.[Request_Date] <= '" + strEndDate + "' "); //
+                sbSQL.Append("AND c.[MKT_SEG_RLLP_DESC] in (" + strMKT_SEG_RLLP_DESC + ") AND  c.[FINC_ARNG_DESC] in (" + strFINC_ARNG_DESC + ")  AND [Authorization] IS NOT NULL  AND [Classification]  IN ('EI','EI_OX')  "); //
                 sbSQL.Append("AND c.[LEG_ENTY_NBR] = '" + legalNbr + "' "); //
-                if (strMKT_TYP_DESC != null)
-                    sbSQL.Append("AND c.[MKT_TYP_DESC] in ('" + String.Join(",", strMKT_TYP_DESC).Replace(",", "','") + "') ");
+
+                if (!string.IsNullOrEmpty(strMKT_TYP_DESC))
+                    sbSQL.Append("AND c.[MKT_TYP_DESC] in (" + strMKT_TYP_DESC + ") ");
+                if (!string.IsNullOrEmpty(strCUST_SEG))
+                    sbSQL.Append("AND c.[CUST_SEG_NBR] in (" + strCUST_SEG + ") ");
                 sbSQL.Append(strWhere);
                 sbSQL.Append("GROUP BY [State_of_Issue], [Par_NonPar_Site], [Inpatient_Outpatient] ");
                 sbSQL.Append(") tmp ");
@@ -92,7 +97,6 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
             }
 
         }
-
 
         var results = _db.LoadData<MHP_EI_Model>(sql: sbSQL.ToString().TrimEnd(' ', 'U', 'N', 'I', 'O', 'N', ' ', 'A', 'L', 'L', ' '), token, connectionId: "VCT_DB");
 
@@ -166,7 +170,7 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
             sbSQL.Append("SELECT count(Distinct u.[Authorization]) cnt, u.[Par_NonPar_Site], u.[Inpatient_Outpatient] ");
             sbSQL.Append("FROM[VCT_DB].[mhp].[MHP_Yearly_Universes] u ");
             sbSQL.Append("INNER JOIN [VCT_DB].[mhp].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
-            sbSQL.Append("INNER JOIN [IL_UCA].[dbo].[CS_PRODUCT_MAP] m ON m.PLAN_ST = c.CS_CO_CD_ST AND m.PRDCT_SYS_ID = c.PRDCT_SYS_ID AND m.CS_PRDCT_CD_SYS_ID = c.CS_PRDCT_CD_SYS_ID AND m.CS_CO_CD = c.CS_CO_CD ");
+            sbSQL.Append("INNER JOIN [VCT_DB].[mhp].[CS_PRODUCT_MAP] m ON m.PLAN_ST = c.CS_CO_CD_ST AND m.PRDCT_SYS_ID = c.PRDCT_SYS_ID AND m.CS_PRDCT_CD_SYS_ID = c.CS_PRDCT_CD_SYS_ID AND m.CS_CO_CD = c.CS_CO_CD ");
             sbSQL.Append("WHERE u.[State_of_Issue]  in ('" + String.Join(",", strState).Replace(",", "','") + "') AND u.[Request_Date] >= '" + strStartDate + "' AND  u.[Request_Date] <= '" + strEndDate + "' "); //
             sbSQL.Append("AND [Authorization] IS NOT NULL  AND [file_name] LIKE 'C&S%' AND m.CS_TADM_PRDCT_MAP  in ('" + String.Join(",", strCS_TADM_PRDCT_MAP).Replace(",", "','") + "') "); //
             sbSQL.Append(strWhere);
@@ -263,7 +267,7 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
         return results;
     }
 
-    public Task<IEnumerable<MPHUniverseDetails_Model>> GetMHPEIDetailsAsync(List<string> strState, string strStartDate, string strEndDate, List<string> strFINC_ARNG_DESC, List<string> strMKT_SEG_RLLP_DESC, List<string> lstLegalEntities, List<string> strMKT_TYP_DESC, CancellationToken token)
+    public Task<IEnumerable<MPHUniverseDetails_Model>> GetMHPEIDetailsAsync(string strState, string strStartDate, string strEndDate, string strFINC_ARNG_DESC, string strMKT_SEG_RLLP_DESC, List<string> lstLegalEntities, string strMKT_TYP_DESC, string strCUST_SEG, CancellationToken token)
     {
 
         StringBuilder sbSQL = new StringBuilder();

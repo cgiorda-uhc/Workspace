@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FileParsingLibrary.MSExcel;
+using MathNet.Numerics;
 using MathNet.Numerics.Providers.SparseSolver;
 using Microsoft.Extensions.Configuration;
 using SharedFunctionsLibrary;
@@ -17,9 +18,12 @@ using System.Windows.Input;
 using System.Xml.Linq;
 using VCPortal_Models.Configuration.HeaderInterfaces.Abstract;
 using VCPortal_Models.Configuration.HeaderInterfaces.Concrete;
+using VCPortal_Models.Dtos.ChemoPx;
 using VCPortal_Models.Dtos.ETGFactSymmetry;
 using VCPortal_Models.Models.ChemoPx;
+using VCPortal_Models.Models.MHP;
 using VCPortal_Models.Parameters.MHP;
+using VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
 using VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;
 using VCPortal_WPF_ViewModel.Shared;
 
@@ -155,18 +159,13 @@ public partial class MHPViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private void GenerateEIReport(object item)
+    private async Task GenerateEIReport(object item)
     {
         object[] parameters = item as object[];
 
-
-
-       
-
-
         MHP_EI_Parameters ei_param = new MHP_EI_Parameters();
 
-        ei_param.State = (string.IsNullOrEmpty(parameters[0].ToString()) ? null : new List<string>(parameters[0].ToString().Replace("--All--,", "").Split(',')));
+        ei_param.State = parameters[0].ToString().Replace("--All--,", "");
         ei_param.StartDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
         ei_param.EndDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
 
@@ -180,22 +179,70 @@ public partial class MHPViewModel : ObservableObject
             ei_param.LegalEntities.Add(e.ToString().Replace(" ", "").Split('-')[0]);
         }
 
-        ei_param.Finc_Arng_Desc = (string.IsNullOrEmpty(parameters[4].ToString()) ? null : new List<string>(parameters[4].ToString().Replace("--All--,", "").Split(',')));
-        ei_param.Mkt_Seg_Rllp_Desc = (string.IsNullOrEmpty(parameters[5].ToString()) ? null : new List<string>(parameters[5].ToString().Replace("--All--,", "").Split(',')));
-        ei_param.Mkt_Typ_Desc = (string.IsNullOrEmpty(parameters[6].ToString()) ? null : new List<string>(parameters[6].ToString().Replace("--All--,", "").Split(',')));
+        ei_param.Finc_Arng_Desc = parameters[4].ToString().Replace("--All--,", "");
+        ei_param.Mkt_Seg_Rllp_Desc = parameters[5].ToString().Replace("--All--,", "");
+        ei_param.Mkt_Typ_Desc = parameters[6].ToString().Replace("--All--,", "");
         // ei_param.Cust_Seg = (string.IsNullOrEmpty(parameters[7].ToString()) ? null : new List<string>(parameters[7]));
         System.Collections.IList items = (System.Collections.IList)parameters[7];
+        StringBuilder sb = new StringBuilder();
         foreach (var i in items)
         {
+            sb.Append(i.ToString().Split('-')[0].Trim() + ",");
+        }
+        if(sb.Length > 0)
+        {
+            ei_param.Cust_Seg = sb.ToString().TrimEnd(',');
+        }
+
+        List<MHP_EI_Model> mhp_final;
+        try
+        {
+
+            var api = _config.APIS.Where(x => x.Name == "MHP_EI").FirstOrDefault();
+            WebAPIConsume.BaseURI = api.BaseUrl;
 
 
-            if (ei_param.Cust_Seg == null)
+            //var url = api.Url + "?" + "State={0}&StartDate={1}&EndDate={2}&Finc_Arng_Desc={3}&Mkt_Seg_Rllp_Desc={4}&LegalEntities={5}&Mkt_Typ_Desc={6}&Cust_Seg={7}";
+            //var response = WebAPIConsume.GetCall<MHP_EI_Parameters>(url, ei_param);
+
+            var response = WebAPIConsume.PostCall<MHP_EI_Parameters>(api.Url, ei_param);
+
+
+            if (response.Result.StatusCode != System.Net.HttpStatusCode.OK)
             {
-                ei_param.Cust_Seg = new List<string>();
+
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                _logger.Error("MHP.EI Report threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
+            }
+            else
+            {
+
+                var reponseStream = await response.Result.Content.ReadAsStreamAsync();
+                var result = await JsonSerializer.DeserializeAsync<List<MHP_EI_Model>>(reponseStream, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                mhp_final = result;
+
+
+
+                UserMessageViewModel.IsError = false;
+                UserMessageViewModel.Message = "MHP.EI Report sucessfully generated";
+                _logger.Information("MHP.EI Report sucessfully generated for {CurrentUser}...", Authentication.UserName);
             }
 
-            ei_param.Cust_Seg.Add(i);
         }
+        catch (Exception ex)
+        {
+            UserMessageViewModel.IsError = true;
+            UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            _logger.Fatal(ex, "ChemotherapyPXData.save threw an error for {CurrentUser}", Authentication.UserName);
+        }
+
+
+
 
     }
     [RelayCommand]

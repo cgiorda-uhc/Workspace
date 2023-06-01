@@ -48,13 +48,13 @@ public static class MHPUniverse_Calls
         //});
 
         //ALL OF MY API ENDPOINT MAPPING
-        //app.MapGet(pattern: "/mhp_ei", (IMHPUniverse_Repo repo, [FromBody] MHP_EI_Parameters param, CancellationToken token)  => GetMHP_EI);
-        app.MapGet(pattern: "/mhp_ei", async ([FromBody] MHP_EI_Parameters param, IMHPUniverse_Repo repo, CancellationToken token) =>
+        //app.MapGet(pattern: "/mhp_ei", async ([FromQuery] IMHPUniverse_Repo repo,  MHP_EI_Parameters param, CancellationToken token)  => 
+        app.MapPost(pattern: "/mhp_ei", async ([FromBody] MHP_EI_Parameters param, IMHPUniverse_Repo repo, CancellationToken token) =>
         {
             try
             {
                 ////RETURN HTTP 200
-                return Results.Ok(await repo.GetMHP_EI_Async(param.State, param.StartDate, param.EndDate, param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, token));//200 SUCCESS
+                return Results.Ok(await repo.GetMHP_EI_Async(param.State, param.StartDate, param.EndDate, param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, param.Cust_Seg, token));//200 SUCCESS
             }
             catch (Exception ex)
             {
@@ -103,7 +103,7 @@ public static class MHPUniverse_Calls
             try
             {
                 ////RETURN HTTP 200
-                return Results.Ok(await repo.GetMHPEIDetailsAsync(param.State, param.StartDate, param.EndDate, param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, token));//200 SUCCESS
+                return Results.Ok(await repo.GetMHPEIDetailsAsync(param.State, param.StartDate, param.EndDate, param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, param.Cust_Seg,token));//200 SUCCESS
             }
             catch (Exception ex)
             {
@@ -156,7 +156,7 @@ public static class MHPUniverse_Calls
         try
         {
             ////RETURN HTTP 200
-            return Results.Ok(await repo.GetMHP_EI_Async(param.State, param.StartDate, param.EndDate, param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, token));//200 SUCCESS
+            return Results.Ok(await repo.GetMHP_EI_Async(param.State, param.StartDate, param.EndDate, param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, param.Cust_Seg, token));//200 SUCCESS
                                                                                                                                                                                                    
         }
         catch (Exception ex)
