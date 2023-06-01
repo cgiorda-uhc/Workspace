@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VCPortal_WPF.UserControls.Projects.MHP"
              xmlns:vml="clr-namespace:VCPortal_WPF_ViewModel.Projects.MHP;assembly=VCPortal_WPF_ViewModel" 
-             xmlns:modalcontrol="clr-namespace:ModalControl;assembly=ModalControl" xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation" xmlns:components="clr-namespace:VCPortal_WPF.Components"
+             xmlns:modalcontrol="clr-namespace:ModalControl;assembly=ModalControl" xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation" xmlns:components="clr-namespace:VCPortal_WPF.Components" xmlns:converters="clr-namespace:VCPortal_WPF.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.Resources>
@@ -58,6 +58,10 @@
                 <Setter Property="BorderThickness" Value="2 2 2 2" />
                 <Setter Property="Background" Value="White" />
             </Style>
+
+            <converters:InverseAndBooleansToBooleanConverter x:Key="InverseAndBooleansToBooleanConverter"/>
+            <converters:SearchFilterConverter x:Key="SearchFilterConverter"/>
+
         </Grid.Resources>
 
         <Grid.ColumnDefinitions>
@@ -88,7 +92,7 @@
                 <ColumnDefinition Width="55"/>
                 <ColumnDefinition Width="55"/>
                 <ColumnDefinition Width="55"/>
-                <ColumnDefinition Width="155"/>
+                <ColumnDefinition Width="200"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -112,7 +116,84 @@
             <telerik:RadButton x:Name="btnEI" Grid.Row="0" Grid.Column="5" Width="50" Command="{Binding EISectionCallCommand}" Click="btnSwitchReport_Click" Content="EI"></telerik:RadButton>
             <telerik:RadButton x:Name="btnIFP" Grid.Row="0" Grid.Column="6" Width="50" Command="{Binding IFPSectionCallCommand}" Click="btnSwitchReport_Click"  Content="IFP"></telerik:RadButton>
             <telerik:RadButton x:Name="btnCS" Grid.Row="0" Grid.Column="7" Width="50" Command="{Binding CSSectionCallCommand}" Click="btnSwitchReport_Click"  Content="CS"></telerik:RadButton>
-            <telerik:RadButton Grid.Row="0" Grid.Column="8" Width="145" Command="{Binding GetETGFactSymmetryDataCallCommand}" Content="Generate Report"></telerik:RadButton>
+            <telerik:RadButton x:Name="btnEIGenerate" Visibility="{Binding EIFormVisibility}" Grid.Row="0" Grid.Column="8" Width="170" Command="{Binding GenerateEIReportCommand}"  Content="Generate EI Report">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource InverseAndBooleansToBooleanConverter}" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                        <Binding ElementName="cbxStateFilter" Path="(SelectedItem)" />
+                        <Binding ElementName="dtStartDate" Path="(SelectedValue)" />
+                        <Binding ElementName="dtEndDate" Path="(SelectedValue)" />
+                        <Binding ElementName="cbxLegalEntityFilter" Path="(SelectedItem)" />
+                        <Binding ElementName="cbxFINC_ARNG_CDFilter" Path="(SelectedItem)" />
+                        <Binding ElementName="cbxMKT_SEG_RLLP_DESCFilter" Path="(SelectedItem)" />
+                        <Binding Path="CanRunReport"   />
+                    </MultiBinding>
+                </Button.IsEnabled>
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource SearchFilterConverter}" >
+                        <Binding Path="SelectedValue" ElementName="cbxStateFilter" />
+                        <Binding Path="SelectedValue" ElementName="dtStartDate"/>
+                        <Binding Path="SelectedValue" ElementName="dtEndDate"/>
+                        <Binding Path="Text" ElementName="cbxLegalEntityFilter"/>
+                        <Binding Path="SelectedValue" ElementName="cbxFINC_ARNG_CDFilter"/>
+                        <Binding Path="SelectedValue" ElementName="cbxMKT_SEG_RLLP_DESCFilter"/>
+                        <Binding Path="SelectedValue" ElementName="cbMKT_TYP_DESCFilter"/>
+                        <Binding Path="Items" ElementName="lstSelectedCustSeg"/>
+                        <!--<Binding Path="SelectedValue" ElementName="Symmetry_VerionFilter"/>-->
+                    </MultiBinding>
+                </Button.CommandParameter>
+
+
+            </telerik:RadButton>
+
+            <telerik:RadButton x:Name="btnCSGenerate" Visibility="{Binding CSFormVisibility}" Grid.Row="0" Grid.Column="8" Width="170" Command="{Binding GenerateCSReportCommand}"  Content="Generate CS Report">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource InverseAndBooleansToBooleanConverter}" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                        <Binding ElementName="cbxStateFilter" Path="(SelectedItem)" />
+                        <Binding ElementName="dtStartDate" Path="(SelectedValue)" />
+                        <Binding ElementName="dtEndDate" Path="(SelectedValue)" />
+                        <Binding ElementName="cbxCS_TADM_PRDCT_MAP" Path="(SelectedItem)" />
+                        <Binding ElementName="cbxGroupNumbers" Path="(SelectedItem)" />
+                        <Binding Path="CanRunReport"   />
+                    </MultiBinding>
+                </Button.IsEnabled>
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource SearchFilterConverter}" >
+                        <Binding Path="SelectedValue" ElementName="cbxStateFilter" />
+                        <Binding Path="SelectedValue" ElementName="dtStartDate"/>
+                        <Binding Path="SelectedValue" ElementName="dtEndDate"/>
+                        <Binding Path="SelectedValue" ElementName="cbxCS_TADM_PRDCT_MAP"/>
+                        <Binding Path="SelectedValue" ElementName="cbxGroupNumbers"/>
+                        <!--<Binding Path="SelectedValue" ElementName="Symmetry_VerionFilter"/>-->
+                    </MultiBinding>
+                </Button.CommandParameter>
+
+
+            </telerik:RadButton>
+
+
+            <telerik:RadButton x:Name="btnIFPGenerate" Visibility="{Binding IFPFormVisibility}" Grid.Row="0" Grid.Column="8" Width="170" Command="{Binding GenerateIFPReportCommand}"  Content="Generate IFP Report">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{StaticResource InverseAndBooleansToBooleanConverter}" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
+                        <Binding ElementName="cbxStateFilter" Path="(SelectedItem)" />
+                        <Binding ElementName="dtStartDate" Path="(SelectedValue)" />
+                        <Binding ElementName="dtEndDate" Path="(SelectedValue)" />
+                        <Binding ElementName="cbxProductCode" Path="(SelectedItem)" />
+                        <Binding Path="CanRunReport"   />
+                    </MultiBinding>
+                </Button.IsEnabled>
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource SearchFilterConverter}" >
+                        <Binding Path="SelectedValue" ElementName="cbxStateFilter" />
+                        <Binding Path="SelectedValue" ElementName="dtStartDate"/>
+                        <Binding Path="SelectedValue" ElementName="dtEndDate"/>
+                        <Binding Path="SelectedValue" ElementName="cbxProductCode"/>
+                        <!--<Binding Path="SelectedValue" ElementName="Symmetry_VerionFilter"/>-->
+                    </MultiBinding>
+                </Button.CommandParameter>
+
+
+            </telerik:RadButton>
+
         </Grid>
 
         <Grid Grid.Row="1" Background="GhostWhite">

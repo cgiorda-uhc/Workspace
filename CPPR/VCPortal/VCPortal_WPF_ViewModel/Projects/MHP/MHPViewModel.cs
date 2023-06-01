@@ -47,6 +47,10 @@ public partial class MHPViewModel : ObservableObject
     [ObservableProperty]
     private bool isModalOpen;
 
+    [ObservableProperty]
+    private bool canRunReport;
+
+
     public MessageViewModel ProgressMessageViewModel { get; }
     public MessageViewModel UserMessageViewModel { get; }
 
@@ -86,7 +90,7 @@ public partial class MHPViewModel : ObservableObject
         IFPFormVisibility = Visibility.Hidden;
 
         _sbStatus = new StringBuilder();
-
+        canRunReport = true;
 
 
         if (_config != null)
@@ -150,23 +154,45 @@ public partial class MHPViewModel : ObservableObject
 
     }
 
-    private void cleanGroups()
+    [RelayCommand]
+    private void GenerateEIReport(object item)
     {
+        object[] parameters = item as object[];
 
-        List<string> tmp;
-        this.GroupNumbers.Clear();
-
-        if (_selected_states.Count() > 0)
-            tmp = _mhpGroupState.Where(x => _selected_states.Contains(x.State_of_Issue)).GroupBy(s => s.Group_Number).Select(g => g.First()).OrderBy(s => s.Group_Number).Select(g => g.Group_Number).ToList();
-        else
-            tmp = _mhpGroupState.GroupBy(s => s.Group_Number).Select(g => g.First()).OrderBy(s => s.Group_Number).Select(g => g.Group_Number).ToList();
-
-        foreach (string s in tmp)
-        {
-            this.GroupNumbers.Add(s);
-        }
-        this.GroupNumbers.Insert(0, "--All--");
+        List<string> stateFilters = (string.IsNullOrEmpty(parameters[0].ToString()) ? null : new List<string>(parameters[0].ToString().Split(',')));
+        string startDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
+        string endDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
+        List<string> legalEntityFilters;
+        List<string> FINC_ARNG_CDFilters = (string.IsNullOrEmpty(parameters[4].ToString()) ? null : new List<string>(parameters[4].ToString().Split(',')));
+        List<string> MKT_SEG_RLLP_DESCFilters = (string.IsNullOrEmpty(parameters[5].ToString()) ? null : new List<string>(parameters[5].ToString().Split(',')));
+        List<string> MKT_TYP_DESCFilters =  (string.IsNullOrEmpty(parameters[6].ToString()) ? null : new List<string>(parameters[6].ToString().Split(',')));
+        List<string> selectedCustSegFilters = (string.IsNullOrEmpty(parameters[7].ToString()) ? null : new List<string>(parameters[7].ToString().Split(',')));
+       
     }
+    [RelayCommand]
+    private void GenerateCSReport(object item)
+    {
+        object[] parameters = item as object[];
+
+        List<string> stateFilters = (string.IsNullOrEmpty(parameters[0].ToString()) ? null : new List<string>(parameters[0].ToString().Split(',')));
+        string startDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
+        string endDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
+        List<string> CS_TADM_PRDCT_MAPFilters = (string.IsNullOrEmpty(parameters[4].ToString()) ? null : new List<string>(parameters[4].ToString().Split(',')));
+        List<string> GroupNumbersFilters = (string.IsNullOrEmpty(parameters[5].ToString()) ? null : new List<string>(parameters[5].ToString().Split(',')));
+        
+    }
+    [RelayCommand]
+    private void GenerateIFPReport(object item)
+    {
+        object[] parameters = item as object[];
+
+        List<string> stateFilters = (string.IsNullOrEmpty(parameters[0].ToString()) ? null : new List<string>(parameters[0].ToString().Split(',')));
+        string startDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
+        string endDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
+        List<string> ProductCodeFilters = (string.IsNullOrEmpty(parameters[3].ToString()) ? null : new List<string>(parameters[3].ToString().Split(',')));
+        
+    }
+
 
     [RelayCommand]
     private async Task EISectionCall()
@@ -277,14 +303,6 @@ public partial class MHPViewModel : ObservableObject
             GroupNumbers = new ObservableCollection<string>(_mhpGroupState.GroupBy(s => s.Group_Number).Select(g => g.First()).OrderBy(s => s.Group_Number).Select(g => g.Group_Number).ToList() as List<string>);
             GroupNumbers.Insert(0, "--All--");
 
-
-
-
-
-
-
-
-
         }
         catch (Exception ex)
         {
@@ -293,6 +311,25 @@ public partial class MHPViewModel : ObservableObject
             _logger.Fatal(ex, "populateFilters.WebAPIConsume.GetCall threw an error for {CurrentUser}", Authentication.UserName);
         }
     }
+
+    private void cleanGroups()
+    {
+
+        List<string> tmp;
+        this.GroupNumbers.Clear();
+
+        if (_selected_states.Count() > 0)
+            tmp = _mhpGroupState.Where(x => _selected_states.Contains(x.State_of_Issue)).GroupBy(s => s.Group_Number).Select(g => g.First()).OrderBy(s => s.Group_Number).Select(g => g.Group_Number).ToList();
+        else
+            tmp = _mhpGroupState.GroupBy(s => s.Group_Number).Select(g => g.First()).OrderBy(s => s.Group_Number).Select(g => g.Group_Number).ToList();
+
+        foreach (string s in tmp)
+        {
+            this.GroupNumbers.Add(s);
+        }
+        this.GroupNumbers.Insert(0, "--All--");
+    }
+
 
     private IMHPUniverseConfig prepareConfig(IConfiguration config)
     {
