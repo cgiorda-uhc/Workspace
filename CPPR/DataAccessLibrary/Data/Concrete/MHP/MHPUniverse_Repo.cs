@@ -79,7 +79,7 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
                 sbSQL.Append("'" + strLegalEntity + "' as LegalEntity ");
                 sbSQL.Append("FROM( ");
                 sbSQL.Append("SELECT count(Distinct u.[Authorization]) cnt, u.[Par_NonPar_Site], u.[Inpatient_Outpatient] ");
-                sbSQL.Append("FROM[VCT_DB].[mhp].[MHP_Yearly_Universes] u ");
+                sbSQL.Append("FROM [VCT_DB].[mhp].[MHP_Yearly_Universes] u ");
                 sbSQL.Append("INNER JOIN [VCT_DB].[mhp].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
                 sbSQL.Append("WHERE u.[State_of_Issue]  in (" + strState + ")  AND u.[Request_Date] >= '" + strStartDate + "' AND  u.[Request_Date] <= '" + strEndDate + "' "); //
                 sbSQL.Append("AND c.[MKT_SEG_RLLP_DESC] in (" + strMKT_SEG_RLLP_DESC + ") AND  c.[FINC_ARNG_DESC] in (" + strFINC_ARNG_DESC + ")  AND [Authorization] IS NOT NULL  AND [Classification]  IN ('EI','EI_OX')  "); //
@@ -267,14 +267,14 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
         return results;
     }
 
-    public Task<IEnumerable<MPHUniverseDetails_Model>> GetMHPEIDetailsAsync(string strState, string strStartDate, string strEndDate, string strFINC_ARNG_DESC, string strMKT_SEG_RLLP_DESC, List<string> lstLegalEntities, string strMKT_TYP_DESC, string strCUST_SEG, CancellationToken token)
+    public Task<IEnumerable<MHPUniverseDetails_Model>> GetMHPEIDetailsAsync(string strState, string strStartDate, string strEndDate, string strFINC_ARNG_DESC, string strMKT_SEG_RLLP_DESC, List<string> lstLegalEntities, string strMKT_TYP_DESC, string strCUST_SEG, CancellationToken token)
     {
 
         StringBuilder sbSQL = new StringBuilder();
 
         foreach (string strLegalEntity in lstLegalEntities)
         {
-            var legalNbr = strLegalEntity.Split('-')[0].Trim();
+            var legalNbr = strLegalEntity;
 
             sbSQL.Append("SELECT u.[Authorization], ");
             sbSQL.Append("u.[Request_Decision], ");
@@ -285,6 +285,8 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
             sbSQL.Append("u.[State_of_Issue], ");
             sbSQL.Append("c.[FINC_ARNG_DESC], ");
             sbSQL.Append("u.[Decision_Reason], ");
+            sbSQL.Append("c.[CUST_SEG_NBR], ");
+            sbSQL.Append("c.[CUST_SEG_NM], ");
             sbSQL.Append("c.[MKT_SEG_RLLP_DESC], ");
             sbSQL.Append("c.[MKT_TYP_DESC], ");
             sbSQL.Append("c.[LEG_ENTY_NBR], ");
@@ -294,18 +296,22 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
             sbSQL.Append("u.[Cardholder_ID], ");
             sbSQL.Append("CONVERT(VARCHAR(10), u.[Member_Date_of_Birth], 101) as Member_Date_of_Birth, ");
             sbSQL.Append("u.[Procedure_Code_Description], ");
+            sbSQL.Append("u.[Primary_Procedure_Code_Req] , ");
             sbSQL.Append("u.[Primary_Diagnosis_Code] ");
-            sbSQL.Append("FROM[VCT_DB].[mhp].[MHP_Yearly_Universes] u ");
+            sbSQL.Append("FROM [VCT_DB].[mhp].[MHP_Yearly_Universes] u ");
             sbSQL.Append("INNER JOIN [VCT_DB].[mhp].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
-            sbSQL.Append("WHERE u.[State_of_Issue]  in ('" + String.Join(",", strState).Replace(",", "','") + "')  AND u.[Request_Date] >= '" + strStartDate + "' AND  u.[Request_Date] <= '" + strEndDate + "' "); //
-            sbSQL.Append("AND c.[MKT_SEG_RLLP_DESC] in ('" + String.Join(",", strMKT_SEG_RLLP_DESC).Replace(",", "','") + "') AND  c.[FINC_ARNG_DESC] in ('" + String.Join(",", strFINC_ARNG_DESC).Replace(",", "','") + "')  AND [Authorization] IS NOT NULL AND (file_name LIKE 'UnitedPCP%') AND [sheet_name]<> 'U12'  "); //
+            sbSQL.Append("WHERE u.[State_of_Issue] in (" + strState + ")  AND u.[Request_Date] >= '" + strStartDate + "' AND  u.[Request_Date] <= '" + strEndDate + "' "); //
+            sbSQL.Append("AND c.[MKT_SEG_RLLP_DESC] in (" + strMKT_SEG_RLLP_DESC + ") AND  c.[FINC_ARNG_DESC] in (" + strFINC_ARNG_DESC + ")  AND [Authorization] IS NOT NULL   AND [Classification]  IN ('EI','EI_OX')   "); //
             sbSQL.Append("AND c.[LEG_ENTY_NBR] = '" + legalNbr + "' "); //
-            if (strMKT_TYP_DESC != null)
-                sbSQL.Append("AND c.[MKT_TYP_DESC] in ('" + String.Join(",", strMKT_TYP_DESC).Replace(",", "','") + "') ");
+                                                                        //sbSQL.Append(" AND [sheet_name] " + (blIsIFP ? "=" : "<>") + " 'U12' ");
+            if (!string.IsNullOrEmpty(strMKT_TYP_DESC))
+                sbSQL.Append("AND c.[MKT_TYP_DESC] in (" + strMKT_TYP_DESC + ") ");
+            if (!string.IsNullOrEmpty(strCUST_SEG))
+                sbSQL.Append("AND c.[CUST_SEG_NBR] in (" + strCUST_SEG + ") ");
             sbSQL.Append("UNION ALL ");
         }
 
-        var results = _db.LoadData<MPHUniverseDetails_Model>(sql: sbSQL.ToString().TrimEnd(' ', 'U', 'N', 'I', 'O', 'N', ' ', 'A', 'L', 'L', ' '), token, connectionId: "VCT_DB");
+        var results = _db.LoadData<MHPUniverseDetails_Model>(sql: sbSQL.ToString().TrimEnd(' ', 'U', 'N', 'I', 'O', 'N', ' ', 'A', 'L', 'L', ' '), token, connectionId: "VCT_DB");
 
         return results;
     }

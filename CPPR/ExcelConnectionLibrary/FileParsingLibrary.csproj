@@ -34,4 +34,8 @@
     <PackageReference Include="System.Data.OleDb" Version="7.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\VCPortal\VCPortal_Models\VCPortal_Models.csproj" />
+  </ItemGroup>
+
 </Project>

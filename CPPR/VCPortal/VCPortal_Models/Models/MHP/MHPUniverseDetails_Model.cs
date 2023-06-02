@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace VCPortal_Models.Models.MHP;
-public class MPHUniverseDetails_Model
+public class MHPUniverseDetails_Model
 {
     private string _strAuthorization;
     public string Authorization
@@ -169,11 +169,27 @@ public class MPHUniverseDetails_Model
         set { _strPrimary_Diagnosis_Code = value; }
     }
 
+    private string _strCUST_SEG_NBR;
+    public string CUST_SEG_NBR
+    {
+        get { return this._strCUST_SEG_NBR; }
+        set { this._strCUST_SEG_NBR = value; }
+    }
 
-    //private string _strDiagnosis_Code_Description;
-    //public string Diagnosis_Code_Description
-    //{
-    //    get { return this._strDiagnosis_Code_Description; }
-    //    set { this._strDiagnosis_Code_Description = value; }
-    //}
+
+    private string _strCUST_SEG_NM;
+    public string CUST_SEG_NM
+    {
+        get { return this._strCUST_SEG_NM; }
+        set { this._strCUST_SEG_NM = value; }
+    }
+
+    private string _strPrimary_Procedure_Code_Req;
+    public string Primary_Procedure_Code_Req
+    {
+        get { return this._strPrimary_Procedure_Code_Req; }
+        set { this._strPrimary_Procedure_Code_Req = value; }
+    }
+
+
 }

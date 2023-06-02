@@ -98,7 +98,7 @@ public static class MHPUniverse_Calls
         });
 
 
-        app.MapGet(pattern: "/mhp_details", async ([FromBody] MHP_EI_Parameters param, IMHPUniverse_Repo repo, CancellationToken token) =>
+        app.MapPost(pattern: "/mhp_details", async ([FromBody] MHP_EI_Parameters param, IMHPUniverse_Repo repo, CancellationToken token) =>
         {
             try
             {

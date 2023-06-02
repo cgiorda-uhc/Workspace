@@ -15,7 +15,6 @@ namespace FileParsingLibrary.MSExcel
     {
         public List<KeyValuePair<string, string>> Mappings { get; set; }
 
-
         public List<T> ImportExcel<T>(string fileName, string sheetName, string columnHeaderRange, int startingRow, string nullCheck = null)
         {
             int rowIndex = 1;

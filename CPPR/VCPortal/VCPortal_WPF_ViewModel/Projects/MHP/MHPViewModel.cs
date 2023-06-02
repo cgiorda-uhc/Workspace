@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FileParsingLibrary.MSExcel;
+using FileParsingLibrary.MSExcel.Custom.MHP;
 using MathNet.Numerics;
 using MathNet.Numerics.Providers.SparseSolver;
 using Microsoft.Extensions.Configuration;
@@ -9,7 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -224,12 +227,8 @@ public partial class MHPViewModel : ObservableObject
 
         _logger.Information("Running MHP.GenerateEIReport for {CurrentUser}...", Authentication.UserName);
 
-
-        _sbStatus.Append("--Generate EI Report starting" + Environment.NewLine);
+        _sbStatus.Append("--Processing selected filters for EI" + Environment.NewLine);
         ProgressMessageViewModel.Message = _sbStatus.ToString();
-        //await Task.Delay(TimeSpan.FromSeconds(1));
-
-
 
         object[] parameters = _params as object[];
 
@@ -257,13 +256,12 @@ public partial class MHPViewModel : ObservableObject
         {
             ei_param.Mkt_Typ_Desc = "'" + String.Join(",", parameters[6].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
         }
- 
-        // ei_param.Cust_Seg = (string.IsNullOrEmpty(parameters[7].ToString()) ? null : new List<string>(parameters[7]));
+
         System.Collections.IList items = (System.Collections.IList)parameters[7];
         StringBuilder sb = new StringBuilder();
         foreach (var i in items)
         {
-            sb.Append(i.ToString().Split('-')[0].Trim() + ",");
+            sb.Append("'"+ i.ToString().Split('-')[0].Trim() + "',");
         }
         if(sb.Length > 0)
         {
@@ -271,30 +269,23 @@ public partial class MHPViewModel : ObservableObject
         }
 
         List<MHP_EI_Model> mhp_final;
+        List<MHPUniverseDetails_Model> mhp_details_final;
         try
         {
 
-            _sbStatus.Append("--Requesting summary data for MHP EI Report, please wait..." + Environment.NewLine);
+            _sbStatus.Append("--Retreiving EI summary data from Database" + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
-            //await Task.Delay(TimeSpan.FromSeconds(1));
-
-
+ 
             var api = _config.APIS.Where(x => x.Name == "MHP_EI").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
-
-
-            //var url = api.Url + "?" + "State={0}&StartDate={1}&EndDate={2}&Finc_Arng_Desc={3}&Mkt_Seg_Rllp_Desc={4}&LegalEntities={5}&Mkt_Typ_Desc={6}&Cust_Seg={7}";
-            //var response = WebAPIConsume.GetCall<MHP_EI_Parameters>(url, ei_param);
-
             var response = await WebAPIConsume.PostCall<MHP_EI_Parameters>(api.Url, ei_param);
-
-
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
             {
 
                 UserMessageViewModel.IsError = true;
                 UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
                 _logger.Error("MHP.EI Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+                return;
             }
             else
             {
@@ -307,25 +298,78 @@ public partial class MHPViewModel : ObservableObject
 
                 mhp_final = result;
 
-                //await Task.Delay(TimeSpan.FromSeconds(1));
-
-                _sbStatus.Append("MHP EI summary data returned" + Environment.NewLine);
-                ProgressMessageViewModel.Message = _sbStatus.ToString();
-
-
-
-
-                UserMessageViewModel.IsError = false;
-                UserMessageViewModel.Message = "MHP EI Report sucessfully generated";
-                _logger.Information("MHP EI Report sucessfully generated for {CurrentUser}...", Authentication.UserName);
             }
+
+
+            _sbStatus.Append("--Retreiving EI details data from Database" + Environment.NewLine);
+            ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+            api = _config.APIS.Where(x => x.Name == "MHP_Details").FirstOrDefault();
+            WebAPIConsume.BaseURI = api.BaseUrl;
+            response = await WebAPIConsume.PostCall<MHP_EI_Parameters>(api.Url, ei_param);
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                _logger.Error("MHP EI Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+                return;
+            }
+            else
+            {
+
+                var reponseStream = await response.Content.ReadAsStreamAsync();
+                var result = await JsonSerializer.DeserializeAsync<List<MHPUniverseDetails_Model>>(reponseStream, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                mhp_details_final = result;
+
+
+            }
+
+            CancellationTokenSource cancellationToken;
+            cancellationToken = new CancellationTokenSource();
+            var bytes = await MHPExcelExport.ExportEIToExcel(mhp_final, mhp_details_final, () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
+
+            var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\MHP_Report_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
+
+
+            _sbStatus.Append("--Saving Excel here: " + file + Environment.NewLine);
+            ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+            if (File.Exists(file))
+                File.Delete(file);
+
+            await File.WriteAllBytesAsync(file, bytes);
+
+
+            _sbStatus.Append("--Opening Excel" + Environment.NewLine);
+            ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(file)
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+
+
+            _sbStatus.Append("--Process completed!" + Environment.NewLine + Environment.NewLine + Environment.NewLine);
+            _sbStatus.Append("--Ready" + Environment.NewLine);
+            ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+            UserMessageViewModel.IsError = false;
+            UserMessageViewModel.Message = "MHP EI Report sucessfully generated";
+            _logger.Information("MHP EI Report sucessfully generated for {CurrentUser}...", Authentication.UserName);
 
         }
         catch (Exception ex)
         {
             UserMessageViewModel.IsError = true;
             UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-            _logger.Fatal(ex, "ChemotherapyPXData.save threw an error for {CurrentUser}", Authentication.UserName);
+            _logger.Fatal(ex, "MHP EI Report MHP EI Report threw an error for {CurrentUser}", Authentication.UserName);
         }
         
 

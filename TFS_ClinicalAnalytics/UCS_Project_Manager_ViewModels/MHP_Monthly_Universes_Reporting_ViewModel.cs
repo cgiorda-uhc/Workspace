@@ -601,10 +601,6 @@ namespace UCS_Project_Manager
                         await Task.Run(async () => await ExportToExcel(mhp_results, mhp_details, token));
                     }
 
-                    
-
-
-
                 }
                 catch (OperationCanceledException)
                 {
