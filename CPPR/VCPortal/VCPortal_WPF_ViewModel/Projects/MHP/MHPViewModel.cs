@@ -165,7 +165,7 @@ public partial class MHPViewModel : ObservableObject
 
         MHP_EI_Parameters ei_param = new MHP_EI_Parameters();
 
-        ei_param.State = parameters[0].ToString().Replace("--All--,", "");
+        ei_param.State = "'" + String.Join(",", parameters[0].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
         ei_param.StartDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
         ei_param.EndDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
 
@@ -179,9 +179,15 @@ public partial class MHPViewModel : ObservableObject
             ei_param.LegalEntities.Add(e.ToString().Replace(" ", "").Split('-')[0]);
         }
 
-        ei_param.Finc_Arng_Desc = parameters[4].ToString().Replace("--All--,", "");
-        ei_param.Mkt_Seg_Rllp_Desc = parameters[5].ToString().Replace("--All--,", "");
-        ei_param.Mkt_Typ_Desc = parameters[6].ToString().Replace("--All--,", "");
+
+        ei_param.Finc_Arng_Desc = "'" + String.Join(",", parameters[4].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+        ei_param.Mkt_Seg_Rllp_Desc = "'" + String.Join(",", parameters[5].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+
+        if(!string.IsNullOrEmpty(parameters[6] + ""))
+        {
+            ei_param.Mkt_Typ_Desc = "'" + String.Join(",", parameters[6].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+        }
+ 
         // ei_param.Cust_Seg = (string.IsNullOrEmpty(parameters[7].ToString()) ? null : new List<string>(parameters[7]));
         System.Collections.IList items = (System.Collections.IList)parameters[7];
         StringBuilder sb = new StringBuilder();

@@ -30,7 +30,7 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
 
         foreach (string strLegalEntity in lstLegalEntities)
         {
-            var legalNbr = strLegalEntity.Split('-')[0].Trim();
+            var legalNbr = strLegalEntity;
             for (int i = 0; i < 6; i++)
             {
                 switch (i)
