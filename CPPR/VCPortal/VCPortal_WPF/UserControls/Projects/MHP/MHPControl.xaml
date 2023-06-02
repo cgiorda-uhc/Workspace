@@ -116,7 +116,7 @@
             <telerik:RadButton x:Name="btnEI" Grid.Row="0" Grid.Column="5" Width="50" Command="{Binding EISectionCallCommand}" Click="btnSwitchReport_Click" Content="EI"></telerik:RadButton>
             <telerik:RadButton x:Name="btnIFP" Grid.Row="0" Grid.Column="6" Width="50" Command="{Binding IFPSectionCallCommand}" Click="btnSwitchReport_Click"  Content="IFP"></telerik:RadButton>
             <telerik:RadButton x:Name="btnCS" Grid.Row="0" Grid.Column="7" Width="50" Command="{Binding CSSectionCallCommand}" Click="btnSwitchReport_Click"  Content="CS"></telerik:RadButton>
-            <telerik:RadButton x:Name="btnEIGenerate" Visibility="{Binding EIFormVisibility}" Grid.Row="0" Grid.Column="8" Width="170" Command="{Binding GenerateEIReportCommand}"  Content="Generate EI Report">
+            <telerik:RadButton x:Name="btnEIGenerate" Visibility="{Binding EIFormVisibility}" Grid.Row="0" Grid.Column="8" Width="170" Command="{Binding GenerateEIReportCallCommand}"  Content="Generate EI Report">
                 <Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource InverseAndBooleansToBooleanConverter}" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                         <Binding ElementName="cbxStateFilter" Path="(SelectedItem)" />

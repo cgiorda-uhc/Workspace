@@ -39,29 +39,6 @@ public class WebAPIConsume
     }
 
 
-    public static Task<HttpResponseMessage> GetCall<T>(string url, T model)
-    {
-        try
-        {
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.SystemDefault;
-            //string apiUrl = BaseURI + url;
-            using (HttpClient client = new HttpClient())
-            {
-                client.BaseAddress = new Uri(BaseURI);
-                client.Timeout = TimeSpan.FromSeconds(900);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var response = client.GetAsync(url);
-                response.Wait();
-                return response;
-            }
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
-    }
-
 
     public static Task<HttpResponseMessage> PostCall<T>(string url, T model) where T : class
     {

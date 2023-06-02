@@ -38,6 +38,7 @@ public partial class MHPViewModel : ObservableObject
 
     private List<MHP_Group_State_Model> _mhpGroupState { get; set; }
 
+    private readonly BackgroundWorker worker = new BackgroundWorker();
 
     [ObservableProperty]
     private string currentTitle;
@@ -88,6 +89,10 @@ public partial class MHPViewModel : ObservableObject
         UserMessageViewModel = new MessageViewModel();
         ProgressMessageViewModel = new MessageViewModel();
 
+        worker.DoWork += worker_DoWork;
+        worker.RunWorkerCompleted += worker_RunWorkerCompleted;
+
+
         CurrentTitle = "MHP EI Reporting";
         EIFormVisibility = Visibility.Visible;
         CSFormVisibility = Visibility.Hidden;
@@ -115,6 +120,45 @@ public partial class MHPViewModel : ObservableObject
 
     }
 
+    private void worker_DoWork(object sender, DoWorkEventArgs e)
+    {
+        var callingFunction = (string)e.Argument;
+
+        _sbStatus.Clear();
+        UserMessageViewModel.Message = "";
+        ProgressMessageViewModel.Message = "";
+        ProgressMessageViewModel.HasMessage = true;
+
+        if (callingFunction == "GenerateEIReport")
+        {
+            ProgressMessageViewModel.HasMessage = true;
+            GenerateEIReport();
+        }
+        //else if (callingFunction == "LoadData")
+        //{
+        //    ProgressMessageViewModel.HasMessage = true;
+        //    getETGFactSymmetryData();
+
+        //}
+        //else if (callingFunction == "InitialLoadData")
+        //{
+        //    ProgressMessageViewModel.HasMessage = true;
+        //    loadGridLists();
+        //    getETGFactSymmetryData();
+
+        //}
+        //else if (callingFunction == "SaveData")
+        //{
+        //    save();
+        //}
+
+    }
+    private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+    {
+        //update ui once worker complete his work
+        ProgressMessageViewModel.HasMessage = false;
+
+    }
 
     private async void InitialLoadData()
     {
@@ -158,10 +202,36 @@ public partial class MHPViewModel : ObservableObject
 
     }
 
+
+    private object _params;
+
     [RelayCommand]
-    private async Task GenerateEIReport(object item)
+    private async Task GenerateEIReportCall(object item)
     {
-        object[] parameters = item as object[];
+        _params = item;
+
+        UserMessageViewModel.Message = "";
+        Mouse.OverrideCursor = Cursors.Wait;
+        await Task.Run(() => worker.RunWorkerAsync("GenerateEIReport"));
+        Mouse.OverrideCursor = null;
+
+    }
+
+
+
+    private async Task GenerateEIReport()
+    {
+
+        _logger.Information("Running MHP.GenerateEIReport for {CurrentUser}...", Authentication.UserName);
+
+
+        _sbStatus.Append("--Generate EI Report starting" + Environment.NewLine);
+        ProgressMessageViewModel.Message = _sbStatus.ToString();
+        //await Task.Delay(TimeSpan.FromSeconds(1));
+
+
+
+        object[] parameters = _params as object[];
 
         MHP_EI_Parameters ei_param = new MHP_EI_Parameters();
 
@@ -204,6 +274,11 @@ public partial class MHPViewModel : ObservableObject
         try
         {
 
+            _sbStatus.Append("--Requesting summary data for MHP EI Report, please wait..." + Environment.NewLine);
+            ProgressMessageViewModel.Message = _sbStatus.ToString();
+            //await Task.Delay(TimeSpan.FromSeconds(1));
+
+
             var api = _config.APIS.Where(x => x.Name == "MHP_EI").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
 
@@ -211,20 +286,20 @@ public partial class MHPViewModel : ObservableObject
             //var url = api.Url + "?" + "State={0}&StartDate={1}&EndDate={2}&Finc_Arng_Desc={3}&Mkt_Seg_Rllp_Desc={4}&LegalEntities={5}&Mkt_Typ_Desc={6}&Cust_Seg={7}";
             //var response = WebAPIConsume.GetCall<MHP_EI_Parameters>(url, ei_param);
 
-            var response = WebAPIConsume.PostCall<MHP_EI_Parameters>(api.Url, ei_param);
+            var response = await WebAPIConsume.PostCall<MHP_EI_Parameters>(api.Url, ei_param);
 
 
-            if (response.Result.StatusCode != System.Net.HttpStatusCode.OK)
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
             {
 
                 UserMessageViewModel.IsError = true;
                 UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("MHP.EI Report threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
+                _logger.Error("MHP.EI Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
             }
             else
             {
 
-                var reponseStream = await response.Result.Content.ReadAsStreamAsync();
+                var reponseStream = await response.Content.ReadAsStreamAsync();
                 var result = await JsonSerializer.DeserializeAsync<List<MHP_EI_Model>>(reponseStream, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
@@ -232,11 +307,17 @@ public partial class MHPViewModel : ObservableObject
 
                 mhp_final = result;
 
+                //await Task.Delay(TimeSpan.FromSeconds(1));
+
+                _sbStatus.Append("MHP EI summary data returned" + Environment.NewLine);
+                ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+
 
 
                 UserMessageViewModel.IsError = false;
-                UserMessageViewModel.Message = "MHP.EI Report sucessfully generated";
-                _logger.Information("MHP.EI Report sucessfully generated for {CurrentUser}...", Authentication.UserName);
+                UserMessageViewModel.Message = "MHP EI Report sucessfully generated";
+                _logger.Information("MHP EI Report sucessfully generated for {CurrentUser}...", Authentication.UserName);
             }
 
         }
@@ -246,8 +327,7 @@ public partial class MHPViewModel : ObservableObject
             UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
             _logger.Fatal(ex, "ChemotherapyPXData.save threw an error for {CurrentUser}", Authentication.UserName);
         }
-
-
+        
 
 
     }
