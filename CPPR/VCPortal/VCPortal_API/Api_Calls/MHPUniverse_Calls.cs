@@ -65,7 +65,7 @@ public static class MHPUniverse_Calls
         });
 
 
-        app.MapGet(pattern: "/mhp_ifp", async ([FromBody] MHP_IFP_Parameters param, IMHPUniverse_Repo repo, CancellationToken token) =>
+        app.MapPost(pattern: "/mhp_ifp", async ([FromBody] MHP_IFP_Parameters param, IMHPUniverse_Repo repo, CancellationToken token) =>
         {
             try
             {
@@ -81,12 +81,12 @@ public static class MHPUniverse_Calls
         });
 
 
-        app.MapGet(pattern: "/mhp_cs", async ([FromBody] MHP_CS_Parameters param, IMHPUniverse_Repo repo, CancellationToken token) =>
+        app.MapPost(pattern: "/mhp_cs", async ([FromBody] MHP_CS_Parameters param, IMHPUniverse_Repo repo, CancellationToken token) =>
         {
             try
             {
                 ////RETURN HTTP 200
-                return Results.Ok(await repo.GetMHP_CS_Async(param.State, param.StartDate, param.EndDate, param.CS_Tadm_Prdct_Map , token));//200 SUCCESS
+                return Results.Ok(await repo.GetMHP_CS_Async(param.State, param.StartDate, param.EndDate, param.CS_Tadm_Prdct_Map , param.GroupNumbers, token));//200 SUCCESS
                                                                                                                                                                                                  
             }
             catch (Exception ex)
@@ -98,7 +98,7 @@ public static class MHPUniverse_Calls
         });
 
 
-        app.MapPost(pattern: "/mhp_details", async ([FromBody] MHP_EI_Parameters param, IMHPUniverse_Repo repo, CancellationToken token) =>
+        app.MapPost(pattern: "/mhp_ei_details", async ([FromBody] MHP_EI_Parameters param, IMHPUniverse_Repo repo, CancellationToken token) =>
         {
             try
             {
@@ -113,6 +113,35 @@ public static class MHPUniverse_Calls
             }
         });
 
+        app.MapPost(pattern: "/mhp_cs_details", async ([FromBody] MHP_CS_Parameters param, IMHPUniverse_Repo repo, CancellationToken token) =>
+        {
+            try
+            {
+                ////RETURN HTTP 200
+                return Results.Ok(await repo.GetMHPCSDetailsAsync(param.State, param.StartDate, param.EndDate, param.CS_Tadm_Prdct_Map, param.GroupNumbers, token));//200 SUCCESS
+            }
+            catch (Exception ex)
+            {
+                //RETURN ERROR
+                return Results.Problem(ex.Message);
+
+            }
+        });
+
+        app.MapPost(pattern: "/mhp_ifp_details", async ([FromBody] MHP_IFP_Parameters param, IMHPUniverse_Repo repo, CancellationToken token) =>
+        {
+            try
+            {
+                ////RETURN HTTP 200
+                return Results.Ok(await repo.GetMHPIFPDetailsAsync(param.State, param.StartDate, param.EndDate, param.ProductCodes, token));//200 SUCCESS
+            }
+            catch (Exception ex)
+            {
+                //RETURN ERROR
+                return Results.Problem(ex.Message);
+
+            }
+        });
 
         app.MapGet(pattern: "/mhp_filters", async ( IMHPUniverse_Repo repo, CancellationToken token) =>
         {

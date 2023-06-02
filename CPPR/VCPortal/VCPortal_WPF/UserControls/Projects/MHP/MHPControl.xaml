@@ -144,7 +144,7 @@
 
             </telerik:RadButton>
 
-            <telerik:RadButton x:Name="btnCSGenerate" Visibility="{Binding CSFormVisibility}" Grid.Row="0" Grid.Column="8" Width="170" Command="{Binding GenerateCSReportCommand}"  Content="Generate CS Report">
+            <telerik:RadButton x:Name="btnCSGenerate" Visibility="{Binding CSFormVisibility}" Grid.Row="0" Grid.Column="8" Width="170" Command="{Binding GenerateCSReportCallCommand}"  Content="Generate CS Report">
                 <Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource InverseAndBooleansToBooleanConverter}" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                         <Binding ElementName="cbxStateFilter" Path="(SelectedItem)" />
@@ -170,7 +170,7 @@
             </telerik:RadButton>
 
 
-            <telerik:RadButton x:Name="btnIFPGenerate" Visibility="{Binding IFPFormVisibility}" Grid.Row="0" Grid.Column="8" Width="170" Command="{Binding GenerateIFPReportCommand}"  Content="Generate IFP Report">
+            <telerik:RadButton x:Name="btnIFPGenerate" Visibility="{Binding IFPFormVisibility}" Grid.Row="0" Grid.Column="8" Width="170" Command="{Binding GenerateIFPReportCallCommand}"  Content="Generate IFP Report">
                 <Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource InverseAndBooleansToBooleanConverter}" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                         <Binding ElementName="cbxStateFilter" Path="(SelectedItem)" />

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace VCPortal_Models.Models.MHP;
-public class MHPUniverseDetails_Model
+public class MHPEIDetails_Model
 {
     private string _strAuthorization;
     public string Authorization
