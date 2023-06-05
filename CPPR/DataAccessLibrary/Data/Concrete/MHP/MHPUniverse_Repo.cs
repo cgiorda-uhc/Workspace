@@ -165,9 +165,9 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
             //sbSQL.Append("" + strCS_TADM_PRDCT_MAP + " as CS_TADM_PRDCT_MAP ");
             sbSQL.Append("FROM( ");
             sbSQL.Append("SELECT count(Distinct u.[Authorization]) cnt, u.[Par_NonPar_Site], u.[Inpatient_Outpatient] ");
-            sbSQL.Append("FROM[IL_UCA].[stg].[MHP_Yearly_Universes] u ");
-            sbSQL.Append("INNER JOIN [IL_UCA].[stg].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
-            sbSQL.Append("INNER JOIN [IL_UCA].[dbo].[CS_PRODUCT_MAP] m ON m.PLAN_ST = c.CS_CO_CD_ST AND m.PRDCT_SYS_ID = c.PRDCT_SYS_ID AND m.CS_PRDCT_CD_SYS_ID = c.CS_PRDCT_CD_SYS_ID AND m.CS_CO_CD = c.CS_CO_CD ");
+            sbSQL.Append("FROM [VCT_DB].[mhp].[MHP_Yearly_Universes] u ");
+            sbSQL.Append("INNER JOIN [VCT_DB].[mhp].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
+            sbSQL.Append("INNER JOIN [VCT_DB].[vct].[CS_PRODUCT_MAP] m ON m.PLAN_ST = c.CS_CO_CD_ST AND m.PRDCT_SYS_ID = c.PRDCT_SYS_ID AND m.CS_PRDCT_CD_SYS_ID = c.CS_PRDCT_CD_SYS_ID AND m.CS_CO_CD = c.CS_CO_CD ");
             sbSQL.Append("WHERE u.[State_of_Issue]  in (" + strState + ") AND u.[Request_Date] >= '" + strStartDate + "' AND  u.[Request_Date] <= '" + strEndDate + "' "); //
             sbSQL.Append("AND [Authorization] IS NOT NULL  AND [Classification] = 'CS' AND m.CS_TADM_PRDCT_MAP  in (" + strCS_TADM_PRDCT_MAP + ") "); //
             if (!string.IsNullOrEmpty(strGroupNumbers))
@@ -246,8 +246,8 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
                 sbSQL.Append("'" + strProd + "' as Product ");
                 sbSQL.Append("FROM( ");
                 sbSQL.Append("SELECT count(Distinct u.[Authorization]) cnt, u.[Par_NonPar_Site], u.[Inpatient_Outpatient] ");
-                sbSQL.Append("FROM[IL_UCA].[stg].[MHP_Yearly_Universes] u ");
-                sbSQL.Append("INNER JOIN [IL_UCA].[stg].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
+                sbSQL.Append("FROM [VCT_DB].[mhp].[MHP_Yearly_Universes] u ");
+                sbSQL.Append("INNER JOIN [VCT_DB].[mhp].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
                 sbSQL.Append("WHERE u.[State_of_Issue]  in (" + strState + ")  AND u.[Request_Date] >= '" + strStartDate + "' AND  u.[Request_Date] <= '" + strEndDate + "' "); //
                 sbSQL.Append("AND [Authorization] IS NOT NULL AND  [Classification]= 'IFP' "); //
 
@@ -346,9 +346,9 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
         sbSQL.Append("u.[Primary_Diagnosis_Code], ");
         sbSQL.Append("u.[Group_Number], ");
         sbSQL.Append("c.[PRDCT_CD_DESC] ");
-        sbSQL.Append("FROM[IL_UCA].[stg].[MHP_Yearly_Universes] u ");
-        sbSQL.Append("INNER JOIN [IL_UCA].[stg].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
-        sbSQL.Append("INNER JOIN [IL_UCA].[dbo].[CS_PRODUCT_MAP] m ON m.PLAN_ST = c.CS_CO_CD_ST AND m.PRDCT_SYS_ID = c.PRDCT_SYS_ID AND m.CS_PRDCT_CD_SYS_ID = c.CS_PRDCT_CD_SYS_ID AND m.CS_CO_CD = c.CS_CO_CD ");
+        sbSQL.Append("FROM [VCT_DB].[mhp].[MHP_Yearly_Universes] u ");
+        sbSQL.Append("INNER JOIN [VCT_DB].[mhp].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
+        sbSQL.Append("INNER JOIN [VCT_DB].[vct].[CS_PRODUCT_MAP] m ON m.PLAN_ST = c.CS_CO_CD_ST AND m.PRDCT_SYS_ID = c.PRDCT_SYS_ID AND m.CS_PRDCT_CD_SYS_ID = c.CS_PRDCT_CD_SYS_ID AND m.CS_CO_CD = c.CS_CO_CD ");
         sbSQL.Append("WHERE u.[State_of_Issue] in (" + strState + ")  AND u.[Request_Date] >= '" + strStartDate + "' AND  u.[Request_Date] <= '" + strEndDate + "' "); //
         sbSQL.Append("AND [Authorization] IS NOT NULL   AND [Classification] = 'CS'  AND m.CS_TADM_PRDCT_MAP  in (" + strCS_TADM_PRDCT_MAP + ") "); //
         if (!string.IsNullOrEmpty(strGroupNumbers))
@@ -407,8 +407,8 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
             sbSQL.Append("u.[Procedure_Code_Description], ");
             sbSQL.Append("u.[Primary_Procedure_Code_Req] , ");
             sbSQL.Append("u.[Primary_Diagnosis_Code] ");
-            sbSQL.Append("FROM[IL_UCA].[stg].[MHP_Yearly_Universes] u ");
-            sbSQL.Append("INNER JOIN [IL_UCA].[stg].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
+            sbSQL.Append("FROM [VCT_DB].[mhp].[MHP_Yearly_Universes] u ");
+            sbSQL.Append("INNER JOIN [VCT_DB].[mhp].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
             sbSQL.Append("WHERE u.[State_of_Issue]  in (" + strState + ")  AND u.[Request_Date] >= '" + strStartDate + "' AND  u.[Request_Date] <= '" + strEndDate + "' "); //
             sbSQL.Append("AND [Authorization] IS NOT NULL AND [Classification] = 'IFP'  "); //
             sbSQL.Append("AND c.[PRDCT_CD] = '" + prod + "' "); //
@@ -417,7 +417,7 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
 
         }
 
-        var results = _db.LoadData<MHPIFPDetails_Model>(sql: sbSQL.ToString(), token, connectionId: "VCT_DB");
+        var results = _db.LoadData<MHPIFPDetails_Model>(sql: sbSQL.ToString().TrimEnd(' ', 'U', 'N', 'I', 'O', 'N', ' ', 'A', 'L', 'L', ' '), token, connectionId: "VCT_DB");
 
         return results;
     }

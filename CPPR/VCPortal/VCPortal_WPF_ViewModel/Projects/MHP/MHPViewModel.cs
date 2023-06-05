@@ -552,7 +552,11 @@ public partial class MHPViewModel : ObservableObject
         ifp_param.State = "'" + String.Join(",", parameters[0].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'"; ;
         ifp_param.StartDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
         ifp_param.EndDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
-        ifp_param.ProductCodes = (string.IsNullOrEmpty(parameters[3].ToString()) ? null : new List<string>(parameters[3].ToString().Replace("--All--", "").Split(',')));
+        ifp_param.ProductCodes = (string.IsNullOrEmpty(parameters[3].ToString()) ? null : new List<string>(parameters[3].ToString().Replace("--All--,", "").Split(',')));
+        for(int i  = 0; i < ifp_param.ProductCodes.Count; i++)
+        {
+            ifp_param.ProductCodes[i] = ifp_param.ProductCodes[i].Split("-")[0].Trim();
+        }
 
         List<MHP_IFP_Model> mhp_final;
         List<MHPIFPDetails_Model> mhp_details_final;

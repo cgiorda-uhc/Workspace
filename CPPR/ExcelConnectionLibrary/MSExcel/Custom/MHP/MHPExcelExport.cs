@@ -29,6 +29,7 @@ namespace FileParsingLibrary.MSExcel.Custom.MHP
             IXLRange range;
             int rowCnt = 0;
             StringBuilder sbStatus = new StringBuilder();
+            sbStatus.Append(getterStatus());
             foreach (MHP_EI_Model mhp in mhp_results)
             {
                 if (token.IsCancellationRequested)
@@ -40,7 +41,7 @@ namespace FileParsingLibrary.MSExcel.Custom.MHP
                 if (mhp.ExcelRow == 4)
                 {
 
-                    sbStatus.Append(getterStatus());
+  
                     sbStatus.Append("--Creating sheet for " + mhp.LegalEntity + Environment.NewLine);
                     setterStatus(sbStatus.ToString());
 
@@ -197,6 +198,7 @@ namespace FileParsingLibrary.MSExcel.Custom.MHP
             XLWorkbook wb = new XLWorkbook(strFilePath);
             IXLWorksheet wsSource = null;
             StringBuilder sbStatus = new StringBuilder();
+            sbStatus.Append(getterStatus());
             foreach (MHP_CS_Model mhp in mhp_results)
             {
                 if (token.IsCancellationRequested)
@@ -207,7 +209,7 @@ namespace FileParsingLibrary.MSExcel.Custom.MHP
 
                 if (mhp.ExcelRow == 4)
                 {
-                    sbStatus.Append(getterStatus());
+
                     sbStatus.Append("--Creating summary sheet for CS" + Environment.NewLine);
                     setterStatus(sbStatus.ToString());
 
@@ -367,6 +369,7 @@ namespace FileParsingLibrary.MSExcel.Custom.MHP
             IXLRange range;
             int rowCnt = 0;
             StringBuilder sbStatus = new StringBuilder();
+            sbStatus.Append(getterStatus());
             foreach (MHP_IFP_Model mhp in mhp_results)
             {
                 if (token.IsCancellationRequested)
@@ -377,14 +380,13 @@ namespace FileParsingLibrary.MSExcel.Custom.MHP
 
                 if (mhp.ExcelRow == 4)
                 {
-                    sbStatus.Append(getterStatus());
                     sbStatus.Append("--Creating sheet for " + mhp.Product + Environment.NewLine);
                     setterStatus(sbStatus.ToString());
 
                     wsSource = wb.Worksheet("template");
                     // Copy the worksheet to a new sheet in this workbook
                     //wsSource.CopyTo("template COPY1").SetTabColor(XLColor.Orange);
-                    var newSheetName = mhp.Product.Split('-')[0].Trim();
+                    var newSheetName = mhp.Product;
                     wsSource.CopyTo(newSheetName);
                     wsSource = wb.Worksheet(newSheetName);
                     wsSource.Cell("A1").Value = mhp.State + " " + mhp.Product + " : " + mhp.StartDate + "-" + mhp.EndDate;
@@ -421,22 +423,6 @@ namespace FileParsingLibrary.MSExcel.Custom.MHP
                 {
                     sbStatus.Append("--Creating details sheet for " + mhp.PRDCT_CD + " - " + mhp.PRDCT_CD_DESC + Environment.NewLine);
                     setterStatus(sbStatus.ToString());
-
-
-                    //NOT FIRST PASS SO RESIZE LAST NEW SHEET
-                    //if (lastEntity != null)
-                    //{
-
-                    //range = wsSource.Range(wsSource.Cell(1, 1).Address, wsSource.Cell(1, typeof(MHP_Yearly_Universes_Details_Model).GetProperties().Length).Address);
-                    //range.Style.Border.OutsideBorder = XLBorderStyleValues.Medium;
-                    //range.Style.Font.Bold = true;
-                    //range.Style.Fill.BackgroundColor = XLColor.Yellow;
-                    ////range.Style
-
-                    //wsSource.Columns().AdjustToContents(1, typeof(MHP_Yearly_Universes_Details_Model).GetProperties().Length);   // Adjust column width
-                    //wsSource.Rows().AdjustToContents(1, mhp_details.Count(n => n.LegalEntity == lastEntity));
-                    //}
-
 
                     //var newSheetName = mhp.LegalEntity.Split('-')[0].Trim();
                     var newSheetName = mhp.PRDCT_CD;
