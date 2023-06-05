@@ -151,7 +151,6 @@
                         <Binding ElementName="dtStartDate" Path="(SelectedValue)" />
                         <Binding ElementName="dtEndDate" Path="(SelectedValue)" />
                         <Binding ElementName="cbxCS_TADM_PRDCT_MAP" Path="(SelectedItem)" />
-                        <Binding ElementName="cbxGroupNumbers" Path="(SelectedItem)" />
                         <Binding Path="CanRunReport"   />
                     </MultiBinding>
                 </Button.IsEnabled>

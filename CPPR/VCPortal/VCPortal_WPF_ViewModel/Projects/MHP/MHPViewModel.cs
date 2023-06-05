@@ -266,49 +266,47 @@ public partial class MHPViewModel : ObservableObject
         object[] parameters = _params as object[];
         MHP_EI_Parameters ei_param = new MHP_EI_Parameters();
 
-        ei_param.State = "'" + String.Join(",", parameters[0].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-        ei_param.StartDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
-        ei_param.EndDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
-
-        var le = parameters[3].ToString().Replace("--All--~", "").Split('~');
-        foreach (var e in le)
-        {
-            if (ei_param.LegalEntities == null)
-            {
-                ei_param.LegalEntities = new List<string>();
-            }
-            ei_param.LegalEntities.Add(e.ToString().Replace(" ", "").Split('-')[0]);
-        }
-
-
-        ei_param.Finc_Arng_Desc = "'" + String.Join(",", parameters[4].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-        ei_param.Mkt_Seg_Rllp_Desc = "'" + String.Join(",", parameters[5].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-
-        if(!string.IsNullOrEmpty(parameters[6] + ""))
-        {
-            ei_param.Mkt_Typ_Desc = "'" + String.Join(",", parameters[6].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-        }
-
-        System.Collections.IList items = (System.Collections.IList)parameters[7];
-        StringBuilder sb = new StringBuilder();
-        foreach (var i in items)
-        {
-            sb.Append("'"+ i.ToString().Split('-')[0].Trim() + "',");
-        }
-        if(sb.Length > 0)
-        {
-            ei_param.Cust_Seg = sb.ToString().TrimEnd(',');
-        }
-
-
-
-
-
-
+        
         List<MHP_EI_Model> mhp_final;
         List<MHPEIDetails_Model> mhp_details_final;
         try
         {
+
+            ei_param.State = "'" + String.Join(",", parameters[0].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+            ei_param.StartDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
+            ei_param.EndDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
+
+            var le = parameters[3].ToString().Replace("--All--~", "").Split('~');
+            foreach (var e in le)
+            {
+                if (ei_param.LegalEntities == null)
+                {
+                    ei_param.LegalEntities = new List<string>();
+                }
+                ei_param.LegalEntities.Add(e.ToString().Replace(" ", "").Split('-')[0]);
+            }
+
+
+            ei_param.Finc_Arng_Desc = "'" + String.Join(",", parameters[4].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+            ei_param.Mkt_Seg_Rllp_Desc = "'" + String.Join(",", parameters[5].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+
+            if (!string.IsNullOrEmpty(parameters[6] + ""))
+            {
+                ei_param.Mkt_Typ_Desc = "'" + String.Join(",", parameters[6].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+            }
+
+            System.Collections.IList items = (System.Collections.IList)parameters[7];
+            StringBuilder sb = new StringBuilder();
+            foreach (var i in items)
+            {
+                sb.Append("'" + i.ToString().Split('-')[0].Trim() + "',");
+            }
+            if (sb.Length > 0)
+            {
+                ei_param.Cust_Seg = sb.ToString().TrimEnd(',');
+            }
+
+
 
             _sbStatus.Append("--Retreiving EI summary data from Database" + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
@@ -424,17 +422,22 @@ public partial class MHPViewModel : ObservableObject
 
         MHP_CS_Parameters cs_param = new MHP_CS_Parameters();
 
-        cs_param.State = "'" + String.Join(",", parameters[0].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-        cs_param.StartDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
-        cs_param.EndDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
-        cs_param.CS_Tadm_Prdct_Map = "'" + String.Join(",", parameters[4].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-        cs_param.GroupNumbers = "'" + String.Join(",", parameters[5].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-
 
         List<MHP_CS_Model> mhp_final;
         List<MHPCSDetails_Model> mhp_details_final;
         try
         {
+            cs_param.State = "'" + String.Join(",", parameters[0].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+            cs_param.StartDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
+            cs_param.EndDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
+            cs_param.CS_Tadm_Prdct_Map = "'" + String.Join(",", parameters[3].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+
+            if (parameters[4] != "")
+            {
+                cs_param.GroupNumbers = "'" + String.Join(",", parameters[4].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+            }
+
+
 
             _sbStatus.Append("--Retreiving CS summary data from Database" + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
@@ -549,19 +552,21 @@ public partial class MHPViewModel : ObservableObject
 
         MHP_IFP_Parameters ifp_param = new MHP_IFP_Parameters();
 
-        ifp_param.State = "'" + String.Join(",", parameters[0].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'"; ;
-        ifp_param.StartDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
-        ifp_param.EndDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
-        ifp_param.ProductCodes = (string.IsNullOrEmpty(parameters[3].ToString()) ? null : new List<string>(parameters[3].ToString().Replace("--All--,", "").Split(',')));
-        for(int i  = 0; i < ifp_param.ProductCodes.Count; i++)
-        {
-            ifp_param.ProductCodes[i] = ifp_param.ProductCodes[i].Split("-")[0].Trim();
-        }
-
         List<MHP_IFP_Model> mhp_final;
         List<MHPIFPDetails_Model> mhp_details_final;
         try
         {
+
+            ifp_param.State = "'" + String.Join(",", parameters[0].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'"; ;
+            ifp_param.StartDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
+            ifp_param.EndDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
+            ifp_param.ProductCodes = (string.IsNullOrEmpty(parameters[3].ToString()) ? null : new List<string>(parameters[3].ToString().Replace("--All--,", "").Split(',')));
+            for (int i = 0; i < ifp_param.ProductCodes.Count; i++)
+            {
+                ifp_param.ProductCodes[i] = ifp_param.ProductCodes[i].Split("-")[0].Trim();
+            }
+
+
 
             _sbStatus.Append("--Retreiving IFP summary data from Database" + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
