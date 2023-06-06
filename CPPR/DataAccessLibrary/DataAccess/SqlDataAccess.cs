@@ -37,7 +37,7 @@ public class SqlDataAccess : IRelationalDataAccess
     {
         using IDbConnection connection = new SqlConnection(connectionString);
 
-        var cmd = new CommandDefinition(sql, commandTimeout: 120);
+        var cmd = new CommandDefinition(sql, commandTimeout: 1200);
         var result = await connection.QueryAsync<T>(cmd);
         return result;
     }

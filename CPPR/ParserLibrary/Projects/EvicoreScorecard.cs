@@ -179,6 +179,12 @@ public class EvicoreScorecard : IEvicoreScorecard
                     else //STATE STYLE SHEETS
                     {
 
+
+                        closed_xml.Mappings = new List<KeyValuePair<string, string>>
+                        {
+                            new KeyValuePair<string, string>("","Header")
+                        };
+
                         var esstate = closed_xml.ImportExcel<EvicoreScorecardSheetStateModel>(cleanFileName, sheet.SheetName, sheet.ColumnRange, sheet.StartingDataRow);
 
                         foreach (var p in typeof(EvicoreScorecardSheetStateModel).GetProperties())
@@ -221,10 +227,10 @@ public class EvicoreScorecard : IEvicoreScorecard
                                 propSheetModel = typeof(EvicoreScorecardSheetStateModel).GetProperty(f.Header); //ex f.Header = 'EINotif'
 
                                 var value = propSheetModel.GetValue(e);
-                                //if (value != null)
-                                //{
-                                //    propModel.SetValue(f, SharedFunctions.ConvertToType(value, propModel.PropertyType));
-                                //}
+                                if (value != null)
+                                {
+                                    propModel.SetValue(f, SharedFunctions.ConvertToType(value, propModel.PropertyType));
+                                }
                                 //NULLABLE NUMBERS NOT FULLY WORKING!!!!
                                 //PropertyInfo propertyInfo = f.GetType().GetProperty(colMapped);
                                 //object value;
@@ -469,6 +475,7 @@ public class EvicoreScorecard : IEvicoreScorecard
                 new KeyValuePair<string, string>("% Call","Per_Call"),
                 new KeyValuePair<string, string>("% Website","Per_Website"),
                 new KeyValuePair<string, string>("% Fax","Per_Fax"),
+                new KeyValuePair<string, string>("% Intellipath","Per_Intellipath"),
                 new KeyValuePair<string, string>("Approved","Approved"),
                 new KeyValuePair<string, string>("Denied","Denied"),
                 new KeyValuePair<string, string>("Withdrawn","Withdrawn"),

@@ -69,227 +69,56 @@ using Microsoft.Extensions.Primitives;
 
 //return;
 
+List<string> files_loaded = new List<string>();
+files_loaded.Add("United PCP- Rad & Card_April_2023.xlsx");
+files_loaded.Add("Americhoice April -Radiology Cardiology Universe 2023.xlsx");
+files_loaded.Add("Oxford  April -Radiology Cardiology Universe 2023.xlsx");
 
-char chrDelimiter = '|';
-List<string>? strLstColumnNames = null;
-StreamReader? csvreader = null;
-string _strTableName;
-//string[] strLstFiles;
-string[] strLstFiles = Directory.GetFiles(@"C:\Users\cgiorda\Desktop\Projects\UGAP Configuration", "*.txt", SearchOption.TopDirectoryOnly);
-string ? strInputLine = "";
-string[] csvArray;
-string strSQL;
-int intBulkSize = 10000;
-var connectionString = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
-var tdConnectionString = "Data Source=UDWPROD;User ID=cgiorda;Password=BooWooDooFoo2023!!;Authentication Mechanism=LDAP;Session Mode=TERADATA;Session Character Set=ASCII;Persist Security Info=true;Connection Timeout=99999;";
+string connectionString = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
+string connectionStringVC = "data source=VCT_DB;server=localhost;Persist Security Info=True;database=VCT_DB;Integrated Security=SSPI;connect timeout=300000;";
 IRelationalDataAccess db_sql = new SqlDataAccess();
-IRelationalDataAccess db_td = new TeraDataAccess();
-System.Data.DataTable dtTransfer = new System.Data.DataTable();
-System.Data.DataRow? drCurrent = null;
-string filename;
-
-//2 GENERTATE FINAL OUTPUT
-strSQL = "Select distinct ETG_BAS_CLSS_NBR, MPC_NBR from CLODM001.ETG_NUMBER";
-var mcp = await db_td.LoadData<UGAPMPCNBRModel>(connectionString: tdConnectionString, strSQL);
 
 
 
-strSQL = "SELECT [MPC_NBR] ,[ETG_BAS_CLSS_NBR] ,[ALWAYS] ,[ATTRIBUTED] ,[ERG_SPCL_CATGY_CD] ,[TRT_CD] ,[RX] ,[NRX] ,[RISK_Model] ,[LOW_MONTH] ,[HIGH_MONTH] FROM [IL_UCA].[dbo].[VW_UGAPCFG_FINAL]";
-
-var etg = await db_sql.LoadData<UGAPETGModel>(connectionString: connectionString, strSQL);
-
-
-foreach (var item in etg)
-{
-    var m = mcp.Where(x => x.ETG_BAS_CLSS_NBR == item.ETG_BAS_CLSS_NBR).Select(x => x.MPC_NBR).FirstOrDefault();
-    item.MPC_NBR = m;
-}
-
-
-List<UGAPETGModel> etg_final = etg.OrderBy(o => o.RISK_Model).ThenBy(o => o.MPC_NBR).ToList();
 StringBuilder sb = new StringBuilder();
 
-filename = "C:\\Users\\cgiorda\\Desktop\\Projects\\UGAP Configuration\\output\\UGAP_Config_Automated.txt";
-if (File.Exists(filename))
+foreach (string file in files_loaded)
 {
-    File.Delete(filename);
+    sb.Append("'" +  file + "',");
 }
 
-using (var file = File.CreateText(filename))
-{
-    string[] columns = typeof(UGAPETGModel).GetProperties().Select(p => p.Name).ToArray();
-    foreach (var column in columns)
-    {
-        sb.Append(column + "|");
-
-    }
-    file.WriteLine(sb.ToString().TrimEnd('|'));
-    file.Flush();
-    sb.Clear();
-
-    foreach (var e in etg_final)
-    {
-        sb.Append((e.MPC_NBR == null ? "" : e.MPC_NBR) + "|");
-        sb.Append((e.ETG_BAS_CLSS_NBR == null ? "" : e.ETG_BAS_CLSS_NBR) + "|");
-        sb.Append((e.ALWAYS == null ? "" : e.ALWAYS) + "|");
-        sb.Append((e.ATTRIBUTED == null ? "" : e.ATTRIBUTED) + "|");
-        sb.Append((e.ERG_SPCL_CATGY_CD == null ? "" : e.ERG_SPCL_CATGY_CD) + "|");
-        sb.Append((e.TRT_CD == null ? "" : e.TRT_CD) + "|");
-        sb.Append((e.RX == null ? "" : e.RX) + "|");
-        sb.Append((e.NRX == null ? "" : e.NRX) + "|");
-        sb.Append((e.RISK_Model == null ? "" : e.RISK_Model) + "|");
-        sb.Append((e.LOW_MONTH == null ? "" : e.LOW_MONTH) + "|");
-        sb.Append((e.HIGH_MONTH == null ? "" : e.HIGH_MONTH) );
-        file.WriteLine(sb.ToString());
-        sb.Clear();
-    }
-    file.Flush();
-}
+//string strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Yearly_Universes_UGAP] WHERE mhp_uni_id in (SELECT [mhp_uni_id] FROM [IL_UCA].[stg].[MHP_Yearly_Universes] WHERE file_name in ("+ sb.ToString().TrimEnd(',')+ "));";
 
 
-return;
+//var mhp_ugap = await db_sql.LoadData<MHPMemberDetailsModel>(connectionString: connectionString, strSQL);
 
 
 
-
-//1 GET FILES
-
-foreach (var strFile in strLstFiles)
-{
-    filename = "ugapcfg_" + Path.GetFileName(strFile).Replace(".txt", "");
-
-    var table = CommonFunctions.getCleanTableName(filename);
-    var tmp_table = table.Substring(0, Math.Min(28, table.Length)) + "_TMP";
+string strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Yearly_Universes]  WHERE file_name in (" + sb.ToString().TrimEnd(',') + ");";
 
 
-    csvreader = new StreamReader(strFile);
-    while ((strInputLine = csvreader.ReadLine()) != null)
-    {
-        csvArray = strInputLine.Split(new char[] { chrDelimiter });
-        //FIRST PASS ONLY GETS COLUMNS AND CREATES TABLE SQL
-        if (strLstColumnNames == null)
-        {
-            strLstColumnNames = new List<string>();
-            //GET AND CLEAN COLUMN NAMES FOR TABLE
-            foreach (string c in csvArray)
-            {
-                var colName = c.getSafeFileName();
-                strLstColumnNames.Add(colName.ToUpper());
-            }
+var mhp = await db_sql.LoadData<MHPUniverseModel>(connectionString: connectionString, strSQL);
 
 
-            //SQL FOR TMP TABLE TO STORE ALL VALUES A VARCHAR(MAX)
-            strSQL = CommonFunctions.getCreateTmpTableScript("stg", tmp_table, strLstColumnNames);
-            await db_sql.Execute(connectionString: connectionString, strSQL);
-
-            strSQL = "SELECT * FROM [stg].[" + tmp_table + "]; ";
-            //CREATE TMP TABLE AND COLLECT NEW DB TABLE FOR BULK TRANSFERS
-            dtTransfer = await db_sql.LoadDataTable(connectionString, strSQL);
-            dtTransfer.TableName = "stg." + tmp_table;
-
-            //GOT COLUMNS, CREATED TMP TABLE FOR FIRST PASS
-            continue;
-        }
-        //CLONE ROW FOR TRANSFER
-        drCurrent = dtTransfer.NewRow();
-        //POPULATE ALL COLUMNS FOR CURRENT ROW
-        for (int i = 0; i < strLstColumnNames.Count; i++)
-        {
-            drCurrent[strLstColumnNames[i]] = (csvArray[i].Trim().Equals("") ? (object)DBNull.Value : csvArray[i].TrimStart('\"').TrimEnd('\"'));
-
-        }
-        dtTransfer.Rows.Add(drCurrent);
-
-        if (dtTransfer.Rows.Count == intBulkSize) //intBulkSize = 10000 DEFAULT
-        {
-            await db_sql.BulkSave(connectionString: connectionString, dtTransfer);
-            dtTransfer.Rows.Clear();
-        }
+string[] columns = typeof(MHPUniverseModel).GetProperties().Select(p => p.Name).ToArray();
 
 
-    }
+await db_sql.BulkSave<MHPUniverseModel>(connectionString: connectionStringVC, "mhp.MHP_Yearly_Universes", mhp, columns);
 
-    //CATCH REST OF UPLOADS OUTSIDE CSV LOOP
-    if (dtTransfer.Rows.Count > 0)
-        await db_sql.BulkSave(connectionString: connectionString, dtTransfer);
+////////////////////////////////////////////////////////////////////////////
 
 
 
-    strSQL = CommonFunctions.getTableAnalysisScript("stg", tmp_table, strLstColumnNames);
-    var dataTypes = (await db_sql.LoadData<DataTypeModel>(connectionString: connectionString, strSQL));
-
-    strSQL = CommonFunctions.getCreateFinalTableScript("stg", table, dataTypes);
-    await db_sql.Execute(connectionString: connectionString, strSQL);
-
-    strSQL = CommonFunctions.getSelectInsertScript("stg", tmp_table, table, strLstColumnNames);
-    await db_sql.Execute(connectionString: connectionString, strSQL);
-
-    strLstColumnNames = null;
+strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Yearly_Universes_UGAP] WHERE mhp_uni_id in (SELECT [mhp_uni_id] FROM [IL_UCA].[stg].[MHP_Yearly_Universes] WHERE file_name in (" + sb.ToString().TrimEnd(',') + "));";
 
 
-    ///////////////////////////////////////////////////////////////
+var mhp_ugap = await db_sql.LoadData<MHPMemberDetailsModel>(connectionString: connectionString, strSQL);
 
 
-    //strSQL = "SELECT [SPECIALTY] as ERG_SPCL_CATGY_CD ,[BASEETG] as ETG_BAS_CLSS_NBR ,[TREATMENT_IND] as TRT_CD ,[IF_ALWAYS] as [ALWAYS] ,[IF_ATTRIB] as ATTRIBUTED ,[RISK_MODEL] as RISK_MDL ,[RX] ,[NRX] FROM [IL_UCA].[stg].["+ table + "]";
-
-    //var etg = await db_sql.LoadData<UGAPETGModel>(connectionString: connectionString, strSQL);
+columns = typeof(MHPMemberDetailsModel).GetProperties().Select(p => p.Name).ToArray();
 
 
-    //foreach (var item in etg)
-    //{
-    //    var m = mcp.Where(x => x.ETG_BAS_CLSS_NBR == item.ETG_BAS_CLSS_NBR).Select(x => x.MPC_NBR).FirstOrDefault();
-    //    item.MPC_NBR = m;
-    //}
-
-
-    //List<UGAPETGModel> etg_final = etg.OrderBy(o => o.MPC_NBR).ToList();
-    //StringBuilder sb = new StringBuilder();
-
-    //filename = "C:\\Users\\cgiorda\\Desktop\\Projects\\UGAP Configuration\\output\\"+ table + ".txt";
-    //if (File.Exists(filename))
-    //{
-    //    File.Delete(filename);
-    //}
-
-    //using (var file = File.CreateText(filename))
-    //{
-    //    string[] columns = typeof(UGAPETGModel).GetProperties().Select(p => p.Name).ToArray();
-    //    foreach (var column in columns)
-    //    {
-    //        sb.Append(column + "|");
-
-    //    }
-    //    file.WriteLine(sb.ToString().TrimEnd('|'));
-    //    file.Flush();
-    //    sb.Clear();
-
-    //    foreach (var e in etg_final)
-    //    {
-    //        sb.Append((e.MPC_NBR == null ? "" : e.MPC_NBR )+ "|");
-    //        sb.Append((e.ETG_BAS_CLSS_NBR == null ? "" : e.ETG_BAS_CLSS_NBR) + "|");
-    //        sb.Append((e.ALWAYS == null ? "" : e.ALWAYS) + "|");
-    //        sb.Append((e.ATTRIBUTED == null ? "" : e.ATTRIBUTED) + "|");
-    //        sb.Append((e.ERG_SPCL_CATGY_CD == null ? "" : e.ERG_SPCL_CATGY_CD) + "|");
-    //        sb.Append((e.TRT_CD == null ? "" : e.TRT_CD) + "|");
-    //        sb.Append((e.RX == null ? "" : e.RX) + "|");
-    //        sb.Append((e.NRX == null ? "" : e.NRX) + "|");
-    //        sb.Append((e.RISK_MDL == null ? "" : e.RISK_MDL));
-    //        file.WriteLine(sb.ToString());
-    //        sb.Clear();
-    //    }
-    //    file.Flush();
-    //}
-
-
-
-}
-
-
-
-
-
-
-
+await db_sql.BulkSave<MHPMemberDetailsModel>(connectionString: connectionStringVC, "mhp.MHP_Yearly_Universes_UGAP", mhp_ugap, columns);
 
 
 

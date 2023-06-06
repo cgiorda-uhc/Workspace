@@ -4,6 +4,9 @@ namespace ProjectManagerLibrary.Models;
 
 public class MHPUniverseModel
 {
+
+    public Int64 mhp_uni_id { get; set; }
+
     public string State_of_Issue { get; set; }
     public string State_of_Residence{ get; set; }
     public string Enrollee_First_Name{ get; set; }

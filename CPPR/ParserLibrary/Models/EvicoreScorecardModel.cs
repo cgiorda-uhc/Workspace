@@ -16,6 +16,9 @@ public class EvicoreScorecardModel
     public double Per_Call { get; set; }
     public double Per_Website { get; set; }
     public double Per_Fax { get; set; }
+
+    public double Per_Intellipath { get; set; }
+
     public double Approved { get; set; }
     public double Denied { get; set; }
     public double Withdrawn { get; set; }
