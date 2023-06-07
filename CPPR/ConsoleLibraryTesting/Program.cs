@@ -53,11 +53,14 @@ using System.Formats.Asn1;
 using DocumentFormat.OpenXml.Math;
 using DocumentFormat.OpenXml.Drawing.Charts;
 using Microsoft.Extensions.Primitives;
+using VCPortal_Models.Parameters.MHP;
+using VCPortal_Models.Models.Shared;
 
 //var adHoc = new AdHoc();
 //adHoc.ConnectionStringMSSQL = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
 //adHoc.TableMHP = "stg.MHP_Yearly_Universes";
 //adHoc.ConnectionStringTD = "Data Source=UDWPROD;User ID=cgiorda;Password=BooWooDooFoo2023!!;Authentication Mechanism=LDAP;Session Mode=TERADATA;Session Character Set=ASCII;Persist Security Info=true;Connection Timeout=99999;";
+//adHoc.ConnectionStringVCPMSSQL  = "data source=VCT_DB;server=localhost;Persist Security Info=True;database=VCT_DB;Integrated Security=SSPI;connect timeout=300000;";
 //adHoc.TableUGAP = "stg.MHP_Yearly_Universes_UGAP";
 //adHoc.Limit = 3000;
 
@@ -77,8 +80,34 @@ files_loaded.Add("Oxford  April -Radiology Cardiology Universe 2023.xlsx");
 string connectionString = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
 string connectionStringVC = "data source=VCT_DB;server=localhost;Persist Security Info=True;database=VCT_DB;Integrated Security=SSPI;connect timeout=300000;";
 IRelationalDataAccess db_sql = new SqlDataAccess();
+string strSQL;
+string[] columns;
 
 
+strSQL = "SELECT * FROM  [IL_UCA].[dbo].[cs_product_map];";
+var pm = await db_sql.LoadData<CS_Product_Map>(connectionString: connectionString, strSQL);
+columns = typeof(CS_Product_Map).GetProperties().Select(p => p.Name).ToArray();
+await db_sql.BulkSave<CS_Product_Map>(connectionString: connectionStringVC, "vct.cs_product_map", pm, columns, truncate: true);
+
+
+return;
+
+strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Group_State];";
+var gs = await db_sql.LoadData<MHP_Group_State_Model>(connectionString: connectionString, strSQL);
+columns = typeof(MHP_Group_State_Model).GetProperties().Select(p => p.Name).ToArray();
+await db_sql.BulkSave<MHP_Group_State_Model>(connectionString: connectionStringVC, "mhp.MHP_Group_State", gs, columns, truncate:true);
+
+
+
+
+strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Universes_Filter_Cache];";
+var fs = await db_sql.LoadData<MHP_Reporting_Filters>(connectionString: connectionString, strSQL);
+columns = typeof(MHP_Reporting_Filters).GetProperties().Select(p => p.Name).ToArray();
+await db_sql.BulkSave<MHP_Reporting_Filters>(connectionString: connectionStringVC, "mhp.MHP_Universes_Filter_Cache", fs, columns, truncate: true);
+
+
+
+return;
 
 StringBuilder sb = new StringBuilder();
 
@@ -87,20 +116,13 @@ foreach (string file in files_loaded)
     sb.Append("'" +  file + "',");
 }
 
-//string strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Yearly_Universes_UGAP] WHERE mhp_uni_id in (SELECT [mhp_uni_id] FROM [IL_UCA].[stg].[MHP_Yearly_Universes] WHERE file_name in ("+ sb.ToString().TrimEnd(',')+ "));";
-
-
-//var mhp_ugap = await db_sql.LoadData<MHPMemberDetailsModel>(connectionString: connectionString, strSQL);
-
-
-
-string strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Yearly_Universes]  WHERE file_name in (" + sb.ToString().TrimEnd(',') + ");";
+strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Yearly_Universes]  WHERE file_name in (" + sb.ToString().TrimEnd(',') + ");";
 
 
 var mhp = await db_sql.LoadData<MHPUniverseModel>(connectionString: connectionString, strSQL);
 
 
-string[] columns = typeof(MHPUniverseModel).GetProperties().Select(p => p.Name).ToArray();
+ columns = typeof(MHPUniverseModel).GetProperties().Select(p => p.Name).ToArray();
 
 
 await db_sql.BulkSave<MHPUniverseModel>(connectionString: connectionStringVC, "mhp.MHP_Yearly_Universes", mhp, columns);

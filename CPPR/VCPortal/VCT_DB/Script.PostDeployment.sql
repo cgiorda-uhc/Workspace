@@ -15,9 +15,9 @@ INSERT INTO [vct].[ETG_Dim_Master]
            ,[ETG_Description]
            ,[ETG_Display])
 SELECT  [ETG_Base_Class]
-      ,[ETG_Description]
-      ,[ETG_Display]
-  FROM [deploy].[ETG_Dim_Master]
+      ,[Description]
+      ,[Short_Description]
+  FROM [deploy].[ETG_Base_Class]
 END
 
 

@@ -5,6 +5,8 @@ using System.Data;
 using FastMember;
 using System.Text.RegularExpressions;
 using System.Reflection;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using MongoDB.Driver.Core.Configuration;
 
 namespace DataAccessLibrary.DataAccess;
 public class SqlDataAccess : IRelationalDataAccess
@@ -150,7 +152,7 @@ public class SqlDataAccess : IRelationalDataAccess
 		await connection.ExecuteAsync(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
 	}
 
-    public async Task BulkSave<T>(string table, IEnumerable<T> data, string[] columns, int bulkTimeout = 120, int batchSize = 5000, string connectionId = "VCT_DB")
+    public async Task BulkSave<T>(string table, IEnumerable<T> data, string[] columns, int bulkTimeout = 120, int batchSize = 5000, string connectionId = "VCT_DB", bool truncate = false)
     {
 
         // data is an IEnumerable<T>           
@@ -165,6 +167,17 @@ public class SqlDataAccess : IRelationalDataAccess
             bcp.BulkCopyTimeout = bulkTimeout;
             bcp.BatchSize = batchSize;
             bcp.DestinationTableName = table;
+
+
+            if (truncate)
+            {
+                using IDbConnection connection = new SqlConnection(_config.GetConnectionString(connectionId));
+
+                var result = await connection.ExecuteAsync("TRUNCATE TABLE " + table, commandType: CommandType.Text);
+
+            }
+
+
             await bcp.WriteToServerAsync(reader);
             //try
             //{
@@ -180,7 +193,7 @@ public class SqlDataAccess : IRelationalDataAccess
 
 
 
-    public async Task BulkSave<T>(string connectionString, string table, IEnumerable<T> data, string[] columns, int bulkTimeout = 120, int batchSize = 5000)
+    public async Task BulkSave<T>(string connectionString, string table, IEnumerable<T> data, string[] columns, int bulkTimeout = 120, int batchSize = 5000, bool truncate = false)
     {
 
         // data is an IEnumerable<T>           
@@ -200,6 +213,17 @@ public class SqlDataAccess : IRelationalDataAccess
             try
             {
 
+                if(truncate)
+                {
+                    using IDbConnection connection = new SqlConnection(connectionString);
+
+                    var result = await connection.ExecuteAsync("TRUNCATE TABLE " + table, commandType: CommandType.Text);
+
+                }
+                
+                
+                
+                
                 await bcp.WriteToServerAsync(reader);
             }
             catch (SqlException ex)

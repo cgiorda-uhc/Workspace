@@ -119,6 +119,9 @@
     <Build Include="vct\Tables\Premium_Mapping.sql" />
     <Build Include="etgsymm\Views\VW_ETG_PTC_Modeling.sql" />
     <Build Include="vct\Tables\CS_PRODUCT_MAP.sql" />
+    <Build Include="deploy\Tables\ETG_Base_Class.sql" />
+    <Build Include="deploy\Tables\ETG_Base_Class_TI.sql" />
+    <Build Include="deploy\Tables\ETG_Base_Class_MPC.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Cd_GetAll.sql" />

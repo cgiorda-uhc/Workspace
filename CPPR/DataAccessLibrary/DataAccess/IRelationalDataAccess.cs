@@ -18,9 +18,9 @@ public interface IRelationalDataAccess
 
     Task SaveData<T>(string storedProcedure, T parameters, string connectionId = "VCT_DB");
 
-    Task BulkSave<T>(string connectionString, string table, IEnumerable<T> data, string[] columns, int bulkTimeout = 120, int batchSize = 5000);
+    Task BulkSave<T>(string connectionString, string table, IEnumerable<T> data, string[] columns, int bulkTimeout = 120, int batchSize = 5000, bool truncate = false);
 
-    Task BulkSave<T>(string table, IEnumerable<T> data, string[] columns, int bulkTimeout = 120, int batchSize = 5000, string connectionId = "VCT_DB");
+    Task BulkSave<T>(string table, IEnumerable<T> data, string[] columns, int bulkTimeout = 120, int batchSize = 5000, string connectionId = "VCT_DB", bool truncate = false);
 
 
     Task<object> ExecuteScalar<T>(string storedProcedure, T parameters, string connectionId = "VCT_DB");
