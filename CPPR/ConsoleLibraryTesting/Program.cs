@@ -95,6 +95,28 @@ var ndb = await db_sql.LoadData<PrimarySpecUHNModel>(connectionString: connectio
 
 
 
+var pd_ndb = from n in ndb
+             join p in pd
+                 on n.NDB_SPCL_CD equals p.NDB_SPCL_TYP_CD 
+            select new PrimarySpecWithCodeModel
+            {
+                MPIN = n.MPIN,
+                ProvType = n.ProvType,
+                NDB_SPCL_CD = n.NDB_SPCL_CD,
+                SpecTypeCd = n.SpecTypeCd,
+                PrimaryInd = n.PrimaryInd,
+                ShortDesc = n.ShortDesc,
+                PREM_SPCL_CD = ((n.NDB_SPCL_CD == "033" || n.NDB_SPCL_CD == "101"  || n.NDB_SPCL_CD == "500") ? "CARDVS" : ((n.NDB_SPCL_CD == "007") ? "DERMA" : ((n.NDB_SPCL_CD == "038") ? "GERIA" : ((n.NDB_SPCL_CD == "093" || n.NDB_SPCL_CD == "504" || n.NDB_SPCL_CD == "059") ? "HEMAONC" : ((n.NDB_SPCL_CD == "479" || n.NDB_SPCL_CD == "095") ? "VASC" : ((n.NDB_SPCL_CD == "024" || n.NDB_SPCL_CD == "359" || n.NDB_SPCL_CD == "337" || n.NDB_SPCL_CD == "233") ? "PLASTIC" : p.PREM_SPCL_CD))))))
+            };
+
+
+
+
+
+
+
+columns = typeof(PrimarySpecWithCodeModel).GetProperties().Select(p => p.Name).ToArray();
+await db_sql.BulkSave<PrimarySpecWithCodeModel>(connectionString: connectionStringVC, "vct.PrimarySpecWithCode", pd_ndb, columns, truncate: true);
 
 
 

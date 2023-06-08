@@ -28,4 +28,25 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="Measure_Status" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="eea1d6ee-5352-4622-8400-d920c5195009" ChangeDateTime="06/08/2023 21:30:09">
+    <Property Name="ElementName" Value="[dbo].[PrimarySpecWithCode].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[PrimarySpecWithCode]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="MPIN" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="3584d820-e2f9-4b16-974a-93d50c7eecd2" ChangeDateTime="06/08/2023 21:31:24">
+    <Property Name="ElementName" Value="[dbo].[PrimarySpecWithCode].[PREM_SPCL_CD]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[PrimarySpecWithCode]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="NDB_SPCL_CD" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="267cabae-5161-4d9c-acf1-28b92aa892ed" ChangeDateTime="06/08/2023 21:31:33">
+    <Property Name="ElementName" Value="[dbo].[PrimarySpecWithCode].[NDB_SPCL_CD]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[PrimarySpecWithCode]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ProvType" />
+  </Operation>
 </Operations>
