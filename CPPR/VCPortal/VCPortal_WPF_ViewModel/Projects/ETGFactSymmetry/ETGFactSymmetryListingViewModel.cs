@@ -364,9 +364,9 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
                 export.Add(new ExcelExport() { ExportList = etgfil.ToList<object>(), SheetName = sheet.SheetName });
             }
 
-            sheet = excel.Sheets.Where(x => x.Name == "ETGEpisodeCost").FirstOrDefault();
-            var etgec = ETGFactSymmetryConfigMapper.getETGEpisodeCostConfig(OC_ETGFactSymmetryViewModel);
-            export.Add(new ExcelExport() { ExportList = etgec.ToList<object>(), SheetName = sheet.SheetName });
+            //sheet = excel.Sheets.Where(x => x.Name == "ETGEpisodeCost").FirstOrDefault();
+            //var etgec = ETGFactSymmetryConfigMapper.getETGEpisodeCostConfig(OC_ETGFactSymmetryViewModel);
+            //export.Add(new ExcelExport() { ExportList = etgec.ToList<object>(), SheetName = sheet.SheetName });
 
             //sheet = excel.Sheets.Where(x => x.Name == "ETGPatientCentricConfig").FirstOrDefault();
             //var api = _config.APIS.Where(x => x.Name == "ETGPatientCentricConfig").FirstOrDefault();

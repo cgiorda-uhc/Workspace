@@ -55,6 +55,7 @@ using DocumentFormat.OpenXml.Drawing.Charts;
 using Microsoft.Extensions.Primitives;
 using VCPortal_Models.Parameters.MHP;
 using VCPortal_Models.Models.Shared;
+using VCPortal_Models.Models.ETGFactSymmetry.Dataloads;
 
 //var adHoc = new AdHoc();
 //adHoc.ConnectionStringMSSQL = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
@@ -79,15 +80,28 @@ files_loaded.Add("Oxford  April -Radiology Cardiology Universe 2023.xlsx");
 
 string connectionString = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
 string connectionStringVC = "data source=VCT_DB;server=localhost;Persist Security Info=True;database=VCT_DB;Integrated Security=SSPI;connect timeout=300000;";
+string connectionStringUHN = "data source=UHN_Reporting;server=WP000074441CLS;Persist Security Info=True;database=UHN_Reporting;Integrated Security=SSPI;connect timeout=300000;";
+string connectionStringPD = "data source=UHPD_Analytics;server=DBSWP0662;Persist Security Info=True;database=UHPD_Analytics;Integrated Security=SSPI;connect timeout=300000;";
 IRelationalDataAccess db_sql = new SqlDataAccess();
 string strSQL;
 string[] columns;
 
 
-strSQL = "SELECT * FROM  [IL_UCA].[dbo].[cs_product_map];";
-var pm = await db_sql.LoadData<CS_Product_Map>(connectionString: connectionString, strSQL);
-columns = typeof(CS_Product_Map).GetProperties().Select(p => p.Name).ToArray();
-await db_sql.BulkSave<CS_Product_Map>(connectionString: connectionStringVC, "vct.cs_product_map", pm, columns, truncate: true);
+strSQL = "select A.PREM_SPCL_CD, A.NDB_SPCL_TYP_CD from PD.CNFG_PREM_SPCL_MAP A where A.PREM_DESG_VER_NBR = 15;";
+var pd = await db_sql.LoadData<PremiumSpecPDModel>(connectionString: connectionStringPD, strSQL);
+
+strSQL = "Select prov.MPIN, prov.ProvType, prov.PrimSpec NDB_SPCL_CD, spcl.SpecTypeCd, spcl.PrimaryInd, spcltyp.ShortDesc From dbo.PROVIDER As prov Left Join dbo.PROV_SPECIALTIES spcl On prov.MPIN = spcl.MPIN And spcl.PractInSpecInd = 'Y' Left Join dbo.SPECIALTY_TYPES spcltyp On spcl.SpecTypeCd = spcltyp.SpecTypeCd;";
+var ndb = await db_sql.LoadData<PrimarySpecUHNModel>(connectionString: connectionStringUHN, strSQL);
+
+
+
+
+
+
+//strSQL = "SELECT * FROM  [IL_UCA].[dbo].[cs_product_map];";
+//var pm = await db_sql.LoadData<CS_Product_Map>(connectionString: connectionString, strSQL);
+//columns = typeof(CS_Product_Map).GetProperties().Select(p => p.Name).ToArray();
+//await db_sql.BulkSave<CS_Product_Map>(connectionString: connectionStringVC, "vct.cs_product_map", pm, columns, truncate: true);
 
 
 return;

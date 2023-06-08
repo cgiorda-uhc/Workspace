@@ -35,7 +35,10 @@ public partial class App : Application
 
         var configuration = new ConfigurationBuilder().AddJsonFile(appsettings).AddEnvironmentVariables().Build();
 
+
+       // Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
         logger = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
+        Log.Logger = logger;
         logger.Information("Starting up VC Portal...");
 
 

@@ -17,8 +17,8 @@ builder.Logging.ClearProviders();
 //builder.Logging.AddSerilog(logger);
 Log.Logger = logger;
 
-
-builder.Host.UseSerilog(logger);
+//COMMENTING FIXED rollingInterval
+//builder.Host.UseSerilog(logger);
 //DEPENDENCY INJECTION AUTOMAPPER FOR DTO SUPPORT
 //builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

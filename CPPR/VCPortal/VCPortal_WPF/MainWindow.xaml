@@ -14,7 +14,7 @@
         xmlns:mhpvml="clr-namespace:VCPortal_WPF_ViewModel.Projects.MHP;assembly=VCPortal_WPF_ViewModel"
         xmlns:modalcontrol="clr-namespace:ModalControl;assembly=ModalControl" xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation" xmlns:components="clr-namespace:VCPortal_WPF.Components"
         mc:Ignorable="d" 
-        Title="MainWindow" Height="450" Width="800" WindowState="Maximized"  FontFamily="Segoe UI Light" FontSize="18" Closing="Window_Closing" >
+        Title="VC Portal" Height="450" Width="800" WindowState="Maximized"  FontFamily="Segoe UI Light" FontSize="18" Closing="Window_Closing" >
 
 
     <Window.Resources>
