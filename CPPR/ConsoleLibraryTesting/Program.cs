@@ -109,12 +109,6 @@ var pd_ndb = from n in ndb
                 PREM_SPCL_CD = ((n.NDB_SPCL_CD == "033" || n.NDB_SPCL_CD == "101"  || n.NDB_SPCL_CD == "500") ? "CARDVS" : ((n.NDB_SPCL_CD == "007") ? "DERMA" : ((n.NDB_SPCL_CD == "038") ? "GERIA" : ((n.NDB_SPCL_CD == "093" || n.NDB_SPCL_CD == "504" || n.NDB_SPCL_CD == "059") ? "HEMAONC" : ((n.NDB_SPCL_CD == "479" || n.NDB_SPCL_CD == "095") ? "VASC" : ((n.NDB_SPCL_CD == "024" || n.NDB_SPCL_CD == "359" || n.NDB_SPCL_CD == "337" || n.NDB_SPCL_CD == "233") ? "PLASTIC" : p.PREM_SPCL_CD))))))
             };
 
-
-
-
-
-
-
 columns = typeof(PrimarySpecWithCodeModel).GetProperties().Select(p => p.Name).ToArray();
 await db_sql.BulkSave<PrimarySpecWithCodeModel>(connectionString: connectionStringVC, "vct.PrimarySpecWithCode", pd_ndb, columns, truncate: true);
 
@@ -1553,7 +1547,7 @@ return;
 
 //}
 
-////ActiveDirectory ad = new ActiveDirectory("", "ms.ds.uhc.com", @"ms\peisaid", "Iluv2playtennis&bsktball");
+////ActiveDirectory ad = new ActiveDirectory("", "ms.ds.uhc.com", @"ms\peisaid", "BooWooDooFoo2023!!");
 
 ////string username = System.Security.Principal.WindowsIdentity.GetCurrent().Name.ToLower().TrimStart('m', 's', '\\');
 
@@ -2161,12 +2155,12 @@ return;
 
 
 
-//ActiveDirectory ad = new ActiveDirectory("", "ms.ds.uhc.com", @"ms\peisaid", "Iluv2playtennis&bsktball");
+//ActiveDirectory ad = new ActiveDirectory("", "ms.ds.uhc.com", @"ms\peisaid", "BooWooDooFoo2023!!");
 //PBIMembership pm = new PBIMembership();
 
 
 
-//var l1 = pm.getAllADMembers("", "ms.ds.uhc.com", @"ms\peisaid", "Iluv2playtennis&bsktball", "AZU_ORBIT_POWERBI_UHC_VC_CLIN_PROG_PERF_*");
+//var l1 = pm.getAllADMembers("", "ms.ds.uhc.com", @"ms\peisaid", "BooWooDooFoo2023!!", "AZU_ORBIT_POWERBI_UHC_VC_CLIN_PROG_PERF_*");
 
 //IConfigurationRoot configuration = new ConfigurationBuilder()
 //    .SetBasePath(Directory.GetCurrentDirectory())

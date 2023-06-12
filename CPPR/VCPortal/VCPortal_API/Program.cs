@@ -19,6 +19,7 @@ Log.Logger = logger;
 
 //COMMENTING FIXED rollingInterval
 //builder.Host.UseSerilog(logger);
+builder.Host.UseSerilog(Log.Logger);
 //DEPENDENCY INJECTION AUTOMAPPER FOR DTO SUPPORT
 //builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

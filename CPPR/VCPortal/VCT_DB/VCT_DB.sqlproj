@@ -123,6 +123,7 @@
     <Build Include="deploy\Tables\ETG_Base_Class_TI.sql" />
     <Build Include="deploy\Tables\ETG_Base_Class_MPC.sql" />
     <Build Include="vct\Tables\PrimarySpecWithCode.sql" />
+    <Build Include="vct\Tables\ETG_Episodes_UGAP.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Cd_GetAll.sql" />

@@ -130,7 +130,7 @@ namespace SharedFunctionsLibrary
                         smtp.Host = "mailo2.uhc.com"; //for gmail host  
                         smtp.EnableSsl = false;
                         smtp.UseDefaultCredentials = true;
-                        //smtp.Credentials = new NetworkCredential("ms/peisaid", "Iluv2playtennis&bsktball");
+                        //smtp.Credentials = new NetworkCredential("ms/peisaid", "BooWooDooFoo2023!!");
                         smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
                         await smtp.SendMailAsync(message).ConfigureAwait(false);
                     }

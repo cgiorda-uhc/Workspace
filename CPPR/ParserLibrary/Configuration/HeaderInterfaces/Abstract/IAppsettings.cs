@@ -17,7 +17,7 @@ namespace ProjectManagerLibrary.Configuration.HeaderInterfaces.Abstract
         string LDAPDomain { get; set; }
         string LDAPPath { get; set; }
         string LDAPUser { get; set; }
-        string LDAPPW { get; set; }//Iluv2playtennis&bsktball
+        string LDAPPW { get; set; }//BooWooDooFoo2023!!
         string SearchString { get; set; }
         SearchType SearchType { get; set; }
         List<SQLConfig> SQLLists { get; set; }
