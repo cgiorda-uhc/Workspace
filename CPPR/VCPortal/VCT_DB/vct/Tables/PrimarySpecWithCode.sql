@@ -8,5 +8,6 @@
     [ShortDesc] VARCHAR(25) NULL, 
     [PREM_SPCL_CD] VARCHAR(25) NULL, 
     [Id] BIGINT NOT NULL IDENTITY, 
+    [Secondary_Spec] VARCHAR(12) NULL, 
     PRIMARY KEY ([Id])
 )

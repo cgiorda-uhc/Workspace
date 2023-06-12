@@ -14,4 +14,6 @@ public class PrimarySpecWithCodeModel
     public string SpecTypeCd { get; set; }
     public string PrimaryInd { get; set; }
     public string ShortDesc { get; set; }
+
+    public string Secondary_Spec { get; set; }
 }

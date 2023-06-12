@@ -1,9 +1,9 @@
 ﻿CREATE TABLE [vct].[ETG_Episodes_UGAP]
 (
-		[INDV_CNT] [smallint] NULL,
-    [EPSD_CNT] [smallint] NULL,
+		[INDV_CNT] INT NULL,
+    [EPSD_CNT] INT NULL,
     [TOT_ALLW_AMT] [float] NULL,
-    [SVRTY] [smallint] NULL,
+    [SVRTY] CHAR(1) NULL,
     [ETG_BAS_CLSS_NBR] CHAR(6) NULL,
    [ETG_TX_IND] [smallint] NULL,
 
