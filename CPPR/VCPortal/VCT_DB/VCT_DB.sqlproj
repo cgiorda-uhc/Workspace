@@ -155,6 +155,7 @@
     <None Include="VCT_DB_DEV.publish.xml" />
     <Build Include="mhp\mhp.sql" />
     <Build Include="mhp\mhp_index.sql" />
+    <Build Include="vct\vct_index.sql" />
   </ItemGroup>
   <ItemGroup>
     <SqlCmdVariable Include="ChemoPXRefresh">

@@ -89,6 +89,41 @@ string strSQL;
 string[] columns;
 
 
+List<string> lst_lob = new List<string>();
+lst_lob.Add("COMMERCIAL");
+lst_lob.Add("MEDICARE");
+lst_lob.Add("MEDICARE");
+
+
+List<string> lst_yr = new List<string>();
+lst_lob.Add("2020");
+lst_lob.Add("2021");
+
+bool blTruncate = true;
+
+foreach(var y in lst_yr)
+{
+
+    Console.WriteLine(y);
+    
+    foreach(var l in lst_lob)
+    {
+        ////STEP 1
+        strSQL = "select count(distinct es.INDV_SYS_ID) as INDV_CNT, count(distinct es.EPSD_NBR) as EPSD_CNT, sum(es.TOT_ALLW_AMT) as TOT_ALLW_AMT, en.SVRTY, en.ETG_BAS_CLSS_NBR, en.ETG_TX_IND, up.PROV_MPIN, sum(es.TOT_NP_ALLW_AMT) as TOT_NP_ALLW_AMT, CASE WHEN prod.PRDCT_LVL_1_NM = 'COMMERCIAL' THEN 1 ELSE CASE WHEN prod.PRDCT_LVL_1_NM = 'MEDICARE' THEN 2 ELSE 3 END END as LOB_ID, DES.ETG_STRT_YEAR_NBR from CLODM001.ETG_SUMMARY es inner join CLODM001.ETG_NUMBER en on es.ETG_SYS_ID = en.ETG_SYS_ID inner join CLODM001.UNIQUE_PROVIDER up on es.RESP_UNIQ_PROV_SYS_ID = up.UNIQ_PROV_SYS_ID inner join CLODM001.INDIVIDUAL ind on es.INDV_SYS_ID = ind.INDV_SYS_ID inner join CLODM001.CLNOPS_CUSTOMER_SEGMENT ccs on ind.CLNOPS_CUST_SEG_SYS_ID = ccs.CLNOPS_CUST_SEG_SYS_ID inner join CLODM001.PRODUCT prod on ccs.PRDCT_SYS_ID = prod.PRDCT_SYS_ID inner join CLODM001.DATE_ETG_START DES on es.ETG_STRT_DT_SYS_ID = DES.ETG_STRT_DT_SYS_ID inner join CLODM001.DATE_ETG_FINISH DEF on es.ETG_FIN_DT_SYS_ID = DEF.ETG_FIN_DT_SYS_ID where es.EP_TYP_NBR in (0, 1, 2, 3) and es.TOT_ALLW_AMT >= 35 and prod.PRDCT_LVL_1_NM = '"+l+"' and DES.ETG_STRT_DT >= '" + y + "-01-01' and DES.ETG_STRT_DT <= '" + y + "-12-31' group by en.SVRTY, en.ETG_BAS_CLSS_NBR, en.ETG_TX_IND, up.PROV_MPIN, CASE WHEN prod.PRDCT_LVL_1_NM = 'COMMERCIAL' THEN 1 ELSE CASE WHEN prod.PRDCT_LVL_1_NM = 'MEDICARE' THEN 2 ELSE 3 END END, DES.ETG_STRT_YEAR_NBR";
+
+
+        Console.WriteLine(1);
+        var ugap = await db_td.LoadData<ETG_Episodes_UGAP>(connectionString: connectionStringTD, strSQL);
+
+        columns = typeof(ETG_Episodes_UGAP).GetProperties().Select(p => p.Name).ToArray();
+        await db_sql.BulkSave<ETG_Episodes_UGAP>(connectionString: connectionStringVC, "vct.ETG_Episodes_UGAP", ugap, columns, truncate: blTruncate);
+        blTruncate = false;
+    }
+
+}
+
+
+
 ////STEP 1
 //strSQL = "select count(distinct es.INDV_SYS_ID) as INDV_CNT, count(distinct es.EPSD_NBR) as EPSD_CNT, sum(es.TOT_ALLW_AMT) as TOT_ALLW_AMT, en.SVRTY, en.ETG_BAS_CLSS_NBR, en.ETG_TX_IND, up.PROV_MPIN, sum(es.TOT_NP_ALLW_AMT) as TOT_NP_ALLW_AMT, CASE WHEN prod.PRDCT_LVL_1_NM = 'COMMERCIAL' THEN 1 ELSE CASE WHEN prod.PRDCT_LVL_1_NM = 'MEDICARE' THEN 2 ELSE 3 END END as LOB_ID, DES.ETG_STRT_YEAR_NBR from CLODM001.ETG_SUMMARY es inner join CLODM001.ETG_NUMBER en on es.ETG_SYS_ID = en.ETG_SYS_ID inner join CLODM001.UNIQUE_PROVIDER up on es.RESP_UNIQ_PROV_SYS_ID = up.UNIQ_PROV_SYS_ID inner join CLODM001.INDIVIDUAL ind on es.INDV_SYS_ID = ind.INDV_SYS_ID inner join CLODM001.CLNOPS_CUSTOMER_SEGMENT ccs on ind.CLNOPS_CUST_SEG_SYS_ID = ccs.CLNOPS_CUST_SEG_SYS_ID inner join CLODM001.PRODUCT prod on ccs.PRDCT_SYS_ID = prod.PRDCT_SYS_ID inner join CLODM001.DATE_ETG_START DES on es.ETG_STRT_DT_SYS_ID = DES.ETG_STRT_DT_SYS_ID inner join CLODM001.DATE_ETG_FINISH DEF on es.ETG_FIN_DT_SYS_ID = DEF.ETG_FIN_DT_SYS_ID where es.EP_TYP_NBR in (0, 1, 2, 3) and es.TOT_ALLW_AMT >= 35 and prod.PRDCT_LVL_1_NM in ('COMMERCIAL', 'MEDICARE', 'MEDICAID') and DES.ETG_STRT_DT >= '2020-01-01' and DES.ETG_STRT_DT <= '2021-12-31' group by en.SVRTY, en.ETG_BAS_CLSS_NBR, en.ETG_TX_IND, up.PROV_MPIN, CASE WHEN prod.PRDCT_LVL_1_NM = 'COMMERCIAL' THEN 1 ELSE CASE WHEN prod.PRDCT_LVL_1_NM = 'MEDICARE' THEN 2 ELSE 3 END END, DES.ETG_STRT_YEAR_NBR";
 
