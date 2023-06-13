@@ -70,4 +70,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="ETG_BASE_CLASS" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="768ef016-6902-4bcb-813b-1265a471f65c" ChangeDateTime="06/13/2023 19:27:26">
+    <Property Name="ElementName" Value="[vct].[ETG_Episodes_UGAP].[INDV_CNT]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[vct].[ETG_Episodes_UGAP]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="EPSD_NBR " />
+  </Operation>
 </Operations>
