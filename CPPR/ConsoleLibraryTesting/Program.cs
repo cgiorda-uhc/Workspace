@@ -89,7 +89,7 @@ string strSQL;
 string[] columns;
 
 
-//STEP 1
+////STEP 1
 //strSQL = "select count(distinct es.INDV_SYS_ID) as INDV_CNT, count(distinct es.EPSD_NBR) as EPSD_CNT, sum(es.TOT_ALLW_AMT) as TOT_ALLW_AMT, en.SVRTY, en.ETG_BAS_CLSS_NBR, en.ETG_TX_IND, up.PROV_MPIN, sum(es.TOT_NP_ALLW_AMT) as TOT_NP_ALLW_AMT, CASE WHEN prod.PRDCT_LVL_1_NM = 'COMMERCIAL' THEN 1 ELSE CASE WHEN prod.PRDCT_LVL_1_NM = 'MEDICARE' THEN 2 ELSE 3 END END as LOB_ID, DES.ETG_STRT_YEAR_NBR from CLODM001.ETG_SUMMARY es inner join CLODM001.ETG_NUMBER en on es.ETG_SYS_ID = en.ETG_SYS_ID inner join CLODM001.UNIQUE_PROVIDER up on es.RESP_UNIQ_PROV_SYS_ID = up.UNIQ_PROV_SYS_ID inner join CLODM001.INDIVIDUAL ind on es.INDV_SYS_ID = ind.INDV_SYS_ID inner join CLODM001.CLNOPS_CUSTOMER_SEGMENT ccs on ind.CLNOPS_CUST_SEG_SYS_ID = ccs.CLNOPS_CUST_SEG_SYS_ID inner join CLODM001.PRODUCT prod on ccs.PRDCT_SYS_ID = prod.PRDCT_SYS_ID inner join CLODM001.DATE_ETG_START DES on es.ETG_STRT_DT_SYS_ID = DES.ETG_STRT_DT_SYS_ID inner join CLODM001.DATE_ETG_FINISH DEF on es.ETG_FIN_DT_SYS_ID = DEF.ETG_FIN_DT_SYS_ID where es.EP_TYP_NBR in (0, 1, 2, 3) and es.TOT_ALLW_AMT >= 35 and prod.PRDCT_LVL_1_NM in ('COMMERCIAL', 'MEDICARE', 'MEDICAID') and DES.ETG_STRT_DT >= '2020-01-01' and DES.ETG_STRT_DT <= '2021-12-31' group by en.SVRTY, en.ETG_BAS_CLSS_NBR, en.ETG_TX_IND, up.PROV_MPIN, CASE WHEN prod.PRDCT_LVL_1_NM = 'COMMERCIAL' THEN 1 ELSE CASE WHEN prod.PRDCT_LVL_1_NM = 'MEDICARE' THEN 2 ELSE 3 END END, DES.ETG_STRT_YEAR_NBR";
 
 //var ugap = await db_td.LoadData<ETG_Episodes_UGAP>(connectionString: connectionStringTD, strSQL);
@@ -98,34 +98,34 @@ string[] columns;
 //await db_sql.BulkSave<ETG_Episodes_UGAP>(connectionString: connectionStringVC, "vct.ETG_Episodes_UGAP", ugap, columns, truncate: true);
 
 
-//STEP 2
-strSQL = "Select prov.MPIN, prov.ProvType, prov.PrimSpec NDB_SPCL_CD, spcl.SpecTypeCd, spcl.PrimaryInd, spcltyp.ShortDesc From dbo.PROVIDER As prov Left Join dbo.PROV_SPECIALTIES spcl On prov.MPIN = spcl.MPIN And spcl.PractInSpecInd = 'Y' Left Join dbo.SPECIALTY_TYPES spcltyp On spcl.SpecTypeCd = spcltyp.SpecTypeCd;";
-var ndb = await db_sql.LoadData<PrimarySpecUHNModel>(connectionString: connectionStringUHN, strSQL);
+////STEP 2
+//strSQL = "Select prov.MPIN, prov.ProvType, prov.PrimSpec NDB_SPCL_CD, spcl.SpecTypeCd, spcl.PrimaryInd, spcltyp.ShortDesc From dbo.PROVIDER As prov Left Join dbo.PROV_SPECIALTIES spcl On prov.MPIN = spcl.MPIN And spcl.PractInSpecInd = 'Y' Left Join dbo.SPECIALTY_TYPES spcltyp On spcl.SpecTypeCd = spcltyp.SpecTypeCd;";
+//var ndb = await db_sql.LoadData<PrimarySpecUHNModel>(connectionString: connectionStringUHN, strSQL);
 
 
-//STEP 3
-strSQL = "select A.PREM_SPCL_CD, A.NDB_SPCL_TYP_CD from PD.CNFG_PREM_SPCL_MAP A where A.PREM_DESG_VER_NBR = 15;";
-var pd = await db_sql.LoadData<PremiumSpecPDModel>(connectionString: connectionStringPD, strSQL);
+////STEP 3
+//strSQL = "select A.PREM_SPCL_CD, A.NDB_SPCL_TYP_CD from PD.CNFG_PREM_SPCL_MAP A where A.PREM_DESG_VER_NBR = 15;";
+//var pd = await db_sql.LoadData<PremiumSpecPDModel>(connectionString: connectionStringPD, strSQL);
 
 
-//STEP 4
-var pd_ndb = from n in ndb
-             join p in pd on n.NDB_SPCL_CD equals p.NDB_SPCL_TYP_CD into n_p_join
-             from np in n_p_join.DefaultIfEmpty()
-             select new PrimarySpecWithCodeModel
-            {
-                MPIN = n.MPIN,
-                ProvType = n.ProvType,
-                NDB_SPCL_CD = n.NDB_SPCL_CD,
-                SpecTypeCd = n.SpecTypeCd,
-                PrimaryInd = n.PrimaryInd,
-                ShortDesc = n.ShortDesc,
-                PREM_SPCL_CD = ((n.NDB_SPCL_CD == "033" || n.NDB_SPCL_CD == "101"  || n.NDB_SPCL_CD == "500") ? "CARDVS" : ((n.NDB_SPCL_CD == "007") ? "DERMA" : ((n.NDB_SPCL_CD == "038") ? "GERIA" : ((n.NDB_SPCL_CD == "093" || n.NDB_SPCL_CD == "504" || n.NDB_SPCL_CD == "059") ? "HEMAONC" : ((n.NDB_SPCL_CD == "479" || n.NDB_SPCL_CD == "095") ? "VASC" : ((n.NDB_SPCL_CD == "024" || n.NDB_SPCL_CD == "359" || n.NDB_SPCL_CD == "337" || n.NDB_SPCL_CD == "233") ? "PLASTIC" : (np == null ? null : np.PREM_SPCL_CD))  ))))),
-                Secondary_Spec = (n.SpecTypeCd == "304" ? "CARDEP" : null)
-            };
+////STEP 4
+//var pd_ndb = from n in ndb
+//             join p in pd on n.NDB_SPCL_CD equals p.NDB_SPCL_TYP_CD into n_p_join
+//             from np in n_p_join.DefaultIfEmpty()
+//             select new PrimarySpecWithCodeModel
+//            {
+//                MPIN = n.MPIN,
+//                ProvType = n.ProvType,
+//                NDB_SPCL_CD = n.NDB_SPCL_CD,
+//                SpecTypeCd = n.SpecTypeCd,
+//                PrimaryInd = n.PrimaryInd,
+//                ShortDesc = n.ShortDesc,
+//                PREM_SPCL_CD = ((n.NDB_SPCL_CD == "033" || n.NDB_SPCL_CD == "101"  || n.NDB_SPCL_CD == "500") ? "CARDVS" : ((n.NDB_SPCL_CD == "007") ? "DERMA" : ((n.NDB_SPCL_CD == "038") ? "GERIA" : ((n.NDB_SPCL_CD == "093" || n.NDB_SPCL_CD == "504" || n.NDB_SPCL_CD == "059") ? "HEMAONC" : ((n.NDB_SPCL_CD == "479" || n.NDB_SPCL_CD == "095") ? "VASC" : ((n.NDB_SPCL_CD == "024" || n.NDB_SPCL_CD == "359" || n.NDB_SPCL_CD == "337" || n.NDB_SPCL_CD == "233") ? "PLASTIC" : (np == null ? null : np.PREM_SPCL_CD))  ))))),
+//                Secondary_Spec = (n.SpecTypeCd == "304" ? "CARDEP" : null)
+//            };
 
-columns = typeof(PrimarySpecWithCodeModel).GetProperties().Select(p => p.Name).ToArray();
-await db_sql.BulkSave<PrimarySpecWithCodeModel>(connectionString: connectionStringVC, "vct.PrimarySpecWithCode", pd_ndb, columns, truncate: true);
+//columns = typeof(PrimarySpecWithCodeModel).GetProperties().Select(p => p.Name).ToArray();
+//await db_sql.BulkSave<PrimarySpecWithCodeModel>(connectionString: connectionStringVC, "vct.PrimarySpecWithCode", pd_ndb, columns, truncate: true);
 
 
 strSQL = "SELECT prim.MPIN, CASE WHEN prim.[PREM_SPCL_CD] ='CARDCD' AND sec.[secondary_spec] = 'CARDEP' THEN 'CARDEP' ELSE CASE WHEN prim.[PREM_SPCL_CD] in ('NS', 'ORTHO') THEN 'NOS' ELSE [PREM_SPCL_CD] END END as [PREM_SPCL_CD] FROM (SELECT [PREM_SPCL_CD], [MPIN] FROM [vct].[PrimarySpecWithCode] GROUP BY [PREM_SPCL_CD], [MPIN] ) prim LEFT JOIN (SELECT [Secondary_Spec], [MPIN] FROM [vct].[PrimarySpecWithCode] GROUP BY [Secondary_Spec], [MPIN]) sec ON prim.MPIN = sec.MPIN";
@@ -135,17 +135,28 @@ strSQL = "SELECT prim.MPIN, CASE WHEN prim.[PREM_SPCL_CD] ='CARDCD' AND sec.[sec
 //STEP 5
 strSQL = "select a.ETG_BASE_CLASS, a.CNCR_IND from PD.CNFG_CNCR_REL_ETG a inner join ( select Max(PD.CNFG_CNCR_REL_ETG.PREM_DESG_VER_NBR) as Max_PREM_DESG_VER_NBR from PD.CNFG_CNCR_REL_ETG ) b on a.PREM_DESG_VER_NBR = b.Max_PREM_DESG_VER_NBR";
 //PD DB 
+var can = await db_sql.LoadData<ETG_Cancer_Flag_PDModel>(connectionString: connectionStringPD, strSQL);
+columns = typeof(ETG_Cancer_Flag_PDModel).GetProperties().Select(p => p.Name).ToArray();
+await db_sql.BulkSave< ETG_Cancer_Flag_PDModel> (connectionString: connectionStringVC, "vct.ETG_Cancer_Flag", can, columns, truncate: true);
 
 //STEP 6
 strSQL = "select n.NDB_SPCL_TYP_CD, n.SPCL_TYP_CD_DESC, c.PREM_SPCL_CD from pd.CLCT_SPCL_TYP_CD n left join ( select b.PREM_SPCL_CD, b.NDB_SPCL_TYP_CD from PD.CNFG_PREM_SPCL_MAP b inner join ( select Max(PD.CNFG_PREM_SPCL_MAP.PREM_DESG_VER_NBR) as Max_PREM_DESG_VER_NBR from PD.CNFG_PREM_SPCL_MAP ) a on b.PREM_DESG_VER_NBR = a.Max_PREM_DESG_VER_NBR ) c on n.NDB_SPCL_TYP_CD = c.NDB_SPCL_TYP_CD where n.NDB_SPCL_TYP_CD <> ' '";
 //NDB DB 
-
+var ndb = await db_sql.LoadData<PremiumNDBSpecPDModel>(connectionString: connectionStringPD, strSQL);
+columns = typeof(PremiumNDBSpecPDModel).GetProperties().Select(p => p.Name).ToArray();
+await db_sql.BulkSave<PremiumNDBSpecPDModel>(connectionString: connectionStringVC, "vct.PremiumNDBSpecPD", ndb, columns, truncate: true);
 
 //STEP 7
 strSQL = "select a.PREM_SPCL_CD, a.TRT_CD, a.ETG_BASE_CLASS from pd.CNFG_ETG_SPCL a inner join ( select Max(PD.CNFG_ETG_SPCL.PREM_DESG_VER_NBR) as Max_PREM_DESG_VER_NBR from PD.CNFG_ETG_SPCL ) Query1 on a.PREM_DESG_VER_NBR = Query1.Max_PREM_DESG_VER_NBR";
 //PD_DB
+var map = await db_sql.LoadData<ETG_Mapped_PD>(connectionString: connectionStringPD, strSQL);
+columns = typeof(ETG_Mapped_PD).GetProperties().Select(p => p.Name).ToArray();
+await db_sql.BulkSave<ETG_Mapped_PD>(connectionString: connectionStringVC, "vct.ETG_Mapped_PD", map, columns, truncate: true);
 
 
+
+
+return;
 
 //strSQL = "SELECT * FROM  [IL_UCA].[dbo].[cs_product_map];";
 //var pm = await db_sql.LoadData<CS_Product_Map>(connectionString: connectionString, strSQL);
@@ -153,7 +164,6 @@ strSQL = "select a.PREM_SPCL_CD, a.TRT_CD, a.ETG_BASE_CLASS from pd.CNFG_ETG_SPC
 //await db_sql.BulkSave<CS_Product_Map>(connectionString: connectionStringVC, "vct.cs_product_map", pm, columns, truncate: true);
 
 
-return;
 
 strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Group_State];";
 var gs = await db_sql.LoadData<MHP_Group_State_Model>(connectionString: connectionString, strSQL);

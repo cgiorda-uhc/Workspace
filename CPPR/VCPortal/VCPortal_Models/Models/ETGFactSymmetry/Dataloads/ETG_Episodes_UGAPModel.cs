@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace VCPortal_Models.Models.ETGFactSymmetry.Dataloads;
-public class ETG_Episodes_UGAP
+public class ETG_Episodes_UGAPModel
 {
     public int INDV_CNT { get; set; }
     public int EPSD_CNT { get; set; }
