@@ -147,7 +147,7 @@ columns = typeof(PremiumNDBSpecPDModel).GetProperties().Select(p => p.Name).ToAr
 await db_sql.BulkSave<PremiumNDBSpecPDModel>(connectionString: connectionStringVC, "vct.PremiumNDBSpecPD", ndb, columns, truncate: true);
 
 //STEP 7
-strSQL = "select a.PREM_SPCL_CD, a.TRT_CD, a.ETG_BASE_CLASS from pd.CNFG_ETG_SPCL a inner join ( select Max(PD.CNFG_ETG_SPCL.PREM_DESG_VER_NBR) as Max_PREM_DESG_VER_NBR from PD.CNFG_ETG_SPCL ) Query1 on a.PREM_DESG_VER_NBR = Query1.Max_PREM_DESG_VER_NBR";
+strSQL = "select LTRIM(RTRIM(a.PREM_SPCL_CD)) as PREM_SPCL_CD, a.TRT_CD, a.ETG_BASE_CLASS from pd.CNFG_ETG_SPCL a inner join ( select Max(PD.CNFG_ETG_SPCL.PREM_DESG_VER_NBR) as Max_PREM_DESG_VER_NBR from PD.CNFG_ETG_SPCL ) Query1 on a.PREM_DESG_VER_NBR = Query1.Max_PREM_DESG_VER_NBR";
 //PD_DB
 var map = await db_sql.LoadData<ETG_Mapped_PD>(connectionString: connectionStringPD, strSQL);
 columns = typeof(ETG_Mapped_PD).GetProperties().Select(p => p.Name).ToArray();
