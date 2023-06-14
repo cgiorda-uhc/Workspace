@@ -25,6 +25,8 @@ public interface IRelationalDataAccess
 
     Task<object> ExecuteScalar<T>(string storedProcedure, T parameters, string connectionId = "VCT_DB");
 
+    Task<object> ExecuteScalar(string connectionString, string sql);
+
     Task<object> Execute(string connectionString, string sql);
 
     Task BulkSave(string connectionString, DataTable table, int bulkTimeout = 120, int batchSize = 5000, int notifyAfter = 120, bool includeMapping = true);

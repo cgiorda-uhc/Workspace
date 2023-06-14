@@ -56,6 +56,8 @@ using Microsoft.Extensions.Primitives;
 using VCPortal_Models.Parameters.MHP;
 using VCPortal_Models.Models.Shared;
 using VCPortal_Models.Models.ETGFactSymmetry.Dataloads;
+using Teradata.Client.Provider;
+
 
 //var adHoc = new AdHoc();
 //adHoc.ConnectionStringMSSQL = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
@@ -89,56 +91,75 @@ string strSQL;
 string[] columns;
 
 
-List<string> lst_lob = new List<string>();
-lst_lob.Add("COMMERCIAL");
-lst_lob.Add("MEDICARE");
-lst_lob.Add("MEDICARE");
 
+
+return;
+
+
+List<string> lst_lob = new List<string>();
+//lst_lob.Add("COMMERCIAL");
+lst_lob.Add("MEDICARE");
+//lst_lob.Add("MEDICAID");
 
 List<string> lst_yr = new List<string>();
-lst_yr.Add("2020");
+//lst_yr.Add("2020");
 lst_yr.Add("2021");
+
+
+List<string> lst_qrt = new List<string>();
+lst_qrt.Add("01-01~03-31");
+lst_qrt.Add("04-01~06-30");
+lst_qrt.Add("07-01~09-30");
+lst_qrt.Add("10-01~12-31");
 
 int lob_id;
 
-bool blTruncate = true;
+bool blTruncate = false;
 
-foreach(var y in lst_yr)
+
+foreach (var l in lst_lob)
 {
+    lob_id = (l == "COMMERCIAL" ? 1 : (l == "MEDICARE" ? 2 : 3));
 
-    Console.WriteLine(y);
-    
-    foreach(var l in lst_lob)
+
+    Console.WriteLine("LOB:" + lob_id + " - " + l);
+
+    foreach (var y in lst_yr)
     {
-        lob_id = (l == "COMMERCIAL" ? 1 : (l == "MEDICARE" ? 2 : 3));
 
 
-        Console.WriteLine(lob_id + " = " + l);
-        for (int i = 0; i < 4; i++)
+        foreach (var q in lst_qrt)
         {
+            var startdate = y + "-" + q.Split('~')[0];
+            var enddate  =  y + "-" + q.Split('~')[1];
+
+            Console.WriteLine("ETG Start Date: " + startdate);
+            Console.WriteLine("ETG End Date: " + enddate);
 
 
-            ////STEP 1
-            //strSQL = "select count(distinct es.INDV_SYS_ID) as INDV_CNT, count(distinct es.EPSD_NBR) as EPSD_CNT, sum(es.TOT_ALLW_AMT) as TOT_ALLW_AMT, en.SVRTY, en.ETG_BAS_CLSS_NBR, en.ETG_TX_IND, up.PROV_MPIN, sum(es.TOT_NP_ALLW_AMT) as TOT_NP_ALLW_AMT, CASE WHEN prod.PRDCT_LVL_1_NM = 'COMMERCIAL' THEN 1 ELSE CASE WHEN prod.PRDCT_LVL_1_NM = 'MEDICARE' THEN 2 ELSE 3 END END as LOB_ID, DES.ETG_STRT_YEAR_NBR from CLODM001.ETG_SUMMARY es inner join CLODM001.ETG_NUMBER en on es.ETG_SYS_ID = en.ETG_SYS_ID inner join CLODM001.UNIQUE_PROVIDER up on es.RESP_UNIQ_PROV_SYS_ID = up.UNIQ_PROV_SYS_ID inner join CLODM001.INDIVIDUAL ind on es.INDV_SYS_ID = ind.INDV_SYS_ID inner join CLODM001.CLNOPS_CUSTOMER_SEGMENT ccs on ind.CLNOPS_CUST_SEG_SYS_ID = ccs.CLNOPS_CUST_SEG_SYS_ID inner join CLODM001.PRODUCT prod on ccs.PRDCT_SYS_ID = prod.PRDCT_SYS_ID inner join CLODM001.DATE_ETG_START DES on es.ETG_STRT_DT_SYS_ID = DES.ETG_STRT_DT_SYS_ID inner join CLODM001.DATE_ETG_FINISH DEF on es.ETG_FIN_DT_SYS_ID = DEF.ETG_FIN_DT_SYS_ID where es.EP_TYP_NBR in (0, 1, 2, 3) and es.TOT_ALLW_AMT >= 35 and prod.PRDCT_LVL_1_NM = '" + l + "' and DES.ETG_STRT_DT >= '" + y + "-01-01' and DES.ETG_STRT_DT <= '" + y + "-12-31' group by en.SVRTY, en.ETG_BAS_CLSS_NBR, en.ETG_TX_IND, up.PROV_MPIN, CASE WHEN prod.PRDCT_LVL_1_NM = 'COMMERCIAL' THEN 1 ELSE CASE WHEN prod.PRDCT_LVL_1_NM = 'MEDICARE' THEN 2 ELSE 3 END END, DES.ETG_STRT_YEAR_NBR";
+            strSQL = "select es.EPSD_NBR, es.TOT_ALLW_AMT, en.SVRTY, en.ETG_BAS_CLSS_NBR, en.ETG_TX_IND, up.PROV_MPIN, es.TOT_NP_ALLW_AMT, " + lob_id + " as LOB_ID from CLODM001.ETG_SUMMARY es inner join CLODM001.ETG_NUMBER en on es.ETG_SYS_ID = en.ETG_SYS_ID inner join CLODM001.UNIQUE_PROVIDER up on es.RESP_UNIQ_PROV_SYS_ID = up.UNIQ_PROV_SYS_ID inner join CLODM001.INDIVIDUAL ind on es.INDV_SYS_ID = ind.INDV_SYS_ID inner join CLODM001.CLNOPS_CUSTOMER_SEGMENT ccs on ind.CLNOPS_CUST_SEG_SYS_ID = ccs.CLNOPS_CUST_SEG_SYS_ID inner join CLODM001.PRODUCT prod on ccs.PRDCT_SYS_ID = prod.PRDCT_SYS_ID inner join CLODM001.DATE_ETG_START DES on es.ETG_STRT_DT_SYS_ID = DES.ETG_STRT_DT_SYS_ID inner join CLODM001.DATE_ETG_FINISH DEF on es.ETG_FIN_DT_SYS_ID = DEF.ETG_FIN_DT_SYS_ID where es.EP_TYP_NBR in (0, 1, 2, 3)  and es.TOT_ALLW_AMT >= 35 and prod.PRDCT_LVL_1_NM = '" + l + "' and DES.ETG_STRT_DT >= '" + startdate + "' and DES.ETG_STRT_DT <= '" + enddate + "'";
 
+            Console.WriteLine("UGAP Pull Start Time: " + DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"));
 
-            strSQL = "select es.EPSD_NBR, es.TOT_ALLW_AMT, en.SVRTY, en.ETG_BAS_CLSS_NBR, en.ETG_TX_IND, up.PROV_MPIN, es.TOT_NP_ALLW_AMT, "+ lob_id + " as LOB_ID from CLODM001.ETG_SUMMARY es inner join CLODM001.ETG_NUMBER en on es.ETG_SYS_ID = en.ETG_SYS_ID inner join CLODM001.UNIQUE_PROVIDER up on es.RESP_UNIQ_PROV_SYS_ID = up.UNIQ_PROV_SYS_ID inner join CLODM001.INDIVIDUAL ind on es.INDV_SYS_ID = ind.INDV_SYS_ID inner join CLODM001.CLNOPS_CUSTOMER_SEGMENT ccs on ind.CLNOPS_CUST_SEG_SYS_ID = ccs.CLNOPS_CUST_SEG_SYS_ID inner join CLODM001.PRODUCT prod on ccs.PRDCT_SYS_ID = prod.PRDCT_SYS_ID inner join CLODM001.DATE_ETG_START DES on es.ETG_STRT_DT_SYS_ID = DES.ETG_STRT_DT_SYS_ID inner join CLODM001.DATE_ETG_FINISH DEF on es.ETG_FIN_DT_SYS_ID = DEF.ETG_FIN_DT_SYS_ID where es.EP_TYP_NBR = " + i +" and es.TOT_ALLW_AMT >= 35 and prod.PRDCT_LVL_1_NM = '" + l + "' and DES.ETG_STRT_DT >= '" + y + "-01-01' and DES.ETG_STRT_DT <= '" + y + "-12-31'";
+            var cnt = await db_td.ExecuteScalar(connectionString: connectionStringTD, "SELECT COUNT(*) FROM (" + strSQL + ") tmp;");
 
+            Console.WriteLine("Count: " + string.Format("{0:#,0}", cnt));
 
-
-            Console.WriteLine(i);
             var ugap = await db_td.LoadData<ETG_Episodes_UGAP>(connectionString: connectionStringTD, strSQL);
 
             columns = typeof(ETG_Episodes_UGAP).GetProperties().Select(p => p.Name).ToArray();
             await db_sql.BulkSave<ETG_Episodes_UGAP>(connectionString: connectionStringVC, "vct.ETG_Episodes_UGAP", ugap, columns, truncate: blTruncate);
-            blTruncate = false;
-        }
+            Console.WriteLine("UGAP Pull End Time: " + DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"));
 
+            blTruncate = false;
+            ugap = null;
+        }
 
     }
 
 }
 
+return;
 ////STEP 1
 //strSQL = "select count(distinct es.INDV_SYS_ID) as INDV_CNT, count(distinct es.EPSD_NBR) as EPSD_CNT, sum(es.TOT_ALLW_AMT) as TOT_ALLW_AMT, en.SVRTY, en.ETG_BAS_CLSS_NBR, en.ETG_TX_IND, up.PROV_MPIN, sum(es.TOT_NP_ALLW_AMT) as TOT_NP_ALLW_AMT, CASE WHEN prod.PRDCT_LVL_1_NM = 'COMMERCIAL' THEN 1 ELSE CASE WHEN prod.PRDCT_LVL_1_NM = 'MEDICARE' THEN 2 ELSE 3 END END as LOB_ID, DES.ETG_STRT_YEAR_NBR from CLODM001.ETG_SUMMARY es inner join CLODM001.ETG_NUMBER en on es.ETG_SYS_ID = en.ETG_SYS_ID inner join CLODM001.UNIQUE_PROVIDER up on es.RESP_UNIQ_PROV_SYS_ID = up.UNIQ_PROV_SYS_ID inner join CLODM001.INDIVIDUAL ind on es.INDV_SYS_ID = ind.INDV_SYS_ID inner join CLODM001.CLNOPS_CUSTOMER_SEGMENT ccs on ind.CLNOPS_CUST_SEG_SYS_ID = ccs.CLNOPS_CUST_SEG_SYS_ID inner join CLODM001.PRODUCT prod on ccs.PRDCT_SYS_ID = prod.PRDCT_SYS_ID inner join CLODM001.DATE_ETG_START DES on es.ETG_STRT_DT_SYS_ID = DES.ETG_STRT_DT_SYS_ID inner join CLODM001.DATE_ETG_FINISH DEF on es.ETG_FIN_DT_SYS_ID = DEF.ETG_FIN_DT_SYS_ID where es.EP_TYP_NBR in (0, 1, 2, 3) and es.TOT_ALLW_AMT >= 35 and prod.PRDCT_LVL_1_NM in ('COMMERCIAL', 'MEDICARE', 'MEDICAID') and DES.ETG_STRT_DT >= '2020-01-01' and DES.ETG_STRT_DT <= '2021-12-31' group by en.SVRTY, en.ETG_BAS_CLSS_NBR, en.ETG_TX_IND, up.PROV_MPIN, CASE WHEN prod.PRDCT_LVL_1_NM = 'COMMERCIAL' THEN 1 ELSE CASE WHEN prod.PRDCT_LVL_1_NM = 'MEDICARE' THEN 2 ELSE 3 END END, DES.ETG_STRT_YEAR_NBR";
 
@@ -202,6 +223,17 @@ strSQL = "select LTRIM(RTRIM(a.PREM_SPCL_CD)) as PREM_SPCL_CD, a.TRT_CD, a.ETG_B
 var map = await db_sql.LoadData<ETG_Mapped_PD>(connectionString: connectionStringPD, strSQL);
 columns = typeof(ETG_Mapped_PD).GetProperties().Select(p => p.Name).ToArray();
 await db_sql.BulkSave<ETG_Mapped_PD>(connectionString: connectionStringVC, "vct.ETG_Mapped_PD", map, columns, truncate: true);
+
+
+
+//STEP 52
+strSQL = "select ETG_D.ETG_BAS_CLSS_NBR, ETG_D.TRT_CD, Count(Distinct ETG_D.INDV_SYS_ID) as MEMBER_COUNT, Count(Distinct ETG_D.EPSD_NBR) as EPSD_COUNT, Sum(ETG_D.TOT_ALLW_AMT) as ETGD_TOT_ALLW_AMT, Sum(ETG_D.RX_ALLW_AMT) as ETGD_RX_ALLW_AMT, case when Sum(ETG_D.TOT_ALLW_AMT) = 0 then 0 else NVL(Sum(ETG_D.RX_ALLW_AMT), 0) / Sum(ETG_D.TOT_ALLW_AMT) end as RX_RATE from ( select ED1.INDV_SYS_ID, ED1.EPSD_NBR, EN1.ETG_BAS_CLSS_NBR, EN1.ETG_TX_IND as TRT_CD, Sum(ED1.QLTY_INCNT_RDUC_AMT) as TOT_ALLW_AMT, Query1.RX_ALLW_AMT from CLODM001.ETG_DETAIL ED1 inner join CLODM001.ETG_NUMBER EN1 on ED1.ETG_SYS_ID = EN1.ETG_SYS_ID inner join CLODM001.DATE_FST_SRVC DFS1 on ED1.FST_SRVC_DT_SYS_ID = DFS1.FST_SRVC_DT_SYS_ID inner join ( select C.INDV_SYS_ID from ( select B.INDV_SYS_ID, Min(B.PHRM_BEN_FLG) as MIN_PHARMACY_FLG, Sum(B.NUM_DAY) as NUM_DAY from ( select a.INDV_SYS_ID, ( case when a.END_DT > '2022-06-30' then Cast('2022-06-30' as Date) else a.END_DT end - case when a.EFF_DT < '2021-07-01' then Cast('2021-07-01' as Date) else a.EFF_DT end) + 1 as NUM_DAY, a.PHRM_BEN_FLG from CLODM001.MEMBER_DETAIL_INPUT a where a.EFF_DT <= '2021-07-01' and a.END_DT >= '2022-06-30' ) as B group by B.INDV_SYS_ID ) C where C.MIN_PHARMACY_FLG = 'Y' and C.NUM_DAY >= 210 ) as MT on ED1.INDV_SYS_ID = MT.INDV_SYS_ID left join ( select ED2.INDV_SYS_ID, ED2.EPSD_NBR, Sum(ED2.QLTY_INCNT_RDUC_AMT) as RX_ALLW_AMT from CLODM001.ETG_DETAIL ED2 inner join CLODM001.DATE_FST_SRVC DFS2 on ED2.FST_SRVC_DT_SYS_ID = DFS2.FST_SRVC_DT_SYS_ID inner join CLODM001.HP_SERVICE_TYPE_CODE HSTC2 on ED2.HLTH_PLN_SRVC_TYP_CD_SYS_ID = HSTC2.HLTH_PLN_SRVC_TYP_CD_SYS_ID where DFS2.FST_SRVC_DT Between '2021-07-01' and '2022-06-30' and ED2.QLTY_INCNT_RDUC_AMT > 0 and HSTC2.HLTH_PLN_SRVC_TYP_LVL_1_NM = 'PHARMACY' group by ED2.INDV_SYS_ID, ED2.EPSD_NBR ) Query1 on ED1.INDV_SYS_ID = Query1.INDV_SYS_ID and ED1.EPSD_NBR = Query1.EPSD_NBR where ED1.EPSD_NBR not in (0, -1) and DFS1.FST_SRVC_DT Between '2021-07-01' and '2022-06-30' and ED1.QLTY_INCNT_RDUC_AMT > 0 group by ED1.INDV_SYS_ID, ED1.EPSD_NBR, EN1.ETG_BAS_CLSS_NBR, EN1.ETG_TX_IND, Query1.RX_ALLW_AMT ) as ETG_D group by ETG_D.ETG_BAS_CLSS_NBR, ETG_D.TRT_CD";
+
+var nrx = await db_td.LoadData<NRX_Cost_UGAPModel>(connectionString: connectionStringTD, strSQL);
+
+columns = typeof(NRX_Cost_UGAPModel).GetProperties().Select(p => p.Name).ToArray();
+await db_sql.BulkSave<NRX_Cost_UGAPModel>(connectionString: connectionStringVC, "vct.NRX_Cost_UGAP", nrx, columns, truncate: true);
+
 
 
 

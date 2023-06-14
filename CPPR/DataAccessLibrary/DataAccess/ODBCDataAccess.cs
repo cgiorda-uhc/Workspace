@@ -113,4 +113,9 @@ public class ODBCDataAccess : IRelationalDataAccess
     {
         throw new NotImplementedException();
     }
+
+    public Task<object> ExecuteScalar(string connectionString, string sql)
+    {
+        throw new NotImplementedException();
+    }
 }

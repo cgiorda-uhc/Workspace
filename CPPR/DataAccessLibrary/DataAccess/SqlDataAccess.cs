@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Reflection;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using MongoDB.Driver.Core.Configuration;
+using Teradata.Client.Provider;
 
 namespace DataAccessLibrary.DataAccess;
 public class SqlDataAccess : IRelationalDataAccess
@@ -134,6 +135,17 @@ public class SqlDataAccess : IRelationalDataAccess
         return result;
 
     }
+
+
+    public async Task<object> ExecuteScalar(string connectionString, string sql)
+    {
+        using IDbConnection connection = new SqlConnection(connectionString);
+
+        var result = await connection.ExecuteScalarAsync(sql, commandType: CommandType.Text);
+        return result;
+
+    }
+
 
     public async Task<object> Execute(string connectionString, string sql)
     {

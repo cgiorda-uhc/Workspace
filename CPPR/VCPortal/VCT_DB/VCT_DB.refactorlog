@@ -77,4 +77,18 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="EPSD_NBR " />
   </Operation>
+  <Operation Name="Rename Refactor" Key="d82910d2-3892-4cc5-b39b-f1ac468071ad" ChangeDateTime="06/13/2023 21:37:54">
+    <Property Name="ElementName" Value="[vct].[ETG_Episodes_UGAP].[EPSD_NBR ]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[vct].[ETG_Episodes_UGAP]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="EPSD_NBR" />
+  </Operation>
+  <Operation Name="Rename Refactor" Key="dff89389-a723-4b5b-b62d-836c4c29ed75" ChangeDateTime="06/14/2023 15:19:05">
+    <Property Name="ElementName" Value="[dbo].[NRX_Cost_UGAP].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[NRX_Cost_UGAP]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ETG_BAS_CLSS_NBR" />
+  </Operation>
 </Operations>

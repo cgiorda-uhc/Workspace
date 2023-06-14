@@ -45,7 +45,7 @@ public class TeraDataAccess : IRelationalDataAccess
         using (IDbConnection connection = new TdConnection(connectionString))
         {
 
-            var cmd = new CommandDefinition(sql, commandTimeout: 120);
+            var cmd = new CommandDefinition(sql, commandTimeout: 20000);
             var result = await connection.QueryAsync<T>(cmd);
             return result;
 
@@ -122,9 +122,25 @@ public class TeraDataAccess : IRelationalDataAccess
 
     }
 
+    public async Task<object> ExecuteScalar(string connectionString, string sql)
+    {
+        using IDbConnection connection = new TdConnection(connectionString);
+
+        var result = await connection.ExecuteScalarAsync(sql, commandType: CommandType.Text);
+        return result;
+
+    }
+
+
+
+
     public async Task<object> Execute(string connectionString, string sql)
     {
-        throw new NotImplementedException();
+
+        using IDbConnection connection = new TdConnection(connectionString);
+
+        var result = await connection.ExecuteAsync(sql, commandType: CommandType.Text);
+        return result;
 
     }
 
