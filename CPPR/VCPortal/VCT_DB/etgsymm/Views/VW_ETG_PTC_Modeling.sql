@@ -29,7 +29,7 @@ CASE WHEN f.[Has_NRX] = 1 THEN 'Y' ELSE  'N'END as  [NRx],
 	
 FROM  etgsymm.ETG_Fact_Symmetry AS f 
 
-INNER JOIN (SELECT ETG_Base_Class,Premium_Specialty_id ,'Commercial'as title  FROM etgsymm.ETG_Fact_Symmetry  UNION SELECT ETG_Base_Class,Premium_Specialty_id ,'Medicare'as title  FROM etgsymm.ETG_Fact_Symmetry UNION SELECT ETG_Base_Class,Premium_Specialty_id ,'Medicaid'as title  FROM etgsymm.ETG_Fact_Symmetry ) AS lob ON f.ETG_Base_Class = lob.ETG_Base_Class AND   f.Premium_Specialty_id = lob.Premium_Specialty_id 
+INNER JOIN (SELECT ETG_Base_Class,Premium_Specialty_id ,'Commercial'as title  FROM etgsymm.ETG_Fact_Symmetry  UNION SELECT ETG_Base_Class,Premium_Specialty_id ,'Medicaid'as title  FROM etgsymm.ETG_Fact_Symmetry ) AS lob ON f.ETG_Base_Class = lob.ETG_Base_Class AND   f.Premium_Specialty_id = lob.Premium_Specialty_id 
 
 LEFT OUTER JOIN vct.ETG_Dim_Master AS m ON f.ETG_Base_Class = m.ETG_Base_Class 
 LEFT OUTER JOIN vct.ETG_Dim_Premium_Spec_Master AS p ON f.Premium_Specialty_id = p.Premium_Specialty_id

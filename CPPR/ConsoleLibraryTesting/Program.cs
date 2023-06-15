@@ -93,16 +93,13 @@ string[] columns;
 
 
 
-return;
-
-
 List<string> lst_lob = new List<string>();
-//lst_lob.Add("COMMERCIAL");
-lst_lob.Add("MEDICARE");
+lst_lob.Add("COMMERCIAL");
+//lst_lob.Add("MEDICARE");
 //lst_lob.Add("MEDICAID");
 
 List<string> lst_yr = new List<string>();
-//lst_yr.Add("2020");
+lst_yr.Add("2020");
 lst_yr.Add("2021");
 
 

@@ -19,3 +19,4 @@ FROM  etgsymm.ETG_Fact_Symmetry AS f
  AND  f.Has_NRX = 1
  AND  f.ETG_Base_Class <> 000000
 AND f.Premium_Specialty_Id IS NOT NULL
+AND f.[PC_Treatment_Indicator]  <> 'All'
