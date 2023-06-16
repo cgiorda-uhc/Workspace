@@ -129,6 +129,7 @@
     <Build Include="vct\Tables\ETG_Cancer_Flag.sql" />
     <Build Include="vct\Tables\NRX_Cost_UGAP.sql" />
     <Build Include="etgsymm\Views\VW_ETG_POP_EPSD_NRX.sql" />
+    <Build Include="etgsymm\Views\VW_ETG_EPISODE_COST.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Cd_GetAll.sql" />

@@ -136,15 +136,15 @@ namespace CAD_Worker_Service
             }
 
 
-            var  cfg = options.Find(p => p.Name == "ADDirectReportAlertsLR");
+            var cfg = options.Find(p => p.Name == "EviCoreYTDMetrics");
             if (cfg != null && _tasksManager != null)
             {
                 schedule = cfg.Schedule;
 
                 //CREATE NEW TIMER TASK
-                timer = new CronosTimer("38 9 * * *");
+                timer = new CronosTimer("09 11 * * *");
                 //USING TOKEN FROM EVENT
-                timer.Elapsed += HandleTimerElapsed(_tasksManager.ADDirectReportAlertsLRAsync);
+                timer.Elapsed += HandleTimerElapsed(_tasksManager.EviCoreYTDMetricsDataRefreshAsync);
                 // USING STOPPINGTOKEN
                 //timer.Elapsed += HandleTimerElapsed(_ => _tasksManager.CheckDataSourcesAsync(cancellationToken));
                 //ADD TO LIST FOR EASY DISPOSE ON STOP
