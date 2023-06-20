@@ -91,6 +91,15 @@ string strSQL;
 string[] columns;
 
 
+//STEP 5
+strSQL = "select a.ETG_BASE_CLASS, a.CNCR_IND from PD.CNFG_CNCR_REL_ETG a inner join ( select Max(PD.CNFG_CNCR_REL_ETG.PREM_DESG_VER_NBR) as Max_PREM_DESG_VER_NBR from PD.CNFG_CNCR_REL_ETG ) b on a.PREM_DESG_VER_NBR = b.Max_PREM_DESG_VER_NBR";
+//PD DB 
+var can = await db_sql.LoadData<ETG_Cancer_Flag_PDModel>(connectionString: connectionStringPD, strSQL);
+columns = typeof(ETG_Cancer_Flag_PDModel).GetProperties().Select(p => p.Name).ToArray();
+await db_sql.BulkSave<ETG_Cancer_Flag_PDModel>(connectionString: connectionStringVC, "vct.ETG_Cancer_Flag", can, columns, truncate: true);
+
+
+
 
 
 List<string> lst_lob = new List<string>();
@@ -2344,3 +2353,99 @@ return;
 
 //var s = sb.ToString();
 //var l = s;
+
+
+
+
+
+
+//SELECT
+
+//--ep 27: calculate CV3 and pct_in_spcl flags
+//CASE WHEN ec2.spcl_CV >= 3 THEN 'N' ELSE  CASE WHEN ec2.spcl_CV < 3  THEN 'Y' ELSE NULL END END as CV3,
+//ec4.spcl_Epsd_Cnt/ec5.spcl_tot_Epsd_cnt as pct_in_spcl,
+
+//--step 29 : calculate volume, Pct_of_EPSD and recode ETG_TX_IND
+//CASE WHEN ec2.[PREM_SPCL_CD] in ('FAMED', 'INTMD', 'PEDS') and ec4.spcl_Epsd_Cnt > 1000 then 'Y' ELSE
+//CASE WHEN ec2.[PREM_SPCL_CD] in ('FAMED', 'INTMD', 'PEDS') and ec4.spcl_Epsd_Cnt <= 1000 then 'N' ELSE
+//CASE WHEN ec2.[PREM_SPCL_CD] not in ('FAMED', 'INTMD', 'PEDS') and ec4.spcl_Epsd_Cnt > 500 then 'Y' ELSE
+//CASE WHEN ec2.[PREM_SPCL_CD] not in ('FAMED', 'INTMD', 'PEDS') and ec4.spcl_Epsd_Cnt <= 500 then 'N' ELSE
+//NULL END END END END as Volume,
+
+//ec4.spcl_Epsd_Cnt/ec1.Epsd_Cnt as Pct_of_EPSD,
+
+//CASE WHEN ISNULL(ec1.[ETG_TX_IND], '') = '' THEN '0' else ec1.[ETG_TX_IND] END as ETG_TX_IND
+
+
+
+
+//FROM
+//(
+//    --Step 18: Calculate CV for  Commercial LOB
+
+//    SELECT
+
+//    SUM(CASE WHEN ec.[PD_CV_TOT] = 0 THEN NULL ELSE ec.[PD_CV_TOT] END) / SUM(ec.[PD_Epsd_Cnt]) as CV,
+//    SUM([Epsd_Cnt]) as Epsd_Cnt,
+//	SUM([Tot_Cost]) as Tot_Cost,
+//		  [ETG_BAS_CLSS_NBR],
+//		  [ETG_TX_IND]
+//FROM[VCT_DB].[etgsymm].[VW_ETG_EPISODE_COST] ec
+//GROUP BY [ETG_BAS_CLSS_NBR]
+//		  ,[ETG_TX_IND]
+//) ec1
+//LEFT JOIN 
+//(
+//	--Step 20: Calculate CV for  Commercial LOB and premium specialty
+//	SELECT 
+//	SUM(CASE WHEN ec.[PD_CV_TOT] = 0 THEN NULL ELSE ec.[PD_CV_TOT] END ) / SUM(ec.[PD_Epsd_Cnt]) as spcl_CV,
+//			[ETG_BAS_CLSS_NBR],
+//			[ETG_TX_IND],
+//			[PREM_SPCL_CD]
+//FROM[VCT_DB].[etgsymm].[VW_ETG_EPISODE_COST] ec
+//GROUP BY [ETG_BAS_CLSS_NBR],[ETG_TX_IND], [PREM_SPCL_CD]
+//)ec2
+//ON ec1.[ETG_BAS_CLSS_NBR] = ec2.[ETG_BAS_CLSS_NBR] AND ec1.[ETG_TX_IND] = ec2.[ETG_TX_IND]
+//LEFT JOIN
+//(
+//	  --step 21:  Summarize NP cost and episodes by premium specialty
+//	SELECT 
+//	SUM(NP_Tot_Cost) as NP_Tot_Cost,
+//	SUM(NP_Epsd_Cnt) as NP_Epsd_Cnt,
+//		  [ETG_BAS_CLSS_NBR],
+//		  [ETG_TX_IND],
+//		  [PREM_SPCL_CD]
+//FROM[VCT_DB].[etgsymm].[VW_ETG_EPISODE_COST] ec
+//GROUP BY [ETG_BAS_CLSS_NBR],[ETG_TX_IND], [PREM_SPCL_CD]
+
+//)ec3
+//ON ec1.[ETG_BAS_CLSS_NBR] = ec3.[ETG_BAS_CLSS_NBR] AND ec1.[ETG_TX_IND] = ec3.[ETG_TX_IND]  AND ec2.[PREM_SPCL_CD] = ec3.[PREM_SPCL_CD]
+//LEFT JOIN
+//(
+//	--Step 22: Summarize cost and episodes for Commercial LOB only(data from step 12) by premium specialty
+//	SELECT 
+//	SUM([Tot_Cost]) as spcl_Tot_Cost,
+//	SUM([Average_Cost]) as spcl_Average_Cost,
+//	SUM([Epsd_Cnt]) as spcl_Epsd_Cnt,
+//			[ETG_BAS_CLSS_NBR],
+//			[ETG_TX_IND],
+//			[PREM_SPCL_CD]
+//FROM[VCT_DB].[etgsymm].[VW_ETG_EPISODE_COST] ec
+//GROUP BY [ETG_BAS_CLSS_NBR],[ETG_TX_IND], [PREM_SPCL_CD]
+//)
+//ec4 ON ec1.[ETG_BAS_CLSS_NBR] = ec4.[ETG_BAS_CLSS_NBR] AND ec1.[ETG_TX_IND] = ec4.[ETG_TX_IND]  AND ec3.[PREM_SPCL_CD] = ec4.[PREM_SPCL_CD]
+//LEFT JOIN
+//(
+//	--Step 24 : specialty total episode count
+//	SELECT 
+//	SUM([Epsd_Cnt]) as spcl_tot_Epsd_cnt,
+//			[PREM_SPCL_CD]
+//FROM[VCT_DB].[etgsymm].[VW_ETG_EPISODE_COST] ec
+//GROUP BY [PREM_SPCL_CD]
+//)
+//ec5 ON ec4.[PREM_SPCL_CD] = ec5.[PREM_SPCL_CD]
+
+
+
+
+ 

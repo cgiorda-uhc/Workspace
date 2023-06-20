@@ -14,3 +14,14 @@
 
                                CREATE INDEX indx_PrimarySpecWithCode_NDB_SPCL_CD ON [vct].[PrimarySpecWithCode] (NDB_SPCL_CD);
             GO;
+
+            CREATE INDEX indx_ETG_Mapped_PD_PREM_SPCL_CD ON [vct].[ETG_Mapped_PD] (PREM_SPCL_CD);
+            GO;
+
+            
+            CREATE INDEX indx_ETG_Mapped_PD_TRT_CD ON [vct].[ETG_Mapped_PD] (TRT_CD);
+            GO;
+
+            
+            CREATE INDEX indx_ETG_Mapped_PD_ETG_BASE_CLASS ON [vct].[ETG_Mapped_PD] (ETG_BASE_CLASS);
+            GO;

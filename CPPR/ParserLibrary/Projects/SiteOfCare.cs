@@ -198,6 +198,67 @@ public class SiteOfCare : ISiteOfCare
     private string _destination;
     private int _month;
     private int _year;
+
+    //private List<string> getNewFiles(List<FileExcelConfig> fileList, FileDateModel fdate)
+    //{
+    //    List<string> filesFound = new List<string>();
+    //    int month, year;
+    //    foreach (var file in fileList)
+    //    {
+
+    //        Log.Information($"Searching for " + file.FilePath + "\\" + file.FileName + "...");
+    //        var list = Directory.GetFiles(file.FilePath, file.FileName, SearchOption.TopDirectoryOnly);
+    //        foreach (var f in list)
+    //        {
+    //            //IF DATE THEN ADD
+    //            var fileName = Path.GetFileName(f).Replace(".xlsx", "").Replace(".xls", "");
+    //            var fileParsed = fileName.Split('_');
+    //            month = int.TryParse(fileParsed[3], out month) ? month : 0;
+    //            year = int.TryParse(fileParsed[2], out year) ? year : 0;
+
+    //            if ((fdate.file_month < month && fdate.file_year == year) || fdate.file_year < year)
+    //            {
+
+    //                Log.Information($"Match found in " + fileName + "..");
+    //                filesFound.Add(f);
+    //                _month = month;
+    //                _year = year;
+    //                _destination = file.Destination;
+    //            }
+
+    //        }
+
+    //        if (!string.IsNullOrEmpty(file.ZippedFile))
+    //        {
+    //            Log.Information($"Searching for " + file.FilePath + "\\" + file.ZippedFile + "...");
+    //            list = Directory.GetFiles(file.FilePath, file.ZippedFile, SearchOption.TopDirectoryOnly);
+    //            foreach (var f in list)
+    //            {
+    //                var fileName = Path.GetFileName(f).Replace(".zip", "");
+    //                var fileParsed = fileName.Split('_');
+
+    //                var format = (fileParsed[2].Length == 3 ? "MMM" : "MMMM"); //Jan vs January
+    //                month = DateTime.ParseExact(fileParsed[2].Trim(), format, CultureInfo.CurrentCulture).Month;
+    //                year = int.TryParse(fileParsed[3], out year) ? year : 0;
+
+    //                if ((fdate.file_month < month && fdate.file_year == year) || fdate.file_year < year)
+    //                {
+    //                    Log.Information($"Match found in " + fileName + "..");
+    //                    filesFound.Add(f);
+    //                    _month = month;
+    //                    _year = year;
+    //                    _destination = file.Destination;
+    //                }
+    //            }
+    //        }
+
+    //    }
+    //    return filesFound;
+    //}
+
+
+
+
     private List<string> getNewFiles(List<FileExcelConfig> fileList, FileDateModel fdate)
     {
         List<string> filesFound = new List<string>();
@@ -207,6 +268,31 @@ public class SiteOfCare : ISiteOfCare
 
             Log.Information($"Searching for " + file.FilePath + "\\" + file.FileName + "...");
             var list = Directory.GetFiles(file.FilePath, file.FileName, SearchOption.TopDirectoryOnly);
+            foreach (var f in list)
+            {
+                //IF DATE THEN ADD
+                var fileName = Path.GetFileName(f).Replace(".xlsx", "").Replace(".xls", "");
+                var fileParsed = fileName.Split('_');
+                month = int.TryParse(fileParsed[2], out month) ? month : 0;
+                year = int.TryParse(fileParsed[1], out year) ? year : 0;
+
+                if ((fdate.file_month < month && fdate.file_year == year) || fdate.file_year < year)
+                {
+
+                    Log.Information($"Match found in " + fileName + "..");
+                    filesFound.Add(f);
+                    _month = month;
+                    _year = year;
+                    _destination = file.Destination;
+                }
+
+            }
+
+
+
+
+            Log.Information($"Searching for " + file.FilePath + "\\" + file.FileName + "...");
+             list = Directory.GetFiles(file.FilePath, file.FileName, SearchOption.TopDirectoryOnly);
             if (!string.IsNullOrEmpty(file.ZippedFile))
             {
                 Log.Information($"Searching for " + file.FilePath + "\\" + file.ZippedFile + "...");

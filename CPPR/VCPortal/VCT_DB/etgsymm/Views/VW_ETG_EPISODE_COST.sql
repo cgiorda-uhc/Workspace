@@ -1,5 +1,6 @@
 ﻿CREATE VIEW [etgsymm].[VW_ETG_EPISODE_COST]
 	AS SELECT 
+pdm.PREM_SPCL_CD,
 ec1.ETG_BAS_CLSS_NBR,  
 ec1.[ETG_TX_IND], 
 ec1.NP_Tot_Cost,
@@ -8,8 +9,7 @@ ec2.Tot_Cost,
 ec2.Average_Cost,
 ec2.Epsd_Cnt,
 ec3.PD_Epsd_Cnt,
-ec3.PD_CV_TOT,
-pdm.PREM_SPCL_CD
+ec3.PD_CV_TOT
 FROM --step 11: Summarize NP cost and episodes (all LOB’s)
 (
        

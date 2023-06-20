@@ -1,0 +1,12 @@
+﻿CREATE TABLE [vct].[UGAPCFG_ETG_TI_RX_NRX_MCD](
+	[SPECIALTY] [varchar](6) NULL,
+	[BASEETG] [int] NULL,
+	[TREATMENT_IND] [smallint] NULL,
+	[ETG_DESC] [varchar](74) NULL,
+	[IF_ALWAYS] [char](1) NULL,
+	[IF_ATTRIB] [char](1) NULL,
+	[RISK_MODEL] [varchar](8) NULL,
+	[RX] [char](1) NULL,
+	[NRX] [char](1) NULL,
+	[BUCKET] [varchar](5) NULL
+) ON [PRIMARY]

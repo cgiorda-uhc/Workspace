@@ -130,6 +130,9 @@
     <Build Include="vct\Tables\NRX_Cost_UGAP.sql" />
     <Build Include="etgsymm\Views\VW_ETG_POP_EPSD_NRX.sql" />
     <Build Include="etgsymm\Views\VW_ETG_EPISODE_COST.sql" />
+    <Build Include="vct\Tables\UGAPCFG_ETG_TI_RX_NRX_COM.sql" />
+    <Build Include="vct\Tables\UGAPCFG_ETG_TI_RX_NRX_MCD.sql" />
+    <Build Include="vct\Tables\UGAPCFG_ETG_TI_RX_NRX_MCR.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Cd_GetAll.sql" />

@@ -7,6 +7,8 @@ using IdentityModel.OidcClient;
 using ProjectManagerLibrary.Configuration.HeaderInterfaces;
 using DataAccessLibrary.DataAccess;
 using ProjectManagerLibrary.Configuration.RoleInterfaces;
+using DocumentFormat.OpenXml.Math;
+using DocumentFormat.OpenXml.Office2013.Drawing.ChartStyle;
 
 namespace CAD_Worker_Service
 {
@@ -136,15 +138,15 @@ namespace CAD_Worker_Service
             }
 
 
-            var cfg = options.Find(p => p.Name == "EviCoreYTDMetrics");
+            var cfg = options.Find(p => p.Name == "MHPUniverse");
             if (cfg != null && _tasksManager != null)
             {
                 schedule = cfg.Schedule;
 
                 //CREATE NEW TIMER TASK
-                timer = new CronosTimer("09 11 * * *");
+                timer = new CronosTimer("09 12 * * *");
                 //USING TOKEN FROM EVENT
-                timer.Elapsed += HandleTimerElapsed(_tasksManager.EviCoreYTDMetricsDataRefreshAsync);
+                timer.Elapsed += HandleTimerElapsed(_tasksManager.MHPUniverseDataRefreshAsync);
                 // USING STOPPINGTOKEN
                 //timer.Elapsed += HandleTimerElapsed(_ => _tasksManager.CheckDataSourcesAsync(cancellationToken));
                 //ADD TO LIST FOR EASY DISPOSE ON STOP

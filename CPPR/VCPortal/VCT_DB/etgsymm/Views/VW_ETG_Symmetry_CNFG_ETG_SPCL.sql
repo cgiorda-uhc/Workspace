@@ -20,7 +20,6 @@ FROM  etgsymm.ETG_Fact_Symmetry AS f
 LEFT OUTER JOIN vct.ETG_Dim_Premium_Spec_Master AS p ON f.Premium_Specialty_id = p.Premium_Specialty_id
  WHERE 
  f.PD_Version = (SELECT max(PD_Version) FROM etgsymm.ETG_Fact_Symmetry)
- AND  f.[PC_Treatment_Indicator] = '0'
  AND  f.ETG_Base_Class <> 000000
 AND f.Premium_Specialty_Id IS NOT NULL
 AND f.EC_Mapping  = 'Mapped'
