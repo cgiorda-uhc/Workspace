@@ -133,6 +133,7 @@
     <Build Include="vct\Tables\UGAPCFG_ETG_TI_RX_NRX_COM.sql" />
     <Build Include="vct\Tables\UGAPCFG_ETG_TI_RX_NRX_MCD.sql" />
     <Build Include="vct\Tables\UGAPCFG_ETG_TI_RX_NRX_MCR.sql" />
+    <Build Include="vct\Tables\ETG_TI_Mapping.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Cd_GetAll.sql" />

@@ -151,7 +151,7 @@ public class SqlDataAccess : IRelationalDataAccess
     {
         using IDbConnection connection = new SqlConnection(connectionString);
 
-        var result = await connection.ExecuteAsync(sql, commandType: CommandType.Text);
+        var result = await connection.ExecuteAsync(sql, commandType: CommandType.Text, commandTimeout: 50000);
         return result;
 
     }

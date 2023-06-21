@@ -59,23 +59,23 @@ using VCPortal_Models.Models.ETGFactSymmetry.Dataloads;
 using Teradata.Client.Provider;
 
 
-//var adHoc = new AdHoc();
-//adHoc.ConnectionStringMSSQL = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
-//adHoc.TableMHP = "stg.MHP_Yearly_Universes";
-//adHoc.ConnectionStringTD = "Data Source=UDWPROD;User ID=cgiorda;Password=BooWooDooFoo2023!!;Authentication Mechanism=LDAP;Session Mode=TERADATA;Session Character Set=ASCII;Persist Security Info=true;Connection Timeout=99999;";
-//adHoc.ConnectionStringVCPMSSQL  = "data source=VCT_DB;server=localhost;Persist Security Info=True;database=VCT_DB;Integrated Security=SSPI;connect timeout=300000;";
-//adHoc.TableUGAP = "stg.MHP_Yearly_Universes_UGAP";
-//adHoc.Limit = 3000;
-
-//List<string> files_loaded = new List<string>();
-//files_loaded.Add("United PCP- Rad & Card_April_2023.xlsx");
-//files_loaded.Add("Americhoice April -Radiology Cardiology Universe 2023.xlsx");
-//files_loaded.Add("Oxford  April -Radiology Cardiology Universe 2023.xlsx");
-//await adHoc.cleanupMemberDataAsync(files_loaded);
-
-//return;
+var adHoc = new AdHoc();
+adHoc.ConnectionStringMSSQL = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
+adHoc.TableMHP = "stg.MHP_Yearly_Universes";
+adHoc.ConnectionStringTD = "Data Source=UDWPROD;User ID=cgiorda;Password=BooWooDooFoo2023!!;Authentication Mechanism=LDAP;Session Mode=TERADATA;Session Character Set=ASCII;Persist Security Info=true;Connection Timeout=99999;";
+adHoc.ConnectionStringVCPMSSQL = "data source=VCT_DB;server=localhost;Persist Security Info=True;database=VCT_DB;Integrated Security=SSPI;connect timeout=300000;";
+adHoc.TableUGAP = "stg.MHP_Yearly_Universes_UGAP";
+adHoc.Limit = 3000;
 
 List<string> files_loaded = new List<string>();
+files_loaded.Add("United PCP- Rad & Card_May_2023.xlsx");
+files_loaded.Add("Oxford May -Radiology Cardiology Universe 2023.xlsx");
+files_loaded.Add("Americhoice May -Radiology Cardiology Universe 2023.xlsx");
+await adHoc.cleanupMemberDataAsync(files_loaded);
+
+return;
+
+files_loaded = new List<string>();
 files_loaded.Add("United PCP- Rad & Card_April_2023.xlsx");
 files_loaded.Add("Americhoice April -Radiology Cardiology Universe 2023.xlsx");
 files_loaded.Add("Oxford  April -Radiology Cardiology Universe 2023.xlsx");
@@ -89,15 +89,6 @@ IRelationalDataAccess db_sql = new SqlDataAccess();
 IRelationalDataAccess db_td = new TeraDataAccess();
 string strSQL;
 string[] columns;
-
-
-//STEP 5
-strSQL = "select a.ETG_BASE_CLASS, a.CNCR_IND from PD.CNFG_CNCR_REL_ETG a inner join ( select Max(PD.CNFG_CNCR_REL_ETG.PREM_DESG_VER_NBR) as Max_PREM_DESG_VER_NBR from PD.CNFG_CNCR_REL_ETG ) b on a.PREM_DESG_VER_NBR = b.Max_PREM_DESG_VER_NBR";
-//PD DB 
-var can = await db_sql.LoadData<ETG_Cancer_Flag_PDModel>(connectionString: connectionStringPD, strSQL);
-columns = typeof(ETG_Cancer_Flag_PDModel).GetProperties().Select(p => p.Name).ToArray();
-await db_sql.BulkSave<ETG_Cancer_Flag_PDModel>(connectionString: connectionStringVC, "vct.ETG_Cancer_Flag", can, columns, truncate: true);
-
 
 
 
