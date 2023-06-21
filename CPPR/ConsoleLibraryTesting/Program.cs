@@ -94,14 +94,6 @@ string[] columns;
 
 
 
- strSQL = "Select distinct ETG_BAS_CLSS_NBR, MPC_NBR from CLODM001.ETG_NUMBER";
-
-var u = await db_td.LoadData<MPCNBR_UGAPModel>(connectionString: connectionStringTD, strSQL);
-
-columns = typeof(MPCNBR_UGAPModel).GetProperties().Select(p => p.Name).ToArray();
-await db_sql.BulkSave<MPCNBR_UGAPModel>(connectionString: connectionStringVC, "vct.ETG_MPCNBR_UGAP", u, columns, truncate: true);
-
-
 
 
 List<string> lst_lob = new List<string>();
@@ -231,6 +223,17 @@ strSQL = "select LTRIM(RTRIM(a.PREM_SPCL_CD)) as PREM_SPCL_CD, a.TRT_CD, a.ETG_B
 var map = await db_sql.LoadData<ETG_Mapped_PD>(connectionString: connectionStringPD, strSQL);
 columns = typeof(ETG_Mapped_PD).GetProperties().Select(p => p.Name).ToArray();
 await db_sql.BulkSave<ETG_Mapped_PD>(connectionString: connectionStringVC, "vct.ETG_Mapped_PD", map, columns, truncate: true);
+
+
+
+
+//UGAP TO VC DB FORM ETG UGAP CFG REPORT
+strSQL = "Select distinct ETG_BAS_CLSS_NBR, MPC_NBR from CLODM001.ETG_NUMBER";
+
+var u = await db_td.LoadData<MPCNBR_UGAPModel>(connectionString: connectionStringTD, strSQL);
+
+columns = typeof(MPCNBR_UGAPModel).GetProperties().Select(p => p.Name).ToArray();
+await db_sql.BulkSave<MPCNBR_UGAPModel>(connectionString: connectionStringVC, "vct.ETG_MPCNBR_UGAP", u, columns, truncate: true);
 
 
 
