@@ -260,6 +260,31 @@ public static class ETGFactSymmetry_Calls
         });
 
 
+        app.MapGet(pattern: "/etgugapcgf", async (IETGFactSymmetry_Repo repo, CancellationToken token) =>
+        {
+            try
+            {
+                _log.Information("Requesting API GetETG_UGAP_CFG_Model()...");
+                ////RETURN HTTP 200
+                ///
+                var results = await repo.GetETG_UGAP_CFG_Model(token);
+
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetETG_UGAP_CFG_Model() 404, not found");
+                return Results.NotFound(); //404
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, "API GetETG_UGAP_CFG_Model threw an error");
+                //RETURN ERROR
+                return Results.Problem(ex.Message);
+
+            }
+        });
 
 
         app.MapPost(pattern: "/etginsert", async (List<ETGFactSymmetry_Tracking_UpdateDto> etg, IETGFactSymmetry_Repo repo) =>

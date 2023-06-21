@@ -134,6 +134,9 @@
     <Build Include="vct\Tables\UGAPCFG_ETG_TI_RX_NRX_MCD.sql" />
     <Build Include="vct\Tables\UGAPCFG_ETG_TI_RX_NRX_MCR.sql" />
     <Build Include="vct\Tables\ETG_TI_Mapping.sql" />
+    <Build Include="vct\Tables\ETG_MPCNBR_UGAP.sql" />
+    <Build Include="etgsymm\Views\VW_UGAPCFG_FINAL.sql" />
+    <Build Include="etgsymm\Views\VW_ETG_Symmetry_UGAP CNFG.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Cd_GetAll.sql" />

@@ -1,5 +1,7 @@
 ﻿using VCPortal_Models.Dtos.ETGFactSymmetry;
 using VCPortal_Models.Models.ETGFactSymmetry;
+using VCPortal_Models.Models.ETGFactSymmetry.Configs;
+using VCPortal_Models.Models.ETGFactSymmetry.Dataloads;
 using VCPortal_Models.Parameters.MHP;
 
 namespace DataAccessLibrary.Data.Abstract;
@@ -24,6 +26,8 @@ public interface IETGFactSymmetry_Repo
     Task<IEnumerable<ETG_CNFG_PC_ETG_NRX>> GetETG_CNFG_PC_ETG_NRX(CancellationToken token);
 
     Task<IEnumerable<ETG_PTC_Modeling_Model>> GetETG_PTC_Modeling_Model(CancellationToken token);
+
+    Task<IEnumerable<ETG_UGAP_CFG_Model>> GetETG_UGAP_CFG_Model(CancellationToken token);
 
     Task UpdateETGFactSymmetry(ETGFactSymmetry_UpdateDto etg);
 

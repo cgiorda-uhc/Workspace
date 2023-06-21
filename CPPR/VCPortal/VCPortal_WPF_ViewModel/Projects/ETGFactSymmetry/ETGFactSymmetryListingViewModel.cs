@@ -18,6 +18,7 @@ using VCPortal_Models.Configuration.HeaderInterfaces.Abstract;
 using VCPortal_Models.Configuration.HeaderInterfaces.Concrete;
 using VCPortal_Models.Dtos.ETGFactSymmetry;
 using VCPortal_Models.Models.ETGFactSymmetry;
+using VCPortal_Models.Models.ETGFactSymmetry.Configs;
 using VCPortal_WPF_ViewModel.Shared;
 
 
@@ -423,6 +424,17 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
             {
                 export.Add(new ExcelExport() { ExportList = etgpcnrx.ToList<object>(), SheetName = sheet.SheetName });
             }
+
+
+
+            sheet = excel.Sheets.Where(x => x.Name == "ETGPTUGAPConfig").FirstOrDefault();
+            api = _config.APIS.Where(x => x.Name == "ETGPTUGAPConfig").FirstOrDefault();
+            var etgugap = await VM_Functions.APIGetResultAsync<ETG_UGAP_CFG_Model>(api.BaseUrl, api.Url);
+            if (etgugap.Count > 0)
+            {
+                export.Add(new ExcelExport() { ExportList = etgugap.ToList<object>(), SheetName = sheet.SheetName });
+            }
+
 
 
 

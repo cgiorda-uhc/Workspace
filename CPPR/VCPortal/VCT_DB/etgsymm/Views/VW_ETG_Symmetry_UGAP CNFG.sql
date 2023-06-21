@@ -1,0 +1,6 @@
+﻿CREATE VIEW [etgsymm].[VW_ETG_Symmetry_UGAP CNFG]
+	AS 
+
+	SELECT nbr.[MPC_NBR] ,f.[ETG_BAS_CLSS_NBR] ,f.[ALWAYS] ,f.[ATTRIBUTED] ,f.[ERG_SPCL_CATGY_CD] ,f.[TRT_CD] ,f.[RX] ,f.[NRX] ,f.[RISK_Model] ,f.[LOW_MONTH] ,f.[HIGH_MONTH] 
+FROM [etgsymm].[VW_UGAPCFG_FINAL] f
+INNER JOIN [vct].[ETG_MPCNBR_UGAP] nbr ON nbr.[ETG_BAS_CLSS_NBR] = f.[ETG_BAS_CLSS_NBR]

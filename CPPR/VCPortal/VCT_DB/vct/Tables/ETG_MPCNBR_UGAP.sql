@@ -1,0 +1,5 @@
+﻿CREATE TABLE [vct].[ETG_MPCNBR_UGAP]
+(
+	ETG_BAS_CLSS_NBR INT NULL,
+	MPC_NBR char(3)
+)

@@ -12,6 +12,7 @@ using VCPortal_Models.Dtos.ChemoPx;
 using VCPortal_Models.Dtos.ETGFactSymmetry;
 using VCPortal_Models.Models.ChemoPx;
 using VCPortal_Models.Models.ETGFactSymmetry;
+using VCPortal_Models.Models.ETGFactSymmetry.Configs;
 using VCPortal_Models.Models.MHP;
 using VCPortal_Models.Parameters.MHP;
 
@@ -122,6 +123,18 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
 
         return results;
     }
+
+    public Task<IEnumerable<ETG_UGAP_CFG_Model>> GetETG_UGAP_CFG_Model(CancellationToken token)
+    {
+
+        string strSQL = "SELECT * FROM [VCT_DB].[etgsymm].[VW_ETG_Symmetry_UGAP CNFG] v ORDER BY v.RISK_Model, v.MPC_NBR ;";
+
+        var results = _db.LoadData<ETG_UGAP_CFG_Model>(sql: strSQL, token, connectionId: "VCT_DB");
+
+        return results;
+    }
+
+
 
 
     public async Task InsertETGFactSymmetryTracking(List<ETGFactSymmetry_Tracking_UpdateDto> ETG, string connectionId)
