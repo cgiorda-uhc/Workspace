@@ -113,6 +113,25 @@ public static class MHPUniverse_Calls
             }
         });
 
+        app.MapPost(pattern: "/mhp_ei_details_all", async ([FromBody] MHP_EI_Parameters_All param, IMHPUniverse_Repo repo, CancellationToken token) =>
+        {
+            try
+            {
+                ////RETURN HTTP 200
+                return Results.Ok(await repo.GetMHPEIDetailsAllAsync(param.State, param.StartDate, param.EndDate, param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, param.Cust_Seg, token));//200 SUCCESS
+            }
+            catch (Exception ex)
+            {
+                //RETURN ERROR
+                return Results.Problem(ex.Message);
+
+            }
+        });
+
+
+
+
+
         app.MapPost(pattern: "/mhp_cs_details", async ([FromBody] MHP_CS_Parameters param, IMHPUniverse_Repo repo, CancellationToken token) =>
         {
             try

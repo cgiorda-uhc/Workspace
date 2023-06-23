@@ -265,16 +265,25 @@ public partial class MHPViewModel : ObservableObject
 
         object[] parameters = _params as object[];
         MHP_EI_Parameters ei_param = new MHP_EI_Parameters();
+        MHP_EI_Parameters_All ei_param_all = new MHP_EI_Parameters_All();
 
-        
         List<MHP_EI_Model> mhp_final;
         List<MHPEIDetails_Model> mhp_details_final;
+        List<MHPEIDetails_Model> mhp_details_final_all;
         try
         {
 
             ei_param.State = "'" + String.Join(",", parameters[0].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
             ei_param.StartDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
             ei_param.EndDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
+
+
+            ei_param_all.State = "'" + String.Join(",", parameters[0].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+            ei_param_all.StartDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
+            ei_param_all.EndDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
+
+
+            StringBuilder sbLE = new StringBuilder();
 
             var le = parameters[3].ToString().Replace("--All--~", "").Split('~');
             foreach (var e in le)
@@ -283,16 +292,26 @@ public partial class MHPViewModel : ObservableObject
                 {
                     ei_param.LegalEntities = new List<string>();
                 }
-                ei_param.LegalEntities.Add(e.ToString().Replace(" ", "").Split('-')[0]);
+
+
+                var val = e.ToString().Replace(" ", "").Split('-')[0];
+                ei_param.LegalEntities.Add(val);
+                sbLE.Append("'" + val + "',");
             }
 
 
             ei_param.Finc_Arng_Desc = "'" + String.Join(",", parameters[4].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
             ei_param.Mkt_Seg_Rllp_Desc = "'" + String.Join(",", parameters[5].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
 
+
+            ei_param_all.LegalEntities = sbLE.ToString().TrimEnd(',');
+            ei_param_all.Finc_Arng_Desc = "'" + String.Join(",", parameters[4].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+            ei_param_all.Mkt_Seg_Rllp_Desc = "'" + String.Join(",", parameters[5].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+
             if (!string.IsNullOrEmpty(parameters[6] + ""))
             {
                 ei_param.Mkt_Typ_Desc = "'" + String.Join(",", parameters[6].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+                ei_param_all.Mkt_Typ_Desc = "'" + String.Join(",", parameters[6].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
             }
 
             System.Collections.IList items = (System.Collections.IList)parameters[7];
@@ -304,6 +323,7 @@ public partial class MHPViewModel : ObservableObject
             if (sb.Length > 0)
             {
                 ei_param.Cust_Seg = sb.ToString().TrimEnd(',');
+                ei_param_all.Cust_Seg = sb.ToString().TrimEnd(',');
             }
 
 
@@ -364,9 +384,44 @@ public partial class MHPViewModel : ObservableObject
 
             }
 
+
+
+
+            _sbStatus.Append("--Retreiving All EI details data from Database" + Environment.NewLine);
+            ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+            api = _config.APIS.Where(x => x.Name == "MHP_EI_Details_All").FirstOrDefault();
+            WebAPIConsume.BaseURI = api.BaseUrl;
+            response = await WebAPIConsume.PostCall<MHP_EI_Parameters_All>(api.Url, ei_param_all);
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                _logger.Error("MHP EI All Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+                return;
+            }
+            else
+            {
+
+                var reponseStream = await response.Content.ReadAsStreamAsync();
+                var result = await JsonSerializer.DeserializeAsync<List<MHPEIDetails_Model>>(reponseStream, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                mhp_details_final_all = result;
+
+
+            }
+
+
+
+
+
             CancellationTokenSource cancellationToken;
             cancellationToken = new CancellationTokenSource();
-            var bytes = await MHPExcelExport.ExportEIToExcel(mhp_final, mhp_details_final, () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
+            var bytes = await MHPExcelExport.ExportEIToExcel(mhp_final, mhp_details_final, mhp_details_final_all ,() => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
 
             var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\MHP_Report_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
 

@@ -317,6 +317,58 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
         return results;
     }
 
+
+
+    public Task<IEnumerable<MHPEIDetails_Model>> GetMHPEIDetailsAllAsync(string strState, string strStartDate, string strEndDate, string strFINC_ARNG_DESC, string strMKT_SEG_RLLP_DESC, string strLegalEntities, string strMKT_TYP_DESC, string strCUST_SEG, CancellationToken token)
+    {
+
+        StringBuilder sbSQL = new StringBuilder();
+
+            sbSQL.Append("SELECT u.[Authorization], ");
+            sbSQL.Append("u.[Request_Decision], ");
+            sbSQL.Append("u.[Authorization_Type], ");
+            sbSQL.Append("u.[Par_NonPar_Site], ");
+            sbSQL.Append("u.[Inpatient_Outpatient], ");
+            sbSQL.Append("CONVERT(VARCHAR(10), u.[Request_Date], 101) as Request_Date, ");
+            sbSQL.Append("u.[State_of_Issue], ");
+            sbSQL.Append("c.[FINC_ARNG_DESC], ");
+            sbSQL.Append("u.[Decision_Reason], ");
+            sbSQL.Append("c.[CUST_SEG_NBR], ");
+            sbSQL.Append("c.[CUST_SEG_NM], ");
+            sbSQL.Append("c.[MKT_SEG_RLLP_DESC], ");
+            sbSQL.Append("c.[MKT_TYP_DESC], ");
+            sbSQL.Append("c.[LEG_ENTY_NBR], ");
+            sbSQL.Append("c.[LEG_ENTY_FULL_NM], ");
+            sbSQL.Append("u.[Enrollee_First_Name],");
+            sbSQL.Append("u.[Enrollee_Last_Name], ");
+            sbSQL.Append("u.[Cardholder_ID], ");
+            sbSQL.Append("CONVERT(VARCHAR(10), u.[Member_Date_of_Birth], 101) as Member_Date_of_Birth, ");
+            sbSQL.Append("u.[Procedure_Code_Description], ");
+            sbSQL.Append("u.[Primary_Procedure_Code_Req] , ");
+            sbSQL.Append("u.[Primary_Diagnosis_Code] ");
+            sbSQL.Append("FROM [VCT_DB].[mhp].[MHP_Yearly_Universes] u ");
+            sbSQL.Append("INNER JOIN [VCT_DB].[mhp].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
+            sbSQL.Append("WHERE u.[State_of_Issue] in (" + strState + ")  AND u.[Request_Date] >= '" + strStartDate + "' AND  u.[Request_Date] <= '" + strEndDate + "' "); //
+            sbSQL.Append("AND c.[MKT_SEG_RLLP_DESC] in (" + strMKT_SEG_RLLP_DESC + ") AND  c.[FINC_ARNG_DESC] in (" + strFINC_ARNG_DESC + ")  AND [Authorization] IS NOT NULL   AND [Classification]  IN ('EI','EI_OX')   "); //
+            sbSQL.Append("AND c.[LEG_ENTY_NBR] in (" + strLegalEntities + ") "); //
+                                                                        //sbSQL.Append(" AND [sheet_name] " + (blIsIFP ? "=" : "<>") + " 'U12' ");
+            if (!string.IsNullOrEmpty(strMKT_TYP_DESC))
+                sbSQL.Append("AND c.[MKT_TYP_DESC] in (" + strMKT_TYP_DESC + ") ");
+            if (!string.IsNullOrEmpty(strCUST_SEG))
+                sbSQL.Append("AND c.[CUST_SEG_NBR] in (" + strCUST_SEG + ") ");
+
+      
+
+        var results = _db.LoadData<MHPEIDetails_Model>(sql: sbSQL.ToString(), token, connectionId: "VCT_DB");
+
+        return results;
+    }
+
+
+
+
+
+
     public Task<IEnumerable<MHPCSDetails_Model>> GetMHPCSDetailsAsync(string strState, string strStartDate, string strEndDate, string strCS_TADM_PRDCT_MAP, string strGroupNumbers, CancellationToken token)
     {
 
