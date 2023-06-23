@@ -287,6 +287,34 @@ public static class ETGFactSymmetry_Calls
         });
 
 
+        app.MapGet(pattern: "/etgsumfinal", async (IETGFactSymmetry_Repo repo, CancellationToken token) =>
+        {
+            try
+            {
+                _log.Information("Requesting API GetETGSummaryFinalAsync()...");
+                ///RETURN HTTP 200
+                ///
+                var results = await repo.GetETGSummaryFinalAsync(token);
+
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetETGSummaryFinalAsync() 404, not found");
+                return Results.NotFound(); //404
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, "API GetETGSummaryFinalAsync threw an error");
+                //RETURN ERROR
+                return Results.Problem(ex.Message);
+
+            }
+        });
+
+
+
         app.MapPost(pattern: "/etginsert", async (List<ETGFactSymmetry_Tracking_UpdateDto> etg, IETGFactSymmetry_Repo repo) =>
         {
             try

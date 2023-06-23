@@ -3,14 +3,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FileParsingLibrary.Models;
 using FileParsingLibrary.MSExcel;
-using MathNet.Numerics.Providers.SparseSolver;
 using Microsoft.Extensions.Configuration;
 using SharedFunctionsLibrary;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Net.NetworkInformation;
 using System.Text;
 using System.Text.Json;
 using System.Windows.Input;
@@ -436,7 +434,13 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
             }
 
 
-
+            sheet = excel.Sheets.Where(x => x.Name == "ETGSummaryFinal").FirstOrDefault();
+            api = _config.APIS.Where(x => x.Name == "ETGSummaryFinal").FirstOrDefault();
+            var etgfinal = await VM_Functions.APIGetResultAsync<ETGSummaryFinalConfig>(api.BaseUrl, api.Url);
+            if (etgfinal.Count > 0)
+            {
+                export.Add(new ExcelExport() { ExportList = etgfinal.ToList<object>(), SheetName = sheet.SheetName });
+            }
 
             api = _config.APIS.Where(x => x.Name == "Tracking").FirstOrDefault();
             var tracking = await VM_Functions.APIGetResultAsync<ETGFactSymmetry_Tracking_ReadDto>(api.BaseUrl, api.Url);

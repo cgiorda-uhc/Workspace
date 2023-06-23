@@ -135,7 +135,15 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
     }
 
 
+    public Task<IEnumerable<ETGSummaryFinalConfig>> GetETGSummaryFinalAsync(CancellationToken token)
+    {
 
+        string strSQL = "SELECT * FROM [etgsymm].[VW_ETG_Summary_Final] ORDER BY Premium_Specialty, ETG_Description;";
+
+        var results = _db.LoadData<ETGSummaryFinalConfig>(sql: strSQL, token, connectionId: "VCT_DB");
+
+        return results;
+    }
 
     public async Task InsertETGFactSymmetryTracking(List<ETGFactSymmetry_Tracking_UpdateDto> ETG, string connectionId)
     {

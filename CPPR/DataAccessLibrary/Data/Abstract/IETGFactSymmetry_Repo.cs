@@ -29,6 +29,8 @@ public interface IETGFactSymmetry_Repo
 
     Task<IEnumerable<ETG_UGAP_CFG_Model>> GetETG_UGAP_CFG_Model(CancellationToken token);
 
+    Task<IEnumerable<ETGSummaryFinalConfig>> GetETGSummaryFinalAsync(CancellationToken token);
+
     Task UpdateETGFactSymmetry(ETGFactSymmetry_UpdateDto etg);
 
     Task InsertETGFactSymmetryTracking(List<ETGFactSymmetry_Tracking_UpdateDto> ETG, string connectionId);
