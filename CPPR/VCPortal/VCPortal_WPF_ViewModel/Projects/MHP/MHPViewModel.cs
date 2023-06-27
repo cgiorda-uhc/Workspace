@@ -386,34 +386,34 @@ public partial class MHPViewModel : ObservableObject
 
 
 
+            //NOT NEEDED!!!
+            //_sbStatus.Append("--Retreiving All EI details data from Database" + Environment.NewLine);
+            //ProgressMessageViewModel.Message = _sbStatus.ToString();
 
-            _sbStatus.Append("--Retreiving All EI details data from Database" + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
+            //api = _config.APIS.Where(x => x.Name == "MHP_EI_Details_All").FirstOrDefault();
+            //WebAPIConsume.BaseURI = api.BaseUrl;
+            //response = await WebAPIConsume.PostCall<MHP_EI_Parameters_All>(api.Url, ei_param_all);
+            //if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            //{
 
-            api = _config.APIS.Where(x => x.Name == "MHP_EI_Details_All").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
-            response = await WebAPIConsume.PostCall<MHP_EI_Parameters_All>(api.Url, ei_param_all);
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            {
+            //    UserMessageViewModel.IsError = true;
+            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            //    _logger.Error("MHP EI All Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+            //    return;
+            //}
+            //else
+            //{
 
-                UserMessageViewModel.IsError = true;
-                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("MHP EI All Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-                return;
-            }
-            else
-            {
+            //    var reponseStream = await response.Content.ReadAsStreamAsync();
+            //    var result = await JsonSerializer.DeserializeAsync<List<MHPEIDetails_Model>>(reponseStream, new JsonSerializerOptions
+            //    {
+            //        PropertyNameCaseInsensitive = true
+            //    });
 
-                var reponseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<MHPEIDetails_Model>>(reponseStream, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                mhp_details_final_all = result;
+            //    mhp_details_final_all = result;
 
 
-            }
+            //}
 
 
 
@@ -421,7 +421,7 @@ public partial class MHPViewModel : ObservableObject
 
             CancellationTokenSource cancellationToken;
             cancellationToken = new CancellationTokenSource();
-            var bytes = await MHPExcelExport.ExportEIToExcel(mhp_final, mhp_details_final, mhp_details_final_all ,() => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
+            var bytes = await MHPExcelExport.ExportEIToExcel(mhp_final, mhp_details_final,() => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
 
             var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\MHP_Report_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
 

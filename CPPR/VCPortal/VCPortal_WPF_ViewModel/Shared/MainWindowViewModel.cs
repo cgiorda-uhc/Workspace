@@ -99,7 +99,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
             if (groups.Contains("ms\\mhp_universe", StringComparer.OrdinalIgnoreCase))
             {
-                NavigationViewModelTypesReports.Add(new TypeAndDisplay { Name = "MHP", VMType = typeof(MHPViewModel) });
+                NavigationViewModelTypesReports.Add(new TypeAndDisplay { Name = "MHP Reporting", VMType = typeof(MHPViewModel) });
             }
 
 

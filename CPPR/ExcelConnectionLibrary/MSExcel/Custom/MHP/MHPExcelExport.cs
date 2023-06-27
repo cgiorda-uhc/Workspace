@@ -12,7 +12,7 @@ namespace FileParsingLibrary.MSExcel.Custom.MHP
     public static class MHPExcelExport
     {
 
-        public static async Task<byte[]> ExportEIToExcel(List<MHP_EI_Model> mhp_results, List<MHPEIDetails_Model> mhp_details, List<MHPEIDetails_Model> mhp_details_all, Func<string> getterStatus, Action<string> setterStatus, CancellationToken token)
+        public static async Task<byte[]> ExportEIToExcel(List<MHP_EI_Model> mhp_results, List<MHPEIDetails_Model> mhp_details, Func<string> getterStatus, Action<string> setterStatus, CancellationToken token)
         {
 
             //throw new Exception("Oh nooooooo!!!");
@@ -211,7 +211,7 @@ namespace FileParsingLibrary.MSExcel.Custom.MHP
         
             rowCnt = 2;
             intNameCntTmp++;
-            foreach (MHPEIDetails_Model mhp in mhp_details_all)
+            foreach (MHPEIDetails_Model mhp in mhp_details)
             {
 
                 wsSource.Cell("A" + rowCnt).Value = mhp.Authorization;
