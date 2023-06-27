@@ -207,6 +207,61 @@ namespace ConsoleLibraryTesting
             }
 
 
+            //StringBuilder sb = new StringBuilder();
+
+            //foreach (string file in files_loaded)
+            //{
+            //    sb.Append("'" + file + "',");
+            //}
+
+            //string strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Yearly_Universes]  WHERE file_name in (" + sb.ToString().TrimEnd(',') + ");";
+            //var mhp = await db_sql.LoadData<MHPUniverseModel>(connectionString: ConnectionStringMSSQL, strSQL);
+            //columns = typeof(MHPUniverseModel).GetProperties().Select(p => p.Name).ToArray();
+            //await db_sql.BulkSave<MHPUniverseModel>(connectionString: ConnectionStringVCPMSSQL, "mhp.MHP_Yearly_Universes", mhp, columns);
+
+            //strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Yearly_Universes_UGAP] WHERE mhp_uni_id in (SELECT [mhp_uni_id] FROM [IL_UCA].[stg].[MHP_Yearly_Universes] WHERE file_name in (" + sb.ToString().TrimEnd(',') + "));";
+            //var mhp_ugap = await db_sql.LoadData<MHPMemberDetailsModel>(connectionString: ConnectionStringMSSQL, strSQL);
+            //columns = typeof(MHPMemberDetailsModel).GetProperties().Select(p => p.Name).ToArray();
+            //await db_sql.BulkSave<MHPMemberDetailsModel>(connectionString: ConnectionStringVCPMSSQL, "mhp.MHP_Yearly_Universes_UGAP", mhp_ugap, columns);
+
+
+            await db_sql.Execute(ConnectionStringMSSQL, "exec [IL_UCA].[dbo].[sp_mhp_refesh_filter_cache]");
+
+
+            //strSQL = "SELECT * FROM  [IL_UCA].[dbo].[cs_product_map];";
+            //var pm = await db_sql.LoadData<CS_Product_Map>(connectionString: ConnectionStringMSSQL, strSQL);
+            //columns = typeof(CS_Product_Map).GetProperties().Select(p => p.Name).ToArray();
+            //await db_sql.BulkSave<CS_Product_Map>(connectionString: ConnectionStringVCPMSSQL, "vct.cs_product_map", pm, columns, truncate: true);
+
+
+            //strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Group_State];";
+            //var gs = await db_sql.LoadData<MHP_Group_State_Model>(connectionString: ConnectionStringMSSQL, strSQL);
+            //columns = typeof(MHP_Group_State_Model).GetProperties().Select(p => p.Name).ToArray();
+            //await db_sql.BulkSave<MHP_Group_State_Model>(connectionString: ConnectionStringVCPMSSQL, "mhp.MHP_Group_State", gs, columns, truncate: true);
+
+
+            //strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Universes_Filter_Cache];";
+            //var fs = await db_sql.LoadData<MHP_Reporting_Filters>(connectionString: ConnectionStringMSSQL, strSQL);
+            //columns = typeof(MHP_Reporting_Filters).GetProperties().Select(p => p.Name).ToArray();
+            //await db_sql.BulkSave<MHP_Reporting_Filters>(connectionString: ConnectionStringVCPMSSQL, "mhp.MHP_Universes_Filter_Cache", fs, columns, truncate: true);
+
+
+
+            //await SharedFunctions.EmailAsync("jon.piotrowski@uhc.com;renee_l_struck@uhc.com;hong_gao@uhc.com", "chris_giordano@uhc.com", "MHPUniverse was refreshed", "MHPUniverse was refreshed", "chris_giordano@uhc.com;laura_fischer@uhc.com;jon_maguire@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
+        }
+
+
+
+        public async Task transferMHPDataAsync(List<string> files_loaded)
+        {
+
+            
+
+            //TWO DBS
+            IRelationalDataAccess db_td = new TeraDataAccess();
+            IRelationalDataAccess db_sql = new SqlDataAccess();
+
+
             StringBuilder sb = new StringBuilder();
 
             foreach (string file in files_loaded)
@@ -216,16 +271,13 @@ namespace ConsoleLibraryTesting
 
             string strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Yearly_Universes]  WHERE file_name in (" + sb.ToString().TrimEnd(',') + ");";
             var mhp = await db_sql.LoadData<MHPUniverseModel>(connectionString: ConnectionStringMSSQL, strSQL);
-            columns = typeof(MHPUniverseModel).GetProperties().Select(p => p.Name).ToArray();
+            var columns = typeof(MHPUniverseModel).GetProperties().Select(p => p.Name).ToArray();
             await db_sql.BulkSave<MHPUniverseModel>(connectionString: ConnectionStringVCPMSSQL, "mhp.MHP_Yearly_Universes", mhp, columns);
 
             strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Yearly_Universes_UGAP] WHERE mhp_uni_id in (SELECT [mhp_uni_id] FROM [IL_UCA].[stg].[MHP_Yearly_Universes] WHERE file_name in (" + sb.ToString().TrimEnd(',') + "));";
             var mhp_ugap = await db_sql.LoadData<MHPMemberDetailsModel>(connectionString: ConnectionStringMSSQL, strSQL);
             columns = typeof(MHPMemberDetailsModel).GetProperties().Select(p => p.Name).ToArray();
             await db_sql.BulkSave<MHPMemberDetailsModel>(connectionString: ConnectionStringVCPMSSQL, "mhp.MHP_Yearly_Universes_UGAP", mhp_ugap, columns);
-
-
-            await db_sql.Execute(ConnectionStringMSSQL, "exec [IL_UCA].[dbo].[sp_mhp_refesh_filter_cache]");
 
 
             strSQL = "SELECT * FROM  [IL_UCA].[dbo].[cs_product_map];";
@@ -245,12 +297,10 @@ namespace ConsoleLibraryTesting
             columns = typeof(MHP_Reporting_Filters).GetProperties().Select(p => p.Name).ToArray();
             await db_sql.BulkSave<MHP_Reporting_Filters>(connectionString: ConnectionStringVCPMSSQL, "mhp.MHP_Universes_Filter_Cache", fs, columns, truncate: true);
 
-
+            return;
 
             await SharedFunctions.EmailAsync("jon.piotrowski@uhc.com;renee_l_struck@uhc.com;hong_gao@uhc.com", "chris_giordano@uhc.com", "MHPUniverse was refreshed", "MHPUniverse was refreshed", "chris_giordano@uhc.com;laura_fischer@uhc.com;jon_maguire@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
         }
-
-
 
         public async Task UGAPConfig()
         {

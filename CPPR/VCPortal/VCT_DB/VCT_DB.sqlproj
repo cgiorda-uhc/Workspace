@@ -138,6 +138,10 @@
     <Build Include="etgsymm\Views\VW_UGAPCFG_FINAL.sql" />
     <Build Include="etgsymm\Views\VW_ETG_Symmetry_UGAP CNFG.sql" />
     <Build Include="etgsymm\Views\VW_ETG_Summary_Final.sql" />
+    <Build Include="etgsymm\Views\VW_ETG_Dataload_PC_EC_TMP.sql" />
+    <Build Include="etgsymm\Views\VW_ETG_Dataload_PC_AGG.sql" />
+    <Build Include="etgsymm\Views\VW_ETG_Dataload_EC_AGG.sql" />
+    <Build Include="etgsymm\Views\VW_ETG_Dataload_NRX_AGG.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Cd_GetAll.sql" />
