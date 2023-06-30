@@ -11,9 +11,9 @@ public class ETGSummaryFinalConfig
     public string ETG_Description { get; set; }
     public string Premium_Specialty { get; set; }
 
-    public bool Never_Map { get; set; }
+    public string Never_Map { get; set; }
 
-    public bool Never_Map_Previous { get; set; }
+    public string Never_Map_Previous { get; set; }
 
     public string Previous_Rx_NRx { get; set; }
     public string Current_Rx_NRx { get; set; }

@@ -5,8 +5,8 @@
 	[ETG_Base_Class]
 	,[ETG_Description]
 	,[Premium_Specialty]
-	,[Never_Mapped] as Never_Map
-	,[Never_Mapped_Previous] as Never_Map_Previous
+	,CASE WHEN [Never_Mapped] = 0 THEN 'N' ELSE CASE WHEN [Never_Mapped] = 1 THEN 'Y' ELSE NULL END END as Never_Map
+		,CASE WHEN [Never_Mapped_Previous] = 0 THEN 'N' ELSE CASE WHEN [Never_Mapped_Previous] = 1 THEN 'Y' ELSE NULL END END as  Never_Map_Previous
 	,[RX_NRX] as Current_Rx_NRx
 	,[RX_NRXPrevious] as Previous_Rx_NRx
 
@@ -32,12 +32,12 @@ END END END END END END END END as Current_LOB
 	
 	,[PC_Treatment_Indicator] as PC_Current_Treatment_Indicator
 	,[PC_Treatment_Indicator_Previous] as PC_Previous_Treatment_Indicator
-	,[PC_Spec_Episode_Count]
-	,[PC_Spec_Episode_Distribution]
-	,[PC_Spec_Percent_of_Episodes]
-	,[PC_Spec_Total_Cost]
-	,[PC_Spec_Average_Cost]
-	,PC_Normalized_Pricing_Total_Cost as PC_Spec_Normalized_Pricing
+	,[PC_Spec_Episode_Count] as PC_Spec_Episode_Cnt
+	,[PC_Spec_Episode_Distribution] 
+	,[PC_Spec_Percent_of_Episodes] as PC_Spec_Perc_of_Episodes
+	,[PC_Spec_Total_Cost] as PC_Spec_Tot_Cost
+	,[PC_Spec_Average_Cost] as PC_Spec_Avg_Cost
+	,PC_Normalized_Pricing_Episode_Count as PC_Spec_Normalized_Pricing
 	,[PC_Spec_CV]
 
 
@@ -46,12 +46,17 @@ END END END END END END END END as Current_LOB
 	,[PC_Change_Comments]
 	,[EC_Treatment_Indicator] as EC_Current_Treatment_Indicator
 	,[EC_Treatment_Indicator_Previous] as EC_Previous_Treatment_Indicator
-	,[EC_Spec_Episode_Count]
-	,[EC_Spec_Episode_Distribution]
-	,[EC_Spec_Percent_of_Episodes]
-	,[EC_Spec_Total_Cost]
-	,[EC_Spec_Average_Cost]
-	,[EC_Normalized_Pricing_Total_Cost]
+	,[EC_Spec_Episode_Count] as EC_Spec_Episode_Cnt
+	,[EC_Spec_Episode_Distribution]  
+	,[EC_Spec_Percent_of_Episodes] as EC_Spec_Perc_of_Episodes
+	,[EC_Spec_Total_Cost] as EC_Spec_Tot_Cost
+	,[EC_Spec_Average_Cost] as EC_Spec_Avg_Cost
+
+
+	,CASE WHEN [EC_Normalized_Pricing_Total_Cost] IS NOT NULL THEN [EC_Normalized_Pricing_Total_Cost] ELSE 0 END as EC_Spec_Normalized_Pricing
+
+
+
 	,[EC_Spec_CV]
 	,[EC_Mapping] as EC_Current_Mapping
 	,[EC_Mapping_Previous] as EC_Previous_Mapping

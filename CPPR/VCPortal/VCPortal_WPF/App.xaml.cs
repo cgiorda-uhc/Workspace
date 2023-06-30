@@ -30,8 +30,8 @@ public partial class App : Application
     Serilog.ILogger logger;
     public App()
     {
-        //var appsettings = "appsettings.Development.json";
-        var appsettings = "appsettings.json";
+        var appsettings = "appsettings.Development.json";
+        //var appsettings = "appsettings.json";
 
         var configuration = new ConfigurationBuilder().AddJsonFile(appsettings).AddEnvironmentVariables().Build();
 

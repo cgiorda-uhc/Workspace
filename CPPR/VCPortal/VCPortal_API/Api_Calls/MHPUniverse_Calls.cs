@@ -26,6 +26,9 @@ public static class MHPUniverse_Calls
     }                    
 */
 
+    private static readonly Serilog.ILogger _log = Serilog.Log.ForContext(typeof(MHPUniverse_Calls));
+
+
     //STATIC EXTENSION FUNCTION ACT AS CONSTRUCTOR 
     public static void ConfigureMHPApi(this WebApplication app)
     {
@@ -54,10 +57,22 @@ public static class MHPUniverse_Calls
             try
             {
                 ////RETURN HTTP 200
-                return Results.Ok(await repo.GetMHP_EI_Async(param.State, param.StartDate, param.EndDate, param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, param.Cust_Seg, token));//200 SUCCESS
+                var results  = await repo.GetMHP_EI_Async(param.State, param.StartDate, param.EndDate, param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, param.Cust_Seg, token);//200 SUCCESS
+
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetMHP_EI_Async 404, not found");
+                return Results.NotFound(); //404
+
+
             }
             catch (Exception ex)
             {
+
+                _log.Error(ex, "API GetMHP_EI_Async threw an error");
                 //RETURN ERROR
                 return Results.Problem(ex.Message);
 
@@ -70,10 +85,21 @@ public static class MHPUniverse_Calls
             try
             {
                 ////RETURN HTTP 200
-                return Results.Ok(await repo.GetMHP_IFP_Async(param.State, param.StartDate, param.EndDate, param.ProductCodes, token));//200 SUCCESS
+                var results = await repo.GetMHP_IFP_Async(param.State, param.StartDate, param.EndDate, param.ProductCodes, token);//200 SUCCESS
+
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetMHP_IFP_Async 404, not found");
+                return Results.NotFound(); //404
             }
             catch (Exception ex)
             {
+
+                _log.Error(ex, "API GetMHP_IFP_Async threw an error");
+
                 //RETURN ERROR
                 return Results.Problem(ex.Message);
 
@@ -85,12 +111,23 @@ public static class MHPUniverse_Calls
         {
             try
             {
-                ////RETURN HTTP 200
-                return Results.Ok(await repo.GetMHP_CS_Async(param.State, param.StartDate, param.EndDate, param.CS_Tadm_Prdct_Map , param.GroupNumbers, token));//200 SUCCESS
-                                                                                                                                                                                                 
+            ////RETURN HTTP 200
+            var results = await repo.GetMHP_CS_Async(param.State, param.StartDate, param.EndDate, param.CS_Tadm_Prdct_Map , param.GroupNumbers, token);//200 SUCCESS
+
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetMHP_CS_Async 404, not found");
+                return Results.NotFound(); //404
+
             }
             catch (Exception ex)
             {
+
+                _log.Error(ex, "API GetMHP_CS_Async threw an error");
+
                 //RETURN ERROR
                 return Results.Problem(ex.Message);
 
@@ -102,11 +139,22 @@ public static class MHPUniverse_Calls
         {
             try
             {
-                ////RETURN HTTP 200
-                return Results.Ok(await repo.GetMHPEIDetailsAsync(param.State, param.StartDate, param.EndDate, param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, param.Cust_Seg,token));//200 SUCCESS
+            ////RETURN HTTP 200
+            var results = await repo.GetMHPEIDetailsAsync(param.State, param.StartDate, param.EndDate, param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, param.Cust_Seg,token);//200 SUCCESS
+
+
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetMHPEIDetailsAsync 404, not found");
+                return Results.NotFound(); //404
             }
             catch (Exception ex)
             {
+                _log.Error(ex, "API GetMHPEIDetailsAsync threw an error");
+
                 //RETURN ERROR
                 return Results.Problem(ex.Message);
 
@@ -118,10 +166,21 @@ public static class MHPUniverse_Calls
             try
             {
                 ////RETURN HTTP 200
-                return Results.Ok(await repo.GetMHPEIDetailsAllAsync(param.State, param.StartDate, param.EndDate, param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, param.Cust_Seg, token));//200 SUCCESS
+                var results = await repo.GetMHPEIDetailsAllAsync(param.State, param.StartDate, param.EndDate, param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, param.Cust_Seg, token);//200 SUCCESS
+
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetMHPEIDetailsAllAsync 404, not found");
+                return Results.NotFound(); //404
             }
             catch (Exception ex)
             {
+
+                _log.Error(ex, "API GetMHPEIDetailsAllAsync threw an error");
+
                 //RETURN ERROR
                 return Results.Problem(ex.Message);
 
@@ -136,11 +195,23 @@ public static class MHPUniverse_Calls
         {
             try
             {
-                ////RETURN HTTP 200
-                return Results.Ok(await repo.GetMHPCSDetailsAsync(param.State, param.StartDate, param.EndDate, param.CS_Tadm_Prdct_Map, param.GroupNumbers, token));//200 SUCCESS
+            ////RETURN HTTP 200
+            var results = await repo.GetMHPCSDetailsAsync(param.State, param.StartDate, param.EndDate, param.CS_Tadm_Prdct_Map, param.GroupNumbers, token);//200 SUCCESS
+
+
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetMHPCSDetailsAsync 404, not found");
+                return Results.NotFound(); //404
+
             }
             catch (Exception ex)
             {
+                _log.Error(ex, "API GetMHPCSDetailsAsync threw an error");
+
                 //RETURN ERROR
                 return Results.Problem(ex.Message);
 
@@ -151,11 +222,22 @@ public static class MHPUniverse_Calls
         {
             try
             {
-                ////RETURN HTTP 200
-                return Results.Ok(await repo.GetMHPIFPDetailsAsync(param.State, param.StartDate, param.EndDate, param.ProductCodes, token));//200 SUCCESS
+            ////RETURN HTTP 200
+            var results = await repo.GetMHPIFPDetailsAsync(param.State, param.StartDate, param.EndDate, param.ProductCodes, token);//200 SUCCESS
+
+
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetMHPIFPDetailsAsync 404, not found");
+                return Results.NotFound(); //404
             }
             catch (Exception ex)
             {
+                _log.Error(ex, "API GetMHPIFPDetailsAsync threw an error");
+
                 //RETURN ERROR
                 return Results.Problem(ex.Message);
 
@@ -166,12 +248,23 @@ public static class MHPUniverse_Calls
         {
             try
             {
-                ////RETURN HTTP 200
-                return Results.Ok(await repo.GetMHP_Filters_Async(token));//200 SUCCESS
+            ////RETURN HTTP 200
+            var results = await repo.GetMHP_Filters_Async(token);//200 SUCCESS
+
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetMHP_Filters_Async 404, not found");
+                return Results.NotFound(); //404
 
             }
             catch (Exception ex)
             {
+
+                _log.Error(ex, "API GetMHP_Filters_Async threw an error");
+
                 //RETURN ERROR
                 return Results.Problem(ex.Message);
 
@@ -182,12 +275,24 @@ public static class MHPUniverse_Calls
         {
             try
             {
-                ////RETURN HTTP 200
-                return Results.Ok(await repo.GetMHP_Group_State_Async(token));//200 SUCCESS
+
+            ////RETURN HTTP 200
+            var results = await repo.GetMHP_Group_State_Async(token);//200 SUCCESS
+
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetMHP_Group_State_Async 404, not found");
+                return Results.NotFound(); //404
+
 
             }
             catch (Exception ex)
             {
+                _log.Error(ex, "API GetMHP_Group_State_Async threw an error");
+
                 //RETURN ERROR
                 return Results.Problem(ex.Message);
 
@@ -203,12 +308,23 @@ public static class MHPUniverse_Calls
     {
         try
         {
-            ////RETURN HTTP 200
-            return Results.Ok(await repo.GetMHP_EI_Async(param.State, param.StartDate, param.EndDate, param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, param.Cust_Seg, token));//200 SUCCESS
-                                                                                                                                                                                                   
+        ////RETURN HTTP 200
+            var results = await repo.GetMHP_EI_Async(param.State, param.StartDate, param.EndDate, param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, param.Cust_Seg, token);//200 SUCCESS
+
+            if (results != null)
+            {
+                return Results.Ok(results);//200 SUCCESS
+
+            }
+            _log.Warning("API GetMHP_EI_Async 404, not found");
+            return Results.NotFound(); //404
+
         }
         catch (Exception ex)
         {
+            _log.Error(ex, "API GetMHP_EI_Async threw an error");
+
+
             //RETURN ERROR
             return Results.Problem(ex.Message);
 

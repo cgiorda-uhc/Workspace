@@ -30,7 +30,7 @@ public class SqlDataAccess : IRelationalDataAccess
     {
         using IDbConnection connection = new SqlConnection(_config.GetConnectionString(connectionId));
 
-        var cmd = new CommandDefinition(sql, cancellationToken: token, commandTimeout:120);
+        var cmd = new CommandDefinition(sql, cancellationToken: token, commandTimeout:12000);
         var result = await connection.QueryAsync<T>(cmd); 
         return result;
     }
@@ -40,7 +40,7 @@ public class SqlDataAccess : IRelationalDataAccess
     {
         using IDbConnection connection = new SqlConnection(connectionString);
 
-        var cmd = new CommandDefinition(sql, commandTimeout: 1200);
+        var cmd = new CommandDefinition(sql, commandTimeout: 12000);
         var result = await connection.QueryAsync<T>(cmd);
         return result;
     }
@@ -52,7 +52,7 @@ public class SqlDataAccess : IRelationalDataAccess
 
         using IDbConnection connection =new SqlConnection((has_connectionstring ? connectionStringId :  _config.GetConnectionString(connectionStringId)));
 
-        var cmd = new CommandDefinition(sql, commandTimeout: 120);
+        var cmd = new CommandDefinition(sql, commandTimeout: 12000);
         var result = await connection.QueryAsync<T>(cmd);
         return result;
     }
@@ -164,7 +164,7 @@ public class SqlDataAccess : IRelationalDataAccess
 		await connection.ExecuteAsync(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
 	}
 
-    public async Task BulkSave<T>(string table, IEnumerable<T> data, string[] columns, int bulkTimeout = 120, int batchSize = 5000, string connectionId = "VCT_DB", bool truncate = false)
+    public async Task BulkSave<T>(string table, IEnumerable<T> data, string[] columns, int bulkTimeout = 12000, int batchSize = 5000, string connectionId = "VCT_DB", bool truncate = false)
     {
 
         // data is an IEnumerable<T>           
@@ -205,7 +205,7 @@ public class SqlDataAccess : IRelationalDataAccess
 
 
 
-    public async Task BulkSave<T>(string connectionString, string table, IEnumerable<T> data, string[] columns, int bulkTimeout = 120, int batchSize = 5000, bool truncate = false)
+    public async Task BulkSave<T>(string connectionString, string table, IEnumerable<T> data, string[] columns, int bulkTimeout = 12000, int batchSize = 5000, bool truncate = false)
     {
 
         // data is an IEnumerable<T>           
@@ -267,7 +267,7 @@ public class SqlDataAccess : IRelationalDataAccess
 
 
 
-    public async Task BulkSave(string connectionString, DataTable table, int bulkTimeout = 120, int batchSize = 5000, int notifyAfter = 120, bool includeMapping = true)
+    public async Task BulkSave(string connectionString, DataTable table, int bulkTimeout = 12000, int batchSize = 5000, int notifyAfter = 120, bool includeMapping = true)
     {
 
         // data is an IEnumerable<T>           
@@ -290,7 +290,7 @@ public class SqlDataAccess : IRelationalDataAccess
         }
     }
 
-    public async Task BulkSave(string connectionString, string destination, IDataReader dr, int bulkTimeout = 120, int batchSize = 5000, int notifyAfter = 120)
+    public async Task BulkSave(string connectionString, string destination, IDataReader dr, int bulkTimeout = 12000, int batchSize = 5000, int notifyAfter = 120)
     {
 
         // data is an IEnumerable<T>           
