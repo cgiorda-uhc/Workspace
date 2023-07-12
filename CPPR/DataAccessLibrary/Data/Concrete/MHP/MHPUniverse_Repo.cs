@@ -105,6 +105,90 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
 
 
 
+
+
+    public Task<IEnumerable<MHP_EI_Model>> GetMHP_EI_ALL_Async(string strState, string strStartDate, string strEndDate, string strFINC_ARNG_DESC, string strMKT_SEG_RLLP_DESC, string strLegalEntities, string strMKT_TYP_DESC, string strCUST_SEG, CancellationToken token)
+    {
+
+        StringBuilder sbSQL = new StringBuilder();
+
+        string strWhere = null;
+        string strExcelRow = null;
+
+        for (int i = 0; i < 6; i++)
+        {
+            switch (i)
+            {
+                case 0:
+                    strWhere = "AND [Authorization_Type]  in ('S', 'U') AND [Request_Decision] in ('FF', 'PF', 'AD') ";
+                    strExcelRow = "4";
+                    break;
+                case 1:
+                    strWhere = "AND [Authorization_Type]  in ('S', 'U') AND [Request_Decision] in ('FF', 'PF')  AND [Decision_Reason] = 'Medically Necessary'   ";
+                    strExcelRow = "5";
+                    break;
+                case 2:
+                    strWhere = "AND [Authorization_Type]  in ('S', 'U') AND [Request_Decision] in ('FF', 'PF', 'AD') AND  [Decision_Reason]  <> 'Medically Necessary' AND [Decision_Reason] not like '054%' AND [Decision_Reason] not like '067%' ";
+                    strExcelRow = "6";
+                    break;
+                case 3:
+                    strWhere = "AND [Authorization_Type]  in ( 'PS')  ";
+                    strExcelRow = "56";
+                    break;
+                case 4:
+                    strWhere = "AND  [Authorization_Type]  in ('PS')  AND [Decision_Reason] = 'Medically Necessary'  ";
+                    strExcelRow = "57";
+                    break;
+                case 5:
+                    strWhere = "AND [Authorization_Type]  in ('PS')  AND  [Decision_Reason] <> 'Medically Necessary' AND [Decision_Reason] not like '054%'  AND [Decision_Reason] not like '067%' ";
+                    strExcelRow = "58";
+                    break;
+                default:
+                    break;
+            }
+
+
+            //AND (file_name LIKE 'Oxford%') AND [sheet_name]<> 'U12 
+
+
+            sbSQL.Append("SELECT ");
+            sbSQL.Append(strExcelRow + " as ExcelRow, ");//4 AND
+            sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('Site is PAR','Par', 'N/A')  AND tmp.[Inpatient_Outpatient] = 'Inpatient' THEN cnt ELSE NULL END) cnt_in_ip, ");
+            sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('NonPar Site','Non-Par') AND tmp.[Inpatient_Outpatient] = 'Inpatient' THEN cnt ELSE NULL END) cnt_on_ip, ");
+            sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('Site is PAR','Par', 'N/A')  AND tmp.[Inpatient_Outpatient] = 'Outpatient' THEN cnt ELSE NULL END) cnt_in_op, ");
+            sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('NonPar Site','Non-Par') AND tmp.[Inpatient_Outpatient] = 'Outpatient' THEN cnt ELSE NULL END)  cnt_on_op, ");
+            sbSQL.Append("'" + strState.Replace("'", "") + "' as State , ");
+            sbSQL.Append("'" + strStartDate + "' as StartDate, ");
+            sbSQL.Append("'" + strEndDate + "' as EndDate, ");
+            sbSQL.Append("'All states, legal entities and markets' as LegalEntity ");
+            sbSQL.Append("FROM( ");
+            sbSQL.Append("SELECT count(Distinct u.[Authorization]) cnt, u.[Par_NonPar_Site], u.[Inpatient_Outpatient] ");
+            sbSQL.Append("FROM [VCT_DB].[mhp].[MHP_Yearly_Universes] u ");
+            sbSQL.Append("INNER JOIN [VCT_DB].[mhp].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
+            sbSQL.Append("WHERE u.[State_of_Issue]  in (" + strState + ")  AND u.[Request_Date] >= '" + strStartDate + "' AND  u.[Request_Date] <= '" + strEndDate + "' "); //
+            sbSQL.Append("AND c.[MKT_SEG_RLLP_DESC] in (" + strMKT_SEG_RLLP_DESC + ") AND  c.[FINC_ARNG_DESC] in (" + strFINC_ARNG_DESC + ")  AND [Authorization] IS NOT NULL  AND [Classification]  IN ('EI','EI_OX')  "); //
+            sbSQL.Append("AND c.[LEG_ENTY_NBR] in (" + strLegalEntities + ") ");  //
+
+            if (!string.IsNullOrEmpty(strMKT_TYP_DESC))
+                sbSQL.Append("AND c.[MKT_TYP_DESC] in (" + strMKT_TYP_DESC + ") ");
+            if (!string.IsNullOrEmpty(strCUST_SEG))
+                sbSQL.Append("AND c.[CUST_SEG_NBR] in (" + strCUST_SEG + ") ");
+            sbSQL.Append(strWhere);
+            sbSQL.Append("GROUP BY [State_of_Issue], [Par_NonPar_Site], [Inpatient_Outpatient] ");
+            sbSQL.Append(") tmp ");
+            sbSQL.Append("UNION ALL ");
+
+        }
+
+        var results = _db.LoadData<MHP_EI_Model>(sql: sbSQL.ToString().TrimEnd(' ', 'U', 'N', 'I', 'O', 'N', ' ', 'A', 'L', 'L', ' '), token, connectionId: "VCT_DB");
+
+        return results;
+    }
+
+
+
+
+
     public Task<IEnumerable<MHP_CS_Model>> GetMHP_CS_Async(string strState, string strStartDate, string strEndDate, string strCS_TADM_PRDCT_MAP, string strGroupNumbers, CancellationToken token)
 
     {

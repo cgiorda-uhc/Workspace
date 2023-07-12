@@ -11,8 +11,20 @@
 	,[RX_NRXPrevious] as Previous_Rx_NRx
 
 
-	,CASE WHEN Has_Commercial_ugap is null AND Has_Medicare_ugap is null AND Has_Medicaid_ugap is null THEN v.LOB
-	ELSE 
+,CASE WHEN Has_Commercial = 1 AND Has_Medicare = 1 AND Has_Medicaid = 1 THEN 'All' ELSE 
+CASE WHEN Has_Commercial = 1 AND Has_Medicare = 1 THEN 'Commercial + Medicare' ELSE
+CASE WHEN Has_Commercial = 1 AND Has_Medicaid = 1 THEN 'Commercial + Medicaid' ELSE
+CASE WHEN Has_Medicare = 1 AND Has_Medicaid = 1 THEN 'Medicare + Medicaid' ELSE
+CASE WHEN Has_Commercial = 1 THEN 'Commercial Only' ELSE
+CASE WHEN Has_Medicare = 1 THEN 'Medicare Only' ELSE
+CASE WHEN Has_Medicaid = 1 THEN 'Medicaid Only' ELSE 'Not Mapped' 
+END END END END END END END  as Current_LOB
+
+
+
+
+       ,CASE WHEN Has_Commercial_ugap is null AND Has_Medicare_ugap is null AND Has_Medicaid_ugap is null THEN NULL
+       ELSE 
 CASE WHEN Has_Commercial_ugap = 1 AND Has_Medicare_ugap = 1 AND Has_Medicaid_ugap = 1 THEN 'All' ELSE 
 CASE WHEN Has_Commercial_ugap = 1 AND Has_Medicare_ugap = 1 THEN 'Commercial + Medicare' ELSE
 CASE WHEN Has_Commercial_ugap = 1 AND Has_Medicaid_ugap = 1 THEN 'Commercial + Medicaid' ELSE
@@ -20,7 +32,7 @@ CASE WHEN Has_Medicare_ugap = 1 AND Has_Medicaid_ugap = 1 THEN 'Medicare + Medic
 CASE WHEN Has_Commercial_ugap = 1 THEN 'Commercial Only' ELSE
 CASE WHEN Has_Medicare_ugap = 1 THEN 'Medicare Only' ELSE
 CASE WHEN Has_Medicaid_ugap = 1 THEN 'Medicaid Only' ELSE 'Not Mapped' 
-END END END END END END END END as Current_LOB
+END END END END END END END END as LOB_UGAP
 
 
 
@@ -64,8 +76,17 @@ END END END END END END END END as Current_LOB
 	,[PC_Measure_Status]
 
 
-	,CASE WHEN Has_Commercial_ugap is null AND Has_Medicare_ugap is null AND Has_Medicaid_ugap is null THEN 'Not Mapped' ELSE 
-	CASE WHEN ISNULL(Has_Commercial_ugap,'') <> ISNULL(Has_Commercial,'') OR ISNULL(Has_Medicare_ugap,'') <> ISNULL(Has_Medicare,'') OR  ISNULL(Has_Medicaid_ugap,'') <> ISNULL(Has_Medicaid,'') THEN 'Drop' ELSE 'Keep' END END as UGAP_Changes
+       ,CASE WHEN PC_Attribution = 'Not Mapped' OR (Has_Commercial_ugap is null AND Has_Medicare_ugap is null AND Has_Medicaid_ugap is null ) THEN 'Not Mapped' ELSE 
+       CASE WHEN ISNULL(Has_Commercial_ugap,'') <> ISNULL(Has_Commercial,'') OR ISNULL(Has_Medicare_ugap,'') <> ISNULL(Has_Medicare,'') OR  ISNULL(Has_Medicaid_ugap,'') <> ISNULL(Has_Medicaid,'') THEN 'Drop' ELSE 'Keep' END END as UGAP_Changes
+
+
+
+
+       ,CASE WHEN Has_Commercial_ugap is null AND Has_Medicare_ugap is null AND Has_Medicaid_ugap is null AND  PC_Attribution <> 'Not Mapped' THEN 'Y' ELSE 
+	   
+	   CASE WHEN (ISNULL(Has_Commercial_ugap,'') <> '' OR  ISNULL(Has_Medicare_ugap,'') <> '' OR ISNULL(Has_Medicaid_ugap,'') <> '')  AND  PC_Attribution = 'Not Mapped' THEN 'Y' ELSE 
+	   'N'
+       END END as Is_Flagged
 
   FROM [etgsymm].[VW_ETG_Symmetry_Main_Interface] v
   LEFT OUTER JOIN 

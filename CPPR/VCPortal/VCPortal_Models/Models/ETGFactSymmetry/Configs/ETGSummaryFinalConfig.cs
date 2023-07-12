@@ -19,6 +19,9 @@ public class ETGSummaryFinalConfig
     public string Current_Rx_NRx { get; set; }
     public string Previous_LOB { get; set; }
     public string Current_LOB { get; set; }
+
+    public string LOB_UGAP { get; set; }
+
     public string PC_Previous_Treatment_Indicator { get; set; }
     public string PC_Current_Treatment_Indicator { get; set; }
 
@@ -53,4 +56,7 @@ public class ETGSummaryFinalConfig
     public string Measure_Status { get; set; }
 
     public string UGAP_Changes { get; set; }
+
+
+    public string Is_Flagged { get; set; }
 }

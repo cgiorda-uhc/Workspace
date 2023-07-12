@@ -268,6 +268,7 @@ public partial class MHPViewModel : ObservableObject
         MHP_EI_Parameters_All ei_param_all = new MHP_EI_Parameters_All();
 
         List<MHP_EI_Model> mhp_final;
+        List<MHP_EI_Model> mhp_final_all;
         List<MHPEIDetails_Model> mhp_details_final;
         List<MHPEIDetails_Model> mhp_details_final_all;
         try
@@ -356,6 +357,39 @@ public partial class MHPViewModel : ObservableObject
             }
 
 
+            //EI ALL SUMMARY
+            _sbStatus.Append("--Retreiving EI summary all data from Database" + Environment.NewLine);
+            ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+            api = _config.APIS.Where(x => x.Name == "MHP_EI_All").FirstOrDefault();
+            WebAPIConsume.BaseURI = api.BaseUrl;
+            response = await WebAPIConsume.PostCall<MHP_EI_Parameters_All>(api.Url, ei_param_all);
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                _logger.Error("MHP EI All Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+                return;
+            }
+            else
+            {
+
+                var reponseStream = await response.Content.ReadAsStreamAsync();
+                var result = await JsonSerializer.DeserializeAsync<List<MHP_EI_Model>>(reponseStream, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                mhp_final_all = result;
+
+
+            }
+
+
+
+
+
             _sbStatus.Append("--Retreiving EI details data from Database" + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
 
@@ -419,9 +453,11 @@ public partial class MHPViewModel : ObservableObject
 
 
 
+
+
             CancellationTokenSource cancellationToken;
             cancellationToken = new CancellationTokenSource();
-            var bytes = await MHPExcelExport.ExportEIToExcel(mhp_final, mhp_details_final,() => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
+            var bytes = await MHPExcelExport.ExportEIToExcel(mhp_final, mhp_final_all, mhp_details_final, () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
 
             var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\MHP_Report_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
 

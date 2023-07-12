@@ -72,6 +72,8 @@
     <Folder Include="deploy\Tables" />
     <Folder Include="mhp" />
     <Folder Include="mhp\Tables" />
+    <Folder Include="peg" />
+    <Folder Include="peg\Tables" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\Views\vw_GetChemoTracking.sql" />
@@ -142,6 +144,9 @@
     <Build Include="etgsymm\Views\VW_ETG_Dataload_PC_AGG.sql" />
     <Build Include="etgsymm\Views\VW_ETG_Dataload_EC_AGG.sql" />
     <Build Include="etgsymm\Views\VW_ETG_Dataload_NRX_AGG.sql" />
+    <Build Include="peg\Tables\DQC_DATA_UHPD_SOURCE.sql" />
+    <Build Include="vct\Tables\Rate_Region.sql" />
+    <Build Include="peg\Tables\PEG_ANCH_UHPD_SOURCE.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Cd_GetAll.sql" />
@@ -171,6 +176,7 @@
     <Build Include="mhp\mhp.sql" />
     <Build Include="mhp\mhp_index.sql" />
     <Build Include="vct\vct_index.sql" />
+    <Build Include="peg\peg.sql" />
   </ItemGroup>
   <ItemGroup>
     <SqlCmdVariable Include="ChemoPXRefresh">

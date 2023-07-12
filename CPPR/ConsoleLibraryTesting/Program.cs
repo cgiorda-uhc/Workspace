@@ -57,39 +57,88 @@ using VCPortal_Models.Parameters.MHP;
 using VCPortal_Models.Models.Shared;
 using VCPortal_Models.Models.ETGFactSymmetry.Dataloads;
 using Teradata.Client.Provider;
+using VCPortal_Models.Models.PEG;
 
 
-var adHoc = new AdHoc();
-adHoc.ConnectionStringMSSQL = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
-adHoc.TableMHP = "stg.MHP_Yearly_Universes";
-adHoc.ConnectionStringTD = "Data Source=UDWPROD;User ID=cgiorda;Password=BooWooDooFoo2023!!;Authentication Mechanism=LDAP;Session Mode=TERADATA;Session Character Set=ASCII;Persist Security Info=true;Connection Timeout=99999;";
-adHoc.ConnectionStringVCPMSSQL = "Data Source=wn000103397;Initial Catalog=VCT_DB;Persist Security Info=True;User ID=vct_app_user;Password=BooWooDooFoo2023!!;connect timeout=300000;";
-adHoc.TableUGAP = "stg.MHP_Yearly_Universes_UGAP";
-adHoc.Limit = 3000;
-
-List<string> files_loaded = new List<string>();
-files_loaded.Add("United PCP- Rad & Card_May_2023.xlsx");
-files_loaded.Add("Oxford May -Radiology Cardiology Universe 2023.xlsx");
-files_loaded.Add("Americhoice May -Radiology Cardiology Universe 2023.xlsx");
-await adHoc.transferMHPDataAsync(files_loaded);
-
-return;
+//var adHoc = new AdHoc();
+//adHoc.ConnectionStringMSSQL = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
+//adHoc.TableMHP = "stg.MHP_Yearly_Universes";
+//adHoc.ConnectionStringTD = "Data Source=UDWPROD;User ID=cgiorda;Password=BooWooDooFoo2023!!;Authentication Mechanism=LDAP;Session Mode=TERADATA;Session Character Set=ASCII;Persist Security Info=true;Connection Timeout=99999;";
+//adHoc.ConnectionStringVCPMSSQL = "Data Source=wn000103397;Initial Catalog=VCT_DB;Persist Security Info=True;User ID=vct_app_user;Password=BooWooDooFoo2023!!;connect timeout=300000;";
+//adHoc.TableUGAP = "stg.MHP_Yearly_Universes_UGAP";
+//adHoc.Limit = 3000;
 
 //List<string> files_loaded = new List<string>();
+//files_loaded.Add("United PCP- Rad & Card_May_2023.xlsx");
+//files_loaded.Add("Oxford May -Radiology Cardiology Universe 2023.xlsx");
+//files_loaded.Add("Americhoice May -Radiology Cardiology Universe 2023.xlsx");
+//await adHoc.transferMHPDataAsync(files_loaded);
+
+//return;
+
+List<string> files_loaded = new List<string>();
 //files_loaded.Add("United PCP- Rad & Card_April_2023.xlsx");
 //files_loaded.Add("Americhoice April -Radiology Cardiology Universe 2023.xlsx");
 //files_loaded.Add("Oxford  April -Radiology Cardiology Universe 2023.xlsx");
 
 string connectionString = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
-string connectionStringVC = "data source=VCT_DB;server=localhost;Persist Security Info=True;database=VCT_DB;Integrated Security=SSPI;connect timeout=300000;";
+//string connectionStringVC = "data source=VCT_DB;server=localhost;Persist Security Info=True;database=VCT_DB;Integrated Security=SSPI;connect timeout=300000;";
+string connectionStringVC = "Data Source=wn000103397;Initial Catalog=VCT_DB;Persist Security Info=True;User ID=vct_app_user;Password=BooWooDooFoo2023!!;connect timeout=300000;";
 string connectionStringUHN = "data source=UHN_Reporting;server=WP000074441CLS;Persist Security Info=True;database=UHN_Reporting;Integrated Security=SSPI;connect timeout=300000;";
 string connectionStringPD = "data source=UHPD_Analytics;server=DBSWP0662;Persist Security Info=True;database=UHPD_Analytics;Integrated Security=SSPI;connect timeout=300000;";
 string connectionStringTD = "Data Source=UDWPROD;User ID=cgiorda;Password=BooWooDooFoo2023!!;Authentication Mechanism=LDAP;Session Mode=TERADATA;Session Character Set=ASCII;Persist Security Info=true;Connection Timeout=99999;";
+
+string connectionStringUHPD = "data source=UHPD_Reporting;server=WP000052579;Persist Security Info=True;database=PD_Reporting;Integrated Security=SSPI;connect timeout=300000;";
+
+
+
 IRelationalDataAccess db_sql = new SqlDataAccess();
 IRelationalDataAccess db_td = new TeraDataAccess();
 string strSQL;
 string[] columns;
 
+//PEG DATA LOAD
+//PEG DATA LOAD
+//PEG DATA LOAD
+
+
+//3 PEG Anchor 
+
+strSQL = "select b.PEG_ANCH_CATGY, b.PEG_ANCH_SBCATGY, b.PEG_ANCH_SBCATGY_DESC, a.PEG_ANCH_CATGY_ID, a.PEG_ANCH_CATGY_DESC, Concat(@@servername, ' - ', Db_Name()) as PACLocation from PD.CNFG_ANCH_SBCATGY b inner join PD.PEG_ANCHOR_CATEGORY a on b.PEG_ANCH_CATGY = a.PEG_ANCH_CATGY group by b.PEG_ANCH_CATGY, b.PEG_ANCH_SBCATGY, b.PEG_ANCH_SBCATGY_DESC, a.PEG_ANCH_CATGY_ID, a.PEG_ANCH_CATGY_DESC";
+
+var pa = await db_sql.LoadData<PEG_ANCH_Model>(connectionString: connectionStringPD, strSQL);
+
+columns = typeof(PEG_ANCH_Model).GetProperties().Select(p => p.Name).ToArray();
+await db_sql.BulkSave<PEG_ANCH_Model>(connectionString: connectionStringVC, "peg.PEG_ANCH_UHPD_SOURCE", pa, columns, truncate: true);
+
+//return;
+
+
+
+
+//2 RATE REGION
+strSQL = "select PD.RATE_REGION.MKT_NBR, PD.RATE_REGION.MKT_NM, PD.RATE_REGION.MAJ_MKT_NM, PD.RATE_REGION.RGN_NM, PD.RATE_REGION.MKT_RLLP_NM, Concat(@@servername, ' - ', Db_Name()) as RRLocation from PD.RATE_REGION";
+
+var rr = await db_sql.LoadData<Rate_Region_Model>(connectionString: connectionStringPD, strSQL);
+
+columns = typeof(Rate_Region_Model).GetProperties().Select(p => p.Name).ToArray();
+await db_sql.BulkSave<Rate_Region_Model>(connectionString: connectionStringVC, "vct.Rate_Region", rr, columns, truncate: true);
+
+//return;
+
+//1
+strSQL = "select cur.PEG_ANCH_CATGY, cur.PEG_ANCH_SBCATGY, cur.PREM_SPCL_CD, cur.SVRTY_LVL_CD, cur.APR_DRG_RLLP_NBR, cur.QLTY_MSR_NM, cur.CNFG_POP_SYS_ID, case when cur.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when cur.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when cur.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else 'UNKNOWN' end as LOB, Replace(Str(cur.UNET_MKT_NBR, 7), Space(1), '0') as MKT_NBR, cur.UNET_MKT_NBR, cur.MKT_DESC as UNET_MKT_DESC, cur.Cur_Version as Current_Version, cur.Cur_CMPLNT_CNT as Current_Market_Compliant, cur.Cur_OPRTNTY_CNT as Current_Market_Opportunity, cur.Cur_NAT_CMPLNC_CNT as Current_National_Compliant, cur.Cur_NAT_OPRTNTY_CNT as Current_National_Opportunity, prev.Prev_Version as Previous_Version, prev.Prev_CMPLNT_CNT as Previous_Market_Compliant, prev.Prev_OPRTNTY_CNT as Previous_Market_Opportunity, prev.Prev_NAT_CMPLNC_CNT as Previous_National_Compliant, prev.Prev_NAT_OPRTNTY_CNT as Previous_National_Opportunity, Concat(@@servername, ' - ', Db_Name()) as DTLocation, Cast(GetDate() as Date) as data_Extract_Dt from ( select c.PEG_ANCH_SBCATGY, c.PEG_ANCH_CATGY, c.SVRTY_LVL_CD, c.PREM_SPCL_CD, Sum(c.CMPLNT_CNT) as Cur_CMPLNT_CNT, Sum(c.OPRTNTY_CNT) as Cur_OPRTNTY_CNT, Concat('PD', c.PD_Version, '-', c.Run, ' Iteration - ', c.Iteration) as Cur_Version, c.APR_DRG_RLLP_NBR, c.QLTY_MSR_NM, c.CNFG_POP_SYS_ID, d.UNET_MKT_NBR, e.MKT_DESC, f.NAT_CMPLNC_CNT as Cur_NAT_CMPLNC_CNT, f.NAT_OPRTNTY_CNT as Cur_NAT_OPRTNTY_CNT from ( select a.Iteration, a.Run, a.run_sequence, a.PREM_DESG_VER_NBR, Rank() over (Order by a.PREM_DESG_VER_NBR Desc, a.run_sequence Desc, a.Iteration Desc) as rank, a.PD_Version from ( select a.Iteration, a.Run, case when Upper(a.Run) = 'DEV' then 1 when Upper(a.Run) = 'TRIAL' then 2 when Upper(a.Run) = 'STAGE' then 3 when Upper(a.Run) = 'PROD' then 4 end as run_sequence, a.PREM_DESG_VER_NBR, a.PD_Version from PD_Reporting.DQC.DQC_341_PEG_QLTY_EXPT_MSR a group by a.Iteration, a.Run, case when Upper(a.Run) = 'DEV' then 1 when Upper(a.Run) = 'TRIAL' then 2 when Upper(a.Run) = 'STAGE' then 3 when Upper(a.Run) = 'PROD' then 4 end, a.PREM_DESG_VER_NBR, a.PD_Version ) a ) b inner join PD_Reporting.DQC.DQC_341_PEG_QLTY_MPIN_MSR_SUMMARY c on b.Iteration = c.Iteration and b.PD_Version = c.PD_Version and b.Run = c.Run inner join PD_Reporting.DQC.DQC_341_PROV_ROLLOUT_UNET_MKT d on c.MPIN = d.MPIN and c.Iteration = d.Iteration and c.PD_Version = d.PD_Version and c.Run = d.Run inner join PD_Reporting.DQC.DQC_341_UNET_MKT e on d.UNET_MKT_NBR = e.UNET_MKT_NBR inner join PD_Reporting.DQC.DQC_341_PEG_QLTY_EXPT_MSR f on c.PEG_ANCH_SBCATGY = f.PEG_ANCH_SBCATGY and c.PEG_ANCH_CATGY = f.PEG_ANCH_CATGY and c.SVRTY_LVL_CD = f.SVRTY_LVL_CD and c.QLTY_MSR_NM = f.QLTY_MSR_NM and c.CNFG_POP_SYS_ID = f.CNFG_POP_SYS_ID and c.PREM_SPCL_CD = f.PREM_SPCL_CD and d.Iteration = f.Iteration and d.PD_Version = f.PD_Version and d.Run = f.Run and c.APR_DRG_RLLP_NBR = f.APR_DRG_RLLP_NBR where b.rank = 1 group by c.PEG_ANCH_SBCATGY, c.PEG_ANCH_CATGY, c.SVRTY_LVL_CD, c.PREM_SPCL_CD, Concat('PD', c.PD_Version, '-', c.Run, ' Iteration - ', c.Iteration), c.APR_DRG_RLLP_NBR, c.QLTY_MSR_NM, c.CNFG_POP_SYS_ID, d.UNET_MKT_NBR, e.MKT_DESC, f.NAT_CMPLNC_CNT, f.NAT_OPRTNTY_CNT ) cur left join ( select c.PEG_ANCH_SBCATGY, c.PEG_ANCH_CATGY, c.SVRTY_LVL_CD, c.PREM_SPCL_CD, Sum(c.CMPLNT_CNT) as Prev_CMPLNT_CNT, Sum(c.OPRTNTY_CNT) as Prev_OPRTNTY_CNT, Concat('PD', c.PD_Version, '-', c.Run, ' Iteration - ', c.Iteration) as Prev_Version, c.APR_DRG_RLLP_NBR, c.QLTY_MSR_NM, c.CNFG_POP_SYS_ID, d.UNET_MKT_NBR, e.MKT_DESC, f.NAT_CMPLNC_CNT as Prev_NAT_CMPLNC_CNT, f.NAT_OPRTNTY_CNT as Prev_NAT_OPRTNTY_CNT from ( select a.Iteration, a.Run, a.run_sequence, a.PREM_DESG_VER_NBR, Rank() over (Order by a.PREM_DESG_VER_NBR Desc, a.run_sequence Desc, a.Iteration Desc) as rank, a.PD_Version from ( select a.Iteration, a.Run, case when Upper(a.Run) = 'DEV' then 1 when Upper(a.Run) = 'TRIAL' then 2 when Upper(a.Run) = 'STAGE' then 3 when Upper(a.Run) = 'PROD' then 4 end as run_sequence, a.PREM_DESG_VER_NBR, a.PD_Version from PD_Reporting.DQC.DQC_341_PEG_QLTY_EXPT_MSR a group by a.Iteration, a.Run, case when Upper(a.Run) = 'DEV' then 1 when Upper(a.Run) = 'TRIAL' then 2 when Upper(a.Run) = 'STAGE' then 3 when Upper(a.Run) = 'PROD' then 4 end, a.PREM_DESG_VER_NBR, a.PD_Version ) a ) b inner join PD_Reporting.DQC.DQC_341_PEG_QLTY_MPIN_MSR_SUMMARY c on b.Iteration = c.Iteration and b.PD_Version = c.PD_Version and b.Run = c.Run inner join PD_Reporting.DQC.DQC_341_PROV_ROLLOUT_UNET_MKT d on c.MPIN = d.MPIN and c.Iteration = d.Iteration and c.PD_Version = d.PD_Version and c.Run = d.Run inner join PD_Reporting.DQC.DQC_341_UNET_MKT e on d.UNET_MKT_NBR = e.UNET_MKT_NBR inner join PD_Reporting.DQC.DQC_341_PEG_QLTY_EXPT_MSR f on c.PEG_ANCH_SBCATGY = f.PEG_ANCH_SBCATGY and c.PEG_ANCH_CATGY = f.PEG_ANCH_CATGY and c.SVRTY_LVL_CD = f.SVRTY_LVL_CD and c.QLTY_MSR_NM = f.QLTY_MSR_NM and c.CNFG_POP_SYS_ID = f.CNFG_POP_SYS_ID and c.PREM_SPCL_CD = f.PREM_SPCL_CD and d.Iteration = f.Iteration and d.PD_Version = f.PD_Version and d.Run = f.Run and c.APR_DRG_RLLP_NBR = f.APR_DRG_RLLP_NBR where b.rank = 2 group by c.PEG_ANCH_SBCATGY, c.PEG_ANCH_CATGY, c.SVRTY_LVL_CD, c.PREM_SPCL_CD, Concat('PD', c.PD_Version, '-', c.Run, ' Iteration - ', c.Iteration), c.APR_DRG_RLLP_NBR, c.QLTY_MSR_NM, c.CNFG_POP_SYS_ID, d.UNET_MKT_NBR, e.MKT_DESC, f.NAT_CMPLNC_CNT, f.NAT_OPRTNTY_CNT ) prev on cur.PEG_ANCH_SBCATGY = prev.PEG_ANCH_SBCATGY and cur.PEG_ANCH_CATGY = prev.PEG_ANCH_CATGY and cur.SVRTY_LVL_CD = prev.SVRTY_LVL_CD and cur.PREM_SPCL_CD = prev.PREM_SPCL_CD and cur.APR_DRG_RLLP_NBR = prev.APR_DRG_RLLP_NBR and cur.QLTY_MSR_NM = prev.QLTY_MSR_NM and cur.CNFG_POP_SYS_ID = prev.CNFG_POP_SYS_ID and cur.UNET_MKT_NBR = prev.UNET_MKT_NBR";
+
+var dqc = await db_sql.LoadData<DQC_DATA_UHPD_SOURCE_Model>(connectionString: connectionStringUHPD, strSQL);
+
+columns = typeof(DQC_DATA_UHPD_SOURCE_Model).GetProperties().Select(p => p.Name).ToArray();
+await db_sql.BulkSave<DQC_DATA_UHPD_SOURCE_Model>(connectionString: connectionStringVC, "peg.DQC_DATA_UHPD_SOURCE", dqc, columns, truncate: true);
+
+return;
+
+//PEG DATA LOAD
+//PEG DATA LOAD
+//PEG DATA LOAD
 
 
 
@@ -146,7 +195,7 @@ foreach (var l in lst_lob)
            // strSQL = "select es.EPSD_NBR, es.TOT_ALLW_AMT, en.SVRTY, en.ETG_BAS_CLSS_NBR, en.ETG_TX_IND, up.PROV_MPIN, es.TOT_NP_ALLW_AMT, " + lob_id + " as LOB_ID from CLODM001.ETG_SUMMARY es inner join CLODM001.ETG_NUMBER en on es.ETG_SYS_ID = en.ETG_SYS_ID inner join CLODM001.UNIQUE_PROVIDER up on es.RESP_UNIQ_PROV_SYS_ID = up.UNIQ_PROV_SYS_ID inner join CLODM001.INDIVIDUAL ind on es.INDV_SYS_ID = ind.INDV_SYS_ID inner join CLODM001.CLNOPS_CUSTOMER_SEGMENT ccs on ind.CLNOPS_CUST_SEG_SYS_ID = ccs.CLNOPS_CUST_SEG_SYS_ID inner join CLODM001.PRODUCT prod on ccs.PRDCT_SYS_ID = prod.PRDCT_SYS_ID inner join CLODM001.DATE_ETG_START DES on es.ETG_STRT_DT_SYS_ID = DES.ETG_STRT_DT_SYS_ID inner join CLODM001.DATE_ETG_FINISH DEF on es.ETG_FIN_DT_SYS_ID = DEF.ETG_FIN_DT_SYS_ID where es.EP_TYP_NBR in (0, 1, 2, 3)  and es.TOT_ALLW_AMT >= 35 and prod.PRDCT_LVL_1_NM = '" + l + "' and DES.ETG_STRT_DT >= '" + startdate + "' and DES.ETG_STRT_DT <= '" + enddate + "'";
 
 
-            strSQL = "select es.EPSD_NBR, es.TOT_ALLW_AMT, en.SVRTY, en.ETG_BAS_CLSS_NBR, en.ETG_TX_IND, up.PROV_MPIN, es.TOT_NP_ALLW_AMT, " + lob_id + " as LOB_ID from CLODM001.ETG_SUMMARY es inner join CLODM001.ETG_NUMBER en on es.ETG_SYS_ID = en.ETG_SYS_ID inner join CLODM001.UNIQUE_PROVIDER up on es.RESP_UNIQ_PROV_SYS_ID = up.UNIQ_PROV_SYS_ID inner join CLODM001.INDIVIDUAL ind on es.INDV_SYS_ID = ind.INDV_SYS_ID inner join CLODM001.CLNOPS_CUSTOMER_SEGMENT ccs on ind.CLNOPS_CUST_SEG_SYS_ID = ccs.CLNOPS_CUST_SEG_SYS_ID inner join CLODM001.PRODUCT prod on ccs.PRDCT_SYS_ID = prod.PRDCT_SYS_ID inner join CLODM001.DATE_ETG_START DES on es.ETG_STRT_DT_SYS_ID = DES.ETG_STRT_DT_SYS_ID where es.EP_TYP_NBR in (0, 1, 2, 3) and es.TOT_ALLW_AMT >= 35 and prod.PRDCT_LVL_1_NM = '" + l + "' and DES.ETG_STRT_DT >= '" + startdate + "' and DES.ETG_STRT_DT <= '" + enddate + "'";
+            strSQL = "select es.EPSD_NBR, es.TOT_ALLW_AMT, en.SVRTY, en.ETG_BAS_CLSS_NBR, en.ETG_TX_IND, up.PROV_MPIN, es.TOT_NP_ALLW_AMT, " + lob_id + " as LOB_ID from CLODM001.ETG_SUMMARY es inner join CLODM001.ETG_NUMBER en on es.ETG_SYS_ID = en.ETG_SYS_ID inner join CLODM001.UNIQUE_PROVIDER up on es.RESP_UNIQ_PROV_SYS_ID = up.UNIQ_PROV_SYS_ID inner join CLODM001.INDIVIDUAL ind on es.INDV_SYS_ID = ind.INDV_SYS_ID inner join CLODM001.CLNOPS_CUSTOMER_SEGMENT ccs on ind.CLNOPS_CUST_SEG_SYS_ID = ccs.CLNOPS_CUST_SEG_SYS_ID inner join CLODM001.PRODUCT prod on ccs.PRDCT_SYS_ID = prod.PRDCT_SYS_ID inner join CLODM001.DATE_ETG_START DES on es.ETG_STRT_DT_SYS_ID = DES.ETG_STRT_DT_SYS_ID where es.EP_TYP_NBR in (0, 1, 2, 3) and es.TOT_ALLW_AMT >= 35 and ISNULL(en.SVRTY,'') <> '' and prod.PRDCT_LVL_1_NM = '" + l + "' and DES.ETG_STRT_DT >= '" + startdate + "' and DES.ETG_STRT_DT <= '" + enddate + "'";
 
             Console.WriteLine("UGAP Pull Start Time: " + DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"));
 

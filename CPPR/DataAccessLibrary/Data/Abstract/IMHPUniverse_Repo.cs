@@ -9,6 +9,8 @@ namespace DataAccessLibrary.Data.Abstract
     {
         Task<IEnumerable<MHP_EI_Model>> GetMHP_EI_Async(string strState, string strStartDate, string strEndDate, string strFINC_ARNG_DESC, string strMKT_SEG_RLLP_DESC, List<string> lstLegalEntities, string strMKT_TYP_DESC, string strCUST_SEG, CancellationToken token);
 
+        Task<IEnumerable<MHP_EI_Model>> GetMHP_EI_ALL_Async(string strState, string strStartDate, string strEndDate, string strFINC_ARNG_DESC, string strMKT_SEG_RLLP_DESC, string strLegalEntities, string strMKT_TYP_DESC, string strCUST_SEG, CancellationToken token);
+
         Task<IEnumerable<MHP_CS_Model>> GetMHP_CS_Async(string strState, string strStartDate, string strEndDate, string strCS_TADM_PRDCT_MAP, string strGroupNumbers, CancellationToken token);
 
 

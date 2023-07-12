@@ -80,6 +80,39 @@ public static class MHPUniverse_Calls
         });
 
 
+
+
+        //ALL OF MY API ENDPOINT MAPPING
+        //app.MapGet(pattern: "/mhp_ei", async ([FromQuery] IMHPUniverse_Repo repo,  MHP_EI_Parameters param, CancellationToken token)  => 
+        app.MapPost(pattern: "/mhp_ei_all", async ([FromBody] MHP_EI_Parameters_All param, IMHPUniverse_Repo repo, CancellationToken token) =>
+        {
+            try
+            {
+                ////RETURN HTTP 200
+                var results = await repo.GetMHP_EI_ALL_Async(param.State, param.StartDate, param.EndDate, param.Finc_Arng_Desc, param.Mkt_Seg_Rllp_Desc, param.LegalEntities, param.Mkt_Typ_Desc, param.Cust_Seg, token);//200 SUCCESS
+
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetMHP_EI_Async 404, not found");
+                return Results.NotFound(); //404
+
+
+            }
+            catch (Exception ex)
+            {
+
+                _log.Error(ex, "API GetMHP_EI_Async threw an error");
+                //RETURN ERROR
+                return Results.Problem(ex.Message);
+
+            }
+        });
+
+
+
         app.MapPost(pattern: "/mhp_ifp", async ([FromBody] MHP_IFP_Parameters param, IMHPUniverse_Repo repo, CancellationToken token) =>
         {
             try

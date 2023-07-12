@@ -1,4 +1,5 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace FileParsingLibrary.MSExcel.Custom.MHP
     public static class MHPExcelExport
     {
 
-        public static async Task<byte[]> ExportEIToExcel(List<MHP_EI_Model> mhp_results, List<MHPEIDetails_Model> mhp_details, Func<string> getterStatus, Action<string> setterStatus, CancellationToken token)
+        public static async Task<byte[]> ExportEIToExcel(List<MHP_EI_Model> mhp_results, List<MHP_EI_Model> mhp_results_all, List<MHPEIDetails_Model> mhp_details, Func<string> getterStatus, Action<string> setterStatus, CancellationToken token)
         {
 
             //throw new Exception("Oh nooooooo!!!");
@@ -30,6 +31,43 @@ namespace FileParsingLibrary.MSExcel.Custom.MHP
             int rowCnt = 0;
             StringBuilder sbStatus = new StringBuilder();
             sbStatus.Append(getterStatus());
+
+
+            foreach (MHP_EI_Model mhp in mhp_results_all)
+            {
+                if (token.IsCancellationRequested)
+                {
+                    break;
+                }
+
+
+                if (mhp.ExcelRow == 4)
+                {
+                    var sheet = "Summary Rpt " + mhp.EndDate.Substring(mhp.EndDate.Length - 4);
+
+                    sbStatus.Append("--Creating sheet for " + sheet + Environment.NewLine);
+                    setterStatus(sbStatus.ToString());
+
+                    wsSource = wb.Worksheet("template");
+                    wsSource.CopyTo(sheet);
+                    wsSource = wb.Worksheet(sheet);
+
+                    wsSource.Cell("A1").Value = mhp.LegalEntity + " : " + mhp.StartDate + "-" + mhp.EndDate;
+                    wsSource.Cell("A1").Style.Font.Bold = true;
+                    wsSource.Cell("A1").Style.Fill.BackgroundColor = XLColor.Yellow;
+                    wsSource.Cell("A1").Style.Border.OutsideBorder = XLBorderStyleValues.Medium;
+                }
+
+                wsSource.Cell("B" + mhp.ExcelRow).Value = (string.IsNullOrEmpty(mhp.cnt_in_ip + "") ? null : mhp.cnt_in_ip + "");
+                wsSource.Cell("D" + mhp.ExcelRow).Value = (string.IsNullOrEmpty(mhp.cnt_on_ip + "") ? null : mhp.cnt_on_ip + "");
+                wsSource.Cell("F" + mhp.ExcelRow).Value = (string.IsNullOrEmpty(mhp.cnt_in_op + "") ? null : mhp.cnt_in_op + "");
+                wsSource.Cell("H" + mhp.ExcelRow).Value = (string.IsNullOrEmpty(mhp.cnt_on_op + "") ? null : mhp.cnt_on_op + "");
+
+            }
+
+
+
+
             foreach (MHP_EI_Model mhp in mhp_results)
             {
                 if (token.IsCancellationRequested)
@@ -70,6 +108,9 @@ namespace FileParsingLibrary.MSExcel.Custom.MHP
 
 
             wb.Worksheet("template").Delete();
+            wsSource = wb.Worksheets.Add();
+
+
 
             rowCnt = 2;
             string lastEntity = null;
@@ -161,87 +202,88 @@ namespace FileParsingLibrary.MSExcel.Custom.MHP
 
 
 
-            rowCnt = 2;
+            //rowCnt = 2;
 
 
           
-            if (token.IsCancellationRequested)
-            {
-                setterStatus("~~~Report Generation Cancelled~~~");
-                token.ThrowIfCancellationRequested();
-            }
+            //if (token.IsCancellationRequested)
+            //{
+            //    setterStatus("~~~Report Generation Cancelled~~~");
+            //    token.ThrowIfCancellationRequested();
+            //}
 
-            sbStatus.Append("--Creating details all sheet for EI " +  Environment.NewLine);
-            setterStatus(sbStatus.ToString());
-
-            //var newSheetName = mhp.LegalEntity.Split('-')[0].Trim();
-            wsSource = wb.Worksheets.Add("EI_Details_All");
-            // Copy the worksheet to a new sheet in this workbook
-            //wsSource.CopyTo("template COPY1").SetTabColor(XLColor.Orange);
-
-            wsSource.Cell("A1").Value = "Authorization";
-            wsSource.Cell("B1").Value = "Request_Decision";
-            wsSource.Cell("C1").Value = "Authorization_Type";
-            wsSource.Cell("D1").Value = "Par_NonPar_Site";
-            wsSource.Cell("E1").Value = "Inpatient_Outpatient";
-            wsSource.Cell("F1").Value = "Request_Date";
-            wsSource.Cell("G1").Value = "State_of_Issue";
-            wsSource.Cell("H1").Value = "FINC_ARNG_DESC";
-            wsSource.Cell("I1").Value = "Decision_Reason";
-            wsSource.Cell("J1").Value = "MKT_SEG_RLLP_DESC";
-            wsSource.Cell("K1").Value = "MKT_TYP_DESC";
-            wsSource.Cell("L1").Value = "LegalEntity";
-            wsSource.Cell("M1").Value = "Enrollee_First_Name";
-            wsSource.Cell("N1").Value = "Enrollee_Last_Name";
-            wsSource.Cell("O1").Value = "Cardholder_ID";
-            wsSource.Cell("P1").Value = "Member_Date_of_Birth";
-            wsSource.Cell("Q1").Value = "Procedure_Code_Description";
-            wsSource.Cell("R1").Value = "Primary_Procedure_Code";
-            wsSource.Cell("S1").Value = "Primary_Diagnosis_Code";
-            wsSource.Cell("T1").Value = "CUST_SEG_NBR";
-            wsSource.Cell("U1").Value = "CUST_SEG_NM";
-            //wsSource.Cell("S1").Value = nameof(mhp.Diagnosis_Code_Description);
+            //sbStatus.Append("--Creating details all sheet for EI " +  Environment.NewLine);
+            //setterStatus(sbStatus.ToString());
 
 
+            ////var newSheetName = mhp.LegalEntity.Split('-')[0].Trim();
+            //wsSource = wb.Worksheets.Add("EI_Details_All");
+            //// Copy the worksheet to a new sheet in this workbook
+            ////wsSource.CopyTo("template COPY1").SetTabColor(XLColor.Orange);
 
-            range = wsSource.Range(wsSource.Cell(1, 1).Address, wsSource.Cell(1, typeof(MHPEIDetails_Model).GetProperties().Length).Address);
-            range.Style.Border.OutsideBorder = XLBorderStyleValues.Medium;
-            range.Style.Font.Bold = true;
-            range.Style.Fill.BackgroundColor = XLColor.Yellow;
+            //wsSource.Cell("A1").Value = "Authorization";
+            //wsSource.Cell("B1").Value = "Request_Decision";
+            //wsSource.Cell("C1").Value = "Authorization_Type";
+            //wsSource.Cell("D1").Value = "Par_NonPar_Site";
+            //wsSource.Cell("E1").Value = "Inpatient_Outpatient";
+            //wsSource.Cell("F1").Value = "Request_Date";
+            //wsSource.Cell("G1").Value = "State_of_Issue";
+            //wsSource.Cell("H1").Value = "FINC_ARNG_DESC";
+            //wsSource.Cell("I1").Value = "Decision_Reason";
+            //wsSource.Cell("J1").Value = "MKT_SEG_RLLP_DESC";
+            //wsSource.Cell("K1").Value = "MKT_TYP_DESC";
+            //wsSource.Cell("L1").Value = "LegalEntity";
+            //wsSource.Cell("M1").Value = "Enrollee_First_Name";
+            //wsSource.Cell("N1").Value = "Enrollee_Last_Name";
+            //wsSource.Cell("O1").Value = "Cardholder_ID";
+            //wsSource.Cell("P1").Value = "Member_Date_of_Birth";
+            //wsSource.Cell("Q1").Value = "Procedure_Code_Description";
+            //wsSource.Cell("R1").Value = "Primary_Procedure_Code";
+            //wsSource.Cell("S1").Value = "Primary_Diagnosis_Code";
+            //wsSource.Cell("T1").Value = "CUST_SEG_NBR";
+            //wsSource.Cell("U1").Value = "CUST_SEG_NM";
+            ////wsSource.Cell("S1").Value = nameof(mhp.Diagnosis_Code_Description);
+
+
+
+            //range = wsSource.Range(wsSource.Cell(1, 1).Address, wsSource.Cell(1, typeof(MHPEIDetails_Model).GetProperties().Length).Address);
+            //range.Style.Border.OutsideBorder = XLBorderStyleValues.Medium;
+            //range.Style.Font.Bold = true;
+            //range.Style.Fill.BackgroundColor = XLColor.Yellow;
         
-            rowCnt = 2;
-            intNameCntTmp++;
-            foreach (MHPEIDetails_Model mhp in mhp_details)
-            {
+            //rowCnt = 2;
+            //intNameCntTmp++;
+            //foreach (MHPEIDetails_Model mhp in mhp_details)
+            //{
 
-                wsSource.Cell("A" + rowCnt).Value = mhp.Authorization;
-                wsSource.Cell("B" + rowCnt).Value = mhp.Request_Decision;
-                wsSource.Cell("C" + rowCnt).Value = mhp.Authorization_Type;
-                wsSource.Cell("D" + rowCnt).Value = mhp.Par_NonPar_Site;
-                wsSource.Cell("E" + rowCnt).Value = mhp.Inpatient_Outpatient;
-                wsSource.Cell("F" + rowCnt).Value = mhp.Request_Date;
-                wsSource.Cell("G" + rowCnt).Value = mhp.State_of_Issue;
-                wsSource.Cell("H" + rowCnt).Value = mhp.FINC_ARNG_DESC;
-                wsSource.Cell("I" + rowCnt).Value = mhp.Decision_Reason;
-                wsSource.Cell("J" + rowCnt).Value = mhp.MKT_SEG_RLLP_DESC;
-                wsSource.Cell("K" + rowCnt).Value = mhp.MKT_TYP_DESC;
-                wsSource.Cell("L" + rowCnt).Value = mhp.LEG_ENTY_NBR + " - " + mhp.LEG_ENTY_FULL_NM;
-                wsSource.Cell("M" + rowCnt).Value = mhp.Enrollee_First_Name;
-                wsSource.Cell("N" + rowCnt).Value = mhp.Enrollee_Last_Name;
-                wsSource.Cell("O" + rowCnt).Value = mhp.Cardholder_ID;
-                wsSource.Cell("P" + rowCnt).Value = mhp.Member_Date_of_Birth;
-                wsSource.Cell("Q" + rowCnt).SetValue(mhp.Procedure_Code_Description + "");
-                wsSource.Cell("R" + rowCnt).SetValue(mhp.Primary_Procedure_Code_Req + "");
-                wsSource.Cell("S" + rowCnt).SetValue(mhp.Primary_Diagnosis_Code + "");
-                wsSource.Cell("T" + rowCnt).SetValue(mhp.CUST_SEG_NBR + "");
-                wsSource.Cell("U" + rowCnt).SetValue(mhp.CUST_SEG_NM + "");
-                //wsSource.Cell("S" + rowCnt).Value = mhp.Diagnosis_Code_Description;
+            //    wsSource.Cell("A" + rowCnt).Value = mhp.Authorization;
+            //    wsSource.Cell("B" + rowCnt).Value = mhp.Request_Decision;
+            //    wsSource.Cell("C" + rowCnt).Value = mhp.Authorization_Type;
+            //    wsSource.Cell("D" + rowCnt).Value = mhp.Par_NonPar_Site;
+            //    wsSource.Cell("E" + rowCnt).Value = mhp.Inpatient_Outpatient;
+            //    wsSource.Cell("F" + rowCnt).Value = mhp.Request_Date;
+            //    wsSource.Cell("G" + rowCnt).Value = mhp.State_of_Issue;
+            //    wsSource.Cell("H" + rowCnt).Value = mhp.FINC_ARNG_DESC;
+            //    wsSource.Cell("I" + rowCnt).Value = mhp.Decision_Reason;
+            //    wsSource.Cell("J" + rowCnt).Value = mhp.MKT_SEG_RLLP_DESC;
+            //    wsSource.Cell("K" + rowCnt).Value = mhp.MKT_TYP_DESC;
+            //    wsSource.Cell("L" + rowCnt).Value = mhp.LEG_ENTY_NBR + " - " + mhp.LEG_ENTY_FULL_NM;
+            //    wsSource.Cell("M" + rowCnt).Value = mhp.Enrollee_First_Name;
+            //    wsSource.Cell("N" + rowCnt).Value = mhp.Enrollee_Last_Name;
+            //    wsSource.Cell("O" + rowCnt).Value = mhp.Cardholder_ID;
+            //    wsSource.Cell("P" + rowCnt).Value = mhp.Member_Date_of_Birth;
+            //    wsSource.Cell("Q" + rowCnt).SetValue(mhp.Procedure_Code_Description + "");
+            //    wsSource.Cell("R" + rowCnt).SetValue(mhp.Primary_Procedure_Code_Req + "");
+            //    wsSource.Cell("S" + rowCnt).SetValue(mhp.Primary_Diagnosis_Code + "");
+            //    wsSource.Cell("T" + rowCnt).SetValue(mhp.CUST_SEG_NBR + "");
+            //    wsSource.Cell("U" + rowCnt).SetValue(mhp.CUST_SEG_NM + "");
+            //    //wsSource.Cell("S" + rowCnt).Value = mhp.Diagnosis_Code_Description;
 
-                rowCnt++;
-            }
+            //    rowCnt++;
+            //}
 
 
-            wsSource.Columns().AdjustToContents(1, 20);
+            //wsSource.Columns().AdjustToContents(1, 20);
 
 
 
