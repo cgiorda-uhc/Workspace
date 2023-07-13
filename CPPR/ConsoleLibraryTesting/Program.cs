@@ -58,6 +58,7 @@ using VCPortal_Models.Models.Shared;
 using VCPortal_Models.Models.ETGFactSymmetry.Dataloads;
 using Teradata.Client.Provider;
 using VCPortal_Models.Models.PEG;
+using VCPortal_Models.Models.EBM;
 
 
 //var adHoc = new AdHoc();
@@ -96,6 +97,29 @@ IRelationalDataAccess db_sql = new SqlDataAccess();
 IRelationalDataAccess db_td = new TeraDataAccess();
 string strSQL;
 string[] columns;
+
+
+//EBM DATA LOAD
+//EBM DATA LOAD
+//EBM DATA LOAD
+//1
+strSQL = "select cur.REPORT_CASE_ID, cur.REPORT_RULE_ID, cur.COND_NM, cur.RULE_DESC, cur.PREM_SPCL_CD, cur.CNFG_POP_SYS_ID, case when cur.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when cur.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when cur.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else 'UNKNOWN' end as LOB, Replace(Str(cur.UNET_MKT_NBR, 7), Space(1), '0') as MKT_NBR, cur.UNET_MKT_NBR, cur.MKT_DESC as UNET_MKT_DESC, cur.Cur_Version as Current_Version, cur.Cur_CMPLNT_CNT as Current_Market_Compliant, cur.Cur_OPRTNTY_CNT as Current_Market_Opportunity, cur.Cur_NAT_CMPLNC_CNT as Current_National_Compliant, cur.Cur_NAT_OPRTNTY_CNT as Current_National_Opportunity, prev.Prev_Version as Previous_Version, prev.Prev_CMPLNT_CNT as Previous_Market_Compliant, prev.Prev_OPRTNTY_CNT as Previous_Market_Opportunity, prev.Prev_NAT_CMPLNC_CNT as Previous_National_Compliant, prev.Prev_NAT_OPRTNTY_CNT as Previous_National_Opportunity, Concat(@@servername, ' - ', Db_Name()) as DTLocation, Cast(GetDate() as Date) as data_Extract_Dt from ( select a.REPORT_CASE_ID, a.REPORT_RULE_ID, a.PREM_SPCL_CD, Sum(a.CMPLNT_CNT) as Cur_CMPLNT_CNT, Sum(a.OPRTNTY_CNT) as Cur_OPRTNTY_CNT, Concat('PD', c.PD_Version, '-', c.Run, ' Iteration - ', c.Iteration) as Cur_Version, b.COND_NM, b.RULE_DESC, c.NAT_CMPLNC_CNT as Cur_NAT_CMPLNC_CNT, c.NAT_OPRTNTY_CNT as Cur_NAT_OPRTNTY_CNT, a.CNFG_POP_SYS_ID, d.UNET_MKT_NBR, e.MKT_DESC from PD_Reporting.DQC.DQC_342_EBM_QLTY_MPIN_MSR_SUMMARY a inner join PD_Reporting.DQC.DQC_342_EBM_RULE_DESCRIPTION b on a.REPORT_CASE_ID = b.REPORT_CASE_ID and a.REPORT_RULE_ID = b.REPORT_RULE_ID and a.Iteration = b.Iteration and a.PD_Version = b.PD_Version and a.Run = b.Run inner join PD_Reporting.DQC.DQC_342_EBM_QLTY_EXPT_MSR c on b.REPORT_CASE_ID = c.REPORT_CASE_ID and b.REPORT_RULE_ID = c.REPORT_RULE_ID and a.CNFG_POP_SYS_ID = c.CNFG_POP_SYS_ID and a.PREM_SPCL_CD = c.PREM_SPCL_CD and b.Iteration = c.Iteration and b.PD_Version = c.PD_Version and b.Run = c.Run inner join PD_Reporting.DQC.DQC_341_PROV_ROLLOUT_UNET_MKT d on a.MPIN = d.MPIN and c.Iteration = d.Iteration and c.PD_Version = d.PD_Version and c.Run = d.Run inner join PD_Reporting.DQC.DQC_341_UNET_MKT e on d.UNET_MKT_NBR = e.UNET_MKT_NBR inner join ( select b.* from ( select a.Iteration, a.Run, a.run_sequence, a.PREM_DESG_VER_NBR, Rank() over (Order by a.PREM_DESG_VER_NBR Desc, a.run_sequence Desc, a.Iteration Desc) as rank from ( select a.Iteration, a.Run, case when Upper(a.Run) = 'DEV' then 1 when Upper(a.Run) = 'TRIAL' then 2 when Upper(a.Run) = 'STAGE' then 3 when Upper(a.Run) = 'PROD' then 4 end as run_sequence, a.PREM_DESG_VER_NBR from PD_Reporting.DQC.DQC_342_EBM_QLTY_EXPT_MSR a group by a.Iteration, a.Run, case when Upper(a.Run) = 'DEV' then 1 when Upper(a.Run) = 'TRIAL' then 2 when Upper(a.Run) = 'STAGE' then 3 when Upper(a.Run) = 'PROD' then 4 end, a.PREM_DESG_VER_NBR ) a ) b where b.rank = 1 ) f on a.Iteration = f.Iteration and a.Run = f.Run and a.PREM_DESG_VER_NBR = f.PREM_DESG_VER_NBR group by a.REPORT_CASE_ID, a.REPORT_RULE_ID, a.PREM_SPCL_CD, Concat('PD', c.PD_Version, '-', c.Run, ' Iteration - ', c.Iteration), b.COND_NM, b.RULE_DESC, c.NAT_CMPLNC_CNT, c.NAT_OPRTNTY_CNT, a.CNFG_POP_SYS_ID, d.UNET_MKT_NBR, e.MKT_DESC ) cur left join ( select a.REPORT_CASE_ID, a.REPORT_RULE_ID, a.PREM_SPCL_CD, Sum(a.CMPLNT_CNT) as Prev_CMPLNT_CNT, Sum(a.OPRTNTY_CNT) as Prev_OPRTNTY_CNT, Concat('PD', c.PD_Version, '-', c.Run, ' Iteration - ', c.Iteration) as Prev_Version, b.COND_NM, b.RULE_DESC, c.NAT_CMPLNC_CNT as Prev_NAT_CMPLNC_CNT, c.NAT_OPRTNTY_CNT as Prev_NAT_OPRTNTY_CNT, a.CNFG_POP_SYS_ID, d.UNET_MKT_NBR, e.MKT_DESC from PD_Reporting.DQC.DQC_342_EBM_QLTY_MPIN_MSR_SUMMARY a inner join PD_Reporting.DQC.DQC_342_EBM_RULE_DESCRIPTION b on a.REPORT_CASE_ID = b.REPORT_CASE_ID and a.REPORT_RULE_ID = b.REPORT_RULE_ID and a.Iteration = b.Iteration and a.PD_Version = b.PD_Version and a.Run = b.Run inner join PD_Reporting.DQC.DQC_342_EBM_QLTY_EXPT_MSR c on b.REPORT_CASE_ID = c.REPORT_CASE_ID and b.REPORT_RULE_ID = c.REPORT_RULE_ID and a.CNFG_POP_SYS_ID = c.CNFG_POP_SYS_ID and a.PREM_SPCL_CD = c.PREM_SPCL_CD and b.Iteration = c.Iteration and b.PD_Version = c.PD_Version and b.Run = c.Run inner join PD_Reporting.DQC.DQC_341_PROV_ROLLOUT_UNET_MKT d on a.MPIN = d.MPIN and c.Iteration = d.Iteration and c.PD_Version = d.PD_Version and c.Run = d.Run inner join PD_Reporting.DQC.DQC_341_UNET_MKT e on d.UNET_MKT_NBR = e.UNET_MKT_NBR inner join ( select b.* from ( select a.Iteration, a.Run, a.run_sequence, a.PREM_DESG_VER_NBR, Rank() over (Order by a.PREM_DESG_VER_NBR Desc, a.run_sequence Desc, a.Iteration Desc) as rank from ( select a.Iteration, a.Run, case when Upper(a.Run) = 'DEV' then 1 when Upper(a.Run) = 'TRIAL' then 2 when Upper(a.Run) = 'STAGE' then 3 when Upper(a.Run) = 'PROD' then 4 end as run_sequence, a.PREM_DESG_VER_NBR from PD_Reporting.DQC.DQC_342_EBM_QLTY_EXPT_MSR a group by a.Iteration, a.Run, case when Upper(a.Run) = 'DEV' then 1 when Upper(a.Run) = 'TRIAL' then 2 when Upper(a.Run) = 'STAGE' then 3 when Upper(a.Run) = 'PROD' then 4 end, a.PREM_DESG_VER_NBR ) a ) b where b.rank = 2 ) f on a.Iteration = f.Iteration and a.Run = f.Run and a.PREM_DESG_VER_NBR = f.PREM_DESG_VER_NBR group by a.REPORT_CASE_ID, a.REPORT_RULE_ID, a.PREM_SPCL_CD, Concat('PD', c.PD_Version, '-', c.Run, ' Iteration - ', c.Iteration), b.COND_NM, b.RULE_DESC, c.NAT_CMPLNC_CNT, c.NAT_OPRTNTY_CNT, a.CNFG_POP_SYS_ID, d.UNET_MKT_NBR, e.MKT_DESC ) prev on cur.REPORT_CASE_ID = prev.REPORT_CASE_ID and cur.REPORT_RULE_ID = prev.REPORT_RULE_ID and cur.PREM_SPCL_CD = prev.PREM_SPCL_CD and cur.UNET_MKT_NBR = prev.UNET_MKT_NBR and cur.CNFG_POP_SYS_ID = prev.CNFG_POP_SYS_ID";
+
+var ebm = await db_sql.LoadData<DQC_DATA_EBM_UHPD_SOURCE_Model>(connectionString: connectionStringUHPD, strSQL);
+
+columns = typeof(DQC_DATA_EBM_UHPD_SOURCE_Model).GetProperties().Select(p => p.Name).ToArray();
+await db_sql.BulkSave<DQC_DATA_EBM_UHPD_SOURCE_Model>(connectionString: connectionStringVC, "ebm.DQC_DATA_UHPD_SOURCE", ebm, columns, truncate: true);
+
+return;
+
+
+//EBM DATA LOAD
+//EBM DATA LOAD
+//EBM DATA LOAD
+
+
+
+
 
 //PEG DATA LOAD
 //PEG DATA LOAD

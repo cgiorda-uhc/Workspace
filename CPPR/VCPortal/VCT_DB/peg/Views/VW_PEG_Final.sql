@@ -1,0 +1,36 @@
+﻿CREATE VIEW [peg].[VW_PEG_Final]
+	AS SELECT 
+      d.[PEG_ANCH_CATGY],
+      d.[PEG_ANCH_SBCATGY],
+      d.[PREM_SPCL_CD],
+      d.[SVRTY_LVL_CD],
+      d.[APR_DRG_RLLP_NBR],
+      d.[QLTY_MSR_NM],
+      d.[CNFG_POP_SYS_ID],
+      d.[MKT_NBR],
+      d.[UNET_MKT_NBR],
+      d.[UNET_MKT_DESC],
+      d.[Current_Version],
+      d.[Current_Market_Compliant],
+      d.[Current_Market_Opportunity],
+      d.[Current_National_Compliant],
+      d.[Current_National_Opportunity],
+      d.[Previous_Version],
+      d.[Previous_Market_Compliant],
+      d.[Previous_Market_Opportunity],
+      d.[Previous_National_Compliant],
+      d.[Previous_National_Opportunity],
+      d.[DTLocation],
+      d.[Data_Extract_Dt],
+	  r.[MKT_NM],
+	r.[MAJ_MKT_NM],
+	r.[RGN_NM],
+	r.[MKT_RLLP_NM],
+  r.[RRLocation],
+  p.[PEG_ANCH_SBCATGY_DESC],
+	p.[PEG_ANCH_CATGY_ID],
+	p.[PEG_ANCH_CATGY_DESC],
+  p.[PACLocation] 
+  FROM [peg].[DQC_DATA_UHPD_SOURCE] d
+  LEFT JOIN [vct].[Rate_Region] r ON r.[MKT_NBR] = d.[MKT_NBR]
+  LEFT JOIN  [peg].[PEG_ANCH_UHPD_SOURCE] p ON d.PEG_ANCH_CATGY = p.PEG_ANCH_CATGY AND  d.PEG_ANCH_SBCATGY= p.PEG_ANCH_SBCATGY

@@ -1,0 +1,26 @@
+﻿CREATE TABLE [ebm].[DQC_DATA_UHPD_SOURCE]
+(
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY,
+		[REPORT_CASE_ID] [char](6) NULL,
+[REPORT_RULE_ID] [char](9) NULL,
+[COND_NM] [varchar](150) NULL,
+[RULE_DESC] [varchar](300) NULL,
+[PREM_SPCL_CD] [char](8) NULL,
+[CNFG_POP_SYS_ID] INT NULL,
+[LOB] [char](10) NULL,
+[MKT_NBR] [varchar](12) NULL,
+[UNET_MKT_NBR] INT NULL,
+[UNET_MKT_DESC] [varchar](60) NULL,
+[Current_Version] [varchar](50) NULL,
+[Current_Market_Compliant] BIGINT NULL,
+[Current_Market_Opportunity] BIGINT NULL,
+[Current_National_Compliant] INT NULL,
+[Current_National_Opportunity] INT NULL,
+[Previous_Version] [varchar](50) NULL,
+[Previous_Market_Compliant] BIGINT NULL,
+[Previous_Market_Opportunity] BIGINT NULL,
+[Previous_National_Compliant] INT NULL,
+[Previous_National_Opportunity] INT NULL,
+[DTLocation] [varchar](50) NULL,
+[Data_Extract_Dt] [Date] NULL 
+)
