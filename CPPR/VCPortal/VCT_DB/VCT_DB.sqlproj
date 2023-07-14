@@ -78,6 +78,9 @@
     <Folder Include="ebm" />
     <Folder Include="ebm\Tables" />
     <Folder Include="ebm\Views" />
+    <Folder Include="etg" />
+    <Folder Include="etg\Tables" />
+    <Folder Include="etg\Views" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\Views\vw_GetChemoTracking.sql" />
@@ -154,6 +157,12 @@
     <Build Include="peg\Views\VW_PEG_Final.sql" />
     <Build Include="ebm\Tables\DQC_DATA_UHPD_SOURCE.sql" />
     <Build Include="ebm\Views\VW_EBM_Final.sql" />
+    <Build Include="etg\Tables\ETG_Episodes_UGAP_SOURCE.sql" />
+    <Build Include="etg\Tables\PrimarySpecWithCode.sql" />
+    <Build Include="etg\Tables\NRX_Cost_UGAP_SOURCE.sql" />
+    <Build Include="etg\Tables\ETG_Cancer_Flag_PD_SOURCE.sql" />
+    <Build Include="etg\Tables\PremiumNDBSpec_PD_SOURCE.sql" />
+    <Build Include="etg\Tables\ETG_Mapped_PD_SOURCE.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Cd_GetAll.sql" />
@@ -185,6 +194,7 @@
     <Build Include="vct\vct_index.sql" />
     <Build Include="peg\peg.sql" />
     <Build Include="ebm\ebm.sql" />
+    <Build Include="etg\etg.sql" />
   </ItemGroup>
   <ItemGroup>
     <SqlCmdVariable Include="ChemoPXRefresh">

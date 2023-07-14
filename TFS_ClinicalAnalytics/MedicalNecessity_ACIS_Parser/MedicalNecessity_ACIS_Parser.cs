@@ -17,8 +17,11 @@ namespace MedicalNecessity_ACIS_Parser
     {
         static void Main(string[] args)
         {
+            HelperFunctions.HelperFunctions.Email("inna_rudi@uhc.com;sheila_donelan@uhc.com", "chris_giordano@uhc.com", "VC Automation Manager: ACIS MedNec Tables", "ACIS MedNec tables were updated with data for the month of July 2023", "chris_giordano@uhc.com;jon_maguire@uhc.com", null, System.Net.Mail.MailPriority.Normal);
 
 
+
+            return;
             //HelperFunctions.HelperFunctions.Email("inna_rudi@uhc.com;sheila_donelan@uhc.com", "chris_giordano@uhc.com", "VC Automation Manager: ACIS MedNec Tables", "ACIS MedNec tables were updated with data for the month of January 2023", "jon_maguire@uhc.com", null, System.Net.Mail.MailPriority.Normal);
 
 
@@ -189,7 +192,7 @@ namespace MedicalNecessity_ACIS_Parser
             Console.WriteLine();
             Console.WriteLine("Processing cleaned spreadsheets");
             //PROCESS ALL EXTRACTED FILES SKIP THOSE ALREADY PROCESSED
-            string[] strArrAlreadyProcessed = DBConnection32.getMSSQLDataTable(strILUCAConnectionString, "SELECT distinct[file] from[dbo].[ACIS_MedNec_Data_Stage]").AsEnumerable().Select(r => r.Field<string>("file")).ToArray();
+            string[] strArrAlreadyProcessed = DBConnection32.getMSSQLDataTable(strILUCAConnectionString, "SELECT distinct [file] from[dbo].[ACIS_MedNec_Data_Stage]").AsEnumerable().Select(r => r.Field<string>("file")).ToArray();
             string strSpreadsheetPrefixName = "ACIS_MedNec_Report_Full_";
             SpreadsheetDocument wbCurrentExcelFile;
             DataTable dtCurrentDataTable;
