@@ -1,11 +1,5 @@
-﻿CREATE VIEW [etgsymm].[VW_ETG_Dataload_PC_AGG]
-	AS 
-
-	
-
-
-
-select e5.PREM_SPCL_CD as Premium_Specialty,
+﻿CREATE VIEW [etg].[VW_ETG_Dataload_PC_AGG]
+	AS select e5.PREM_SPCL_CD as Premium_Specialty,
 	e5.ETG_BAS_CLSS_NBR as ETG_Base_Class,
 	e5.Pop_Epsd_Cnt as PC_Episode_Count,
 	Cast(e5.Pop_Tot_Cost as numeric(19, 2)) as PC_Total_Cost,
@@ -51,7 +45,7 @@ from
 			temptab.ETG_BAS_CLSS_NBR,
 			Avg(temptab.TOT_ALLW_AMT) as Pop_Average_Cost,
 			Count(temptab.EPSD_NBR) as totEpsd_Cnt 
-		from etgsymm.VW_ETG_Dataload_PC_EC_TMP as temptab 
+		from etg.VW_ETG_Dataload_PC_EC_Master as temptab 
 		where temptab.TRT_CD = 0 
 			and temptab.PREM_SPCL_CD not in ('', 'NONE') 
 			and temptab.LOB_ID = 1 
@@ -63,7 +57,7 @@ from
 						when b.PREM_SPCL_CD is NULL then 'NONE' 
 						else b.PREM_SPCL_CD 
 					end) as PREM_SPCL_CD 
-		from vct.PrimarySpecWithCode b 
+		from etg.PrimarySpecWithCode_PDNDB_SOURCE b 
 		where b.PREM_SPCL_CD not in ('', 'NONE') 
 		group by b.PREM_SPCL_CD
 		) spcl
@@ -73,7 +67,7 @@ from
 	select Count(Distinct temptab.EPSD_NBR) as Pop_NP_Epsd_Cnt,
 		Sum(temptab.TOT_NP_ALLW_AMT) as Pop_NP_Tot_Cost,
 		temptab.ETG_BAS_CLSS_NBR 
-	from etgsymm.VW_ETG_Dataload_PC_EC_TMP as temptab 
+	from etg.VW_ETG_Dataload_PC_EC_Master as temptab 
 	where temptab.TRT_CD = 0 
 		and temptab.PREM_SPCL_CD not in ('', 'NONE') 
 	group by temptab.ETG_BAS_CLSS_NBR
@@ -92,7 +86,7 @@ from
 							else StDev(temptab.TOT_ALLW_AMT) / Avg(temptab.TOT_ALLW_AMT) 
 						end) * Count(Distinct temptab.EPSD_NBR)) as TOT_CV,
 			temptab.PREM_SPCL_CD 
-		from etgsymm.VW_ETG_Dataload_PC_EC_TMP as temptab 
+		from etg.VW_ETG_Dataload_PC_EC_Master as temptab 
 		where temptab.PREM_SPCL_CD not in ('', 'NONE') 
 			and temptab.TRT_CD = 0 
 			and temptab.LOB_ID = 1 
@@ -108,7 +102,7 @@ from
 		Avg(temptab.TOT_ALLW_AMT) as spcl_Pop_Average_Cost,
 		temptab.PREM_SPCL_CD,
 		Count(temptab.EPSD_NBR) as spcl_tot_Epsd_Cnt 
-	from etgsymm.VW_ETG_Dataload_PC_EC_TMP as temptab 
+	from etg.VW_ETG_Dataload_PC_EC_Master as temptab 
 	where temptab.PREM_SPCL_CD not in ('', 'NONE') 
 		and temptab.TRT_CD = 0 
 		and temptab.LOB_ID = 1 
@@ -120,7 +114,7 @@ from
 		Sum(temptab.TOT_NP_ALLW_AMT) as spcl_Pop_NP_Tot_Cost,
 		temptab.ETG_BAS_CLSS_NBR,
 		temptab.PREM_SPCL_CD 
-	from etgsymm.VW_ETG_Dataload_PC_EC_TMP as temptab 
+	from etg.VW_ETG_Dataload_PC_EC_Master as temptab 
 	where temptab.PREM_SPCL_CD not in ('', 'NONE') 
 		and temptab.TRT_CD = 0 
 	group by temptab.ETG_BAS_CLSS_NBR, temptab.PREM_SPCL_CD
@@ -140,7 +134,7 @@ from
 							else StDev(temptab.TOT_ALLW_AMT) / Avg(temptab.TOT_ALLW_AMT) 
 						end) * Count(Distinct temptab.EPSD_NBR)) as TOT_CV,
 			temptab.PREM_SPCL_CD 
-		from etgsymm.VW_ETG_Dataload_PC_EC_TMP as temptab 
+		from etg.VW_ETG_Dataload_PC_EC_Master as temptab 
 		where temptab.PREM_SPCL_CD not in ('', 'NONE') 
 			and temptab.TRT_CD = 0 
 			and temptab.LOB_ID = 1 
@@ -152,7 +146,7 @@ from
 	(
 	select Count(Distinct temptab.EPSD_NBR) as spcl_Pop_TOT_Epsd_Cnt,
 		temptab.PREM_SPCL_CD 
-	from etgsymm.VW_ETG_Dataload_PC_EC_TMP as temptab 
+	from etg.VW_ETG_Dataload_PC_EC_Master as temptab 
 	where temptab.PREM_SPCL_CD not in ('', 'NONE') 
 		and temptab.TRT_CD = 0 
 		and temptab.LOB_ID = 1 

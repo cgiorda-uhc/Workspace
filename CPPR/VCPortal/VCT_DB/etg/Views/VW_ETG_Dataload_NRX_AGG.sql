@@ -1,8 +1,5 @@
-﻿CREATE VIEW [etgsymm].[VW_ETG_Dataload_NRX_AGG]
-	AS 
-	
-	
-	select b.ETG_BAS_CLSS_NBR as ETG_Base_Class,
+﻿CREATE VIEW [etg].[VW_ETG_Dataload_NRX_AGG]
+	AS select b.ETG_BAS_CLSS_NBR as ETG_Base_Class,
 	Concat('Rx: ', b.RX, ' / NRx: ', b.NRX) as RX_NRX,
 	case 
 			when b.RX = 'Y' then 'True' 
@@ -39,9 +36,10 @@ from
 					when CF.CNCR_IND = 'N' then 0 
 					else NRX.TRT_CD 
 				end as TRT_CD 
-		from vct.NRX_Cost_UGAP NRX 
-			left join vct.ETG_Cancer_Flag CF on NRX.ETG_BAS_CLSS_NBR = CF.ETG_BASE_CLASS
+		from etg.NRX_Cost_UGAP_SOURCE NRX 
+			left join etg.ETG_Cancer_Flag_PD_SOURCE CF on NRX.ETG_BAS_CLSS_NBR = CF.ETG_BASE_CLASS
 		) a 
 	where a.TRT_CD = 0 
 	group by a.ETG_BAS_CLSS_NBR
 	) b
+

@@ -131,14 +131,6 @@
     <Build Include="deploy\Tables\ETG_Base_Class.sql" />
     <Build Include="deploy\Tables\ETG_Base_Class_TI.sql" />
     <Build Include="deploy\Tables\ETG_Base_Class_MPC.sql" />
-    <Build Include="vct\Tables\PrimarySpecWithCode.sql" />
-    <Build Include="vct\Tables\ETG_Episodes_UGAP.sql" />
-    <Build Include="vct\Tables\ETG_Mapped_PD.sql" />
-    <Build Include="vct\Tables\PremiumNDBSpecPD.sql" />
-    <Build Include="vct\Tables\ETG_Cancer_Flag.sql" />
-    <Build Include="vct\Tables\NRX_Cost_UGAP.sql" />
-    <Build Include="etgsymm\Views\VW_ETG_POP_EPSD_NRX.sql" />
-    <Build Include="etgsymm\Views\VW_ETG_EPISODE_COST.sql" />
     <Build Include="vct\Tables\UGAPCFG_ETG_TI_RX_NRX_COM.sql" />
     <Build Include="vct\Tables\UGAPCFG_ETG_TI_RX_NRX_MCD.sql" />
     <Build Include="vct\Tables\UGAPCFG_ETG_TI_RX_NRX_MCR.sql" />
@@ -147,10 +139,6 @@
     <Build Include="etgsymm\Views\VW_UGAPCFG_FINAL.sql" />
     <Build Include="etgsymm\Views\VW_ETG_Symmetry_UGAP CNFG.sql" />
     <Build Include="etgsymm\Views\VW_ETG_Summary_Final.sql" />
-    <Build Include="etgsymm\Views\VW_ETG_Dataload_PC_EC_TMP.sql" />
-    <Build Include="etgsymm\Views\VW_ETG_Dataload_PC_AGG.sql" />
-    <Build Include="etgsymm\Views\VW_ETG_Dataload_EC_AGG.sql" />
-    <Build Include="etgsymm\Views\VW_ETG_Dataload_NRX_AGG.sql" />
     <Build Include="peg\Tables\DQC_DATA_UHPD_SOURCE.sql" />
     <Build Include="vct\Tables\Rate_Region.sql" />
     <Build Include="peg\Tables\PEG_ANCH_UHPD_SOURCE.sql" />
@@ -158,11 +146,21 @@
     <Build Include="ebm\Tables\DQC_DATA_UHPD_SOURCE.sql" />
     <Build Include="ebm\Views\VW_EBM_Final.sql" />
     <Build Include="etg\Tables\ETG_Episodes_UGAP_SOURCE.sql" />
-    <Build Include="etg\Tables\PrimarySpecWithCode.sql" />
+    <Build Include="etg\Tables\PrimarySpecWithCode_PDNDB_SOURCE.sql" />
     <Build Include="etg\Tables\NRX_Cost_UGAP_SOURCE.sql" />
     <Build Include="etg\Tables\ETG_Cancer_Flag_PD_SOURCE.sql" />
     <Build Include="etg\Tables\PremiumNDBSpec_PD_SOURCE.sql" />
     <Build Include="etg\Tables\ETG_Mapped_PD_SOURCE.sql" />
+    <Build Include="etg\Views\VW_ETG_Dataload_PC_EC_Master.sql" />
+    <Build Include="etg\Views\VW_ETG_Dataload_PC_AGG.sql" />
+    <Build Include="etg\Views\VW_ETG_Dataload_NRX_AGG.sql" />
+    <Build Include="etg\Views\VW_ETG_Dataload_EC_AGG.sql" />
+    <Build Include="etg\Views\VW_ETG_EPISODE_COST.sql" />
+    <Build Include="etg\Views\VW_ETG_POP_EPSD_NRX.sql" />
+    <Build Include="etg\Views\VW_ETG_Final_DataLoad.sql" />
+    <Build Include="etg\Tables\ETG_Dataload_EC_AGG.sql" />
+    <Build Include="etg\Tables\ETG_Dataload_NRX_AGG.sql" />
+    <Build Include="etg\Tables\ETG_Dataload_PC_AGG.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Cd_GetAll.sql" />
@@ -195,6 +193,7 @@
     <Build Include="peg\peg.sql" />
     <Build Include="ebm\ebm.sql" />
     <Build Include="etg\etg.sql" />
+    <Build Include="etg\etg_index.sql" />
   </ItemGroup>
   <ItemGroup>
     <SqlCmdVariable Include="ChemoPXRefresh">

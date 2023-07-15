@@ -1,5 +1,0 @@
-﻿CREATE TABLE [vct].[ETG_Cancer_Flag]
-(
-	[ETG_BASE_CLASS] INT NOT NULL, 
-    [CNCR_IND] CHAR(1) NULL 
-)

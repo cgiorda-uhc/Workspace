@@ -1,8 +1,5 @@
-﻿CREATE VIEW [etgsymm].[VW_ETG_Dataload_EC_AGG]
-	AS 
-
-
-	select e5.PREM_SPCL_CD as Premium_Specialty,
+﻿CREATE VIEW [etg].[VW_ETG_Dataload_EC_AGG]
+	AS select e5.PREM_SPCL_CD as Premium_Specialty,
 	e5.ETG_BAS_CLSS_NBR as ETG_Base_Class,
 	e5.ETG_TX_IND as EC_Treatment_Indicator,
 	e5.EPSD_Epsd_Cnt as EC_Episode_Count,
@@ -50,7 +47,7 @@ from
 			temptab.ETG_BAS_CLSS_NBR,
 			temptab.ETG_TX_IND,
 			Avg(temptab.TOT_ALLW_AMT) as EPSD_Average_Cost 
-		from etgsymm.VW_ETG_Dataload_PC_EC_TMP as temptab 
+		from etg.VW_ETG_Dataload_PC_EC_Master as temptab 
 		where temptab.ETG_TX_IND = 0 
 			and temptab.PREM_SPCL_CD not in ('', 'GENSURG', 'GERIA', 'HEMAONC', 'PLASTIC', 'VASC', 'NONE', 'NONPAR') 
 			and temptab.LOB_ID = 1 
@@ -62,7 +59,7 @@ from
 						when b.PREM_SPCL_CD is NULL then 'NONE' 
 						else b.PREM_SPCL_CD 
 					end) as PREM_SPCL_CD 
-		from vct.PrimarySpecWithCode b 
+		from etg.PrimarySpecWithCode_PDNDB_SOURCE b 
 		where b.PREM_SPCL_CD not in ('', 'GENSURG', 'GERIA', 'HEMAONC', 'PLASTIC', 'VASC', 'NONE', 'NONPAR') 
 		group by b.PREM_SPCL_CD
 		) spcl
@@ -73,7 +70,7 @@ from
 		Sum(temptab.TOT_NP_ALLW_AMT) as EPSD_NP_Tot_Cost,
 		temptab.ETG_BAS_CLSS_NBR,
 		temptab.ETG_TX_IND 
-	from etgsymm.VW_ETG_Dataload_PC_EC_TMP as temptab 
+	from etg.VW_ETG_Dataload_PC_EC_Master as temptab 
 	where temptab.ETG_TX_IND = 0 
 		and temptab.PREM_SPCL_CD not in ('', 'GENSURG', 'GERIA', 'HEMAONC', 'PLASTIC', 'VASC', 'NONE', 'NONPAR') 
 	group by temptab.ETG_BAS_CLSS_NBR, temptab.ETG_TX_IND
@@ -95,7 +92,7 @@ from
 						end) * Count(Distinct temptab.EPSD_NBR)) as TOT_CV,
 			temptab.PREM_SPCL_CD,
 			temptab.SVRTY 
-		from etgsymm.VW_ETG_Dataload_PC_EC_TMP as temptab 
+		from etg.VW_ETG_Dataload_PC_EC_Master as temptab 
 		where temptab.ETG_TX_IND = 0 
 			and temptab.PREM_SPCL_CD not in ('', 'GENSURG', 'GERIA', 'HEMAONC', 'PLASTIC', 'VASC', 'NONE', 'NONPAR') 
 			and temptab.LOB_ID = 1 
@@ -112,7 +109,7 @@ from
 		Avg(temptab.TOT_ALLW_AMT) as spcl_Average_Cost,
 		temptab.PREM_SPCL_CD,
 		temptab.PD_Mapped 
-	from etgsymm.VW_ETG_Dataload_PC_EC_TMP as temptab 
+	from etg.VW_ETG_Dataload_PC_EC_Master as temptab 
 	where temptab.ETG_TX_IND = 0 
 		and temptab.PREM_SPCL_CD not in ('', 'GENSURG', 'GERIA', 'HEMAONC', 'PLASTIC', 'VASC', 'NONE', 'NONPAR') 
 		and temptab.LOB_ID = 1 
@@ -125,7 +122,7 @@ from
 		temptab.ETG_BAS_CLSS_NBR,
 		temptab.ETG_TX_IND,
 		temptab.PREM_SPCL_CD 
-	from etgsymm.VW_ETG_Dataload_PC_EC_TMP as temptab 
+	from etg.VW_ETG_Dataload_PC_EC_Master as temptab 
 	where temptab.ETG_TX_IND = 0 
 		and temptab.PREM_SPCL_CD not in ('', 'GENSURG', 'GERIA', 'HEMAONC', 'PLASTIC', 'VASC', 'NONE', 'NONPAR') 
 	group by temptab.ETG_BAS_CLSS_NBR, temptab.ETG_TX_IND, temptab.PREM_SPCL_CD
@@ -148,7 +145,7 @@ from
 						end) * Count(Distinct temptab.EPSD_NBR)) as TOT_CV,
 			temptab.PREM_SPCL_CD,
 			temptab.SVRTY 
-		from etgsymm.VW_ETG_Dataload_PC_EC_TMP as temptab 
+		from etg.VW_ETG_Dataload_PC_EC_Master as temptab 
 		where temptab.ETG_TX_IND = 0 
 			and temptab.PREM_SPCL_CD not in ('', 'GENSURG', 'GERIA', 'HEMAONC', 'PLASTIC', 'VASC', 'NONE', 'NONPAR') 
 			and temptab.LOB_ID = 1 
@@ -160,9 +157,10 @@ from
 	(
 	select Count(Distinct temptab.EPSD_NBR) as spcl_TOT_Epsd_Cnt,
 		temptab.PREM_SPCL_CD 
-	from etgsymm.VW_ETG_Dataload_PC_EC_TMP as temptab 
+	from etg.VW_ETG_Dataload_PC_EC_Master as temptab 
 	where temptab.PREM_SPCL_CD not in ('', 'GENSURG', 'GERIA', 'HEMAONC', 'PLASTIC', 'VASC', 'NONE', 'NONPAR') 
 		and temptab.ETG_TX_IND = 0 
 		and temptab.LOB_ID = 1 
 	group by temptab.PREM_SPCL_CD
 	) e13 on e5.PREM_SPCL_CD = e13.PREM_SPCL_CD
+

@@ -76,17 +76,24 @@ END END END END END END END END as LOB_UGAP
 	,[PC_Measure_Status]
 
 
-       ,CASE WHEN PC_Attribution = 'Not Mapped' OR (Has_Commercial_ugap is null AND Has_Medicare_ugap is null AND Has_Medicaid_ugap is null ) THEN 'Not Mapped' ELSE 
+       --,CASE WHEN PC_Attribution = 'Not Mapped' OR (Has_Commercial_ugap is null AND Has_Medicare_ugap is null AND Has_Medicaid_ugap is null ) THEN 'Not Mapped' ELSE 
+       --CASE WHEN ISNULL(Has_Commercial_ugap,'') <> ISNULL(Has_Commercial,'') OR ISNULL(Has_Medicare_ugap,'') <> ISNULL(Has_Medicare,'') OR  ISNULL(Has_Medicaid_ugap,'') <> ISNULL(Has_Medicaid,'') THEN 'Drop' ELSE 'Keep' END END as UGAP_Changes
+	   ,CASE WHEN PC_Attribution = 'Not Mapped' THEN 'Not Mapped' ELSE 
        CASE WHEN ISNULL(Has_Commercial_ugap,'') <> ISNULL(Has_Commercial,'') OR ISNULL(Has_Medicare_ugap,'') <> ISNULL(Has_Medicare,'') OR  ISNULL(Has_Medicaid_ugap,'') <> ISNULL(Has_Medicaid,'') THEN 'Drop' ELSE 'Keep' END END as UGAP_Changes
 
 
 
-
-       ,CASE WHEN Has_Commercial_ugap is null AND Has_Medicare_ugap is null AND Has_Medicaid_ugap is null AND  PC_Attribution <> 'Not Mapped' THEN 'Y' ELSE 
+    --   ,CASE WHEN Has_Commercial_ugap is null AND Has_Medicare_ugap is null AND Has_Medicaid_ugap is null AND  PC_Attribution <> 'Not Mapped' THEN 'Y' ELSE 
 	   
-	   CASE WHEN (ISNULL(Has_Commercial_ugap,'') <> '' OR  ISNULL(Has_Medicare_ugap,'') <> '' OR ISNULL(Has_Medicaid_ugap,'') <> '')  AND  PC_Attribution = 'Not Mapped' THEN 'Y' ELSE 
+	   --CASE WHEN (ISNULL(Has_Commercial_ugap,'') <> '' OR  ISNULL(Has_Medicare_ugap,'') <> '' OR ISNULL(Has_Medicaid_ugap,'') <> '')  AND  PC_Attribution = 'Not Mapped' THEN 'Y' ELSE 
+	   --'N'
+    --   END END as Is_Flagged
+
+	   ,CASE WHEN (ISNULL(Has_Commercial_ugap,'') <> '' OR  ISNULL(Has_Medicare_ugap,'') <> '' OR ISNULL(Has_Medicaid_ugap,'') <> '')  AND  PC_Attribution = 'Not Mapped' THEN 'Y' ELSE 
 	   'N'
-       END END as Is_Flagged
+       END as Is_Flagged
+
+
 
   FROM [etgsymm].[VW_ETG_Symmetry_Main_Interface] v
   LEFT OUTER JOIN 

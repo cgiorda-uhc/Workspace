@@ -1,4 +1,4 @@
-﻿CREATE VIEW [etgsymm].[VW_ETG_EPISODE_COST]
+﻿CREATE VIEW [etg].[VW_ETG_EPISODE_COST]
 	AS SELECT 
 pdm.PREM_SPCL_CD,
 ec1.ETG_BAS_CLSS_NBR,  
@@ -16,7 +16,7 @@ FROM --step 11: Summarize NP cost and episodes (all LOB’s)
 	   SELECT etg.[ETG_BAS_CLSS_NBR], etg.[ETG_TX_IND], 
        SUM (etg.[TOT_NP_ALLW_AMT]) as NP_Tot_Cost, 
        COUNT(distinct etg.[EPSD_NBR]) as NP_Epsd_Cnt
-       FROM [etgsymm].[VW_ETG_POP_EPSD_NRX] etg --MAIN VIEW
+       FROM [etg].[VW_ETG_POP_EPSD_NRX] etg --MAIN VIEW
          WHERE etg.[PREM_SPCL_CD] NOT IN ('','GENSURG','GERIA','HEMAONC','PLASTIC','VASC','NONE','NONPAR') --Step 10: Filter the data from step 9 on
        and etg.[ETG_TX_IND] = 0
        GROUP BY etg.[ETG_BAS_CLSS_NBR], etg.[ETG_TX_IND]
@@ -30,7 +30,7 @@ LEFT JOIN --Step 13: Summarize cost and episodes for Commercial LOB only
 	  SELECT etg.[ETG_BAS_CLSS_NBR], etg.[ETG_TX_IND], SUM(etg.[TOT_ALLW_AMT]) as Tot_Cost, 
        AVG(etg.[TOT_ALLW_AMT]) as Average_Cost,
        COUNT(DISTINCT etg.[EPSD_NBR]) as Epsd_Cnt
-       FROM [etgsymm].[VW_ETG_POP_EPSD_NRX] etg --MAIN VIEW
+       FROM [etg].[VW_ETG_POP_EPSD_NRX] etg --MAIN VIEW
        WHERE etg.[LOB] = 'COMMERCIAL' --step 12 : filter the data from Step 10 on 
        GROUP BY etg.[ETG_BAS_CLSS_NBR], etg.[ETG_TX_IND]
 
@@ -41,7 +41,7 @@ LEFT JOIN --Step 15: Attach PD specialties to data from step 5
 (
        
 	   SELECT distinct [PREM_SPCL_CD],[ETG_BASE_CLASS]
-       FROM [vct].[ETG_Mapped_PD] 
+       FROM [etg].[ETG_Mapped_PD_SOURCE] 
        WHERE [PREM_SPCL_CD] NOT IN ('','GENSURG','GERIA','HEMAONC','PLASTIC','VASC','NONE','NONPAR')
 
        
@@ -59,8 +59,9 @@ LEFT JOIN
             AVG(etg.[TOT_ALLW_AMT])  as Average_Cost,
             COUNT(DISTINCT etg.[EPSD_NBR])  as Epsd_Cnt,
             STDEV(etg.[TOT_ALLW_AMT]) as SD
-            FROM [etgsymm].[VW_ETG_POP_EPSD_NRX] etg --MAIN VIEW
+            FROM [etg].[VW_ETG_POP_EPSD_NRX] etg --MAIN VIEW
             GROUP BY etg.[ETG_BAS_CLSS_NBR], etg.[ETG_TX_IND],[PREM_SPCL_CD],[SVRTY]
         ) e
 
 ) ec3 ON ec1.[ETG_BAS_CLSS_NBR] = ec3.[ETG_BAS_CLSS_NBR] AND ec1.[ETG_TX_IND] = ec3.[ETG_TX_IND] AND ec3.[PREM_SPCL_CD] = pdm.[PREM_SPCL_CD] --Step 19: Join CV to data from Step 15 
+
