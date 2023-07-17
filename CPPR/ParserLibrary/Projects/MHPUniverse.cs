@@ -104,7 +104,7 @@ public class MHPUniverse : IMHPUniverse
 
 
                 var files_found = newFiles.Where(x => Path.GetFileName(x.FileName) == filename).FirstOrDefault();
-                var config_sheets = _config.FileLists.Find(f => f.FileName.ToLower().StartsWith(files_found.Name.ToLower())).ExcelConfigs;
+                var config_sheets = _config.FileLists.Find(f => f.FileName.ToLower().HasMatchOnWild(files_found.Name.ToLower())).ExcelConfigs;
 
                 string colrange = "";
                 int startingRow = 1;
@@ -117,19 +117,32 @@ public class MHPUniverse : IMHPUniverse
                     colrange = cfg.ColumnRange;
                     startingRow = cfg.StartingDataRow;
 
-                    if (filename.ToLower().Contains("_rad"))
+                    if (filename.ToLower().Contains("gastro"))
                     {
-                        strType = "RAD";
+                        strType = "GASTRO";
                     }
-                    else
+                    else if (filename.ToLower().Contains("card"))
                     {
                         strType = "CARD";
+                    }
+                    else 
+                    {
+                        strType = "RAD";
                     }
 
                     var sheet = cfg.SheetName;
                     Log.Information($"Processing " + filename + " sheet:" + sheet);
 
                     string strLastState = null;
+
+
+
+                    //if(cleanFileName.ToLower().Contains("gastro"))
+                    //{
+                    //    sheet = "Gastro";
+                    //}
+
+
                     var mhp = closed_xml.ImportExcel<MHPUniverseModel>(cleanFileName, sheet, colrange, startingRow);
                     var mhp_final = mhp.Distinct().ToList();//MHP IS KNOWN FOR DUPLICATE ROWS
                     foreach (var m in mhp_final)

@@ -3,6 +3,7 @@
 
 
 
+using AutoMapper;
 using System.Reflection;
 
 namespace ProjectManagerLibrary.Projects;
@@ -124,7 +125,7 @@ public class EvicoreScorecard : IEvicoreScorecard
                     var lob = closed_xml.GetValueFromExcel(cleanFileName, sheet.SheetName, sheet.SheetIdentifier);
 
                     //LOS STYLE SHEETS 
-                    if (sheet.SheetName == "RADIOLOGY" || sheet.SheetName == "CARDIOLOGY")
+                    if (sheet.SheetName == "RADIOLOGY" || sheet.SheetName == "CARDIOLOGY" || sheet.SheetName == "GASTROENTEROLOGY")
                     {
                         //USE LOS MAPPINGS TO PRELOAD  List<EvicoreScorecardModel>
                         foreach (var m in closed_xml.Mappings)
@@ -135,46 +136,110 @@ public class EvicoreScorecard : IEvicoreScorecard
                             }
                         }
 
+
+                        
+
+
                         var eslos = closed_xml.ImportExcel<EvicoreScorecardSheetLOSModel>(cleanFileName, sheet.SheetName, sheet.ColumnRange, sheet.StartingDataRow);
 
-                        foreach (var e in eslos.Where(x => !string.IsNullOrEmpty(x.EINotif)))
+
+                        if (sheet.SheetName == "GASTROENTEROLOGY")
                         {
-                            if (e.Header.Trim().EqualsAnyOf(ignore))
+                            //closed_xml.Mappings = getColumnGastroMappings();
+
+                            foreach (var e in eslos.Where(x => !string.IsNullOrEmpty(x.EIPA)))
                             {
-                                continue;
-                            }
-
-
-                            //ex Map '% Fax' = 'Per_Fax'
-                            var mapping = headerMappings.SingleOrDefault(m => m.Key.ToLower().Trim() == e.Header.ToLower().Trim());
-                            var colMapped = mapping.Value;
-
-                            foreach (var f in ecsFinalList.Where(x => x.sheet_name == sheet.SheetName))
-                            {
-                                //ex MAP 'E&I - Notif.' to 'EINotif'
-                                mapping = closed_xml.Mappings.SingleOrDefault(m => m.Key.ToLower().Trim() == f.Header.ToLower().Trim());
-                                var colSheetMapped = mapping.Value;
-
-
-
-                                try
+                                if (e.Header.Trim().EqualsAnyOf(ignore))
                                 {
-                                    //DYNAMICALLY SET VALUES TO PROPERTIES BASED ON MAPPED STRINGS
-                                    propModel = typeof(EvicoreScorecardModel).GetProperty(colMapped); //ex colMapped = 'Per_Fax'
-                                    propSheetModel = typeof(EvicoreScorecardSheetLOSModel).GetProperty(colSheetMapped); //ex f.Header = 'EINotif'
-                                    var value = SharedFunctions.ConvertToType(propSheetModel.GetValue(e), propModel.PropertyType);
-                                    propModel.SetValue(f, value);
-                                }
-                                catch(Exception ex)
-                                {
-                                    string exc = ex.Message;
+                                    continue;
                                 }
 
 
+                                //ex Map '% Fax' = 'Per_Fax'
+                                var mapping = headerMappings.SingleOrDefault(m => m.Key.ToLower().Trim() == e.Header.ToLower().Trim());
+                                var colMapped = mapping.Value;
+
+                                foreach (var f in ecsFinalList.Where(x => x.sheet_name == sheet.SheetName))
+                                {
+                                    //ex MAP 'E&I - Notif.' to 'EINotif'
+                                    mapping = closed_xml.Mappings.SingleOrDefault(m => m.Key.ToLower().Trim() == f.Header.ToLower().Trim());
+                                    var colSheetMapped = mapping.Value;
+
+
+
+                                    try
+                                    {
+                                        //DYNAMICALLY SET VALUES TO PROPERTIES BASED ON MAPPED STRINGS
+                                        propModel = typeof(EvicoreScorecardModel).GetProperty(colMapped); //ex colMapped = 'Per_Fax'
+                                        propSheetModel = typeof(EvicoreScorecardSheetLOSModel).GetProperty(colSheetMapped); //ex f.Header = 'EINotif'
+                                        var val = propSheetModel.GetValue(e);
+                                        if (val == null)
+                                        {
+                                            continue;
+                                        }
+                                        var value = SharedFunctions.ConvertToType(val, propModel.PropertyType);
+                                        propModel.SetValue(f, value);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        string exc = ex.Message;
+                                    }
+
+
+                                }
+
+
                             }
-
-
                         }
+                        else
+                        {
+
+                            //closed_xml.Mappings = getColumnLOSMappings();
+
+
+                            foreach (var e in eslos.Where(x => !string.IsNullOrEmpty(x.EINotif)))
+                            {
+                                if (e.Header.Trim().EqualsAnyOf(ignore))
+                                {
+                                    continue;
+                                }
+
+
+                                //ex Map '% Fax' = 'Per_Fax'
+                                var mapping = headerMappings.SingleOrDefault(m => m.Key.ToLower().Trim() == e.Header.ToLower().Trim());
+                                var colMapped = mapping.Value;
+
+                                foreach (var f in ecsFinalList.Where(x => x.sheet_name == sheet.SheetName))
+                                {
+                                    //ex MAP 'E&I - Notif.' to 'EINotif'
+                                    mapping = closed_xml.Mappings.SingleOrDefault(m => m.Key.ToLower().Trim() == f.Header.ToLower().Trim());
+                                    var colSheetMapped = mapping.Value;
+
+
+
+                                    try
+                                    {
+                                        //DYNAMICALLY SET VALUES TO PROPERTIES BASED ON MAPPED STRINGS
+                                        propModel = typeof(EvicoreScorecardModel).GetProperty(colMapped); //ex colMapped = 'Per_Fax'
+                                        propSheetModel = typeof(EvicoreScorecardSheetLOSModel).GetProperty(colSheetMapped); //ex f.Header = 'EINotif'
+                                        var value = SharedFunctions.ConvertToType(propSheetModel.GetValue(e), propModel.PropertyType);
+                                        propModel.SetValue(f, value);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        string exc = ex.Message;
+                                    }
+
+
+                                }
+
+
+                            }
+                        }
+
+
+
+                        
                     }
                     else //STATE STYLE SHEETS
                     {
@@ -467,6 +532,39 @@ public class EvicoreScorecard : IEvicoreScorecard
 
     }
 
+    private List<KeyValuePair<string, string>> getColumnGastroMappings()
+    {
+        var list = new List<KeyValuePair<string, string>>
+            {
+                new KeyValuePair<string, string>("","Header"),
+                new KeyValuePair<string, string>("E&I - PA","EIPA"),
+                new KeyValuePair<string, string>("Oxford","Oxford"),
+                new KeyValuePair<string, string>("NHP","NHP"),
+                new KeyValuePair<string, string>("River Valley","RiverValley")
+            };
+
+        return list;
+
+    }
+
+
+    //private List<KeyValuePair<string, string>> getColumnLOSGastroMappings()
+    //{
+    //    var list = new List<KeyValuePair<string, string>>
+    //        {
+    //            new KeyValuePair<string, string>("","Header"),
+    //            new KeyValuePair<string, string>("E&I - PA","EIPA"),
+    //            new KeyValuePair<string, string>("Oxford","Oxford"),
+    //            new KeyValuePair<string, string>("NHP","NHP"),
+    //            new KeyValuePair<string, string>("River Valley","RiverValley")
+    //        };
+
+    //    return list;
+
+    //}
+
+
+
     private List<KeyValuePair<string, string>> getHeaderMappings()
     {
         var list = new List<KeyValuePair<string, string>>
@@ -506,7 +604,10 @@ public class EvicoreScorecard : IEvicoreScorecard
                 new KeyValuePair<string, string>("ECHOCARDIOGRAPHY","MOD_ECHOCARDIOGRAPHY"),
                 new KeyValuePair<string, string>("ECHOCARDIOGRAPHY-ADDON","MOD_ECHOCARDIOGRAPHY_ADDON"),
                 new KeyValuePair<string, string>("NUCLEAR STRESS","MOD_NUCLEAR_STRESS"),
-                new KeyValuePair<string, string>("CCCM Misc Cath Codes","MOD_CCCM_Misc_Cath_Codes")
+                new KeyValuePair<string, string>("CCCM Misc Cath Codes","MOD_CCCM_Misc_Cath_Codes"),
+                new KeyValuePair<string, string>("CAPSULE ENDOSCOPY","CAPSULE_ENDOSCOPY"),
+                new KeyValuePair<string, string>("COLONOSCOPY","COLONOSCOPY"),
+                new KeyValuePair<string, string>("EGD","EGD")
 
             };
 

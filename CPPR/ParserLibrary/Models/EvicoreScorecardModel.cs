@@ -52,6 +52,12 @@ public class EvicoreScorecardModel
     public double MOD_NUCLEAR_STRESS { get; set; }
     public double MOD_CCCM_Misc_Cath_Codes { get; set; }
 
+    public double CAPSULE_ENDOSCOPY { get; set; }
+
+    public double COLONOSCOPY { get; set; }
+
+    public double EGD { get; set; }
+
 
     public string report_type { get; set; }
     public int file_month { get; set; }

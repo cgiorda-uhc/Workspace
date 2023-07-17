@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -16,6 +17,16 @@ namespace SharedFunctionsLibrary
             var newFileName = string.Join("_", strFileName.Split(Path.GetInvalidFileNameChars()));
             return newFileName.Substring(0, Math.Min(32, newFileName.Length));
         }
+
+        public static bool HasMatchOnWild(this string s, string search)
+        {
+            var value = "^" + Regex.Escape(search).Replace("\\*", ".*") + "$";
+
+            return  Regex.IsMatch(s, value);
+           
+        }
+
+
 
         public static bool IsNumeric(this string s)
         {

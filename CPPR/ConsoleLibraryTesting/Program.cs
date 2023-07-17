@@ -61,23 +61,25 @@ using VCPortal_Models.Models.PEG;
 using VCPortal_Models.Models.EBM;
 
 
-//var adHoc = new AdHoc();
-//adHoc.ConnectionStringMSSQL = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
-//adHoc.TableMHP = "stg.MHP_Yearly_Universes";
-//adHoc.ConnectionStringTD = "Data Source=UDWPROD;User ID=cgiorda;Password=BooWooDooFoo2023!!;Authentication Mechanism=LDAP;Session Mode=TERADATA;Session Character Set=ASCII;Persist Security Info=true;Connection Timeout=99999;";
-//adHoc.ConnectionStringVCPMSSQL = "Data Source=wn000103397;Initial Catalog=VCT_DB;Persist Security Info=True;User ID=vct_app_user;Password=BooWooDooFoo2023!!;connect timeout=300000;";
-//adHoc.TableUGAP = "stg.MHP_Yearly_Universes_UGAP";
-//adHoc.Limit = 3000;
-
-//List<string> files_loaded = new List<string>();
-//files_loaded.Add("United PCP- Rad & Card_May_2023.xlsx");
-//files_loaded.Add("Oxford May -Radiology Cardiology Universe 2023.xlsx");
-//files_loaded.Add("Americhoice May -Radiology Cardiology Universe 2023.xlsx");
-//await adHoc.transferMHPDataAsync(files_loaded);
-
-//return;
+var adHoc = new AdHoc();
+adHoc.ConnectionStringMSSQL = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
+adHoc.TableMHP = "stg.MHP_Yearly_Universes";
+adHoc.ConnectionStringTD = "Data Source=UDWPROD;User ID=cgiorda;Password=BooWooDooFoo2023!!;Authentication Mechanism=LDAP;Session Mode=TERADATA;Session Character Set=ASCII;Persist Security Info=true;Connection Timeout=99999;";
+adHoc.ConnectionStringVCPMSSQL = "Data Source=wn000103397;Initial Catalog=VCT_DB;Persist Security Info=True;User ID=vct_app_user;Password=BooWooDooFoo2023!!;connect timeout=300000;";
+adHoc.TableUGAP = "stg.MHP_Yearly_Universes_UGAP";
+adHoc.Limit = 3000;
 
 List<string> files_loaded = new List<string>();
+files_loaded.Add("Oxford June -Gastro Universe 2023.xlsx");
+files_loaded.Add("United PCP- Gastro_June_2023.xlsx");
+files_loaded.Add("United PCP- Rad & Card_June_2023.xlsx");
+files_loaded.Add("Oxford June -Radiology Cardiology Universe 2023.xlsx");
+files_loaded.Add("Americhoice June -Radiology Cardiology Universe 2023.xlsx");
+await adHoc.transferMHPDataAsync(files_loaded);
+
+return;
+
+//List<string> files_loaded = new List<string>();
 //files_loaded.Add("United PCP- Rad & Card_April_2023.xlsx");
 //files_loaded.Add("Americhoice April -Radiology Cardiology Universe 2023.xlsx");
 //files_loaded.Add("Oxford  April -Radiology Cardiology Universe 2023.xlsx");
