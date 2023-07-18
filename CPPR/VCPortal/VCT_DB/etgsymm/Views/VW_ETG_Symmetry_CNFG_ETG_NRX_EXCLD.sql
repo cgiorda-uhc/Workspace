@@ -18,4 +18,6 @@ FROM  etgsymm.ETG_Fact_Symmetry AS f
  AND [Has_NRX] = 0
   AND  f.ETG_Base_Class <> 000000
 AND f.Premium_Specialty_Id IS NOT NULL
-AND f.EC_Mapping  = 'Mapped';
+
+AND f.ETG_Fact_Symmetry_Id IN  (SELECT ETG_Fact_Symmetry_Id FROM [etgsymm].[VW_ETG_Summary_Final] WHERE [UGAP_Changes] <> 'Not Mapped')
+

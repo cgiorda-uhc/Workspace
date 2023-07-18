@@ -1,7 +1,49 @@
 ﻿CREATE VIEW [etgsymm].[VW_ETG_Summary_Final]
 	AS 
 
-	SELECT 
+	/****** Script for SelectTopNRows command from SSMS  ******/
+SELECT [ETG_Base_Class]
+      ,[ETG_Description]
+      ,[Premium_Specialty]
+      ,[Never_Map]
+      ,[Never_Map_Previous]
+      ,[Current_Rx_NRx]
+      ,[Previous_Rx_NRx]
+      ,[Current_LOB]
+      ,[LOB_UGAP]
+      ,[Previous_LOB]
+      ,[PC_Current_Treatment_Indicator]
+      ,[PC_Previous_Treatment_Indicator]
+      ,[PC_Spec_Episode_Cnt]
+      ,[PC_Spec_Episode_Distribution]
+      ,[PC_Spec_Perc_of_Episodes]
+      ,[PC_Spec_Tot_Cost]
+      ,[PC_Spec_Avg_Cost]
+      ,[PC_Spec_Normalized_Pricing]
+      ,[PC_Spec_CV]
+      ,[PC_Current_Attribution]
+      ,[PC_Prev_Attribution]
+      ,[PC_Change_Comments]
+      ,[EC_Current_Treatment_Indicator]
+      ,[EC_Previous_Treatment_Indicator]
+      ,[EC_Spec_Episode_Cnt]
+      ,[EC_Spec_Episode_Distribution]
+      ,[EC_Spec_Perc_of_Episodes]
+      ,[EC_Spec_Tot_Cost]
+      ,[EC_Spec_Avg_Cost]
+      ,[EC_Spec_Normalized_Pricing]
+      ,[EC_Spec_CV]
+      , CASE WHEN [UGAP_Changes] = 'Drop' AND [LOB_UGAP] IS NULL THEN 'Not Mapped'  ELSE EC_Current_Mapping END AS [EC_Current_Mapping]
+      ,[EC_Previous_Mapping]
+      ,[EC_Change_Comments]
+      ,[PC_Measure_Status]
+      ,[UGAP_Changes]
+      ,[Is_Flagged]
+	  ,ETG_Fact_Symmetry_Id
+  FROM 
+  (
+
+  SELECT 
 	[ETG_Base_Class]
 	,[ETG_Description]
 	,[Premium_Specialty]
@@ -91,7 +133,7 @@ END END END END END END END END as LOB_UGAP
 
 	   ,CASE WHEN (ISNULL(Has_Commercial_ugap,'') <> '' OR  ISNULL(Has_Medicare_ugap,'') <> '' OR ISNULL(Has_Medicaid_ugap,'') <> '')  AND  PC_Attribution = 'Not Mapped' THEN 'Y' ELSE 
 	   'N'
-       END as Is_Flagged
+       END as Is_Flagged  ,ETG_Fact_Symmetry_Id
 
 
 
@@ -146,3 +188,5 @@ END END END END END END END END as LOB_UGAP
 
 
 )i ON i.[BASEETG] = v.ETG_Base_Class AND i.[SPECIALTY] = v.Premium_Specialty
+
+  ) t

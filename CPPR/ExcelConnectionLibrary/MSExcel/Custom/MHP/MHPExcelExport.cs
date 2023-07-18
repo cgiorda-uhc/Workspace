@@ -108,9 +108,6 @@ namespace FileParsingLibrary.MSExcel.Custom.MHP
 
 
             wb.Worksheet("template").Delete();
-            wsSource = wb.Worksheets.Add();
-
-
 
             rowCnt = 2;
             string lastEntity = null;

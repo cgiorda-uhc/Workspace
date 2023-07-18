@@ -159,7 +159,7 @@ namespace ProjectManagerLibrary.Projects
 
                     var m = u.Manager;
 
-                    _usersFinal.Add(new ADDirectReportAlertsLRModel {userid=u.LoginName, email = u.EmailAddress, employee_name = u.FullName, manager_name = m.FullName});
+                    _usersFinal.Add(new ADDirectReportAlertsLRModel {userid=u.LoginName, email = u.EmailAddress, employee_name = u.FullName, manager_name = ( m == null?  null : m.FullName)});
                 }
             }
             return _usersFinal;
