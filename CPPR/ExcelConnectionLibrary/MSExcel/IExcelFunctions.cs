@@ -14,7 +14,12 @@ namespace FileParsingLibrary.MSExcel
         Task<byte[]> ExportToExcelAsync(List<ExcelExport> excelExports, Func<string> getterStatus, Action<string> setterStatus);
         //Task<byte[]> ExportToExcelAsync<T>(List<ExcelExport<T>> excelExports);
 
+
+        Task<byte[]> ExportToExcelTemplateAsync(string templateNamePath, List<ExcelExport> excelExports);
+
         byte[] ExportToExcel<T>(List<T> list, string worksheetTitle, List<string[]> titles);
+
+
 
         object GetValueFromExcel(string fileName, string sheetName, string cell);
         List<T> ImportExcel<T>(string fileName, string sheetName, string columnHeaderRange, int startingRow, string nullCheck = null);

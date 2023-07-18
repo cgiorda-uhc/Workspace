@@ -2,7 +2,9 @@
 using DataAccessLibrary.Models;
 using DataAccessLibrary.Scripts;
 using DataAccessLibrary.Shared;
+using DocumentFormat.OpenXml.Spreadsheet;
 using FileParsingLibrary.Models;
+using FileParsingLibrary.MSExcel;
 using FileParsingLibrary.MSWord;
 using ProjectManagerLibrary.Models;
 using ProjectManagerLibrary.Shared;
@@ -13,6 +15,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using VCPortal_Models.Models.DQC_Reporting;
 using VCPortal_Models.Models.EBM;
 using VCPortal_Models.Models.ETGFactSymmetry.Dataloads;
 using VCPortal_Models.Models.PEG;
@@ -23,6 +26,10 @@ namespace ConsoleLibraryTesting
 {
     public class AdHoc
     {
+
+
+        public string PEGReportTemplatePath { get; set; }
+        public string EBMReportTemplatePath { get; set; }
 
         public string ConnectionStringVC { get; set; }
 
@@ -451,6 +458,22 @@ namespace ConsoleLibraryTesting
             await db_sql.BulkSave<ETG_Mapped_PD>(connectionString: ConnectionStringVC, "etg.ETG_Mapped_PD_SOURCE", map, columns, truncate: true);
 
 
+            //STEP 7 [etg].[ETG_Dataload_NRX_AGG] CACHE
+            strSQL = "TRUNCATE TABLE [etg].[ETG_Dataload_NRX_AGG];INSERT INTO [etg].[ETG_Dataload_NRX_AGG] ([ETG_Base_Class] ,[RX_NRX] ,[Has_RX] ,[Has_NRX] ,[RX_RATE] ,[RX] ,[NRX]) SELECT [ETG_Base_Class] ,[RX_NRX] ,[Has_RX] ,[Has_NRX] ,[RX_RATE] ,[RX] ,[NRX] FROM [etg].[VW_ETG_Dataload_NRX_AGG];";
+            await db_sql.Execute(ConnectionStringVC, strSQL);
+
+
+            //STEP 8 [etg].[ETG_Dataload_EC_AGG] CACHE
+            strSQL = "TRUNCATE TABLE [etg].[ETG_Dataload_EC_AGG];INSERT INTO [etg].[ETG_Dataload_EC_AGG] ([Premium_Specialty] ,[ETG_Base_Class] ,[EC_Treatment_Indicator] ,[EC_Episode_Count] ,[EC_Total_Cost] ,[EC_Average_Cost] ,[EC_Coefficients_of_Variation] ,[EC_Normalized_Pricing_Episode_Count] ,[EC_Normalized_Pricing_Total_Cost] ,[EC_Spec_Episode_Count] ,[EC_Spec_Total_Cost] ,[EC_Spec_Average_Cost] ,[EC_Spec_Coefficients_of_Variation] ,[EC_Spec_Percent_of_Episodes] ,[EC_Spec_Normalized_Pricing_Episode_Count] ,[EC_Spec_Normalized_Pricing_Total_Cost] ,[EC_CV3] ,[EC_Spec_Episode_Volume] ,[PD_Mapped]) SELECT [Premium_Specialty] ,[ETG_Base_Class] ,[EC_Treatment_Indicator] ,[EC_Episode_Count] ,[EC_Total_Cost] ,[EC_Average_Cost] ,[EC_Coefficients_of_Variation] ,[EC_Normalized_Pricing_Episode_Count] ,[EC_Normalized_Pricing_Total_Cost] ,[EC_Spec_Episode_Count] ,[EC_Spec_Total_Cost] ,[EC_Spec_Average_Cost] ,[EC_Spec_Coefficients_of_Variation] ,[EC_Spec_Percent_of_Episodes] ,[EC_Spec_Normalized_Pricing_Episode_Count] ,[EC_Spec_Normalized_Pricing_Total_Cost] ,[EC_CV3] ,[EC_Spec_Episode_Volume] ,[PD_Mapped] FROM [etg].[VW_ETG_Dataload_EC_AGG];";
+            await db_sql.Execute(ConnectionStringVC, strSQL);
+
+
+            //STEP 9 [etg].[ETG_Dataload_PC_AGG] CACHE
+            strSQL = "TRUNCATE TABLE [etg].[ETG_Dataload_PC_AGG];INSERT INTO [etg].[ETG_Dataload_PC_AGG] ([Premium_Specialty] ,[ETG_Base_Class] ,[PC_Episode_Count] ,[PC_Total_Cost] ,[PC_Average_Cost] ,[PC_Coefficients_of_Variation] ,[PC_Normalized_Pricing_Episode_Count] ,[PC_Normalized_Pricing_Total_Cost] ,[PC_Spec_Episode_Count] ,[PC_Spec_Total_Cost] ,[PC_Spec_Average_Cost] ,[PC_Spec_CV] ,[PC_Spec_Percent_of_Episodes] ,[PC_Spec_Normalized_Pricing_Episode_Count] ,[PC_Spec_Normalized_Pricing_Total_Cost] ,[PC_CV3] ,[PC_Spec_Epsd_Volume]) SELECT [Premium_Specialty] ,[ETG_Base_Class] ,[PC_Episode_Count] ,[PC_Total_Cost] ,[PC_Average_Cost] ,[PC_Coefficients_of_Variation] ,[PC_Normalized_Pricing_Episode_Count] ,[PC_Normalized_Pricing_Total_Cost] ,[PC_Spec_Episode_Count] ,[PC_Spec_Total_Cost] ,[PC_Spec_Average_Cost] ,[PC_Spec_CV] ,[PC_Spec_Percent_of_Episodes] ,[PC_Spec_Normalized_Pricing_Episode_Count] ,[PC_Spec_Normalized_Pricing_Total_Cost] ,[PC_CV3] ,[PC_Spec_Epsd_Volume] FROM [etg].[VW_ETG_Dataload_PC_AGG];";
+            await db_sql.Execute(ConnectionStringVC, strSQL);
+
+
+
 
 
         }
@@ -680,6 +703,29 @@ namespace ConsoleLibraryTesting
 
             return;
         }
+
+
+        public async Task generatePEGReportsAsync()
+        {
+ 
+            List<ExcelExport> export = new List<ExcelExport>();
+
+            var closed_xml = new ClosedXMLFunctions();
+
+
+            IRelationalDataAccess db_sql = new SqlDataAccess();
+            string strSheetName = "PEG";
+            string strSQL = "select Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC) as PEG, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC)";
+            var peg = await db_sql.LoadData<PEG_Model>(connectionString: ConnectionStringVC, strSQL);
+            export.Add(new ExcelExport() { ExportList = peg.ToList<object>(), SheetName = strSheetName });
+
+
+            var b = closed_xml.ExportToExcelTemplateAsync(PEGReportTemplatePath, export);
+
+
+        }
+
+
 
 
     }

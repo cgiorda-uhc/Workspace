@@ -608,6 +608,86 @@ namespace FileParsingLibrary.MSExcel
         }
 
 
+
+
+        public async Task<byte[]> ExportToExcelTemplateAsync(string templateNamePath, List<ExcelExport> excelExports)
+        {
+            //StringBuilder sbStatus = new StringBuilder();
+            //sbStatus.Append("--Exporting to Excel..." + Environment.NewLine);
+            //sbStatus.Append("-------------------------------------------" + Environment.NewLine);
+            byte[] final = new byte[0];
+            Task t = Task.Run(async () =>
+            {
+                using var wb = new XLWorkbook(templateNamePath); //create workbook
+                int rowcnt = 1;
+                int currentCol = 1;
+                int totalcnt = 0;
+                foreach (var ex in excelExports)
+                {
+                    //sbStatus.Append("--Generating Sheet: " + ex.SheetName + "..." + Environment.NewLine);
+                    //setterStatus(sbStatus.ToString());
+                    var ws = wb.Worksheet(ex.SheetName); //add worksheet to workbook
+                    var type = ex.ExportList!.FirstOrDefault()!.GetType();
+
+                    PropertyInfo[] properties = type.GetProperties();
+
+                    var colNameIdList = new List<ExcelColumnNameId>();
+                    foreach (var prop in properties)
+                    {
+                        var colName = prop.Name.Replace("_", " ");
+                        var cell = ws.RangeUsed().AsTable().HeadersRow().CellsUsed(c => c.Value.ToString() == colName).FirstOrDefault().Address.ColumnNumber;
+                        colNameIdList.Add(new ExcelColumnNameId { ColumnId = cell, ColumnName = colName });
+
+                    }
+   
+                    totalcnt = ex.ExportList.Count();
+                    if (ex.ExportList != null && totalcnt > 0)
+                    {
+                        rowcnt = 2;
+                        foreach (var item in ex.ExportList)
+                        {
+                            //setterStatus(sbStatus.ToString() + "--Adding " + (rowcnt - 1).ToString("N0") + " out of " + totalcnt.ToString("N0") + " rows..." + Environment.NewLine);
+                           // currentCol = 1;
+                            foreach (var prop in properties)
+                            {
+                               // prop.Name
+                                
+                                
+                                ws.Cell(rowcnt, currentCol).Value = prop.GetValue(item, null) + "";
+                                currentCol++;
+                            }
+                            rowcnt++;
+                        }
+
+                        //sbStatus.Clear();
+                        //sbStatus.Append(getterStatus());
+                        //sbStatus.Append("--" + ex.SheetName + " has beeen generated." + Environment.NewLine);
+                        //sbStatus.Append("-------------------------------------------" + Environment.NewLine);
+                        //setterStatus(sbStatus.ToString());
+                    }
+
+                    ws.Columns().AdjustToContents(1, 20);
+                }
+                //sbStatus.Append("--Opening spreadsheet..." + Environment.NewLine + Environment.NewLine);
+                //setterStatus(sbStatus.ToString());
+
+                //save file to memory stream and return it as byte array
+                using (var ms = new MemoryStream())
+                {
+                    wb.SaveAs(ms);
+
+                    final = ms.ToArray();
+                }
+
+            });
+            t.Wait(); // Wait until the above task is complete, email is sent
+            return final;
+        }
+
+
+
+
+
         public object GetValueFromExcel(string fileName, string sheetName, string cell)
         {
             object value = null;
