@@ -64,7 +64,7 @@ using VCPortal_Models.Models.EBM;
 var adHoc = new AdHoc();
 
 
-
+ 
 adHoc.ConnectionStringMSSQL = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
 adHoc.TableMHP = "stg.MHP_Yearly_Universes";
 adHoc.ConnectionStringTD = "Data Source=UDWPROD;User ID=cgiorda;Password=BooWooDooFoo2023!!;Authentication Mechanism=LDAP;Session Mode=TERADATA;Session Character Set=ASCII;Persist Security Info=true;Connection Timeout=99999;";

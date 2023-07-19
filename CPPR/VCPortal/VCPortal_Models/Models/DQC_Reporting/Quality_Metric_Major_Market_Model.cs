@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace VCPortal_Models.Models.DQC_Reporting;
-public class LOB_Major_Market_Model : iOpportunityCompliant
+public class Quality_Metric_Major_Market_Model : iOpportunityCompliant
 {
-    public string LOB { get; set; }
+    public string Quality_Metric { get; set; }
 
     public string Major_Market { get; set; }
     public int Previous_Opportunity { get; set; }
