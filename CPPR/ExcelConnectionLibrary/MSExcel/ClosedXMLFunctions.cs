@@ -636,7 +636,7 @@ namespace FileParsingLibrary.MSExcel
                     {
                         var colName = prop.Name.Replace("_", " ");
                         var cell = ws.RangeUsed().AsTable().HeadersRow().CellsUsed(c => c.Value.ToString() == colName).FirstOrDefault().Address.ColumnNumber;
-                        colNameIdList.Add(new ExcelColumnNameId { ColumnId = cell, ColumnName = colName });
+                        colNameIdList.Add(new ExcelColumnNameId { ColumnId = cell, ColumnName = prop.Name });
 
                     }
    
@@ -650,9 +650,11 @@ namespace FileParsingLibrary.MSExcel
                            // currentCol = 1;
                             foreach (var prop in properties)
                             {
-                               // prop.Name
-                                
-                                
+                                // prop.Name
+
+                                currentCol = colNameIdList.Where(x => x.ColumnName == prop.Name).Select(x => x.ColumnId).FirstOrDefault();
+
+
                                 ws.Cell(rowcnt, currentCol).Value = prop.GetValue(item, null) + "";
                                 currentCol++;
                             }

@@ -93,7 +93,7 @@ adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Repor
 
 await adHoc.generatePEGReportsAsync();
 
-
+ 
 return;
 
 
