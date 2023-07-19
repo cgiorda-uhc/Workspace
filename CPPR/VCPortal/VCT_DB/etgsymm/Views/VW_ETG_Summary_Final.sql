@@ -21,7 +21,10 @@ SELECT [ETG_Base_Class]
       ,[PC_Spec_Avg_Cost]
       ,[PC_Spec_Normalized_Pricing]
       ,[PC_Spec_CV]
-      ,[PC_Current_Attribution]
+
+      ,CASE WHEN [UGAP_Changes] = 'Drop' AND [LOB_UGAP] IS NULL THEN 'Not Mapped'  ELSE PC_Current_Attribution END AS [PC_Current_Attribution]
+
+
       ,[PC_Prev_Attribution]
       ,[PC_Change_Comments]
       ,[EC_Current_Treatment_Indicator]
@@ -33,7 +36,11 @@ SELECT [ETG_Base_Class]
       ,[EC_Spec_Avg_Cost]
       ,[EC_Spec_Normalized_Pricing]
       ,[EC_Spec_CV]
+
+
+
       , CASE WHEN [UGAP_Changes] = 'Drop' AND [LOB_UGAP] IS NULL THEN 'Not Mapped'  ELSE EC_Current_Mapping END AS [EC_Current_Mapping]
+
       ,[EC_Previous_Mapping]
       ,[EC_Change_Comments]
       ,[PC_Measure_Status]
@@ -105,6 +112,9 @@ END END END END END END END END as LOB_UGAP
 	,[EC_Spec_Percent_of_Episodes] as EC_Spec_Perc_of_Episodes
 	,[EC_Spec_Total_Cost] as EC_Spec_Tot_Cost
 	,[EC_Spec_Average_Cost] as EC_Spec_Avg_Cost
+
+
+
 
 
 	,CASE WHEN [EC_Normalized_Pricing_Total_Cost] IS NOT NULL THEN [EC_Normalized_Pricing_Total_Cost] ELSE 0 END as EC_Spec_Normalized_Pricing
