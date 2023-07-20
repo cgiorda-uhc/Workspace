@@ -748,7 +748,7 @@ namespace ConsoleLibraryTesting
 
             strSheetName = "Quality Metric";
             strSQL = "select VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM";
-            var qm = await db_sql.LoadData<Quality_Metric_Model> (connectionString: ConnectionStringVC, strSQL);
+            var qm = await db_sql.LoadData<Quality_Metric_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = qm.ToList<object>(), SheetName = strSheetName });
 
 
@@ -761,7 +761,7 @@ namespace ConsoleLibraryTesting
 
             strSheetName = "Major Market";
             strSQL = "select VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM as Major_Market, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM";
-            var maj = await db_sql.LoadData<Major_Market_Model> (connectionString: ConnectionStringVC, strSQL);
+            var maj = await db_sql.LoadData<Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = maj.ToList<object>(), SheetName = strSheetName });
 
 
@@ -788,7 +788,7 @@ namespace ConsoleLibraryTesting
 
             strSheetName = "Spec by PEG Subcat";
             strSQL = "select VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC) as PEG_with_Subcategory, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC)";
-            var sps  = await db_sql.LoadData<Spec_PEG_Subcat_Model>(connectionString: ConnectionStringVC, strSQL);
+            var sps = await db_sql.LoadData<Spec_PEG_Subcat_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = sps.ToList<object>(), SheetName = strSheetName });
 
             strSheetName = "Quality Metric by PEG";
@@ -804,7 +804,7 @@ namespace ConsoleLibraryTesting
 
             strSheetName = "LOB by Spec";
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Market_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD";
-            var ls  = await db_sql.LoadData<LOB_Spec_Model>(connectionString: ConnectionStringVC, strSQL);
+            var ls = await db_sql.LoadData<LOB_Spec_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = ls.ToList<object>(), SheetName = strSheetName });
 
 

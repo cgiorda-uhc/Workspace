@@ -2,6 +2,7 @@
 using ClosedXML.Graphics;
 using DocumentFormat.OpenXml.Office2019.Excel.RichData2;
 using FileParsingLibrary.Models;
+using NPOI.OpenXmlFormats.Dml.Diagram;
 using NPOI.SS.Formula.Functions;
 using SixLabors.Fonts;
 using System.ComponentModel;
@@ -624,6 +625,13 @@ namespace FileParsingLibrary.MSExcel
                 int totalcnt = 0;
                 foreach (var ex in excelExports)
                 {
+                    //if(ex.SheetName == "LOB")
+                    //{
+                    //    var s = "";
+                    //}
+                    
+                    
+                    
                     //sbStatus.Append("--Generating Sheet: " + ex.SheetName + "..." + Environment.NewLine);
                     //setterStatus(sbStatus.ToString());
                     var ws = wb.Worksheet(ex.SheetName); //add worksheet to workbook
@@ -637,9 +645,9 @@ namespace FileParsingLibrary.MSExcel
                         var colName = prop.Name.Replace("_", " ");
                         var cell = ws.RangeUsed().AsTable().HeadersRow().CellsUsed(c => c.Value.ToString() == colName).FirstOrDefault().Address.ColumnNumber;
                         colNameIdList.Add(new ExcelColumnNameId { ColumnId = cell, ColumnName = prop.Name });
-
                     }
-   
+
+
                     totalcnt = ex.ExportList.Count();
                     if (ex.ExportList != null && totalcnt > 0)
                     {
@@ -661,6 +669,17 @@ namespace FileParsingLibrary.MSExcel
                             rowcnt++;
                         }
 
+                        //DELETE LEFTOVER TEMPLATE GARBAGE
+                        ws.Range("A" + rowcnt  + ":Z" + (rowcnt + 200)).Delete(XLShiftDeletedCells.ShiftCellsUp);
+                        //for (int i = 0; i < 200; i++)
+                        //{
+                        //    ws.Range("A" + (rowcnt + i) + ":Z" + (rowcnt + i) ).Delete(XLShiftDeletedCells.ShiftCellsUp);
+
+                        //}
+
+
+
+
                         //sbStatus.Clear();
                         //sbStatus.Append(getterStatus());
                         //sbStatus.Append("--" + ex.SheetName + " has beeen generated." + Environment.NewLine);
@@ -668,7 +687,7 @@ namespace FileParsingLibrary.MSExcel
                         //setterStatus(sbStatus.ToString());
                     }
 
-                    ws.Columns().AdjustToContents(1, 20);
+                    //ws.Columns().AdjustToContents(1, 20);
                 }
                 //sbStatus.Append("--Opening spreadsheet..." + Environment.NewLine + Environment.NewLine);
                 //setterStatus(sbStatus.ToString());
