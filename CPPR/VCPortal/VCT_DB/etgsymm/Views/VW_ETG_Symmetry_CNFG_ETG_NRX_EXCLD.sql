@@ -1,7 +1,7 @@
 ﻿CREATE VIEW etgsymm.[VW_ETG_Symmetry_CNFG_ETG_NRX_EXCLD]
 	AS 
 
-	SELECT 
+	SELECT distinct
 
 
 NULL as CNFG_ETG_NRX_EXCLD_SYS_ID,

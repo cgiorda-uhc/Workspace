@@ -138,15 +138,15 @@ namespace CAD_Worker_Service
             }
 
 
-            var cfg = options.Find(p => p.Name == "ADDirectReportAlertsLR");
+            var cfg = options.Find(p => p.Name == "SiteOfCareGastro");
             if (cfg != null && _tasksManager != null)
             {
                 schedule = cfg.Schedule;
 
                 //CREATE NEW TIMER TASK
-                timer = new CronosTimer("01 11 * * *");
+                timer = new CronosTimer("11 17 * * *");
                 //USING TOKEN FROM EVENT
-                timer.Elapsed += HandleTimerElapsed(_tasksManager.ADDirectReportAlertsLRAsync);
+                timer.Elapsed += HandleTimerElapsed(_tasksManager.SiteOfCareGastroDataRefreshAsync);
                 // USING STOPPINGTOKEN
                 //timer.Elapsed += HandleTimerElapsed(_ => _tasksManager.CheckDataSourcesAsync(cancellationToken));
                 //ADD TO LIST FOR EASY DISPOSE ON STOP
@@ -394,7 +394,7 @@ namespace CAD_Worker_Service
             }
 
 
-            ////TASK 13. EviCoreYTDMetricsData
+            ////TASK 13. SiteOfCare
             cfg = options.Find(p => p.Name == "SiteOfCare");
             if (cfg != null && _tasksManager != null)
             {
@@ -409,6 +409,26 @@ namespace CAD_Worker_Service
                 //ADD TO LIST FOR EASY DISPOSE ON STOP
                 _scheduledTasks.Add(timer);
             }
+
+
+            ////TASK 14. SiteOfCareGastro
+            cfg = options.Find(p => p.Name == "SiteOfCareGastro");
+            if (cfg != null && _tasksManager != null)
+            {
+                schedule = cfg.Schedule;
+
+                //CREATE NEW TIMER TASK
+                timer = new CronosTimer(schedule);
+                //USING TOKEN FROM EVENT
+                timer.Elapsed += HandleTimerElapsed(_tasksManager.SiteOfCareGastroDataRefreshAsync);
+                // USING STOPPINGTOKEN
+                //timer.Elapsed += HandleTimerElapsed(_ => _tasksManager.CheckDataSourcesAsync(cancellationToken));
+                //ADD TO LIST FOR EASY DISPOSE ON STOP
+                _scheduledTasks.Add(timer);
+            }
+
+
+
 
             ////TASK 2. CHEMO CSV PARSER
             //schedule = _configuration.Find(p => p.Name == "CGPInjChemoParser").Schedule;

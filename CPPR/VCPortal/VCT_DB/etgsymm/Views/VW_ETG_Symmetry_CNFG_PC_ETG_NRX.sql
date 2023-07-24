@@ -26,5 +26,4 @@ LEFT JOIN [vct].[ETG_TI_Mapping] m ON f.ETG_Base_Class = m.[Base_ETG]  AND f.[PC
  AND  f.Has_NRX = 1
  AND  f.ETG_Base_Class <> 000000
 AND f.Premium_Specialty_Id IS NOT NULL
-AND f.PC_Attribution in ('If Involved', 'Always Attributed')
-AND f.ETG_Fact_Symmetry_Id IN  (SELECT ETG_Fact_Symmetry_Id FROM [etgsymm].[VW_ETG_Summary_Final] WHERE [UGAP_Changes] <> 'Not Mapped')
+AND f.ETG_Fact_Symmetry_Id IN  (SELECT ETG_Fact_Symmetry_Id FROM [etgsymm].[VW_ETG_Summary_Final] WHERE [UGAP_Changes] <> 'Not Mapped' AND PC_Current_Attribution in ('If Involved', 'Always Attributed'))

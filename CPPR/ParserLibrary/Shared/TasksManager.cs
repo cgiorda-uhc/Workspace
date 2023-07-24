@@ -22,6 +22,7 @@ namespace ProjectManagerLibrary.Shared
         private readonly IMHPUniverse _mhpUniverse;
         private readonly IEviCoreYTDMetrics _eviYTDMetrics;
         private readonly ISiteOfCare _siteOfCare;
+        private readonly ISiteOfCare _siteOfCareGastro;
         private readonly List<IProjectConfig>? _projConfig;
 
         public TasksManager(IConfiguration config, IRelationalDataAccess db)
@@ -41,6 +42,7 @@ namespace ProjectManagerLibrary.Shared
             _mhpUniverse = new MHPUniverse(config, db);
             _eviYTDMetrics = new EviCoreYTDMetrics(config, db);
             _siteOfCare = new SiteOfCare(config, db);
+            _siteOfCareGastro = new SiteOfCareGastro(config, db);
             //CONFIGURATON FOR ALL FUNCTIONS
             var cfg = config.GetSection("Automation").Get<IEnumerable<ProjectConfig>>();
             if (cfg != null)
@@ -657,6 +659,57 @@ namespace ProjectManagerLibrary.Shared
 
 
         }
+
+
+
+        public async Task SiteOfCareGastroDataRefreshAsync(CancellationToken stoppingToken)
+        {
+
+            if (_projConfig == null)
+            {
+                return;
+            }
+            var cfg = _projConfig.Find(p => p.Name == "SiteOfCareGastro");
+            if (cfg == null)
+            {
+                return;
+            }
+            var delay = cfg.Delay;
+
+
+            //SEND CUSTOM CONFIGURATION
+            var result = _siteOfCareGastro.LoadSiteOfCareData();
+
+            while (!stoppingToken.IsCancellationRequested)
+            {
+
+                if (result.Status == TaskStatus.Running)
+                {
+                    await Task.Delay(delay, stoppingToken).ConfigureAwait(false);
+                }
+                else if (result.Status == TaskStatus.RanToCompletion)
+                {
+
+                    //ONCE DONE LOG AND NULL TASK
+                    Log.Information($"Total execution time for task: SiteOfCareGastro  = " + result.Result);
+                    result = null;
+                    break;
+                }
+                else if (result.Status == TaskStatus.Faulted) //ADDED ADD THIS WANT ENDLESS FAULT LOOPING-- HOPE THIS FIXES!!!
+                {
+                    var ex = result.Exception;
+                    Log.Error($"Task faulted and stopped running. ErrorType={ex.GetType()} ErrorMessage={ex.Message}");
+                    result = null;
+                    break;
+                }
+
+            }
+
+
+        }
+
+
+
         private Task<long>? _taskParseDelimitedFiles;
         //private long _taskParseDelimitedFiles;
         public async Task parseDelimitedFilesAsync(CancellationToken stoppingToken)
