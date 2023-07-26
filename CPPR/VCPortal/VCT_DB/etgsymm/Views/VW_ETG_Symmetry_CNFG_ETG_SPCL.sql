@@ -8,7 +8,7 @@
 NULL as CNFG_ETG_SPCL_SYS_ID,
 
   f.[ETG_Base_Class] AS [ETG_BASE_CLASS],
- f.[PC_Treatment_Indicator]  as TRT_CD,
+ f.[EC_Treatment_Indicator]  as TRT_CD,
 
 
 CAST(f.PD_Version AS DECIMAL(10,2))  as PREM_DESG_VER_NBR,

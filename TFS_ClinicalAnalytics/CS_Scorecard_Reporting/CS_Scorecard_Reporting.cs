@@ -23,10 +23,10 @@ namespace CS_Scorecard_Reporting
             string strILUCAConnectionString = ConfigurationManager.AppSettings["ILUCA"];
             string strSQL = getDrivingSQL(isRad:true);
 
-            DataTable dtRad = DBConnection64.getMSSQLDataTable(strILUCAConnectionString, strSQL);
+            DataTable dtRad = DBConnection32.getMSSQLDataTable(strILUCAConnectionString, strSQL);
 
             strSQL = getDrivingSQL(isRad: false);
-            DataTable dtCard = DBConnection64.getMSSQLDataTable(strILUCAConnectionString, strSQL);
+            DataTable dtCard = DBConnection32.getMSSQLDataTable(strILUCAConnectionString, strSQL);
 
             // NOTE: Don't call Excel objects in here... 
             // Debugger would keep alive until end, preventing GC cleanup

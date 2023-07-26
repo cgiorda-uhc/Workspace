@@ -2,13 +2,16 @@
 	AS
 	
 
-		SELECT 
+				SELECT 
 	DISTINCT
 
 NULL as CNFG_PC_ETG_NRX_SYS_ID,
 
   f.[ETG_Base_Class] AS [ETG_BASE_CLASS],
-CASE WHEN f.[PC_Treatment_Indicator] = 'All' THEN  m.[Treatment_Indicator] ELSE f.[PC_Treatment_Indicator] END  as TRT_CD,
+
+
+    m.[TRT_CD] as  TRT_CD,
+--CASE WHEN f.[PC_Treatment_Indicator] = 'All' THEN  m.[TRT_CD] ELSE f.[PC_Treatment_Indicator] END  as TRT_CD,
  'Y' as NRX,
 
 CAST(f.PD_Version AS DECIMAL(10,2))  as PREM_DESG_VER_NBR,
@@ -17,7 +20,7 @@ NULL as [NOTES]
 	
 FROM  etgsymm.ETG_Fact_Symmetry AS f 
 
-LEFT JOIN [vct].[ETG_TI_Mapping] m ON f.ETG_Base_Class = m.[Base_ETG]  AND f.[PC_Treatment_Indicator] = 'All'
+INNER JOIN (SELECT DISTINCT[ETG_BAS_CLSS_NBR],[TRT_CD],[NRX] FROM [etgsymm].[VW_ETG_Symmetry_UGAP CNFG] WHERE NRX = 'Y') m ON f.ETG_Base_Class = m.[ETG_BAS_CLSS_NBR]
 
 
 
