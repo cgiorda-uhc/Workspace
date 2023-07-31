@@ -73,6 +73,20 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
     }
 
 
+    public Task<IEnumerable<ETGVersion_Model>> GetPDVersionsAsync(CancellationToken token)
+    {
+
+        string strSQL = "SELECT DISTINCT [PD_Version],[Symmetry_Version] FROM  [etgsymm].[ETG_Fact_Symmetry] ORDER BY [PD_Version] DESC;";
+
+        var results = _db.LoadData<ETGVersion_Model>(sql: strSQL, token, connectionId: "VCT_DB");
+
+        return results;
+    }
+
+
+
+
+
     public Task<IEnumerable<ETGRxNrxConfig>> GetETGRxNrxConfigAsync(CancellationToken token)
     {
 

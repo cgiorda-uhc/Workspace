@@ -15,6 +15,7 @@ using System.Windows.Input;
 using VCPortal_Models.Configuration.HeaderInterfaces.Abstract;
 using VCPortal_Models.Configuration.HeaderInterfaces.Concrete;
 using VCPortal_Models.Dtos.ETGFactSymmetry;
+using VCPortal_Models.Models.ChemoPx;
 using VCPortal_Models.Models.ETGFactSymmetry;
 using VCPortal_Models.Models.ETGFactSymmetry.Configs;
 using VCPortal_WPF_ViewModel.Shared;
@@ -61,6 +62,9 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
     private List<string> mappingOptions;
     [ObservableProperty]
     private List<string> patientCentricMappingOptions;
+
+    [ObservableProperty]
+    private List<string> pdVersions;
 
     private StringBuilder _sbStatus;
     public ETGFactSymmetryListingViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
@@ -472,8 +476,38 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
         }
     }
 
-    private void loadGridLists()
+    private async Task loadGridLists()
     {
+
+        
+
+
+        var api = _config.APIS.Where(x => x.Name == "ETGPDVersion").FirstOrDefault();
+        WebAPIConsume.BaseURI = api.BaseUrl;
+        _sbStatus.Append("--Getting PDVersions list..." + Environment.NewLine);
+        ProgressMessageViewModel.Message = _sbStatus.ToString();
+        await Task.Delay(TimeSpan.FromSeconds(.5));
+        var response = WebAPIConsume.GetCall(api.Url);
+        if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            var reponseStream = await response.Result.Content.ReadAsStreamAsync();
+            var result = await JsonSerializer.DeserializeAsync<List<ETGVersion_Model>>(reponseStream, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+
+            pdVersions = result.Select(x => x.PD_Version.ToString()).ToList();
+            pdVersions.Insert(0, "None");
+        }
+        else
+        {
+            UserMessageViewModel.IsError = true;
+            UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            _logger.Error("loadGridLists.PDVersions threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
+        }
+
+
 
         _sbStatus.Append("--Getting RxNrxOption list..." + Environment.NewLine);
         ProgressMessageViewModel.Message = _sbStatus.ToString();
