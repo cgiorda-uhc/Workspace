@@ -12,7 +12,10 @@ public class ETG_CNFG_ETG_SPCL
 
     public string ETG_BASE_CLASS { get; set; }
 
+    public Int16 TRT_CD { get; set; }
+
     public string PREM_DESG_VER_NBR { get; set; }
+
 
     public string PREM_SPCL_CD { get; set; }
 
