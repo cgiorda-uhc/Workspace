@@ -176,7 +176,7 @@
 
             <telerik:RadButton x:Name="btnClearFilters" Grid.Row="0" Grid.Column="7" Width="130" Click="btnClearFilters_Click"  Content="Clear Filters"></telerik:RadButton>
 
-            <ComboBox x:Name="Versions"  Grid.Row="0" Grid.Column="8" Width="130" ItemsSource="{Binding PdVersions}" SelectedValue="{Binding CurrentVersion, Mode=TwoWay}">
+            <ComboBox x:Name="Versions"  Grid.Row="0" Grid.Column="8" Width="130" ItemsSource="{Binding PdVersions}" SelectedValue="{Binding CurrentVersion, Mode=TwoWay}" >
                 
             </ComboBox>
 

@@ -120,7 +120,7 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
         UserMessageViewModel.Message = "";
         ProgressMessageViewModel.Message = "";
         ProgressMessageViewModel.HasMessage = true;
-        loadGridLists();
+        await loadGridLists();
         await getETGFactSymmetryData();
         Mouse.OverrideCursor = null;
         ProgressMessageViewModel.HasMessage = false;
@@ -498,6 +498,7 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
         WebAPIConsume.BaseURI = api.BaseUrl;
         _sbStatus.Append("--Getting PDVersions list..." + Environment.NewLine);
         ProgressMessageViewModel.Message = _sbStatus.ToString();
+        CurrentVersion = "No History";
         await Task.Delay(TimeSpan.FromSeconds(.5));
         var response = WebAPIConsume.GetCall(api.Url);
         if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
@@ -508,7 +509,6 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
                 PropertyNameCaseInsensitive = true
             });
 
-            CurrentVersion = "No History";
             PdVersions = result.Select(x => x.PD_Version.ToString()).ToList();
             PdVersions.Insert(0, CurrentVersion);
 
