@@ -126,7 +126,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="133"/>
                 <ColumnDefinition Width="133"/>
                 <ColumnDefinition Width="133"/>
                 <ColumnDefinition Width="133"/>
@@ -151,11 +151,13 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
-            <telerik:RadButton x:Name="btnSave" Grid.Row="0" Grid.Column="5" Width="130" Click="btnSave_Click" Command="{Binding SaveCallCommand}" IsEnabled="{Binding CanSave}" Content="Save"></telerik:RadButton>
+
+            
+            <telerik:RadButton x:Name="btnSave" Grid.Row="0" Grid.Column="4" Width="130" Click="btnSave_Click" Command="{Binding SaveCallCommand}" IsEnabled="{Binding CanSave}" Content="Save"></telerik:RadButton>
             <!--<telerik:RadButton x:Name="btnExporConfig" Grid.Row="0" Grid.Column="6" Width="130" Command="{Binding ExportConfigsCallCommand}" Click="btnExporConfig_Click"  Content="Export Configs"></telerik:RadButton>-->
 
 
-            <telerik:RadButton x:Name="btnExporConfig" Grid.Row="0" Grid.Column="6" Width="130" Command="{Binding ExportConfigsCallCommand}" Click="btnExporConfig_Click"  Content="Export Data">
+            <telerik:RadButton x:Name="btnExporConfig" Grid.Row="0" Grid.Column="5" Width="130" Command="{Binding ExportConfigsCallCommand}" Click="btnExporConfig_Click"  Content="Export Data">
                 <telerik:RadButton.IsEnabled>
                     <MultiBinding Converter="{StaticResource booleanAndConverter}">
                         <Binding Path="CanSave"  Converter="{StaticResource inverseBooleanConverter}" />
@@ -167,12 +169,17 @@
 
             <!--<telerik:RadButton Grid.Row="0" Grid.Column="7" Width="130" Command="{Binding GetETGFactSymmetryDataCallCommand}" Content="Refresh Data"></telerik:RadButton>-->
 
-            <components:YesNoButton Grid.Row="0" Grid.Column="7" Width="130" Command="{Binding GetETGFactSymmetryDataCallCommand}" CheckSaves="True" Question="You have unsaved changes. Refresh anyway?" Content="Refresh Data">
+            <components:YesNoButton Grid.Row="0" Grid.Column="6" Width="130" Command="{Binding GetETGFactSymmetryDataCallCommand}" CheckSaves="True" Question="You have unsaved changes. Refresh anyway?" Content="Refresh Data">
             </components:YesNoButton>
 
 
 
-            <telerik:RadButton x:Name="btnClearFilters" Grid.Row="0" Grid.Column="8" Width="130" Click="btnClearFilters_Click"  Content="Clear Filters"></telerik:RadButton>
+            <telerik:RadButton x:Name="btnClearFilters" Grid.Row="0" Grid.Column="7" Width="130" Click="btnClearFilters_Click"  Content="Clear Filters"></telerik:RadButton>
+
+            <ComboBox x:Name="Versions"  Grid.Row="0" Grid.Column="8" Width="130" ItemsSource="{Binding PdVersions}" SelectedValue="{Binding CurrentVersion, Mode=TwoWay}">
+                
+            </ComboBox>
+
         </Grid>
 
 

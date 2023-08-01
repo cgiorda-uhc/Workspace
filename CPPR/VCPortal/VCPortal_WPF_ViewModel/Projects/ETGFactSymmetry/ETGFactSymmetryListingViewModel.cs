@@ -66,6 +66,11 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
     [ObservableProperty]
     private List<string> pdVersions;
 
+
+    [ObservableProperty]
+    private string currentVersion;
+
+
     private StringBuilder _sbStatus;
     public ETGFactSymmetryListingViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
     {
@@ -350,6 +355,13 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
             _logger.Information("Running ETGFactSymmetryData.exportConfigs for {CurrentUser}...", Authentication.UserName);
 
 
+            if(CurrentVersion != null)
+            {
+                var s = CurrentVersion;
+            }
+
+
+
             List<ExcelExport> export = new List<ExcelExport>();
             var excel = _config.excelExportConfig;
             //var file = excel.FilePath + "\\" + excel.FileName;
@@ -496,9 +508,10 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
                 PropertyNameCaseInsensitive = true
             });
 
+            CurrentVersion = "No History";
+            PdVersions = result.Select(x => x.PD_Version.ToString()).ToList();
+            PdVersions.Insert(0, CurrentVersion);
 
-            pdVersions = result.Select(x => x.PD_Version.ToString()).ToList();
-            pdVersions.Insert(0, "None");
         }
         else
         {
