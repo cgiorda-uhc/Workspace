@@ -64,11 +64,11 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
     private List<string> patientCentricMappingOptions;
 
     [ObservableProperty]
-    private List<string> pdVersions;
+    private ObservableCollection<string> pdVersions;
 
 
     [ObservableProperty]
-    private string currentVersion;
+    private string currentVersion = "No History";
 
 
     private StringBuilder _sbStatus;
@@ -97,12 +97,15 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
         {
 
 
-            InitialLoadData();
+            //InitialLoadData();
             //getETGFactSymmetryData();
             //Task.Run(async () => await getETGFactSymmetryData());
 
+            InitialLoadData();
 
             //worker.RunWorkerAsync("InitialLoadData");
+
+
             //loadGridLists();
             //Task.Run(async () => await getETGFactSymmetryData());
         }
@@ -120,8 +123,10 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
         UserMessageViewModel.Message = "";
         ProgressMessageViewModel.Message = "";
         ProgressMessageViewModel.HasMessage = true;
+        //worker.RunWorkerAsync("InitialLoadData");
         await loadGridLists();
         await getETGFactSymmetryData();
+
         Mouse.OverrideCursor = null;
         ProgressMessageViewModel.HasMessage = false;
 
@@ -186,13 +191,13 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
         //    getETGFactSymmetryData();
 
         //}
-        //else if (callingFunction == "InitialLoadData")
-        //{
-        //    ProgressMessageViewModel.HasMessage = true;
-        //    loadGridLists();
-        //    getETGFactSymmetryData();
+        else if (callingFunction == "InitialLoadData")
+        {
+            ProgressMessageViewModel.HasMessage = true;
+            loadGridLists();
+            //getETGFactSymmetryData();
 
-        //}
+        }
         //else if (callingFunction == "SaveData")
         //{
         //    save();
@@ -491,9 +496,6 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
     private async Task loadGridLists()
     {
 
-        
-
-
         var api = _config.APIS.Where(x => x.Name == "ETGPDVersion").FirstOrDefault();
         WebAPIConsume.BaseURI = api.BaseUrl;
         _sbStatus.Append("--Getting PDVersions list..." + Environment.NewLine);
@@ -502,7 +504,7 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
         await Task.Delay(TimeSpan.FromSeconds(.5));
         var response = WebAPIConsume.GetCall(api.Url);
 
-        PdVersions = new List<string>();
+        PdVersions = new ObservableCollection<string>();
 
 
         if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
@@ -515,7 +517,7 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
 
             var lst = result.Select(x => x.PD_Version.ToString()).ToList();
             PdVersions.Add(CurrentVersion);
-            foreach(var l in lst)
+            foreach (var l in lst)
             {
                 PdVersions.Add(l);
             }

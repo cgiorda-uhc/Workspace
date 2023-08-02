@@ -128,6 +128,13 @@ public partial class ETGFactSymmetryControl : UserControl
         ETGGridView.FilterDescriptors.Clear();
     }
 
+
+
+    //private void UserControl_Loaded(object sender, RoutedEventArgs e)
+    //{
+    //    Versions.SelectedIndex = 0;
+    //}
+
     //private void uc_etgfact_Unloaded(object sender, RoutedEventArgs e)
     //{
     //    ETGGridView.ItemsSource = null;
