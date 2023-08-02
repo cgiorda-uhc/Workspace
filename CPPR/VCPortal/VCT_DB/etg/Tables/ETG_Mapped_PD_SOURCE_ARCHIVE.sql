@@ -1,4 +1,4 @@
-﻿CREATE TABLE [etg].[ETG_Mapped_PD_SOURCE]
+﻿CREATE TABLE [etg].[ETG_Mapped_PD_SOURCE_ARCHIVE]
 (
 			[Id] [int] IDENTITY(1,1) NOT NULL,
 				[PREM_SPCL_CD] [varchar](15) NOT NULL,

@@ -1,4 +1,4 @@
-﻿CREATE TABLE [etg].[PremiumNDBSpec_PD_SOURCE]
+﻿CREATE TABLE [etg].[PremiumNDBSpec_PD_SOURCE_ARCHIVE]
 (
 			[Id] [int] IDENTITY(1,1) NOT NULL,
 		[NDB_SPCL_TYP_CD] [varchar](15) NOT NULL,

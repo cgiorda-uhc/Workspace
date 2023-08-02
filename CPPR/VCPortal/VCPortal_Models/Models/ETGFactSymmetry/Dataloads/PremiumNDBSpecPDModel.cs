@@ -13,4 +13,6 @@ public class PremiumNDBSpecPDModel
 
     public string PREM_SPCL_CD { get; set; }
 
+    public float PD_Version { get; set; }
+
 }

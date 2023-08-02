@@ -181,7 +181,7 @@
             </telerik:RadComboBox>-->
 
 
-            <telerik:RadComboBox x:Name="Versions" Grid.Row="0" Grid.Column="8" Width="130" ItemsSource="{Binding PdVersions}" SelectedValue="{Binding CurrentVersion, Mode=TwoWay}">
+            <telerik:RadComboBox x:Name="Versions" Grid.Row="0" HorizontalContentAlignment="Center" Grid.Column="8" Width="130" ItemsSource="{Binding PdVersions}" SelectedValue="{Binding CurrentVersion, Mode=TwoWay}">
             </telerik:RadComboBox>
 
 

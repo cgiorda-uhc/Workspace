@@ -22,4 +22,7 @@ public class NRX_Cost_UGAPModel
 
 
     public float RX_RATE { get; set; }
+
+
+    public float PD_Version { get; set; }
 }

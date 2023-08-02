@@ -16,4 +16,6 @@ public class ETG_Episodes_UGAP
     public float TOT_NP_ALLW_AMT { get; set; }
     public Int16 LOB_ID { get; set; }
 
+    public float PD_Version { get; set; }
+
 }

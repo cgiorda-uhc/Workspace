@@ -1,4 +1,4 @@
-﻿CREATE TABLE [etg].[ETG_Dataload_NRX_AGG]
+﻿CREATE TABLE [etg].[ETG_Dataload_NRX_AGG_ARCHIVE]
 (
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 		[ETG_Base_Class] [int] NOT NULL,

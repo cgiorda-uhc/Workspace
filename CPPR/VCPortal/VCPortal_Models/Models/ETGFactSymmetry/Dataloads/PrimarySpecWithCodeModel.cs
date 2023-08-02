@@ -16,4 +16,6 @@ public class PrimarySpecWithCodeModel
     public string ShortDesc { get; set; }
 
     public string Secondary_Spec { get; set; }
+
+    public float PD_Version { get; set; }
 }

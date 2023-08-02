@@ -21,6 +21,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VCPortal_Models.Models.DQC_Reporting;
 using VCPortal_Models.Models.EBM;
+using VCPortal_Models.Models.ETGFactSymmetry.Configs;
 using VCPortal_Models.Models.ETGFactSymmetry.Dataloads;
 using VCPortal_Models.Models.PEG;
 using VCPortal_Models.Models.Shared;
@@ -328,7 +329,175 @@ namespace ConsoleLibraryTesting
 
 
         //ETG SYMM SOURCE AUTOMATION
-        public async Task getETGSymmSourceDataAsync(Int16 year  = 2022)
+        public async Task getETGSymmSourceDataAsync(Int16 version)
+        {
+            //ETG DATA LOAD
+            //ETG DATA LOAD
+            //ETG DATA LOAD
+
+            List<ETGVersion_Model> v = new List<ETGVersion_Model>();
+            v.Add(new ETGVersion_Model() { PD_Version = 16, Year = 2022 });
+            v.Add(new ETGVersion_Model() { PD_Version = 15, Year = 2021 });
+            v.Add(new ETGVersion_Model() { PD_Version = 14, Year = 2020 });
+
+            var year = v.Where(x => x.PD_Version == version).Select(x => x.Year).FirstOrDefault();
+
+
+            IRelationalDataAccess db_sql = new SqlDataAccess();
+            IRelationalDataAccess db_td = new TeraDataAccess();
+
+            //STEP 1 etg.NRX_Cost_UGAP_SOURCE
+            string strSQL = "select ETG_D.ETG_BAS_CLSS_NBR, ETG_D.TRT_CD, Count(Distinct ETG_D.INDV_SYS_ID) as MEMBER_COUNT, Count(Distinct ETG_D.EPSD_NBR) as EPSD_COUNT, Sum(ETG_D.TOT_ALLW_AMT) as ETGD_TOT_ALLW_AMT, Sum(ETG_D.RX_ALLW_AMT) as ETGD_RX_ALLW_AMT, case when Sum(ETG_D.TOT_ALLW_AMT) = 0 then 0 else NVL(Sum(ETG_D.RX_ALLW_AMT), 0) / Sum(ETG_D.TOT_ALLW_AMT) end as RX_RATE from ( select ED1.INDV_SYS_ID, ED1.EPSD_NBR, EN1.ETG_BAS_CLSS_NBR, EN1.ETG_TX_IND as TRT_CD, Sum(ED1.QLTY_INCNT_RDUC_AMT) as TOT_ALLW_AMT, Query1.RX_ALLW_AMT from CLODM001.ETG_DETAIL ED1 inner join CLODM001.ETG_NUMBER EN1 on ED1.ETG_SYS_ID = EN1.ETG_SYS_ID inner join CLODM001.DATE_FST_SRVC DFS1 on ED1.FST_SRVC_DT_SYS_ID = DFS1.FST_SRVC_DT_SYS_ID inner join ( select C.INDV_SYS_ID from ( select B.INDV_SYS_ID, Min(B.PHRM_BEN_FLG) as MIN_PHARMACY_FLG, Sum(B.NUM_DAY) as NUM_DAY from ( select a.INDV_SYS_ID, ( case when a.END_DT > '" + year + "-12-31' then Cast('" + year + "-12-31' as Date) else a.END_DT end - case when a.EFF_DT < '" + year + "-01-01' then Cast('" + year + "-01-01' as Date) else a.EFF_DT end) + 1 as NUM_DAY, a.PHRM_BEN_FLG from CLODM001.MEMBER_DETAIL_INPUT a where a.EFF_DT <= '" + year + "-12-31' and a.END_DT >= '" + year + "-01-01') as B group by B.INDV_SYS_ID ) C where C.MIN_PHARMACY_FLG = 'Y' and C.NUM_DAY >= 210 ) as MT on ED1.INDV_SYS_ID = MT.INDV_SYS_ID left join ( select ED2.INDV_SYS_ID, ED2.EPSD_NBR, Sum(ED2.QLTY_INCNT_RDUC_AMT) as RX_ALLW_AMT from CLODM001.ETG_DETAIL ED2 inner join CLODM001.DATE_FST_SRVC DFS2 on ED2.FST_SRVC_DT_SYS_ID = DFS2.FST_SRVC_DT_SYS_ID inner join CLODM001.HP_SERVICE_TYPE_CODE HSTC2 on ED2.HLTH_PLN_SRVC_TYP_CD_SYS_ID = HSTC2.HLTH_PLN_SRVC_TYP_CD_SYS_ID where DFS2.FST_SRVC_DT Between '" + year + "-01-01'and '" + year + "-12-31'  and ED2.QLTY_INCNT_RDUC_AMT > 0 and HSTC2.HLTH_PLN_SRVC_TYP_LVL_1_NM = 'PHARMACY' group by ED2.INDV_SYS_ID, ED2.EPSD_NBR ) Query1 on ED1.INDV_SYS_ID = Query1.INDV_SYS_ID and ED1.EPSD_NBR = Query1.EPSD_NBR where ED1.EPSD_NBR not in (0, -1) and DFS1.FST_SRVC_DT Between '" + year + "-01-01' and '" + year + "-12-31' and ED1.QLTY_INCNT_RDUC_AMT > 0 group by ED1.INDV_SYS_ID, ED1.EPSD_NBR, EN1.ETG_BAS_CLSS_NBR, EN1.ETG_TX_IND, Query1.RX_ALLW_AMT ) as ETG_D group by ETG_D.ETG_BAS_CLSS_NBR, ETG_D.TRT_CD";
+
+            var nrxx = await db_td.LoadData<NRX_Cost_UGAPModel>(connectionString: ConnectionStringTD, strSQL);
+
+            string[] columns = typeof(NRX_Cost_UGAPModel).GetProperties().Select(p => p.Name).ToArray();
+            await db_sql.BulkSave<NRX_Cost_UGAPModel>(connectionString: ConnectionStringVC, "etg.NRX_Cost_UGAP_SOURCE", nrxx, columns, truncate: true);
+
+            //STEP 2 etg.ETG_Episodes_UGAP_SOURCE
+            //BROKEN APART DUE TO 200+ MILLION ROWS
+            List<string> lst_lob = new List<string>();
+            lst_lob.Add("COMMERCIAL");
+            lst_lob.Add("MEDICARE");
+            lst_lob.Add("MEDICAID");
+
+            List<string> lst_yr = new List<string>();
+            lst_yr.Add("2021");
+            lst_yr.Add("2022");
+
+
+            List<string> lst_qrt = new List<string>();
+            lst_qrt.Add("01-01~03-31");
+            lst_qrt.Add("04-01~06-30");
+            lst_qrt.Add("07-01~09-30");
+            lst_qrt.Add("10-01~12-31");
+
+            int lob_id;
+
+            bool blTruncate = true;
+
+
+            foreach (var l in lst_lob)
+            {
+                lob_id = (l == "COMMERCIAL" ? 1 : (l == "MEDICARE" ? 2 : 3));
+
+
+                Console.WriteLine("LOB:" + lob_id + " - " + l);
+
+                foreach (var y in lst_yr)
+                {
+
+
+                    foreach (var q in lst_qrt)
+                    {
+                        var startdate = y + "-" + q.Split('~')[0];
+                        var enddate = y + "-" + q.Split('~')[1];
+
+                        Console.WriteLine("ETG Start Date: " + startdate);
+                        Console.WriteLine("ETG End Date: " + enddate);
+
+
+                        strSQL = "select es.EPSD_NBR, es.TOT_ALLW_AMT, en.SVRTY, en.ETG_BAS_CLSS_NBR, en.ETG_TX_IND, up.PROV_MPIN, es.TOT_NP_ALLW_AMT, " + lob_id + " as LOB_ID from CLODM001.ETG_SUMMARY es inner join CLODM001.ETG_NUMBER en on es.ETG_SYS_ID = en.ETG_SYS_ID inner join CLODM001.UNIQUE_PROVIDER up on es.RESP_UNIQ_PROV_SYS_ID = up.UNIQ_PROV_SYS_ID inner join CLODM001.INDIVIDUAL ind on es.INDV_SYS_ID = ind.INDV_SYS_ID inner join CLODM001.CLNOPS_CUSTOMER_SEGMENT ccs on ind.CLNOPS_CUST_SEG_SYS_ID = ccs.CLNOPS_CUST_SEG_SYS_ID inner join CLODM001.PRODUCT prod on ccs.PRDCT_SYS_ID = prod.PRDCT_SYS_ID inner join CLODM001.DATE_ETG_START DES on es.ETG_STRT_DT_SYS_ID = DES.ETG_STRT_DT_SYS_ID where es.EP_TYP_NBR in (0, 1, 2, 3) and es.TOT_ALLW_AMT >= 35 and ISNULL(en.SVRTY,'') <> '' and prod.PRDCT_LVL_1_NM = '" + l + "' and DES.ETG_STRT_DT >= '" + startdate + "' and DES.ETG_STRT_DT <= '" + enddate + "'";
+
+                        Console.WriteLine("UGAP Pull Start Time: " + DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"));
+
+                        var cnt = await db_td.ExecuteScalar(connectionString: ConnectionStringTD, "SELECT COUNT(*) FROM (" + strSQL + ") tmp;");
+
+                        Console.WriteLine("Count: " + string.Format("{0:#,0}", cnt));
+
+                        var ugap = await db_td.LoadData<ETG_Episodes_UGAP>(connectionString: ConnectionStringTD, strSQL);
+
+                        columns = typeof(ETG_Episodes_UGAP).GetProperties().Select(p => p.Name).ToArray();
+                        await db_sql.BulkSave<ETG_Episodes_UGAP>(connectionString: ConnectionStringVC, "etg.ETG_Episodes_UGAP_SOURCE", ugap, columns, truncate: blTruncate);
+                        Console.WriteLine("UGAP Pull End Time: " + DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"));
+
+                        blTruncate = false;
+                        ugap = null;
+                    }
+
+                }
+
+            }
+
+
+            //STEP 3 etg.PrimarySpecWithCode_PDNDB_SOURCE
+            //1 NDB
+            strSQL = "Select prov.MPIN, prov.ProvType, prov.PrimSpec NDB_SPCL_CD, spcl.SpecTypeCd, spcl.PrimaryInd, spcltyp.ShortDesc From dbo.PROVIDER As prov Left Join dbo.PROV_SPECIALTIES spcl On prov.MPIN = spcl.MPIN And spcl.PractInSpecInd = 'Y' Left Join dbo.SPECIALTY_TYPES spcltyp On spcl.SpecTypeCd = spcltyp.SpecTypeCd;";
+            var ndb = await db_sql.LoadData<PrimarySpecUHNModel>(connectionString: ConnectionStringUHN, strSQL);
+            //2 PD
+            //strSQL = "select A.PREM_SPCL_CD, A.NDB_SPCL_TYP_CD from PD.CNFG_PREM_SPCL_MAP A where A.PREM_DESG_VER_NBR = 15;"; //SELECT MAX(PREM_DESG_VER_NBR) FROM 
+            strSQL = "select A.PREM_SPCL_CD, A.NDB_SPCL_TYP_CD from PD.CNFG_PREM_SPCL_MAP A where A.PREM_DESG_VER_NBR = (SELECT MAX(PREM_DESG_VER_NBR) FROM PD.CNFG_PREM_SPCL_MAP)";
+            var pd = await db_sql.LoadData<PremiumSpecPDModel>(connectionString: ConnectionStringPD, strSQL);
+            //3 JOIN NDB + PD INTO etg.PrimarySpecWithCode_PDNDB_SOURCE
+            var pd_ndb = from n in ndb
+                         join p in pd on n.NDB_SPCL_CD equals p.NDB_SPCL_TYP_CD into n_p_join
+                         from np in n_p_join.DefaultIfEmpty()
+                         select new PrimarySpecWithCodeModel
+                         {
+                             MPIN = n.MPIN,
+                             ProvType = n.ProvType,
+                             NDB_SPCL_CD = n.NDB_SPCL_CD,
+                             SpecTypeCd = n.SpecTypeCd,
+                             PrimaryInd = n.PrimaryInd,
+                             ShortDesc = n.ShortDesc,
+                             PREM_SPCL_CD = ((n.NDB_SPCL_CD == "033" || n.NDB_SPCL_CD == "101" || n.NDB_SPCL_CD == "500") ? "CARDVS" : ((n.NDB_SPCL_CD == "007") ? "DERMA" : ((n.NDB_SPCL_CD == "038") ? "GERIA" : ((n.NDB_SPCL_CD == "093" || n.NDB_SPCL_CD == "504" || n.NDB_SPCL_CD == "059") ? "HEMAONC" : ((n.NDB_SPCL_CD == "479" || n.NDB_SPCL_CD == "095") ? "VASC" : ((n.NDB_SPCL_CD == "024" || n.NDB_SPCL_CD == "359" || n.NDB_SPCL_CD == "337" || n.NDB_SPCL_CD == "233") ? "PLASTIC" : (np == null ? null : np.PREM_SPCL_CD))))))),
+                             Secondary_Spec = (n.SpecTypeCd == "304" ? "CARDEP" : null)
+                         };
+
+            columns = typeof(PrimarySpecWithCodeModel).GetProperties().Select(p => p.Name).ToArray();
+            await db_sql.BulkSave<PrimarySpecWithCodeModel>(connectionString: ConnectionStringVC, "etg.PrimarySpecWithCode_PDNDB_SOURCE", pd_ndb, columns, truncate: true);
+
+
+            //UNUSED DELETE???
+            //strSQL = "SELECT prim.MPIN, CASE WHEN prim.[PREM_SPCL_CD] ='CARDCD' AND sec.[secondary_spec] = 'CARDEP' THEN 'CARDEP' ELSE CASE WHEN prim.[PREM_SPCL_CD] in ('NS', 'ORTHO') THEN 'NOS' ELSE [PREM_SPCL_CD] END END as [PREM_SPCL_CD] FROM (SELECT [PREM_SPCL_CD], [MPIN] FROM [vct].[PrimarySpecWithCode] GROUP BY [PREM_SPCL_CD], [MPIN] ) prim LEFT JOIN (SELECT [Secondary_Spec], [MPIN] FROM [vct].[PrimarySpecWithCode] GROUP BY [Secondary_Spec], [MPIN]) sec ON prim.MPIN = sec.MPIN";
+            //VC DB 
+
+
+            //STEP 4 etg.ETG_Cancer_Flag_PD_SOURCE
+            strSQL = "select a.ETG_BASE_CLASS, a.CNCR_IND from PD.CNFG_CNCR_REL_ETG a inner join ( select Max(PD.CNFG_CNCR_REL_ETG.PREM_DESG_VER_NBR) as Max_PREM_DESG_VER_NBR from PD.CNFG_CNCR_REL_ETG ) b on a.PREM_DESG_VER_NBR = b.Max_PREM_DESG_VER_NBR";
+            var can = await db_sql.LoadData<ETG_Cancer_Flag_PDModel>(connectionString: ConnectionStringPD, strSQL);
+            columns = typeof(ETG_Cancer_Flag_PDModel).GetProperties().Select(p => p.Name).ToArray();
+            await db_sql.BulkSave<ETG_Cancer_Flag_PDModel>(connectionString: ConnectionStringVC, "etg.ETG_Cancer_Flag_PD_SOURCE", can, columns, truncate: true);
+
+            //STEP 5 etg.PremiumNDBSpec_PD_SOURCE
+            strSQL = "select n.NDB_SPCL_TYP_CD, n.SPCL_TYP_CD_DESC, c.PREM_SPCL_CD from pd.CLCT_SPCL_TYP_CD n left join ( select b.PREM_SPCL_CD, b.NDB_SPCL_TYP_CD from PD.CNFG_PREM_SPCL_MAP b inner join ( select Max(PD.CNFG_PREM_SPCL_MAP.PREM_DESG_VER_NBR) as Max_PREM_DESG_VER_NBR from PD.CNFG_PREM_SPCL_MAP ) a on b.PREM_DESG_VER_NBR = a.Max_PREM_DESG_VER_NBR ) c on n.NDB_SPCL_TYP_CD = c.NDB_SPCL_TYP_CD where n.NDB_SPCL_TYP_CD <> ' '";
+            var pndb = await db_sql.LoadData<PremiumNDBSpecPDModel>(connectionString: ConnectionStringPD, strSQL);
+            columns = typeof(PremiumNDBSpecPDModel).GetProperties().Select(p => p.Name).ToArray();
+            await db_sql.BulkSave<PremiumNDBSpecPDModel>(connectionString: ConnectionStringVC, "etg.PremiumNDBSpec_PD_SOURCE", pndb, columns, truncate: true);
+
+            //STEP 6 etg.ETG_Mapped_PD_SOURCE
+            strSQL = "select LTRIM(RTRIM(a.PREM_SPCL_CD)) as PREM_SPCL_CD, a.TRT_CD, a.ETG_BASE_CLASS from pd.CNFG_ETG_SPCL a inner join ( select Max(PD.CNFG_ETG_SPCL.PREM_DESG_VER_NBR) as Max_PREM_DESG_VER_NBR from PD.CNFG_ETG_SPCL ) Query1 on a.PREM_DESG_VER_NBR = Query1.Max_PREM_DESG_VER_NBR";
+            var map = await db_sql.LoadData<ETG_Mapped_PD>(connectionString: ConnectionStringPD, strSQL);
+            columns = typeof(ETG_Mapped_PD).GetProperties().Select(p => p.Name).ToArray();
+            await db_sql.BulkSave<ETG_Mapped_PD>(connectionString: ConnectionStringVC, "etg.ETG_Mapped_PD_SOURCE", map, columns, truncate: true);
+
+
+            //STEP 7 [etg].[ETG_Dataload_NRX_AGG] CACHE
+            strSQL = "TRUNCATE TABLE [etg].[ETG_Dataload_NRX_AGG];INSERT INTO [etg].[ETG_Dataload_NRX_AGG] ([ETG_Base_Class] ,[RX_NRX] ,[Has_RX] ,[Has_NRX] ,[RX_RATE] ,[RX] ,[NRX]) SELECT [ETG_Base_Class] ,[RX_NRX] ,[Has_RX] ,[Has_NRX] ,[RX_RATE] ,[RX] ,[NRX] FROM [etg].[VW_ETG_Dataload_NRX_AGG];";
+            await db_sql.Execute(ConnectionStringVC, strSQL);
+
+
+            //STEP 8 [etg].[ETG_Dataload_EC_AGG] CACHE
+            strSQL = "TRUNCATE TABLE [etg].[ETG_Dataload_EC_AGG];INSERT INTO [etg].[ETG_Dataload_EC_AGG] ([Premium_Specialty] ,[ETG_Base_Class] ,[EC_Treatment_Indicator] ,[EC_Episode_Count] ,[EC_Total_Cost] ,[EC_Average_Cost] ,[EC_Coefficients_of_Variation] ,[EC_Normalized_Pricing_Episode_Count] ,[EC_Normalized_Pricing_Total_Cost] ,[EC_Spec_Episode_Count] ,[EC_Spec_Total_Cost] ,[EC_Spec_Average_Cost] ,[EC_Spec_Coefficients_of_Variation] ,[EC_Spec_Percent_of_Episodes] ,[EC_Spec_Normalized_Pricing_Episode_Count] ,[EC_Spec_Normalized_Pricing_Total_Cost] ,[EC_CV3] ,[EC_Spec_Episode_Volume] ,[PD_Mapped]) SELECT [Premium_Specialty] ,[ETG_Base_Class] ,[EC_Treatment_Indicator] ,[EC_Episode_Count] ,[EC_Total_Cost] ,[EC_Average_Cost] ,[EC_Coefficients_of_Variation] ,[EC_Normalized_Pricing_Episode_Count] ,[EC_Normalized_Pricing_Total_Cost] ,[EC_Spec_Episode_Count] ,[EC_Spec_Total_Cost] ,[EC_Spec_Average_Cost] ,[EC_Spec_Coefficients_of_Variation] ,[EC_Spec_Percent_of_Episodes] ,[EC_Spec_Normalized_Pricing_Episode_Count] ,[EC_Spec_Normalized_Pricing_Total_Cost] ,[EC_CV3] ,[EC_Spec_Episode_Volume] ,[PD_Mapped] FROM [etg].[VW_ETG_Dataload_EC_AGG;";
+            await db_sql.Execute(ConnectionStringVC, strSQL);
+
+
+            //STEP 9 [etg].[ETG_Dataload_PC_AGG] CACHE
+            strSQL = "TRUNCATE TABLE [etg].[ETG_Dataload_PC_AGG];INSERT INTO [etg].[ETG_Dataload_PC_AGG] ([Premium_Specialty] ,[ETG_Base_Class] ,[PC_Episode_Count] ,[PC_Total_Cost] ,[PC_Average_Cost] ,[PC_Coefficients_of_Variation] ,[PC_Normalized_Pricing_Episode_Count] ,[PC_Normalized_Pricing_Total_Cost] ,[PC_Spec_Episode_Count] ,[PC_Spec_Total_Cost] ,[PC_Spec_Average_Cost] ,[PC_Spec_CV] ,[PC_Spec_Percent_of_Episodes] ,[PC_Spec_Normalized_Pricing_Episode_Count] ,[PC_Spec_Normalized_Pricing_Total_Cost] ,[PC_CV3] ,[PC_Spec_Epsd_Volume]) SELECT [Premium_Specialty] ,[ETG_Base_Class] ,[PC_Episode_Count] ,[PC_Total_Cost] ,[PC_Average_Cost] ,[PC_Coefficients_of_Variation] ,[PC_Normalized_Pricing_Episode_Count] ,[PC_Normalized_Pricing_Total_Cost] ,[PC_Spec_Episode_Count] ,[PC_Spec_Total_Cost] ,[PC_Spec_Average_Cost] ,[PC_Spec_CV] ,[PC_Spec_Percent_of_Episodes] ,[PC_Spec_Normalized_Pricing_Episode_Count] ,[PC_Spec_Normalized_Pricing_Total_Cost] ,[PC_CV3] ,[PC_Spec_Epsd_Volume] FROM [etg].[VW_ETG_Dataload_PC_AGG];";
+            await db_sql.Execute(ConnectionStringVC, strSQL);
+
+
+
+
+
+        }
+
+
+
+
+
+
+        public async Task getETGSymmSourceDataOriginalAsync(Int16 year  = 2022)
         {
             //ETG DATA LOAD
             //ETG DATA LOAD

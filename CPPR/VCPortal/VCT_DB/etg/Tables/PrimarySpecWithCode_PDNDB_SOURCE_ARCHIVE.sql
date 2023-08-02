@@ -1,4 +1,4 @@
-﻿CREATE TABLE [etg].[PrimarySpecWithCode_PDNDB_SOURCE]
+﻿CREATE TABLE [etg].[PrimarySpecWithCode_PDNDB_SOURCE_ARCHIVE]
 (
 	[MPIN] [bigint] NOT NULL,
 	[ProvType] [char](2) NULL,

@@ -11,4 +11,6 @@ public class ETG_Mapped_PD
     public Int16 TRT_CD { get; set; }
     public int ETG_BASE_CLASS { get; set; }
 
+    public float PD_Version { get; set; }
+
 }

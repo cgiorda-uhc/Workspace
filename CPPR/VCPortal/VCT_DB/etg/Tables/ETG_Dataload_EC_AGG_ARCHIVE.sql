@@ -1,4 +1,4 @@
-﻿CREATE TABLE [etg].[ETG_Dataload_EC_AGG]
+﻿CREATE TABLE [etg].[ETG_Dataload_EC_AGG_ARCHIVE]
 (
 			[Id] [int] IDENTITY(1,1) NOT NULL,
 		[Premium_Specialty] [varchar](25) NULL,

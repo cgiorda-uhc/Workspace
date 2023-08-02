@@ -10,4 +10,6 @@ public class ETG_Cancer_Flag_PDModel
     public int ETG_BASE_CLASS { get; set; }
     public char CNCR_IND { get; set; }
 
+    public float PD_Version { get; set; }
+
 }
