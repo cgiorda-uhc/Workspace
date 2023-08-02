@@ -124,10 +124,16 @@ public class EviCoreYTDMetrics : IEviCoreYTDMetrics
                     Log.Information($"Processing " + filename + " sheet:" + sheet);
 
                     var chk = sheet_ref.Where(fi => fi.ToLower().Trim().Contains(sheet.Trim().ToLower()));
-                    if (!chk.Any())
+                    if (!chk.Any() && !sheet.ToLower().Contains("for_new_sheet_names"))
                     {
                         continue;
                     }
+
+
+                    //if(sheet.ToLower().Contains("gastro"))
+                    //{
+                    //    var s = "";
+                    //}
 
 
                     var lob = closed_xml.GetValueFromExcel(file, sheet, config_sheet.SheetIdentifier);
