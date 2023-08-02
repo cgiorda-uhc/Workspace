@@ -501,6 +501,10 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
         CurrentVersion = "No History";
         await Task.Delay(TimeSpan.FromSeconds(.5));
         var response = WebAPIConsume.GetCall(api.Url);
+
+        PdVersions = new List<string>();
+
+
         if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
         {
             var reponseStream = await response.Result.Content.ReadAsStreamAsync();
@@ -509,8 +513,12 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
                 PropertyNameCaseInsensitive = true
             });
 
-            PdVersions = result.Select(x => x.PD_Version.ToString()).ToList();
-            PdVersions.Insert(0, CurrentVersion);
+            var lst = result.Select(x => x.PD_Version.ToString()).ToList();
+            PdVersions.Add(CurrentVersion);
+            foreach(var l in lst)
+            {
+                PdVersions.Add(l);
+            }
 
         }
         else
@@ -519,8 +527,6 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
             UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
             _logger.Error("loadGridLists.PDVersions threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
         }
-
-
 
         _sbStatus.Append("--Getting RxNrxOption list..." + Environment.NewLine);
         ProgressMessageViewModel.Message = _sbStatus.ToString();

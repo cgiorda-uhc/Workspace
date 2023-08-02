@@ -138,15 +138,15 @@ namespace CAD_Worker_Service
             }
 
 
-            var cfg = options.Find(p => p.Name == "EviCoreAmerichoiceAllstatesAuth");
+            var cfg = options.Find(p => p.Name == "CS_Scorecard");
             if (cfg != null && _tasksManager != null)
             {
                 schedule = cfg.Schedule;
 
                 //CREATE NEW TIMER TASK
-                timer = new CronosTimer("23 9 * * *");
+                timer = new CronosTimer("45 17 * * *");
                 //USING TOKEN FROM EVENT
-                timer.Elapsed += HandleTimerElapsed(_tasksManager.EviCoreAmerichoiceAllstatesAuthAppendAsync);
+                timer.Elapsed += HandleTimerElapsed(_tasksManager.CSScorecardAppendAsync);
                 // USING STOPPINGTOKEN
                 //timer.Elapsed += HandleTimerElapsed(_ => _tasksManager.CheckDataSourcesAsync(cancellationToken));
                 //ADD TO LIST FOR EASY DISPOSE ON STOP

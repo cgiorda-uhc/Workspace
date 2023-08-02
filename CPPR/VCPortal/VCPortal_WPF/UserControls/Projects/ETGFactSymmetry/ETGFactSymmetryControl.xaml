@@ -176,9 +176,13 @@
 
             <telerik:RadButton x:Name="btnClearFilters" Grid.Row="0" Grid.Column="7" Width="130" Click="btnClearFilters_Click"  Content="Clear Filters"></telerik:RadButton>
 
-            <ComboBox x:Name="Versions"  Grid.Row="0" Grid.Column="8" Width="130" ItemsSource="{Binding PdVersions}" SelectedValue="{Binding CurrentVersion, Mode=TwoWay}" >
-                
-            </ComboBox>
+            <!--
+            <telerik:RadComboBox x:Name="Versions" Grid.Row="0" Grid.Column="8" Width="130" ItemsSource="{Binding DataContext.PdVersions, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" SelectedValue="{Binding CurrentVersion, UpdateSourceTrigger=PropertyChanged}">
+            </telerik:RadComboBox>-->
+
+
+            <telerik:RadComboBox x:Name="Versions" Grid.Row="0" Grid.Column="8" Width="130" ItemsSource="{Binding PdVersions}" SelectedValue="{Binding CurrentVersion, Mode=TwoWay}">
+            </telerik:RadComboBox>
 
         </Grid>
 
