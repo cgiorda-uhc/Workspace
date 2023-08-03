@@ -170,6 +170,7 @@
     <Build Include="etg\Tables\PremiumNDBSpec_PD_SOURCE.sql" />
     <Build Include="etg\Tables\PrimarySpecWithCode_PDNDB_SOURCE.sql" />
     <Build Include="etg\Tables\ETG_Cancer_Flag_PD_SOURCE.sql" />
+    <Build Include="etgsymm\StoredProcedures\sp_ETG_Symmetry_Adhoc.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Cd_GetAll.sql" />

@@ -91,7 +91,7 @@ adHoc.PEGReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Repor
 adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\EBM Template\\342 EBM DQ&C Results - Template.xlsx";
 
 
-await adHoc.getETGSymmSourceDataAsync(2021);
+await adHoc.getETGSymmSourceDataAsync(15);
 
 
 
