@@ -894,7 +894,6 @@ namespace ConsoleLibraryTesting
 
 
 
-
             strSheetName = "PEG Subcat";
             strSQL = "select Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ',VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC) as PEG_with_Subcategory, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC)";
             var pegsub = await db_sql.LoadData<PEG_Subcat_Model>(connectionString: ConnectionStringVC, strSQL);

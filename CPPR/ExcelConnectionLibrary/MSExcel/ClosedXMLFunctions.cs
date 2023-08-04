@@ -1,7 +1,10 @@
 ﻿using ClosedXML.Excel;
 using ClosedXML.Graphics;
 using DocumentFormat.OpenXml.Office2019.Excel.RichData2;
+using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Wordprocessing;
 using FileParsingLibrary.Models;
+using Microsoft.Office.Interop.Excel;
 using NPOI.OpenXmlFormats.Dml.Diagram;
 using NPOI.SS.Formula.Functions;
 using SixLabors.Fonts;
@@ -662,8 +665,19 @@ namespace FileParsingLibrary.MSExcel
 
                                 currentCol = colNameIdList.Where(x => x.ColumnName == prop.Name).Select(x => x.ColumnId).FirstOrDefault();
 
+                                if (prop.PropertyType == typeof(string))
+                                {
 
-                                ws.Cell(rowcnt, currentCol).Value = prop.GetValue(item, null) + "";
+
+                                    ws.Cell(rowcnt, currentCol).Value = prop.GetValue(item, null) + "";
+                                }
+                                else
+                                {
+
+                                    ws.Cell(rowcnt, currentCol).Value = int.Parse(prop.GetValue(item, null) + "");
+                                }
+
+
                                 currentCol++;
                             }
                             rowcnt++;
@@ -671,6 +685,30 @@ namespace FileParsingLibrary.MSExcel
 
                         //DELETE LEFTOVER TEMPLATE GARBAGE
                         ws.Range("A" + rowcnt  + ":Z" + (rowcnt + 200)).Delete(XLShiftDeletedCells.ShiftCellsUp);
+
+
+                        var rows = ws.RangeUsed().RowsUsed().Skip(1); // Skip header row
+                        foreach (var row in rows)
+                        {
+                            var rowNumber = row.RowNumber();
+                            // Process the row
+                            var cells = row.Cells();
+                            var cnt = 1;
+                            foreach (var cell in cells)
+                            {
+                                if (cnt == cells.Count() - 1)
+                                {
+                                    break;
+                                }
+
+                                cell.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                                cnt++;
+                            }    
+                        }
+
+
+
+                       // ws.RangeUsed().Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
                         //for (int i = 0; i < 200; i++)
                         //{
                         //    ws.Range("A" + (rowcnt + i) + ":Z" + (rowcnt + i) ).Delete(XLShiftDeletedCells.ShiftCellsUp);

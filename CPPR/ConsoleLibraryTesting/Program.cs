@@ -73,7 +73,7 @@ adHoc.ConnectionStringVC = "Data Source=wn000103397;Initial Catalog=VCT_DB;Persi
 
 adHoc.ConnectionStringUHPD = "data source=UHPD_Reporting;server=WP000052579;Persist Security Info=True;database=PD_Reporting;Integrated Security=SSPI;connect timeout=300000;";
 
-adHoc.ConnectionStringPD = "data source=UHPD_Analytics;server=DBSWP0662;Persist Security Info=True;database=UHPD_Analytics;Integrated Security=SSPI;connect timeout=300000;";
+adHoc.ConnectionStringPD = "data source=UHPD_Analytics;server=DBSWP0662;Persis4t Security Info=True;database=UHPD_Analytics;Integrated Security=SSPI;connect timeout=300000;";
 
 
 adHoc.ConnectionStringUHN = "data source=UHN_Reporting;server=WP000074441CLS;Persist Security Info=True;database=UHN_Reporting;Integrated Security=SSPI;connect timeout=300000;";
@@ -91,12 +91,12 @@ adHoc.PEGReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Repor
 adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\EBM Template\\342 EBM DQ&C Results - Template.xlsx";
 
 
-await adHoc.getETGSymmSourceDataAsync(15);
+//await adHoc.getETGSymmSourceDataAsync(15);
 
 
 
 //await adHoc.generateEBMReportsAsync();
-//await adHoc.generatePEGReportsAsync();
+await adHoc.generatePEGReportsAsync();
 
  
 return;
