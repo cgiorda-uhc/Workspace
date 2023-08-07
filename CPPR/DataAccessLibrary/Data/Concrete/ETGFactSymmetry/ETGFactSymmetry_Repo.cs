@@ -39,6 +39,15 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
         return results;
     }
 
+    public async Task<IEnumerable<ETGSummaryAdhocConfig>> GetETGFactSymmetryAdhocAsync(int version)
+    {
+        var results = await _db.LoadData<ETGSummaryAdhocConfig, dynamic>(storedProcedure: "etgsymm.sp_ETG_Symmetry_Adhoc", new { version = version });
+
+        return results;
+    }
+
+
+
 
 
     public Task<IEnumerable<ETGFactSymmetry_Tracking_ReadDto>> GetETGTrackingAsync(CancellationToken token)

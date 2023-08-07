@@ -10,6 +10,8 @@ public interface IETGFactSymmetry_Repo
 {
     Task<IEnumerable<ETGFactSymmetry_ReadDto>> GetETGFactSymmetryDisplayAsync(CancellationToken token);
 
+    Task<IEnumerable<ETGSummaryAdhocConfig>> GetETGFactSymmetryAdhocAsync(int version);
+
     Task<IEnumerable<ETGFactSymmetry_Tracking_ReadDto>> GetETGTrackingAsync(CancellationToken token);
 
     Task<IEnumerable<ETGPatientCentricConfig>> GetETGPatientCentricConfigAsync(CancellationToken token);

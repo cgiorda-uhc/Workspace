@@ -3,20 +3,12 @@
 
 AS
 	SELECT 
-f.ETG_Fact_Symmetry_Id,
-fp.ETG_Fact_Symmetry_Id as ETG_Fact_Symmetry_Id_Previous,
+
 f.ETG_Base_Class,
 m.ETG_Description,
-f.Premium_Specialty_Id,
 p.Premium_Specialty,
 
 
-f.Never_Mapped,
-fp.Never_Mapped as Never_Mapped_Previous,
-
-f.Has_Commercial,
-f.Has_Medicare,
-f.Has_Medicaid, 
 
 CASE WHEN f.Has_Commercial is null AND f.Has_Medicare is null AND f.Has_Medicaid is null THEN 'Not Mapped' ELSE 
 CASE WHEN f.Has_Commercial = 1 AND f.Has_Medicare = 1 AND f.Has_Medicaid = 1 THEN 'All' ELSE 
@@ -27,12 +19,6 @@ CASE WHEN f.Has_Commercial = 1 THEN 'Commercial Only' ELSE
 CASE WHEN f.Has_Medicare = 1 THEN 'Medicare Only' ELSE
 CASE WHEN f.Has_Medicaid = 1 THEN 'Medicaid Only' ELSE 'Not Mapped' 
 END END END END END END END END as LOB,
-
-
-fp.Has_Commercial as Has_Commercial_Previous,
-fp.Has_Medicare as Has_Medicare_Previous,
-fp.Has_Medicaid as Has_Medicaid_Previous, 
-
 
 
 CASE WHEN fp.Has_Commercial is null AND fp.Has_Medicare is null AND fp.Has_Medicaid is null THEN 'Not Mapped' ELSE 
@@ -52,9 +38,6 @@ CASE WHEN f.[Has_RX] = 0 AND f.[Has_NRX] = 0 THEN 'Rx: N / NRx: N' ELSE
 'Not Mapped'  END END END END as RX_NRX,
 
 
-f.[Has_RX],
-f.[Has_NRX],
-
 
 
 CASE WHEN fp.[Has_NRX] = 1 AND fp.[Has_RX] = 0 THEN 'Rx: N / NRx: Y' ELSE 
@@ -63,9 +46,6 @@ CASE WHEN fp.[Has_NRX] = 0 AND fp.[Has_RX] = 0 THEN 'Rx: N / NRx: N' ELSE
 CASE WHEN fp.[Has_NRX] = 0 AND fp.[Has_RX] = 1 THEN 'Rx: Y / NRx: N' ELSE 
 NULL END END END END as RX_NRXPrevious,
 
-
-fp.[Has_RX] as Has_RX_Previous,
-fp.[Has_NRX]as Has_NRX_Previous,
 
 
  CASE WHEN f.[PC_Attribution] not in ( 'Not Mapped', 'Not Present')
@@ -208,15 +188,11 @@ END  END  END  END  END  END  END END as [EC_Changes_Made],
 CASE WHEN f.EC_Mapping IS NULL THEN 'Not Mapped' ELSE f.EC_Mapping END  as EC_Mapping,
 CASE WHEN fp.EC_Mapping IS NULL THEN 'Not Mapped' ELSE fp.EC_Mapping END as EC_Mapping_Previous,
 
---CASE WHEN f.EC_Mapping IS NULL THEN 'Not Mapped' ELSE f.EC_Mapping END  as Current_Mapping_Original,
---CASE WHEN fp.EC_Mapping IS NULL THEN 'Not Mapped' ELSE fp.EC_Mapping END as Previous_Mapping_Original,
+
 
 f.EC_Change_Comments,
 
 
-
-f.Data_Period as Data_Period,
-fp.Data_Period as Data_Period_Previous,
  f.Symmetry_Version as Symmetry_Version,
   fp.Symmetry_Version as Symmetry_Version_Previous
 

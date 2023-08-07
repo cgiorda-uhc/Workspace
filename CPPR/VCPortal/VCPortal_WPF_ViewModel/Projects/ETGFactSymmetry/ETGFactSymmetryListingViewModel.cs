@@ -434,6 +434,18 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
             if (tracking.Count > 0)
             {
                 export.Add(new ExcelExport() { ExportList = tracking.ToList<object>(), SheetName = "Tracking" });
+            
+            }
+
+            if(CurrentVersion.IsNumeric())
+            {
+                sheet = excel.Sheets.Where(x => x.Name == "ETGAdhoc").FirstOrDefault();
+                api = _config.APIS.Where(x => x.Name == "ETGAdhoc").FirstOrDefault();
+                var etgad = await VM_Functions.APIGetResultAsync<ETGSummaryAdhocConfig> (api.BaseUrl, api.Url + "/" + CurrentVersion);
+                if (etgad.Count > 0)
+                {
+                    export.Add(new ExcelExport() { ExportList = etgad.ToList<object>(), SheetName = sheet.SheetName });
+                }
             }
 
 

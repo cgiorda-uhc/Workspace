@@ -43,6 +43,35 @@ public static class ETGFactSymmetry_Calls
         });
 
 
+        //ALL OF MY API ENDPOINT MAPPING
+        app.MapGet(pattern: "/etgsymmetryadhoc/{version}", async (IETGFactSymmetry_Repo repo, int version) =>
+        {
+            try
+            {
+                _log.Information("Requesting API GetETGFactSymmetryAdhoc()...");
+                ///RETURN HTTP 200
+                ///
+                var results = await repo.GetETGFactSymmetryAdhocAsync(version);
+
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetETGFactSymmetryAdhoc() 404, not found");
+                return Results.NotFound(); //404
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, "API GetETGFactSymmetryAdhoc threw an error");
+                //RETURN ERROR
+                return Results.Problem(ex.Message);
+
+            }
+        });
+
+
+
         app.MapGet(pattern: "/etgsymmetrytracking", async (IETGFactSymmetry_Repo repo, CancellationToken token) =>
         {
             try
