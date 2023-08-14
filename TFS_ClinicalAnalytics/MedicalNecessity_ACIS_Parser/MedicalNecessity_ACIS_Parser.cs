@@ -17,11 +17,11 @@ namespace MedicalNecessity_ACIS_Parser
     {
         static void Main(string[] args)
         {
-            HelperFunctions.HelperFunctions.Email("inna_rudi@uhc.com;sheila_donelan@uhc.com", "chris_giordano@uhc.com", "VC Automation Manager: ACIS MedNec Tables", "ACIS MedNec tables were updated with data for the month of July 2023", "chris_giordano@uhc.com;jon_maguire@uhc.com", null, System.Net.Mail.MailPriority.Normal);
+            //HelperFunctions.HelperFunctions.Email("inna_rudi@uhc.com", "chris_giordano@uhc.com", "VC Automation Manager: ACIS MedNec Tables", "ACIS MedNec tables were updated with data for the month of August 2023", "chris_giordano@uhc.com", null, System.Net.Mail.MailPriority.Normal);
 
 
 
-            return;
+            //return;
             //HelperFunctions.HelperFunctions.Email("inna_rudi@uhc.com;sheila_donelan@uhc.com", "chris_giordano@uhc.com", "VC Automation Manager: ACIS MedNec Tables", "ACIS MedNec tables were updated with data for the month of January 2023", "jon_maguire@uhc.com", null, System.Net.Mail.MailPriority.Normal);
 
 

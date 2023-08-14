@@ -91,25 +91,45 @@ adHoc.PEGReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Repor
 adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\EBM Template\\342 EBM DQ&C Results - Template.xlsx";
 
 
-//await adHoc.getETGSymmSourceDataAsync(15);
-
-
-
-//await adHoc.generateEBMReportsAsync();
-await adHoc.generatePEGReportsAsync();
-
- 
-return;
 
 
 
 
 List<string> files_loaded = new List<string>();
-files_loaded.Add("Oxford June -Gastro Universe 2023.xlsx");
-files_loaded.Add("United PCP- Gastro_June_2023.xlsx");
-files_loaded.Add("United PCP- Rad & Card_June_2023.xlsx");
-files_loaded.Add("Oxford June -Radiology Cardiology Universe 2023.xlsx");
 files_loaded.Add("Americhoice June -Radiology Cardiology Universe 2023.xlsx");
+files_loaded.Add("United PCP- Rad & Card_June_2023.xlsx");
+files_loaded.Add("Americhoice May -Radiology Cardiology Universe 2023.xlsx");
+files_loaded.Add("United PCP- Rad & Card_May_2023.xlsx");
+files_loaded.Add("Americhoice April -Radiology Cardiology Universe 2023.xlsx");
+files_loaded.Add("United PCP- Rad & Card_April_2023.xlsx");
+files_loaded.Add("Americhoice March -Radiology Cardiology Universe 2023.xlsx");
+files_loaded.Add("United PCP- Rad & Card_March_2023.xlsx");
+
+//await adHoc.cleanupMemberDataAsync(files_loaded);
+
+
+await adHoc.transferMHPDataAsync(files_loaded);
+
+
+//await adHoc.getETGSymmSourceDataAsync(15);
+
+
+
+//await adHoc.generateEBMReportsAsync();
+//await adHoc.generatePEGReportsAsync();
+
+
+return;
+
+
+
+
+//List<string> files_loaded = new List<string>();
+//files_loaded.Add("Oxford June -Gastro Universe 2023.xlsx");
+//files_loaded.Add("United PCP- Gastro_June_2023.xlsx");
+//files_loaded.Add("United PCP- Rad & Card_June_2023.xlsx");
+//files_loaded.Add("Oxford June -Radiology Cardiology Universe 2023.xlsx");
+//files_loaded.Add("Americhoice June -Radiology Cardiology Universe 2023.xlsx");
 
 
 //await adHoc.cleanupMemberDataAsync(files_loaded);

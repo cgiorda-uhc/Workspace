@@ -150,6 +150,7 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
     public Task<IEnumerable<ETG_UGAP_CFG_Model>> GetETG_UGAP_CFG_Model(CancellationToken token)
     {
 
+
         string strSQL = "SELECT * FROM [VCT_DB].[etgsymm].[VW_ETG_Symmetry_UGAP CNFG] v ORDER BY v.RISK_Model, v.MPC_NBR ;";
 
         var results = _db.LoadData<ETG_UGAP_CFG_Model>(sql: strSQL, token, connectionId: "VCT_DB");

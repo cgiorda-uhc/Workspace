@@ -82,6 +82,12 @@ public class NICEUHCWestEligibility : INICEUHCWestEligibility
 
                 Log.Information($"Processing " + filename + " sheet:" + sheet);
                 var nice = closed_xml.ImportExcel<NICEUHCWestEligibilityModel>(file, sheet, config_sheet.ColumnRange, config_sheet.StartingDataRow);
+
+
+
+                nice.RemoveAll(p => p.Contract_Number == null);
+                nice.RemoveAll(p => p.Contract_Number.ToLower() == "grand total");
+
                 foreach (var n in nice)
                 {
 
