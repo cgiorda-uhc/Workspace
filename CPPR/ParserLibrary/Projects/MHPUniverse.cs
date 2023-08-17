@@ -4,6 +4,7 @@ using DataAccessLibrary.Models;
 using DataAccessLibrary.Scripts;
 using DataAccessLibrary.Shared;
 using DocumentFormat.OpenXml.Wordprocessing;
+using NPOI.HPSF;
 using NPOI.HSSF.Record.Chart;
 using System.Globalization;
 
@@ -255,10 +256,34 @@ public class MHPUniverse : IMHPUniverse
     {
         List<FileFound> filesFound = new List<FileFound>();
         int month, year;
+        FileDateModel date = null;
         foreach (var file in fileList)
         {
-
-            var date = fdate.Where(x => file.FileName.ToLower().StartsWith(x.name.ToLower())).FirstOrDefault();
+            
+            bool isMatched = false;
+            foreach (var f in fdate)
+            {
+                var search = f.name.ToLower().Split("*");
+                foreach(var s in search)
+                {
+                    if (file.FileName.ToLower().Contains(s))
+                    {
+                        isMatched = true;
+                    }
+                    else
+                    {
+                        isMatched = false;
+                        break;
+                    }
+                        
+                }
+                if(isMatched)
+                {
+                    date = f;
+                    break;
+                }
+            }
+           // var date = fdate.Where(x => file.FileName.ToLower().StartsWith(x.name.ToLower())).FirstOrDefault();
 
             //var file_path = file.FilePath.Replace("*", (date.file_year + (date.file_month == 12 ? 1  : 0)).ToString());
             var file_path = file.FilePath;
