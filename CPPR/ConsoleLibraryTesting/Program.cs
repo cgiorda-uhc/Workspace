@@ -96,19 +96,21 @@ adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Repor
 
 
 List<string> files_loaded = new List<string>();
-files_loaded.Add("Americhoice June -Radiology Cardiology Universe 2023.xlsx");
-files_loaded.Add("United PCP- Rad & Card_June_2023.xlsx");
-files_loaded.Add("Americhoice May -Radiology Cardiology Universe 2023.xlsx");
-files_loaded.Add("United PCP- Rad & Card_May_2023.xlsx");
-files_loaded.Add("Americhoice April -Radiology Cardiology Universe 2023.xlsx");
-files_loaded.Add("United PCP- Rad & Card_April_2023.xlsx");
-files_loaded.Add("Americhoice March -Radiology Cardiology Universe 2023.xlsx");
-files_loaded.Add("United PCP- Rad & Card_March_2023.xlsx");
 
-//await adHoc.cleanupMemberDataAsync(files_loaded);
+files_loaded.Add("Oxford July -Gastro Universe 2023.xlsx");
+files_loaded.Add("Oxford July-Radiology Cardiology Universe 2023.xlsx");
+files_loaded.Add("United PCP- Rad & Card_July_2023.xlsx");
+files_loaded.Add("Americhoice July -Radiology Cardiology Universe 2023.xlsx");
+files_loaded.Add("United PCP- Gastro_July_2023.xlsx");
 
 
-await adHoc.transferMHPDataAsync(files_loaded);
+
+
+await adHoc.cleanupMemberDataAsync(files_loaded);
+return;
+
+
+//await adHoc.transferMHPDataAsync(files_loaded);
 
 
 //await adHoc.getETGSymmSourceDataAsync(15);
@@ -119,7 +121,7 @@ await adHoc.transferMHPDataAsync(files_loaded);
 //await adHoc.generatePEGReportsAsync();
 
 
-return;
+
 
 
 

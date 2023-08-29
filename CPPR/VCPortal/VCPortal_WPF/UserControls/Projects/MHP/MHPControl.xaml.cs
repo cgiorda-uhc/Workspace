@@ -30,7 +30,7 @@ namespace VCPortal_WPF.UserControls.Projects.MHP;
 public partial class MHPControl : UserControl
 {
 
-    private MHPViewModel _viewModel => (MHPViewModel)DataContext;
+    private ProcCodeTrendsViewModel _viewModel => (ProcCodeTrendsViewModel)DataContext;
 
     public MHPControl()
     {

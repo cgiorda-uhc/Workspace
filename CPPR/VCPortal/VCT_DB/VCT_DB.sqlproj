@@ -81,6 +81,7 @@
     <Folder Include="etg" />
     <Folder Include="etg\Tables" />
     <Folder Include="etg\Views" />
+    <Folder Include="pct" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\Views\vw_GetChemoTracking.sql" />
@@ -204,6 +205,7 @@
     <Build Include="ebm\ebm.sql" />
     <Build Include="etg\etg.sql" />
     <Build Include="etg\etg_index.sql" />
+    <Build Include="pct\pct.sql" />
   </ItemGroup>
   <ItemGroup>
     <SqlCmdVariable Include="ChemoPXRefresh">

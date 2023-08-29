@@ -15,6 +15,7 @@ using VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
 using VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;
 using VCPortal_WPF_ViewModel.Projects.Home;
 using VCPortal_WPF_ViewModel.Projects.MHP;
+using VCPortal_WPF_ViewModel.Projects.ProcCodeTrends;
 
 namespace VCPortal_WPF_ViewModel.Shared;
 public class MainWindowViewModel : INotifyPropertyChanged
@@ -102,7 +103,10 @@ public class MainWindowViewModel : INotifyPropertyChanged
                 NavigationViewModelTypesReports.Add(new TypeAndDisplay { Name = "MHP Reporting", VMType = typeof(MHPViewModel) });
             }
 
-
+            if (groups.Contains("ms\\pc_trends", StringComparer.OrdinalIgnoreCase))
+            {
+                NavigationViewModelTypesReports.Add(new TypeAndDisplay { Name = "ProcCode Trending", VMType = typeof(ProcCodeTrendsViewModel) });
+            }
 
             NavigationViewModelTypesReports.Add(new TypeAndDisplay { Name = "Compliance Reporting" });
 
