@@ -45,12 +45,7 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
     [ObservableProperty]
     private string currentTitle;
-    [ObservableProperty]
-    private Visibility eIFormVisibility;
-    [ObservableProperty]
-    private Visibility cSFormVisibility;
-    [ObservableProperty]
-    private Visibility iFPFormVisibility;
+
 
     [ObservableProperty]
     private bool isModalOpen;
@@ -63,25 +58,25 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
     public MessageViewModel UserMessageViewModel { get; }
 
     [ObservableProperty]
-    public List<string> _states;
+    public List<string> _product; //COMMERCIAL, NULL
     [ObservableProperty]
-    public List<string> _mKT_SEG_RLLP_DESC;
+    public List<string> _funding_Type; //ASO, INSURED
     [ObservableProperty]
-    public List<string> _fINC_ARNG_DESC;
+    public List<string> _region;//CENTRAL, EAST
     [ObservableProperty]
-    public List<string> _lEG_ENTY;
+    public List<string> _op_Phys; //OP, PHYS
     [ObservableProperty]
-    public List<string> _cS_TADM_PRDCT_MAP;
+    public List<string> _service_Type; //AMBULANCE, DME;SUPPLIES,EMERGENCY ROOM
     [ObservableProperty]
-    public List<string> _mKT_TYP_DESC;
+    public List<string> _pAR;//NON-PAR PROVIDER, PAR PROVIDER
     [ObservableProperty]
-    public List<string> _cUST_SEG;
-
+    public List<string> _market;//COLORADO MINOR, COLUMBUS MINOR
     [ObservableProperty]
-    public ObservableCollection<string> _groupNumbers;
+    public List<string> _major_Market;//CALIFORNIA MAJOR
     [ObservableProperty]
-    public List<string> _productCode;
-
+    public List<string> _legal_Entity;//HP OP HP JV, MAMSI, NEIGHBORHOOD
+    [ObservableProperty]
+    public List<string> _source_System;//CIRRUS, OXFORD, TOPS/UNET
 
     public ProcCodeTrendsViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
     {
@@ -96,7 +91,7 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
         worker.RunWorkerCompleted += worker_RunWorkerCompleted;
 
 
-        CurrentTitle = "MHP EI Reporting";
+        CurrentTitle = "ProcCode Trending";
         EIFormVisibility = Visibility.Visible;
         CSFormVisibility = Visibility.Hidden;
         IFPFormVisibility = Visibility.Hidden;
