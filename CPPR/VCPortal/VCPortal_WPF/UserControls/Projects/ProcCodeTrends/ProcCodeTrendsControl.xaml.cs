@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using VCPortal_WPF.Components;
+using VCPortal_WPF.UserControls.Shared;
 
 namespace VCPortal_WPF.UserControls.Projects.ProcCodeTrends;
 /// <summary>
@@ -22,5 +24,62 @@ public partial class ProcCodeTrendsControl : UserControl
     public ProcCodeTrendsControl()
     {
         InitializeComponent();
+
+        modalContentControl.Content = new StatusControl();
+    }
+
+    bool blJustProcessed;
+    private void cbx_ItemSelectionChanged(object sender, Xceed.Wpf.Toolkit.Primitives.ItemSelectionChangedEventArgs e)
+    {
+        if (blJustProcessed)
+        {
+            blJustProcessed = false;
+            return;
+        }
+        var _checkComboBox = (SelectAllCheckComboBox)sender;
+        var value = e.Item.ToString();
+        checkForAll(_checkComboBox, value, e.IsSelected);
+    }
+
+    private void cbx_Loaded(object sender, RoutedEventArgs e)
+    {
+        blJustProcessed = false;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private void checkForAll(SelectAllCheckComboBox _checkComboBox, string strValue, bool isSelected)
+    {
+        if (strValue == "-9999" || strValue == "--All--")
+        {
+            // Select All
+            if (isSelected)
+            {
+
+                blJustProcessed = true;
+                _checkComboBox.SelectAll();
+
+            }
+            else
+            {
+
+                _checkComboBox.UnSelectAll();
+            }
+        }
+    }
+
+    private void cbxMarketFilter_ItemSelectionChanged(object sender, Xceed.Wpf.Toolkit.Primitives.ItemSelectionChangedEventArgs e)
+    {
+
     }
 }

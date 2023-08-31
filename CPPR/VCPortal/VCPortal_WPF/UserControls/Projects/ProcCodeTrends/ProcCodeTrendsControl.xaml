@@ -116,25 +116,17 @@
             <telerik:RadButton x:Name="btnGenerateReport"  Grid.Row="0" Grid.Column="8" Width="170" Command="{Binding GenerateReportCallCommand}"  Content="Generate Report">
                 <Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource InverseAndBooleansToBooleanConverter}" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
-                        <Binding ElementName="cbxStateFilter" Path="(SelectedItem)" />
-                        <Binding ElementName="dtStartDate" Path="(SelectedValue)" />
-                        <Binding ElementName="dtEndDate" Path="(SelectedValue)" />
-                        <Binding ElementName="cbxLegalEntityFilter" Path="(SelectedItem)" />
-                        <Binding ElementName="cbxFINC_ARNG_CDFilter" Path="(SelectedItem)" />
-                        <Binding ElementName="cbxMKT_SEG_RLLP_DESCFilter" Path="(SelectedItem)" />
+                        <Binding ElementName="cbxRegionFilter" Path="(SelectedItem)" />
+                        <Binding ElementName="cbxMarketFilter" Path="(SelectedItem)" />
+                        <Binding ElementName="cbxMajorMarketFilter" Path="(SelectedItem)" />
                         <Binding Path="CanRunReport"   />
                     </MultiBinding>
                 </Button.IsEnabled>
                 <Button.CommandParameter>
                     <MultiBinding Converter="{StaticResource SearchFilterConverter}" >
-                        <Binding Path="SelectedValue" ElementName="cbxStateFilter" />
-                        <Binding Path="SelectedValue" ElementName="dtStartDate"/>
-                        <Binding Path="SelectedValue" ElementName="dtEndDate"/>
-                        <Binding Path="Text" ElementName="cbxLegalEntityFilter"/>
-                        <Binding Path="SelectedValue" ElementName="cbxFINC_ARNG_CDFilter"/>
-                        <Binding Path="SelectedValue" ElementName="cbxMKT_SEG_RLLP_DESCFilter"/>
-                        <Binding Path="SelectedValue" ElementName="cbMKT_TYP_DESCFilter"/>
-                        <Binding Path="Items" ElementName="lstSelectedCustSeg"/>
+                        <Binding Path="SelectedValue" ElementName="cbxRegionFilter"/>
+                        <Binding Path="SelectedValue" ElementName="cbxMarketFilter"/>
+                        <Binding Path="SelectedValue" ElementName="cbxMajorMarketFilter"/>
                     </MultiBinding>
                 </Button.CommandParameter>
 
@@ -161,116 +153,21 @@
 
 
             <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
-            <telerik:Label Grid.Row="1"   Grid.Column="1" Content="* Select State(s):" Margin="4" HorizontalAlignment="Left" Style="{StaticResource ValidLabel}"  />
-            <components:SelectAllCheckComboBox x:Name="cbxStateFilter" Grid.Row="2"  Margin="10 10 10 10" Grid.Column="1" Command="{Binding StateChangedCommand}" ItemsSource="{Binding Path=States}" ItemSelectionChanged="cbxStateFilter_ItemSelectionChanged" Loaded="cbxStateFilter_Loaded"  >
+            <telerik:Label Grid.Row="1"   Grid.Column="1" Content="Select Region(s):" Margin="4" HorizontalAlignment="Left" Style="{StaticResource ValidLabel}"  />
+            <components:SelectAllCheckComboBox  x:Name="cbxRegionFilter" Grid.Row="2"  Margin="10 10 10 10" Grid.Column="1" Command="{Binding RegionChangedCommand}" ItemsSource="{Binding Path=Region}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded">
             </components:SelectAllCheckComboBox>
 
+
+
             <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
-            <telerik:Label  Grid.Row="1"    Grid.Column="2" Content="* Start Date:" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"   />
-            <telerik:RadDatePicker x:Name="dtStartDate"  Grid.Row="2"   Grid.Column="2"   Margin="10 10 10 10"  VerticalAlignment="Top" HorizontalAlignment="Left" SelectedValue="01/01/2022"/>
+            <telerik:Label  Grid.Row="1"    Grid.Column="2" Content="* Select Market(s):" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"   />
+            <components:SelectAllCheckComboBox  x:Name="cbxMarketFilter" Grid.Row="2"  Margin="10 10 10 10" Grid.Column="2" Command="{Binding MarketChangedCommand}" ItemsSource="{Binding Path=Market}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded">
+            </components:SelectAllCheckComboBox>
 
             <Border Grid.Column="3" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
-            <telerik:Label  Grid.Row="1"    Grid.Column="3" Content="* End Date:" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"  />
-            <telerik:RadDatePicker x:Name="dtEndDate"  Grid.Row="2"   Grid.Column="3"   Margin="10 10 10 10"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="115" SelectedValue="12/31/2022"/>
-
-
-
-            <Grid  Grid.Column="1" Grid.Row="4" Grid.ColumnSpan="3">
-
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="40"/>
-                    <RowDefinition Height="40"/>
-                    <RowDefinition Height="50"/>
-                    <RowDefinition Height="40"/>
-                    <RowDefinition Height="200"/>
-                    <RowDefinition Height="50"/>
-                </Grid.RowDefinitions>
-
-
-
-                <Border Grid.Column="0" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
-                <telerik:Label Grid.Row="1"   Grid.Column="0" Content="* Select Legal Entity(s):" Style="{StaticResource ValidLabel}" Margin="4" HorizontalAlignment="Left"  />
-                <components:SelectAllCheckComboBoxTilde x:Name="cbxLegalEntityFilter"  Grid.Column="0"  Grid.Row="2" Width="460"  Margin="10 10 10 10"  HorizontalAlignment="Left" ItemsSource="{Binding Path=LEG_ENTY}" ItemSelectionChanged="cbxLegalEntityFilter_ItemSelectionChanged" Loaded="cbxLegalEntityFilter_Loaded"  >
-                </components:SelectAllCheckComboBoxTilde>
-
-
-                <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
-                <telerik:Label  Grid.Row="1"    Grid.Column="1" Content="* Select FINC ARNG DESC(s):" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"   />
-                <components:SelectAllCheckComboBox x:Name="cbxFINC_ARNG_CDFilter" Grid.Row="2"  Margin="10 10 10 10" Grid.Column="1" ItemsSource="{Binding Path=FINC_ARNG_DESC}" ItemSelectionChanged="CbxFINC_ARNG_CDFilter_ItemSelectionChanged" Loaded="CbxFINC_ARNG_CDFilter_Loaded">
-                </components:SelectAllCheckComboBox>
-
-
-                <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
-                <telerik:Label  Grid.Row="1"    Grid.Column="2" Content="* Select MKT SEG RLLP DESC(s):" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"  />
-                <components:SelectAllCheckComboBox x:Name="cbxMKT_SEG_RLLP_DESCFilter" Grid.Row="2"  Margin="10 10 10 10" Grid.Column="2" ItemsSource="{Binding Path=MKT_SEG_RLLP_DESC}" ItemSelectionChanged="CbxMKT_SEG_RLLP_DESCFilter_ItemSelectionChanged" Loaded="CbxMKT_SEG_RLLP_DESCFilter_Loaded" >
-                </components:SelectAllCheckComboBox>
-
-                <Border Grid.Column="0" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
-                <telerik:Label  Grid.Row="3"  Grid.Column="0" Content="Select MKT TYP DESC(s):" Style="{StaticResource OptionalLabel}" Margin="4"  HorizontalAlignment="Left"   />
-                <components:SelectAllCheckComboBox x:Name="cbMKT_TYP_DESCFilter" Grid.Column="0" Grid.Row="4"  Margin="10 10 10 10" VerticalAlignment="Top" Height="32"  ItemsSource="{Binding Path=MKT_TYP_DESC}" ItemSelectionChanged="CbxMKT_TYP_DESCFilter_ItemSelectionChanged" Loaded="CbxMKT_TYP_DESCFilter_Loaded"  >
-                </components:SelectAllCheckComboBox>
-
-
-                <Border Grid.Column="1" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
-                <telerik:Label Grid.Row="3"   Grid.Column="1" Content="Select CUST SEG(s):" Style="{StaticResource OptionalLabel}" Margin="4" HorizontalAlignment="Left"  />
-
-                <Grid  Grid.Column="1"  Grid.Row="4">
-
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="100"/>
-                        <RowDefinition Height="40"/>
-                    </Grid.RowDefinitions>
-
-                    <telerik:RadAutoCompleteBox Grid.Column="1" Grid.Row="0"  Name="txtCUST_SEGFilter"  Margin="10 10 10 10" VerticalAlignment="Top" Height="32" ItemsSource="{Binding CUST_SEG}"
-                                TextSearchMode="Contains" SelectionMode="Single" AutoCompleteMode="Suggest" 
-                                WatermarkContent="Enter Customer Segment">
-                        <telerik:RadAutoCompleteBox.FilteringBehavior>
-                            <telerik:AsyncFilteringBehavior />
-                        </telerik:RadAutoCompleteBox.FilteringBehavior>
-                    </telerik:RadAutoCompleteBox>
-
-                    <telerik:RadButton x:Name="btnAddCustSeg" Grid.Row="1" Grid.Column="1" Width="70" Background="LightGoldenrodYellow" Click="btnAddCustSeg_Click" HorizontalAlignment="Right" VerticalAlignment="Top"  Margin="10 -50 10 10" Content="Add"></telerik:RadButton>
-
-
-                </Grid>
-
-
-
-                <Border Grid.Column="2" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
-                <telerik:Label Grid.Row="3"   Grid.Column="2" Content="Filtered CUST SEG(s):" Style="{StaticResource OptionalLabel}" Margin="4" HorizontalAlignment="Left"  />
-
-
-                <Grid  Grid.Row="4"  Grid.Column="2" >
-
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="180"/>
-                        <ColumnDefinition Width="150"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="160"/>
-                        <RowDefinition Height="50"/>
-                    </Grid.RowDefinitions>
-
-
-                    <telerik:RadListBox x:Name="lstSelectedCustSeg" Grid.ColumnSpan="5"  Grid.Row="0" Grid.Column="0"   Margin="10 10 10 10"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-
-                    <telerik:RadButton x:Name="btnRemoveSelected" Grid.Row="1" Grid.Column="3" Width="160" Background="LightGoldenrodYellow" Margin="10 10 -10 10"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Remove Selected" Click="btnRemoveSelected_Click"></telerik:RadButton>
-                    <telerik:RadButton x:Name="btnRemoveAll" Grid.Row="1" Grid.Column="4" Width="123" Background="LightGoldenrodYellow" Margin="10 10 10 10"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Remove All" Click="btnRemoveAll_Click"></telerik:RadButton>
-
-                </Grid>
-
-            </Grid>
+            <telerik:Label  Grid.Row="1"    Grid.Column="3" Content="* Select Major Market(s):" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"  />
+            <components:SelectAllCheckComboBox  x:Name="cbxMajorMarketFilter" Grid.Row="2"  Margin="10 10 10 10" Grid.Column="3" Command="{Binding MajorMarketChangedCommand}" ItemsSource="{Binding Path=Major_Market}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded">
+            </components:SelectAllCheckComboBox>
 
         </Grid>
 
