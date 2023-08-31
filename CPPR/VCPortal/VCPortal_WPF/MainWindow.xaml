@@ -12,6 +12,8 @@
         xmlns:chemovml="clr-namespace:VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;assembly=VCPortal_WPF_ViewModel"
         xmlns:mhpuc="clr-namespace:VCPortal_WPF.UserControls.Projects.MHP" 
         xmlns:mhpvml="clr-namespace:VCPortal_WPF_ViewModel.Projects.MHP;assembly=VCPortal_WPF_ViewModel"
+        xmlns:pctvml="clr-namespace:VCPortal_WPF_ViewModel.Projects.ProcCodeTrends;assembly=VCPortal_WPF_ViewModel"
+        xmlns:pctuc="clr-namespace:VCPortal_WPF.UserControls.Projects.ProcCodeTrends" 
         xmlns:modalcontrol="clr-namespace:ModalControl;assembly=ModalControl" xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation" xmlns:components="clr-namespace:VCPortal_WPF.Components"
         mc:Ignorable="d" 
         Title="VC Portal" Height="450" Width="800" WindowState="Maximized"  FontFamily="Segoe UI Light" FontSize="18" Closing="Window_Closing" >
@@ -29,6 +31,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type mhpvml:MHPViewModel}">
             <mhpuc:MHPControl/>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type pctvml:ProcCodeTrendsViewModel}">
+            <pctuc:ProcCodeTrendsControl/>
         </DataTemplate>
     </Window.Resources>
     <!--<Window.DataContext>

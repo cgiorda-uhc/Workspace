@@ -153,32 +153,90 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
     }
 
 
-    private List<string> _selected_states;
+    private List<string> _selected_regions;
     [RelayCommand]
-    private void StateChanged(object item)
+    private void RegionChanged(object item)
     {
         string strItem = item.ToString();
 
 
-        if (_selected_states == null)
-            _selected_states = new List<string>();
+        if (_selected_regions == null)
+            _selected_regions = new List<string>();
 
         if (strItem == "--All--")
         {
 
-            _selected_states.Clear();
+            _selected_regions.Clear();
         }
-        else if (_selected_states.Contains(strItem))
+        else if (_selected_regions.Contains(strItem))
         {
-            _selected_states.Remove(strItem);
+            _selected_regions.Remove(strItem);
         }
         else
         {
-            _selected_states.Add(strItem);
+            _selected_regions.Add(strItem);
         }
 
         cleanGroups();
       
+
+    }
+
+    private List<string> _selected_markets;
+    [RelayCommand]
+    private void MarketChanged(object item)
+    {
+        string strItem = item.ToString();
+
+
+        if (_selected_markets == null)
+            _selected_markets = new List<string>();
+
+        if (strItem == "--All--")
+        {
+
+            _selected_markets.Clear();
+        }
+        else if (_selected_markets.Contains(strItem))
+        {
+            _selected_markets.Remove(strItem);
+        }
+        else
+        {
+            _selected_markets.Add(strItem);
+        }
+
+        cleanGroups();
+
+
+    }
+
+    private List<string> _selected_major_markets;
+    [RelayCommand]
+    private void MajorMarketChanged(object item)
+    {
+        string strItem = item.ToString();
+
+
+        if (_selected_major_markets == null)
+            _selected_major_markets = new List<string>();
+
+        if (strItem == "--All--")
+        {
+
+            _selected_major_markets.Clear();
+        }
+        else if (_selected_major_markets.Contains(strItem))
+        {
+            _selected_major_markets.Remove(strItem);
+        }
+        else
+        {
+            _selected_major_markets.Add(strItem);
+        }
+
+        cleanGroups();
+
 
     }
 
