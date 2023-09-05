@@ -73,6 +73,10 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
     public List<string> _funding_Type; //ASO, INSURED
     [ObservableProperty]
     public List<string> _op_Phys; //OP, PHYS
+
+
+
+
     [ObservableProperty]
     public List<string> _service_Type; //AMBULANCE, DME;SUPPLIES,EMERGENCY ROOM
     [ObservableProperty]
@@ -204,35 +208,6 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
         else
         {
             _selected_markets.Add(strItem);
-        }
-
-        cleanGroups();
-
-
-    }
-
-    private List<string> _selected_major_markets;
-    [RelayCommand]
-    private void MajorMarketChanged(object item)
-    {
-        string strItem = item.ToString();
-
-
-        if (_selected_major_markets == null)
-            _selected_major_markets = new List<string>();
-
-        if (strItem == "--All--")
-        {
-
-            _selected_major_markets.Clear();
-        }
-        else if (_selected_major_markets.Contains(strItem))
-        {
-            _selected_major_markets.Remove(strItem);
-        }
-        else
-        {
-            _selected_major_markets.Add(strItem);
         }
 
         cleanGroups();
