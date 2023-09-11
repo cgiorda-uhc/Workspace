@@ -6,7 +6,7 @@ fp.ETG_Fact_Symmetry_Id as ETG_Fact_Symmetry_Id_Previous,
 f.ETG_Base_Class,
 m.ETG_Description,
 f.Premium_Specialty_Id,
-p.Premium_Specialty,
+CASE WHEN p.Premium_Specialty = 'CRD2' THEN  'CARDCD' ELSE p.Premium_Specialty END as Premium_Specialty ,
 
 
 f.Never_Mapped,
@@ -228,3 +228,6 @@ LEFT OUTER JOIN vct.ETG_Dim_Premium_Spec_Master AS p ON f.Premium_Specialty_id =
 
 WHERE f.ETG_Base_Class <> 000000
 AND f.Premium_Specialty_Id IS NOT NULL
+
+--AND f.Premium_Specialty_Id not  in (9, 17)
+AND p.Premium_Specialty not in ('CARDCD', 'CARDEP')

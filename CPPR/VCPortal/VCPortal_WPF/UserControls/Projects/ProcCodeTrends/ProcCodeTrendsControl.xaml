@@ -147,6 +147,23 @@
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="40"/>
+
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="40"/>
+
+
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="40"/>
+
+
+
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="40"/>
+
+
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="20"/>
             </Grid.RowDefinitions>
@@ -171,19 +188,19 @@
 
 
 
-            <Border Grid.Column="1" Grid.Row="2" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
-            <telerik:Label Grid.Row="2"   Grid.Column="1" Content="Select Product(s):" Margin="4" HorizontalAlignment="Left" Style="{StaticResource ValidLabel}"  />
-            <components:SelectAllCheckComboBox  x:Name="cbxProduct" Grid.Row="2"  Margin="10 10 10 10" Grid.Column="1" ItemsSource="{Binding Path=Product}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded">
+            <Border Grid.Column="1" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
+            <telerik:Label Grid.Row="3"   Grid.Column="1" Content="Select Product(s):" Margin="4" HorizontalAlignment="Left" Style="{StaticResource ValidLabel}"  />
+            <components:SelectAllCheckComboBox  x:Name="cbxProduct" Grid.Row="4"  Margin="10 10 10 10" Grid.Column="1" ItemsSource="{Binding Path=Product}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded">
             </components:SelectAllCheckComboBox>
 
-            <Border Grid.Column="2" Grid.Row="2" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
-            <telerik:Label  Grid.Row="2"    Grid.Column="2" Content="* Select Funding Type(s):" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"   />
-            <components:SelectAllCheckComboBox  x:Name="cbxFundingType" Grid.Row="2"  Margin="10 10 10 10" Grid.Column="2" ItemsSource="{Binding Path=Funding_Type}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded">
+            <Border Grid.Column="2" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
+            <telerik:Label  Grid.Row="3"    Grid.Column="2" Content="* Select Funding Type(s):" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"   />
+            <components:SelectAllCheckComboBox  x:Name="cbxFundingType" Grid.Row="4"  Margin="10 10 10 10" Grid.Column="2" ItemsSource="{Binding Path=Funding_Type}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded">
             </components:SelectAllCheckComboBox>
 
-            <Border Grid.Column="3" Grid.Row="2" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
-            <telerik:Label  Grid.Row="2"    Grid.Column="3" Content="* Select OP/PHYS Bucket(s):" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"  />
-            <components:SelectAllCheckComboBox  x:Name="cbxOP_PHYS" Grid.Row="2"  Margin="10 10 10 10" Grid.Column="3"  ItemsSource="{Binding Path=Op_Phys}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded">
+            <Border Grid.Column="3" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
+            <telerik:Label  Grid.Row="3"    Grid.Column="3" Content="* Select OP/PHYS Bucket(s):" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"  />
+            <components:SelectAllCheckComboBox  x:Name="cbxOP_PHYS" Grid.Row="4"  Margin="10 10 10 10" Grid.Column="3"  ItemsSource="{Binding Path=Op_Phys}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded">
             </components:SelectAllCheckComboBox>
 
 
@@ -197,21 +214,26 @@
 
             <Border Grid.Column="2" Grid.Row="5" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
             <telerik:Label Grid.Row="5"   Grid.Column="2" Content="Select PAR(s):" Margin="4" HorizontalAlignment="Left" Style="{StaticResource ValidLabel}"  />
-            <components:SelectAllCheckComboBox  x:Name="cbxPar" Grid.Row="6"  Margin="10 10 10 10" Grid.Column="1" ItemsSource="{Binding Path=PAR}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded">
+            <components:SelectAllCheckComboBox  x:Name="cbxPar" Grid.Row="6"  Margin="10 10 10 10" Grid.Column="2" ItemsSource="{Binding Path=PAR}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded">
             </components:SelectAllCheckComboBox>
 
             <Border Grid.Column="3" Grid.Row="5" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
             <telerik:Label  Grid.Row="5"    Grid.Column="3" Content="* Select Legal Entity(s):" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"   />
-            <components:SelectAllCheckComboBox  x:Name="cbxLegalEntity" Grid.Row="6"  Margin="10 10 10 10" Grid.Column="2" ItemsSource="{Binding Path=Legal_Entity}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded">
+            <components:SelectAllCheckComboBox  x:Name="cbxLegalEntity" Grid.Row="6"  Margin="10 10 10 10" Grid.Column="3" ItemsSource="{Binding Path=Legal_Entity}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded">
             </components:SelectAllCheckComboBox>
+            
+            
+            
 
             <Border Grid.Column="1" Grid.Row="7" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
             <telerik:Label  Grid.Row="7"    Grid.Column="1" Content="* Select Source System(s):" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"  />
-            <components:SelectAllCheckComboBox  x:Name="cbxSourceSystem" Grid.Row="8"  Margin="10 10 10 10" Grid.Column="3"  ItemsSource="{Binding Path=Source_System}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded">
+            <components:SelectAllCheckComboBox  x:Name="cbxSourceSystem" Grid.Row="8"  Margin="10 10 10 10" Grid.Column="1"  ItemsSource="{Binding Path=Source_System}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded">
             </components:SelectAllCheckComboBox>
 
 
+            <Border Grid.Column="2" Grid.Row="7" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
 
+            <Border Grid.Column="3" Grid.Row="7" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
 
         </Grid>
 

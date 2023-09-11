@@ -3,6 +3,14 @@
 	
 	
 		
+	
+
+	SELECT tmp.CNFG_ETG_SPCL_SYS_ID, tmp.[ETG_BASE_CLASS], tmp.TRT_CD,tmp.PREM_DESG_VER_NBR,tmp.PREM_SPCL_CD, tmp.[NOTES] FROM (
+	
+
+
+	
+		
 	SELECT 
 
 
@@ -80,3 +88,28 @@ LEFT OUTER JOIN vct.ETG_Dim_Premium_Spec_Master AS p ON f.Premium_Specialty_id =
 AND f.Premium_Specialty_Id IS NOT NULL
 AND f.ETG_Fact_Symmetry_Id IN  (SELECT ETG_Fact_Symmetry_Id FROM [etgsymm].[VW_ETG_Summary_Final] WHERE  EC_Current_Mapping = 'Mapped')
 AND f.[EC_Treatment_Indicator] IS NULL
+
+
+) tmp
+
+WHERE 
+
+tmp.PREM_SPCL_CD IN 
+(
+
+'ALRGY',   
+'CARDCD',  
+'EDCRN',   
+'ENT',     
+'FAMED',   
+'GI',      
+'INTMD',   
+'NEPHR',   
+'NEURO',   
+'NOS',     
+'OBGYN',   
+'PEDS',    
+'PULMN',   
+'RHEUM',   
+'UROL'  
+)
