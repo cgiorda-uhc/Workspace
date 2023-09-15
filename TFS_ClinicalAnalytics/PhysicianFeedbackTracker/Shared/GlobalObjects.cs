@@ -67,7 +67,7 @@ namespace PhysicianFeedbackTracker
         private static string _strILUCAUsername = "iluca_ucs_sql";//(_strEnvironment == "Dev" ? "pei2_sql_noprod" : "pei2_sql_prod");
 
 
-        private static string _strILUCAPassword = (_strEnvironment == "Dev" ? "TheBuddha2022!!" : "TheBuddha2022!!");
+        private static string _strILUCAPassword = (_strEnvironment == "Dev" ? "BooWooDooFoo2023!!" : "BooWooDooFoo2023!!");
         //
         //private static string _strILUCAPassword = (_strEnvironment == "Dev" ? "Buddha2010!!!!" : "Buddha2010!!!!");
 
