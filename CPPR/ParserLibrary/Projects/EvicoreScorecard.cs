@@ -147,7 +147,7 @@ public class EvicoreScorecard : IEvicoreScorecard
                         {
                             //closed_xml.Mappings = getColumnGastroMappings();
 
-                            foreach (var e in eslos.Where(x => !string.IsNullOrEmpty(x.EIPA)))
+                            foreach (var e in eslos.Where(x => !string.IsNullOrEmpty(x.EIAN)))
                             {
                                 if (e.Header.Trim().EqualsAnyOf(ignore))
                                 {
@@ -521,6 +521,7 @@ public class EvicoreScorecard : IEvicoreScorecard
                 new KeyValuePair<string, string>("","Header"),
                 new KeyValuePair<string, string>("E&I - Notif.","EINotif"),
                 new KeyValuePair<string, string>("E&I - PA","EIPA"),
+                new KeyValuePair<string, string>("E&I - AN","EIAN"),
                 new KeyValuePair<string, string>("M&R","MR"),
                 new KeyValuePair<string, string>("C&S","CS"),
                 new KeyValuePair<string, string>("Oxford","Oxford"),
@@ -537,7 +538,8 @@ public class EvicoreScorecard : IEvicoreScorecard
         var list = new List<KeyValuePair<string, string>>
             {
                 new KeyValuePair<string, string>("","Header"),
-                new KeyValuePair<string, string>("E&I - PA","EIPA"),
+                //new KeyValuePair<string, string>("E&I - PA","EIPA"),
+                new KeyValuePair<string, string>("E&I - AN","EIAN"),
                 new KeyValuePair<string, string>("Oxford","Oxford"),
                 new KeyValuePair<string, string>("NHP","NHP"),
                 new KeyValuePair<string, string>("River Valley","RiverValley")
@@ -583,6 +585,12 @@ public class EvicoreScorecard : IEvicoreScorecard
                 new KeyValuePair<string, string>("Non-Cert (D + W + E) exc. Admin ex)","Non_Cert"),
                 new KeyValuePair<string, string>("Requests/1000","Requests_per_thou"),
                 new KeyValuePair<string, string>("Approvals/1000","Approval_per_thou"),
+
+
+                 new KeyValuePair<string, string>("Notified","Notified"),
+                new KeyValuePair<string, string>("Notifications/1000","Notifications_per_thou"),
+
+
                 new KeyValuePair<string, string>("3DI","MOD_3DI"),
                 new KeyValuePair<string, string>("BONE DENSITY","MOD_BONE_DENSITY"),
                 new KeyValuePair<string, string>("CT SCAN","MOD_CT_SCAN"),
@@ -607,6 +615,7 @@ public class EvicoreScorecard : IEvicoreScorecard
                 new KeyValuePair<string, string>("CCCM Misc Cath Codes","MOD_CCCM_Misc_Cath_Codes"),
                 new KeyValuePair<string, string>("CAPSULE ENDOSCOPY","CAPSULE_ENDOSCOPY"),
                 new KeyValuePair<string, string>("COLONOSCOPY","COLONOSCOPY"),
+                new KeyValuePair<string, string>("DIAG RAD","DIAG_RAD"),
                 new KeyValuePair<string, string>("EGD","EGD")
 
             };

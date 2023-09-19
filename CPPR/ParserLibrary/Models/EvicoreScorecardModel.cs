@@ -20,6 +20,7 @@ public class EvicoreScorecardModel
     public double Per_Intellipath { get; set; }
 
     public double Approved { get; set; }
+
     public double Denied { get; set; }
     public double Withdrawn { get; set; }
     public double Admin_Expired { get; set; }
@@ -28,6 +29,13 @@ public class EvicoreScorecardModel
     public double Non_Cert { get; set; }
     public double Requests_per_thou { get; set; }
     public double Approval_per_thou { get; set; }
+
+
+
+    public double Notified { get; set; }
+    public double Notifications_per_thou { get; set; }
+
+
 
     public double MOD_3DI { get; set; }
     public double MOD_BONE_DENSITY { get; set; }
@@ -58,7 +66,7 @@ public class EvicoreScorecardModel
 
     public double EGD { get; set; }
 
-
+    public double DIAG_RAD { get; set; }
     public string report_type { get; set; }
     public int file_month { get; set; }
     public int file_year { get; set; }

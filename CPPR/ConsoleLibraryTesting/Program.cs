@@ -106,11 +106,14 @@ files_loaded.Add("United PCP- Gastro_July_2023.xlsx");
 
 
 
-await adHoc.cleanupMemberDataAsync(files_loaded);
+//await adHoc.cleanupMemberDataAsync(files_loaded);
+
+await adHoc.transferMHPDataAsync(files_loaded);
+
 return;
 
 
-//await adHoc.transferMHPDataAsync(files_loaded);
+
 
 
 //await adHoc.getETGSymmSourceDataAsync(15);
