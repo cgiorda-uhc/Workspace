@@ -138,15 +138,15 @@ namespace CAD_Worker_Service
             }
 
 
-            var cfg = options.Find(p => p.Name == "MHPUniverse");
+            var cfg = options.Find(p => p.Name == "NICEUHCWestEligibility");
             if (cfg != null && _tasksManager != null)
             {
                 schedule = cfg.Schedule;
 
                 //CREATE NEW TIMER TASK
-                timer = new CronosTimer("09 10 * * *");
+                timer = new CronosTimer("25 16 * * *");
                 //USING TOKEN FROM EVENT
-                timer.Elapsed += HandleTimerElapsed(_tasksManager.MHPUniverseDataRefreshAsync);
+                timer.Elapsed += HandleTimerElapsed(_tasksManager.NICEUHCWestEligibilityAppendAsync);
                 // USING STOPPINGTOKEN
                 //timer.Elapsed += HandleTimerElapsed(_ => _tasksManager.CheckDataSourcesAsync(cancellationToken));
                 //ADD TO LIST FOR EASY DISPOSE ON STOP

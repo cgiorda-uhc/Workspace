@@ -132,9 +132,6 @@ namespace ConsoleLibraryTesting
         }
 
 
-
-
-
         public static  DateTime GetLastChosenDayOfTheMonth(DateTime date, DayOfWeek dayOfWeek)
         {
             var lastDayOfMonth = new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month));
@@ -491,10 +488,6 @@ namespace ConsoleLibraryTesting
 
 
         }
-
-
-
-
 
 
         public async Task getETGSymmSourceDataOriginalAsync(Int16 year  = 2022)

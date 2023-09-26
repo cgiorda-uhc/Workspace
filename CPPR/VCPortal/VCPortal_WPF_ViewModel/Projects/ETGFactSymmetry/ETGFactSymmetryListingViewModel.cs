@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
+using System.Windows;
 using System.Windows.Input;
 using VCPortal_Models.Configuration.HeaderInterfaces.Abstract;
 using VCPortal_Models.Configuration.HeaderInterfaces.Concrete;
@@ -90,6 +91,11 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
 
         OC_ETGFactSymmetryViewModel = new ObservableCollection<ETGFactSymmetryViewModel>();
         ETGFactSymmetryFilterItems = new List<ETGFactSymmetryViewModel>();
+
+
+        CurrentTitle = "ETG PTC";
+        PECVisibility = Visibility.Hidden;
+        PTCVisibility = Visibility.Visible;
 
 
 
@@ -636,6 +642,36 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
         return ecs;
 
     }
+
+
+    [ObservableProperty]
+    private string currentTitle;
+    [ObservableProperty]
+    private Visibility pECVisibility;
+    [ObservableProperty]
+    private Visibility pTCVisibility;
+
+
+    [RelayCommand]
+    private async Task PTCSectionCall()
+    {
+        CurrentTitle = "ETG PTC";
+        PECVisibility = Visibility.Hidden;
+        PTCVisibility = Visibility.Visible;
+
+    }
+
+
+    [RelayCommand]
+    private async Task PECSectionCall()
+    {
+        CurrentTitle = "ETG PEC";
+        PECVisibility = Visibility.Visible;
+        PTCVisibility = Visibility.Hidden;
+    }
+
+
+
 
 
     //bool disposed;
