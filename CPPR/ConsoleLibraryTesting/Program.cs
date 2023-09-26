@@ -95,6 +95,19 @@ adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Repor
 
 
 
+
+
+
+
+
+
+
+
+
+
+return;
+
+
 List<string> files_loaded = new List<string>();
 
 files_loaded.Add("Oxford July -Gastro Universe 2023.xlsx");
@@ -110,7 +123,7 @@ files_loaded.Add("United PCP- Gastro_July_2023.xlsx");
 
 await adHoc.transferMHPDataAsync(files_loaded);
 
-return;
+
 
 
 

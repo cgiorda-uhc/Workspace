@@ -1454,6 +1454,96 @@ namespace ConsoleLibraryTesting
         }
 
 
+
+        public async Task parseCSV(string filepath, string filetype = "csv",char chrDelimiter = '|', string schema = "stg")
+        {
+            List<string>? strLstColumnNames = null;
+            StreamReader? csvreader = null;
+            string _strTableName;
+            string[] strLstFiles = Directory.GetFiles(filepath, "*." + filetype, SearchOption.TopDirectoryOnly);
+            string? strInputLine = "";
+            string[] csvArray;
+            string strSQL;
+            int intBulkSize = 10000;
+
+            IRelationalDataAccess db_dest = new SqlDataAccess();
+            System.Data.DataTable dtTransfer = new System.Data.DataTable();
+            System.Data.DataRow? drCurrent = null;
+            foreach (var strFile in strLstFiles)
+            {
+                var filename = "inna_" + Path.GetFileName(strFile).Replace("." + filetype, "");
+
+                var table = CommonFunctions.getCleanTableName(filename);
+                var tmp_table = table.Substring(0, Math.Min(28, table.Length)) + "_TMP";
+
+
+                csvreader = new StreamReader(strFile);
+                while ((strInputLine = csvreader.ReadLine()) != null)
+                {
+                    csvArray = strInputLine.Split(new char[] { chrDelimiter });
+                    //FIRST PASS ONLY GETS COLUMNS AND CREATES TABLE SQL
+                    if (strLstColumnNames == null)
+                    {
+                        strLstColumnNames = new List<string>();
+                        //GET AND CLEAN COLUMN NAMES FOR TABLE
+                        foreach (string c in csvArray)
+                        {
+                            var colName = c.getSafeFileName();
+                            strLstColumnNames.Add(colName.ToUpper());
+                        }
+
+
+                        //SQL FOR TMP TABLE TO STORE ALL VALUES A VARCHAR(MAX)
+                        strSQL = CommonFunctions.getCreateTmpTableScript(schema, tmp_table, strLstColumnNames);
+                        await db_dest.Execute(connectionString: ConnectionStringMSSQL, strSQL);
+
+                        strSQL = "SELECT * FROM ["+ schema + "].[" + tmp_table + "]; ";
+                        //CREATE TMP TABLE AND COLLECT NEW DB TABLE FOR BULK TRANSFERS
+                        dtTransfer = await db_dest.LoadDataTable(ConnectionStringMSSQL, strSQL);
+                        dtTransfer.TableName =  schema + "." + tmp_table;
+
+                        //GOT COLUMNS, CREATED TMP TABLE FOR FIRST PASS
+                        continue;
+                    }
+                    //CLONE ROW FOR TRANSFER
+                    drCurrent = dtTransfer.NewRow();
+                    //POPULATE ALL COLUMNS FOR CURRENT ROW
+                    for (int i = 0; i < strLstColumnNames.Count; i++)
+                    {
+                        drCurrent[strLstColumnNames[i]] = (csvArray[i].Trim().Equals("") ? (object)DBNull.Value : csvArray[i].TrimStart('\"').TrimEnd('\"'));
+
+                    }
+                    dtTransfer.Rows.Add(drCurrent);
+
+                    if (dtTransfer.Rows.Count == intBulkSize) //intBulkSize = 10000 DEFAULT
+                    {
+                        await db_dest.BulkSave(connectionString: ConnectionStringMSSQL, dtTransfer);
+                        dtTransfer.Rows.Clear();
+                    }
+
+
+                }
+
+                //CATCH REST OF UPLOADS OUTSIDE CSV LOOP
+                if (dtTransfer.Rows.Count > 0)
+                    await db_dest.BulkSave(connectionString: ConnectionStringMSSQL, dtTransfer);
+
+
+
+                strSQL = CommonFunctions.getTableAnalysisScript(schema, tmp_table, strLstColumnNames);
+                var dataTypes = (await db_dest.LoadData<DataTypeModel>(connectionString: ConnectionStringMSSQL, strSQL));
+
+                strSQL = CommonFunctions.getCreateFinalTableScript(schema, table, dataTypes);
+                await db_dest.Execute(connectionString: ConnectionStringMSSQL, strSQL);
+
+                strSQL = CommonFunctions.getSelectInsertScript(schema, tmp_table, table, strLstColumnNames);
+                await db_dest.Execute(connectionString: ConnectionStringMSSQL, strSQL);
+
+                strLstColumnNames = null;
+            }
+        }
+
+
     }
 
 

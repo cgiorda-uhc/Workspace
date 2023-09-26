@@ -371,7 +371,8 @@ public class EviCoreYTDMetrics : IEviCoreYTDMetrics
                 new KeyValuePair<string, string>("% Of Calls Abandoned","Abandoned_Percent"),
                  new KeyValuePair<string, string>("% Abn Calls","Abandoned_Percent"),
                 new KeyValuePair<string, string>("Average Answer Speed","Avg_Speed_Answer"),
-                new KeyValuePair<string, string>("Avg ACD Time","Avg_Speed_Answer"),
+                new KeyValuePair<string, string>("Avg ACD Time","Average_Talk_Time"),
+                //new KeyValuePair<string, string>("Avg ACD Time","Avg_Speed_Answer"),
                 new KeyValuePair<string, string>("Average Talk Time","Average_Talk_Time"),
                 new KeyValuePair<string, string>("% In Service Level","ASA_in_SL_Perent"),
                 new KeyValuePair<string, string>("% Ans Calls","ASA_in_SL_Perent")

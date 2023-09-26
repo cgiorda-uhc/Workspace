@@ -72,6 +72,20 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
     private string currentVersion = "No History";
 
 
+
+
+
+    [ObservableProperty]
+    private string currentTitle;
+    [ObservableProperty]
+    private Visibility pECVisibility;
+    [ObservableProperty]
+    private Visibility pTCVisibility;
+
+
+
+
+
     private StringBuilder _sbStatus;
     public ETGFactSymmetryListingViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
     {
@@ -642,14 +656,6 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
         return ecs;
 
     }
-
-
-    [ObservableProperty]
-    private string currentTitle;
-    [ObservableProperty]
-    private Visibility pECVisibility;
-    [ObservableProperty]
-    private Visibility pTCVisibility;
 
 
     [RelayCommand]
