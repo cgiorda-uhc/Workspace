@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using FileParsingLibrary.Models;
 using FileParsingLibrary.MSExcel;
 using Microsoft.Extensions.Configuration;
+using NPOI.SS.Formula.PTG;
 using SharedFunctionsLibrary;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -78,9 +79,9 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
     [ObservableProperty]
     private string currentTitle;
     [ObservableProperty]
-    private Visibility pECVisibility;
+    private bool is_PEC_Visibile;
     [ObservableProperty]
-    private Visibility pTCVisibility;
+    private bool is_PTC_Visibile;
 
 
 
@@ -108,8 +109,8 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
 
 
         CurrentTitle = "ETG PTC";
-        PECVisibility = Visibility.Hidden;
-        PTCVisibility = Visibility.Visible;
+        Is_PEC_Visibile = false;
+        Is_PTC_Visibile = true;
 
 
 
@@ -380,6 +381,9 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
             _logger.Information("Running ETGFactSymmetryData.exportConfigs for {CurrentUser}...", Authentication.UserName);
 
 
+            APIConfig api;
+            string suffix;
+
             if(CurrentVersion != null)
             {
                 var s = CurrentVersion;
@@ -393,58 +397,69 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
             var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "tmp.xlsx";
 
             var sheet = excel.Sheets.Where(x => x.Name == "ETGSummaryConfig").FirstOrDefault();
-            var etgsum = ETGFactSymmetryConfigMapper.getETGSummaryConfig(OC_ETGFactSymmetryViewModel);
-            export.Add(new ExcelExport() { ExportList = etgsum.ToList<object>(), SheetName = sheet.SheetName });
-
-
-            sheet = excel.Sheets.Where(x => x.Name == "ETGPTCModelConfig").FirstOrDefault();
-            var api = _config.APIS.Where(x => x.Name == "ETGPTCModelConfig").FirstOrDefault();
-            var etgptc = await VM_Functions.APIGetResultAsync<ETG_PTC_Modeling_Model>(api.BaseUrl, api.Url);
-            if (etgptc.Count > 0)
+            if(Is_PTC_Visibile)
             {
-                export.Add(new ExcelExport() { ExportList = etgptc.ToList<object>(), SheetName = sheet.SheetName });
+
+                suffix = "_PTC";
+
+                var etgsum = ETGFactSymmetryConfigMapper.getETG_PTC_SummaryConfig(OC_ETGFactSymmetryViewModel);
+                export.Add(new ExcelExport() { ExportList = etgsum.ToList<object>(), SheetName = sheet.SheetName + suffix });
+
+
+                sheet = excel.Sheets.Where(x => x.Name == "ETGPTCModelConfig").FirstOrDefault();
+                api = _config.APIS.Where(x => x.Name == "ETGPTCModelConfig").FirstOrDefault();
+                var etgptc = await VM_Functions.APIGetResultAsync<ETG_PTC_Modeling_Model>(api.BaseUrl, api.Url);
+                if (etgptc.Count > 0)
+                {
+                    export.Add(new ExcelExport() { ExportList = etgptc.ToList<object>(), SheetName = sheet.SheetName + suffix });
+                }
+
+                sheet = excel.Sheets.Where(x => x.Name == "ETGSummaryFinal").FirstOrDefault();
+                api = _config.APIS.Where(x => x.Name == "ETGSummaryFinal").FirstOrDefault();
+                var etgfinal = await VM_Functions.APIGetResultAsync<ETGSummaryFinalConfig>(api.BaseUrl, api.Url);
+                if (etgfinal.Count > 0)
+                {
+                    export.Add(new ExcelExport() { ExportList = etgfinal.ToList<object>(), SheetName = sheet.SheetName + suffix });
+                }
+
+                sheet = excel.Sheets.Where(x => x.Name == "ETGPTUGAPConfig").FirstOrDefault();
+                api = _config.APIS.Where(x => x.Name == "ETGPTUGAPConfig").FirstOrDefault();
+                var etgugap = await VM_Functions.APIGetResultAsync<ETG_UGAP_CFG_Model>(api.BaseUrl, api.Url);
+                if (etgugap.Count > 0)
+                {
+                    export.Add(new ExcelExport() { ExportList = etgugap.ToList<object>(), SheetName = sheet.SheetName + suffix });
+                }
+
+                sheet = excel.Sheets.Where(x => x.Name == "ETGNrxExclConfig").FirstOrDefault();
+                api = _config.APIS.Where(x => x.Name == "ETGNrxExclConfig").FirstOrDefault();
+                var etgnxe = await VM_Functions.APIGetResultAsync<ETG_CNFG_ETG_NRX_EXCLD>(api.BaseUrl, api.Url);
+                if (etgnxe.Count > 0)
+                {
+                    export.Add(new ExcelExport() { ExportList = etgnxe.ToList<object>(), SheetName = sheet.SheetName + suffix });
+                }
+
+
+                sheet = excel.Sheets.Where(x => x.Name == "ETGPCNrxConfig").FirstOrDefault();
+                api = _config.APIS.Where(x => x.Name == "ETGPCNrxConfig").FirstOrDefault();
+                var etgpcnrx = await VM_Functions.APIGetResultAsync<ETG_CNFG_PC_ETG_NRX>(api.BaseUrl, api.Url);
+                if (etgpcnrx.Count > 0)
+                {
+                    export.Add(new ExcelExport() { ExportList = etgpcnrx.ToList<object>(), SheetName = sheet.SheetName + suffix });
+                }
+
+                sheet = excel.Sheets.Where(x => x.Name == "ETGSpclConfig").FirstOrDefault();
+                api = _config.APIS.Where(x => x.Name == "ETGSpclConfig").FirstOrDefault();
+                var etgspc = await VM_Functions.APIGetResultAsync<ETG_CNFG_ETG_SPCL>(api.BaseUrl, api.Url);
+                if (etgspc.Count > 0)
+                {
+                    export.Add(new ExcelExport() { ExportList = etgspc.ToList<object>(), SheetName = sheet.SheetName + suffix });
+                }
+
             }
-
-            sheet = excel.Sheets.Where(x => x.Name == "ETGSummaryFinal").FirstOrDefault();
-            api = _config.APIS.Where(x => x.Name == "ETGSummaryFinal").FirstOrDefault();
-            var etgfinal = await VM_Functions.APIGetResultAsync<ETGSummaryFinalConfig>(api.BaseUrl, api.Url);
-            if (etgfinal.Count > 0)
+            else
             {
-                export.Add(new ExcelExport() { ExportList = etgfinal.ToList<object>(), SheetName = sheet.SheetName });
-            }
-
-            sheet = excel.Sheets.Where(x => x.Name == "ETGPTUGAPConfig").FirstOrDefault();
-            api = _config.APIS.Where(x => x.Name == "ETGPTUGAPConfig").FirstOrDefault();
-            var etgugap = await VM_Functions.APIGetResultAsync<ETG_UGAP_CFG_Model>(api.BaseUrl, api.Url);
-            if (etgugap.Count > 0)
-            {
-                export.Add(new ExcelExport() { ExportList = etgugap.ToList<object>(), SheetName = sheet.SheetName });
-            }
-
-            sheet = excel.Sheets.Where(x => x.Name == "ETGNrxExclConfig").FirstOrDefault();
-            api = _config.APIS.Where(x => x.Name == "ETGNrxExclConfig").FirstOrDefault();
-            var etgnxe = await VM_Functions.APIGetResultAsync<ETG_CNFG_ETG_NRX_EXCLD>(api.BaseUrl, api.Url);
-            if (etgnxe.Count > 0)
-            {
-                export.Add(new ExcelExport() { ExportList = etgnxe.ToList<object>(), SheetName = sheet.SheetName });
-            }
-
-
-
-            sheet = excel.Sheets.Where(x => x.Name == "ETGPCNrxConfig").FirstOrDefault();
-            api = _config.APIS.Where(x => x.Name == "ETGPCNrxConfig").FirstOrDefault();
-            var etgpcnrx = await VM_Functions.APIGetResultAsync<ETG_CNFG_PC_ETG_NRX>(api.BaseUrl, api.Url);
-            if (etgpcnrx.Count > 0)
-            {
-                export.Add(new ExcelExport() { ExportList = etgpcnrx.ToList<object>(), SheetName = sheet.SheetName });
-            }
-
-            sheet = excel.Sheets.Where(x => x.Name == "ETGSpclConfig").FirstOrDefault();
-            api = _config.APIS.Where(x => x.Name == "ETGSpclConfig").FirstOrDefault();
-            var etgspc = await VM_Functions.APIGetResultAsync<ETG_CNFG_ETG_SPCL>(api.BaseUrl, api.Url);
-            if (etgspc.Count > 0)
-            {
-                export.Add(new ExcelExport() { ExportList = etgspc.ToList<object>(), SheetName = sheet.SheetName });
+                var etgsum = ETGFactSymmetryConfigMapper.getETG_PEC_SummaryConfig(OC_ETGFactSymmetryViewModel);
+                export.Add(new ExcelExport() { ExportList = etgsum.ToList<object>(), SheetName = sheet.SheetName + "_PEC" });
             }
 
 
@@ -472,7 +487,7 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
             if (ETGFactSymmetryFilterItems.Count>0)
             {
                 sheet = excel.Sheets.Where(x => x.Name == "ETGFiltered").FirstOrDefault();
-                var etgfil = ETGFactSymmetryConfigMapper.getETGSummaryConfig(ETGFactSymmetryFilterItems);
+                var etgfil = ETGFactSymmetryConfigMapper.getETG_PTC_SummaryConfig(ETGFactSymmetryFilterItems);
                 export.Add(new ExcelExport() { ExportList = etgfil.ToList<object>(), SheetName = sheet.SheetName });
             }
 
@@ -662,8 +677,8 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
     private async Task PTCSectionCall()
     {
         CurrentTitle = "ETG PTC";
-        PECVisibility = Visibility.Hidden;
-        PTCVisibility = Visibility.Visible;
+        Is_PEC_Visibile = false;
+        Is_PTC_Visibile = true;
 
     }
 
@@ -672,8 +687,8 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
     private async Task PECSectionCall()
     {
         CurrentTitle = "ETG PEC";
-        PECVisibility = Visibility.Visible;
-        PTCVisibility = Visibility.Hidden;
+        Is_PEC_Visibile = true;
+        Is_PTC_Visibile = false;
     }
 
 

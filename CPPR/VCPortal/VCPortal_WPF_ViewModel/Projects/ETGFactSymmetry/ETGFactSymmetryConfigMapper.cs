@@ -8,15 +8,16 @@ using System.Text;
 using System.Threading.Tasks;
 using VCPortal_Models.Dtos.ETGFactSymmetry;
 using VCPortal_Models.Models.ETGFactSymmetry;
+using VCPortal_Models.Models.ETGFactSymmetry.Configs;
 
 namespace VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;
 public static class ETGFactSymmetryConfigMapper
 {
 
 
-    internal static List<ETGSummaryConfig> getETGSummaryConfig(IEnumerable<ETGFactSymmetryViewModel> esmList)
+    internal static List<ETGSummaryPTCConfig> getETG_PTC_SummaryConfig(IEnumerable<ETGFactSymmetryViewModel> esmList)
     {
-        var targetList = esmList.Select(x => new ETGSummaryConfig()
+        var targetList = esmList.Select(x => new ETGSummaryPTCConfig()
         {
             ETG_Base_Class = x.ETG_Base_Class,
             ETG_Description = x.ETG_Description,
@@ -29,10 +30,6 @@ public static class ETGFactSymmetryConfigMapper
             Current_LOB = x.LOB,
             PC_Current_Treatment_Indicator = x.PC_Treatment_Indicator,
             PC_Previous_Treatment_Indicator = x.PC_Treatment_Indicator_Previous,
-            //PC_Episode_Cnt = x.PC_Episode_Count,
-            //PC_Tot_Cost = x.PC_Total_Cost,
-            //PC_Avg_Cost = x.PC_Average_Cost,
-            //PC_CV = x.PC_Coefficients_of_Variation,
             PC_Spec_Episode_Cnt = x.PC_Spec_Episode_Count,
             PC_Spec_Episode_Distribution = Math.Round(x.PC_Spec_Episode_Distribution,4),
             PC_Spec_Perc_of_Episodes = Math.Round(x.PC_Spec_Percent_of_Episodes,4),
@@ -43,12 +40,30 @@ public static class ETGFactSymmetryConfigMapper
             PC_Prev_Attribution = x.PC_Attribution_Previous,
             PC_Current_Attribution = x.PC_Attribution,
             PC_Change_Comments = x.PC_Change_Comments,
+            Measure_Status = x.PC_Measure_Status
+
+
+        }).ToList();
+
+
+        return targetList;
+
+    }
+
+
+    internal static List<ETGSummaryPECConfig> getETG_PEC_SummaryConfig(IEnumerable<ETGFactSymmetryViewModel> esmList)
+    {
+        var targetList = esmList.Select(x => new ETGSummaryPECConfig()
+        {
+            ETG_Base_Class = x.ETG_Base_Class,
+            ETG_Description = x.ETG_Description,
+            Premium_Specialty = x.Premium_Specialty,
+            Never_Map = (x.Never_Mapped == true ? 'Y' : 'N'),
+            Never_Map_Previous = (x.Never_Mapped_Previous == true ? 'Y' : 'N'),
+            Previous_Rx_NRx = x.RX_NRXPrevious,
+            Current_Rx_NRx = x.RX_NRX,
             EC_Current_Treatment_Indicator = x.EC_Treatment_Indicator,
             EC_Previous_Treatment_Indicator = x.EC_Treatment_Indicator_Previous,
-            //EC_Episode_Count = x.EC_Episode_Count,
-            //EC_Tot_Cost = x.EC_Total_Cost,
-            //EC_Avg_Cost = x.EC_Average_Cost,
-            //EC_CV = x.EC_Coefficients_of_Variation,
             EC_Spec_Episode_Cnt = x.EC_Spec_Episode_Count,
             EC_Spec_Episode_Distribution = Math.Round(x.EC_Spec_Episode_Distribution, 4),
             EC_Spec_Perc_of_Episodes = Math.Round(x.EC_Spec_Percent_of_Episodes, 4),
@@ -59,9 +74,6 @@ public static class ETGFactSymmetryConfigMapper
             EC_Previous_Mapping = x.EC_Mapping_Previous,
             EC_Current_Mapping = x.EC_Mapping,
             EC_Change_Comments = x.EC_Change_Comments,
-            //Previous_Pt_Centric_Mapping = x.Patient_Centric_Mapping_Previous,
-            //Current_Pt_Centric_Mapping = x.Patient_Centric_Mapping,
-            //Pt_Centric_Change_Comments = x.Patient_Centric_Change_Comments,
             Measure_Status = x.PC_Measure_Status
 
 
@@ -71,6 +83,7 @@ public static class ETGFactSymmetryConfigMapper
         return targetList;
 
     }
+
 
 
 

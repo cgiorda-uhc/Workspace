@@ -9,7 +9,7 @@
             xmlns:vml="clr-namespace:VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;assembly=VCPortal_WPF_ViewModel"
             xmlns:modalcontrol="clr-namespace:ModalControl;assembly=ModalControl" xmlns:Collections="clr-namespace:System.Collections;assembly=System.Runtime.Extensions" xmlns:specialized="clr-namespace:System.Collections.Specialized;assembly=System" xmlns:components="clr-namespace:VCPortal_WPF.Components" xmlns:converters="clr-namespace:VCPortal_WPF.Converters"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="5000" d:DesignWidth="10000">
     <UserControl.Resources>
 
         <converters:BooleanAndConverter x:Key="booleanAndConverter" />
@@ -183,7 +183,7 @@
             </telerik:RadComboBox>-->
 
 
-            <telerik:RadComboBox x:Name="Versions" Grid.Row="0" HorizontalContentAlignment="Center" Grid.Column="8" Width="130" ItemsSource="{Binding PdVersions}" SelectedValue="{Binding CurrentVersion, Mode=TwoWay}">
+            <telerik:RadComboBox x:Name="Versions" Grid.Row="0" HorizontalContentAlignment="Center" Grid.Column="8" Width="120" ItemsSource="{Binding PdVersions}" SelectedValue="{Binding CurrentVersion, Mode=TwoWay}">
             </telerik:RadComboBox>
 
 
@@ -232,8 +232,8 @@
                 </telerik:GridViewCheckBoxColumn>
 
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding LOBPrevious}" Header="Prev LOB" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}"/>
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding LOB}" Header="Curr LOB" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}">
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding LOBPrevious}" Header="Prev LOB" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}" IsVisible="{Binding Is_PTC_Visibile}"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding LOB}" Header="Curr LOB" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource mainHeader}" IsVisible="{Binding Is_PTC_Visibile}">
                     <telerik:GridViewDataColumn.CellStyle>
                         <Style TargetType="telerik:GridViewCell">
                             <Setter Property="Background" Value="{StaticResource editableColor}" />
@@ -290,8 +290,8 @@
                 <telerik:GridViewDataColumn DataMemberBinding="{Binding Has_NRX}" Header="Curr NRX"/>-->
 
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Treatment_Indicator_Previous}" Width="100" Header="PC Prev TX Indicator" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}"/>
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Treatment_Indicator}" Width="100" Header="PC Curr TX Indicator" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Treatment_Indicator_Previous}" Width="100" Header="PC Prev TX Indicator" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}" IsVisible="{Binding Is_PTC_Visibile}"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Treatment_Indicator}" Width="100" Header="PC Curr TX Indicator" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}" IsVisible="{Binding Is_PTC_Visibile}">
                     <telerik:GridViewDataColumn.CellStyle>
                         <Style TargetType="telerik:GridViewCell">
                             <Setter Property="Background" Value="{StaticResource editableColor}" />
@@ -346,10 +346,10 @@
 
 
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_Episode_Count, StringFormat={}{0:N0}}" Width="100" x:Name="PC_Spec_Episode_Count" Header="PC Spec Episode Cnt" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}" CellStyleSelector="{StaticResource EpisodeCountConditionalFormatStyle}"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_Episode_Count, StringFormat={}{0:N0}}" Width="100" x:Name="PC_Spec_Episode_Count" Header="PC Spec Episode Cnt" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}" CellStyleSelector="{StaticResource EpisodeCountConditionalFormatStyle}" IsVisible="{Binding Is_PTC_Visibile}"/>
 
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_Episode_Count_Diff, StringFormat={}{0:P2}}" Width="100" x:Name="PC_Spec_Episode_Count_Diff" Header="PC Spec Episode Cnt Diff" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}" CellStyleSelector="{StaticResource EpisodeCountConditionalFormatStyle}"  TextAlignment="Right">
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_Episode_Count_Diff, StringFormat={}{0:P2}}" Width="100" x:Name="PC_Spec_Episode_Count_Diff" Header="PC Spec Episode Cnt Diff" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}" CellStyleSelector="{StaticResource EpisodeCountConditionalFormatStyle}"  IsVisible="{Binding Is_PTC_Visibile}" TextAlignment="Right">
                     <!--<telerik:GridViewDataColumn.CellStyle>
                         <Style TargetType="telerik:GridViewCell">
                             <Setter Property="HorizontalAlignment" Value="Right" />
@@ -370,7 +370,7 @@
                 </telerik:GridViewDataColumn>
 
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_Episode_Distribution, StringFormat={}{0:N4}}" Width="120" Header="PC Spec Episode Distribution" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_Episode_Distribution, StringFormat={}{0:N4}}" Width="120" Header="PC Spec Episode Distribution" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}" IsVisible="{Binding Is_PTC_Visibile}">
                     <telerik:GridViewDataColumn.CellStyle>
                         <Style TargetType="telerik:GridViewCell">
                             <Setter Property="HorizontalAlignment" Value="Right" />
@@ -378,7 +378,7 @@
                     </telerik:GridViewDataColumn.CellStyle>
                 </telerik:GridViewDataColumn>
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_Percent_of_Episodes, StringFormat={}{0:P2}}" Width="100" Header="PC Spec % of Episodes" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_Percent_of_Episodes, StringFormat={}{0:P2}}" Width="100" Header="PC Spec % of Episodes" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}" IsVisible="{Binding Is_PTC_Visibile}">
                     <telerik:GridViewDataColumn.CellStyle>
                         <Style TargetType="telerik:GridViewCell">
                             <Setter Property="HorizontalAlignment" Value="Right" />
@@ -386,7 +386,7 @@
                     </telerik:GridViewDataColumn.CellStyle>
                 </telerik:GridViewDataColumn>
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_Total_Cost, StringFormat={}{0:c0}}" Width="100" Header="PC Spec Tot Cost" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_Total_Cost, StringFormat={}{0:c0}}" Width="100" Header="PC Spec Tot Cost" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}" IsVisible="{Binding Is_PTC_Visibile}">
                     <telerik:GridViewDataColumn.CellStyle>
                         <Style TargetType="telerik:GridViewCell">
                             <Setter Property="HorizontalAlignment" Value="Right" />
@@ -394,17 +394,7 @@
                     </telerik:GridViewDataColumn.CellStyle>
                 </telerik:GridViewDataColumn>
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_Average_Cost, StringFormat={}{0:c0}}" Width="100" Header="PC Spec Avg Cost" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
-                    <telerik:GridViewDataColumn.CellStyle>
-                        <Style TargetType="telerik:GridViewCell">
-                            <Setter Property="HorizontalAlignment" Value="Right" />
-                        </Style>
-                    </telerik:GridViewDataColumn.CellStyle>
-                </telerik:GridViewDataColumn>
-
-
-
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Normalized_Pricing_Total_Cost, StringFormat={}{0:c0}}" Width="130" Header="PC Spec Normalized Price" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_Average_Cost, StringFormat={}{0:c0}}" Width="100" Header="PC Spec Avg Cost" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}" IsVisible="{Binding Is_PTC_Visibile}">
                     <telerik:GridViewDataColumn.CellStyle>
                         <Style TargetType="telerik:GridViewCell">
                             <Setter Property="HorizontalAlignment" Value="Right" />
@@ -414,8 +404,7 @@
 
 
 
-
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_CV, StringFormat={}{0:N4}}" Width="100" Header="PC Spec CV" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Normalized_Pricing_Total_Cost, StringFormat={}{0:c0}}" Width="130" Header="PC Spec Normalized Price" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}" IsVisible="{Binding Is_PTC_Visibile}">
                     <telerik:GridViewDataColumn.CellStyle>
                         <Style TargetType="telerik:GridViewCell">
                             <Setter Property="HorizontalAlignment" Value="Right" />
@@ -423,8 +412,19 @@
                     </telerik:GridViewDataColumn.CellStyle>
                 </telerik:GridViewDataColumn>
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Attribution_Previous}" Header="PC Prev Attribution" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}"/>
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Attribution}" Header="PC Curr Attribution" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
+
+
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Spec_CV, StringFormat={}{0:N4}}" Width="100" Header="PC Spec CV" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}" IsVisible="{Binding Is_PTC_Visibile}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Attribution_Previous}" Header="PC Prev Attribution" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}" IsVisible="{Binding Is_PTC_Visibile}"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Attribution}" Header="PC Curr Attribution" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}" IsVisible="{Binding Is_PTC_Visibile}">
                     <telerik:GridViewDataColumn.CellStyle>
                         <Style TargetType="telerik:GridViewCell">
                             <Setter Property="Background" Value="{StaticResource editableColor}" />
@@ -443,7 +443,7 @@
                     </telerik:GridViewDataColumn.CellEditTemplate>
                 </telerik:GridViewDataColumn>
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Change_Comments}" Width="700" Header="PC Change Comments" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}">
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Change_Comments}" Width="700" Header="PC Change Comments" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}" IsVisible="{Binding Is_PTC_Visibile}">
                     <telerik:GridViewDataColumn.CellStyle>
                         <Style TargetType="telerik:GridViewCell">
                             <Setter Property="Background" Value="{StaticResource editableColor}" />
@@ -452,8 +452,8 @@
                 </telerik:GridViewDataColumn>
 
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Treatment_Indicator_Previous}" Width="100" Header="Prev EC Tx Indicator" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}"/>
-                <telerik:GridViewDataColumn  DataMemberBinding="{Binding EC_Treatment_Indicator}" Width="100" Header="Curr EC Tx Indicator" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Treatment_Indicator_Previous}" Width="100" Header="Prev EC Tx Indicator" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}" IsVisible="{Binding Is_PEC_Visibile}"/>
+                <telerik:GridViewDataColumn  DataMemberBinding="{Binding EC_Treatment_Indicator}" Width="100" Header="Curr EC Tx Indicator" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}" IsVisible="{Binding Is_PEC_Visibile}">
                     <telerik:GridViewDataColumn.CellStyle>
                         <Style TargetType="telerik:GridViewCell">
                             <Setter Property="Background" Value="{StaticResource editableColor}" />
@@ -506,10 +506,10 @@
 
 
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_Episode_Count, StringFormat={}{0:N0}}" x:Name="EC_Spec_Episode_Count" Width="100" Header="EC Spec Episode Cnt" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}" CellStyleSelector="{StaticResource EpisodeCountConditionalFormatStyle}"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_Episode_Count, StringFormat={}{0:N0}}" x:Name="EC_Spec_Episode_Count" Width="100" Header="EC Spec Episode Cnt" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}" CellStyleSelector="{StaticResource EpisodeCountConditionalFormatStyle}" IsVisible="{Binding Is_PEC_Visibile}"/>
 
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_Episode_Count_Diff, StringFormat={}{0:P2}}" Width="100" x:Name="EC_Spec_Episode_Count_Diff" Header="EC Spec Episode Cnt Diff" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}" CellStyleSelector="{StaticResource EpisodeCountConditionalFormatStyle}" TextAlignment="Right">
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_Episode_Count_Diff, StringFormat={}{0:P2}}" Width="100" x:Name="EC_Spec_Episode_Count_Diff" Header="EC Spec Episode Cnt Diff" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}" CellStyleSelector="{StaticResource EpisodeCountConditionalFormatStyle}" TextAlignment="Right" IsVisible="{Binding Is_PEC_Visibile}">
                     <!--<telerik:GridViewDataColumn.CellStyle>
                         <Style TargetType="telerik:GridViewCell">
                             <Setter Property="HorizontalAlignment" Value="Right" />
@@ -531,7 +531,7 @@
 
 
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_Episode_Distribution, StringFormat={}{0:N4}}" Width="120" Header="EC Spec Episode Distribution" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_Episode_Distribution, StringFormat={}{0:N4}}" Width="120" Header="EC Spec Episode Distribution" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}" IsVisible="{Binding Is_PEC_Visibile}">
                     <telerik:GridViewDataColumn.CellStyle>
                         <Style TargetType="telerik:GridViewCell">
                             <Setter Property="HorizontalAlignment" Value="Right" />
@@ -539,7 +539,7 @@
                     </telerik:GridViewDataColumn.CellStyle>
                 </telerik:GridViewDataColumn>
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_Percent_of_Episodes, StringFormat={}{0:P2}}" Width="100" Header="EC Spec % of Episodes" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_Percent_of_Episodes, StringFormat={}{0:P2}}" Width="100" Header="EC Spec % of Episodes" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}" IsVisible="{Binding Is_PEC_Visibile}">
                     <telerik:GridViewDataColumn.CellStyle>
                         <Style TargetType="telerik:GridViewCell">
                             <Setter Property="HorizontalAlignment" Value="Right" />
@@ -547,7 +547,7 @@
                     </telerik:GridViewDataColumn.CellStyle>
                 </telerik:GridViewDataColumn>
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_Total_Cost, StringFormat={}{0:c0}}" Width="100" Header="EC Spec Tot Cost" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_Total_Cost, StringFormat={}{0:c0}}" Width="100" Header="EC Spec Tot Cost" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}" IsVisible="{Binding Is_PEC_Visibile}">
                     <telerik:GridViewDataColumn.CellStyle>
                         <Style TargetType="telerik:GridViewCell">
                             <Setter Property="HorizontalAlignment" Value="Right" />
@@ -555,16 +555,7 @@
                     </telerik:GridViewDataColumn.CellStyle>
                 </telerik:GridViewDataColumn>
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_Average_Cost, StringFormat={}{0:c0}}" Width="100" Header="EC Spec Avg Cost" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
-                    <telerik:GridViewDataColumn.CellStyle>
-                        <Style TargetType="telerik:GridViewCell">
-                            <Setter Property="HorizontalAlignment" Value="Right" />
-                        </Style>
-                    </telerik:GridViewDataColumn.CellStyle>
-                </telerik:GridViewDataColumn>
-
-
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Normalized_Pricing_Total_Cost, StringFormat={}{0:c0}}" Width="130" Header="EC Spec Normalized Price" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_Average_Cost, StringFormat={}{0:c0}}" Width="100" Header="EC Spec Avg Cost" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}" IsVisible="{Binding Is_PEC_Visibile}">
                     <telerik:GridViewDataColumn.CellStyle>
                         <Style TargetType="telerik:GridViewCell">
                             <Setter Property="HorizontalAlignment" Value="Right" />
@@ -573,8 +564,7 @@
                 </telerik:GridViewDataColumn>
 
 
-
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_CV, StringFormat={}{0:N4}}" Width="100" Header="EC Spec CV" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Normalized_Pricing_Total_Cost, StringFormat={}{0:c0}}" Width="130" Header="EC Spec Normalized Price" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}" IsVisible="{Binding Is_PEC_Visibile}">
                     <telerik:GridViewDataColumn.CellStyle>
                         <Style TargetType="telerik:GridViewCell">
                             <Setter Property="HorizontalAlignment" Value="Right" />
@@ -582,8 +572,18 @@
                     </telerik:GridViewDataColumn.CellStyle>
                 </telerik:GridViewDataColumn>
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Mapping_Previous}" Header="EC Prev Mapping" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}"/>
-                <telerik:GridViewDataColumn  DataMemberBinding="{Binding EC_Mapping}" Header="EC Curr Mapping" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
+
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Spec_CV, StringFormat={}{0:N4}}" Width="100" Header="EC Spec CV" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}" IsVisible="{Binding Is_PEC_Visibile}">
+                    <telerik:GridViewDataColumn.CellStyle>
+                        <Style TargetType="telerik:GridViewCell">
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                        </Style>
+                    </telerik:GridViewDataColumn.CellStyle>
+                </telerik:GridViewDataColumn>
+
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Mapping_Previous}" Header="EC Prev Mapping" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}" IsVisible="{Binding Is_PEC_Visibile}"/>
+                <telerik:GridViewDataColumn  DataMemberBinding="{Binding EC_Mapping}" Header="EC Curr Mapping" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}" IsVisible="{Binding Is_PEC_Visibile}">
                     <telerik:GridViewDataColumn.CellStyle>
                         <Style TargetType="telerik:GridViewCell">
                             <Setter Property="Background" Value="{StaticResource editableColor}" />
@@ -603,7 +603,7 @@
                 </telerik:GridViewDataColumn>
 
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Change_Comments}" Width="700" Header="EC Change Comments" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}">
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Change_Comments}" Width="700" Header="EC Change Comments" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}" IsVisible="{Binding Is_PEC_Visibile}">
                     <telerik:GridViewDataColumn.CellStyle>
                         <Style TargetType="telerik:GridViewCell">
                             <Setter Property="Background" Value="{StaticResource editableColor}" />
