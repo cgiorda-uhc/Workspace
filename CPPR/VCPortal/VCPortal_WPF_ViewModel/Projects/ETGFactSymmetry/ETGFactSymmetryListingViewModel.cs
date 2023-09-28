@@ -451,14 +451,12 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
                 export.Add(new ExcelExport() { ExportList = etgsum.ToList<object>(), SheetName = suffix + sheet.SheetName });
 
 
-
-
                 sheet = excel.Sheets.Where(x => x.Name == "ETGNrxExclConfig").FirstOrDefault();
                 api = _config.APIS.Where(x => x.Name == "ETGNrxExclConfig").FirstOrDefault();
                 var etgnxe = await VM_Functions.APIGetResultAsync<ETG_CNFG_ETG_NRX_EXCLD>(api.BaseUrl, api.Url);
                 if (etgnxe.Count > 0)
                 {
-                    export.Add(new ExcelExport() { ExportList = etgnxe.ToList<object>(), SheetName = suffix + sheet.SheetName });
+                    export.Add(new ExcelExport() { ExportList = etgnxe.ToList<object>(), SheetName = sheet.SheetName });
                 }
 
 
@@ -467,7 +465,7 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
                 var etgspc = await VM_Functions.APIGetResultAsync<ETG_CNFG_ETG_SPCL>(api.BaseUrl, api.Url);
                 if (etgspc.Count > 0)
                 {
-                    export.Add(new ExcelExport() { ExportList = etgspc.ToList<object>(), SheetName = suffix + sheet.SheetName });
+                    export.Add(new ExcelExport() { ExportList = etgspc.ToList<object>(), SheetName = sheet.SheetName });
                 }
 
             }
