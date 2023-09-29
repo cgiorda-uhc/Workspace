@@ -451,6 +451,16 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
                 export.Add(new ExcelExport() { ExportList = etgsum.ToList<object>(), SheetName = suffix + sheet.SheetName });
 
 
+                sheet = excel.Sheets.Where(x => x.Name == "ETGSummaryFinal").FirstOrDefault();
+                api = _config.APIS.Where(x => x.Name == "ETGSummaryFinal").FirstOrDefault();
+                var etgfinal = await VM_Functions.APIGetResultAsync<ETGSummaryFinal_PEC_Config>(api.BaseUrl, api.Url);
+                if (etgfinal.Count > 0)
+                {
+                    export.Add(new ExcelExport() { ExportList = etgfinal.ToList<object>(), SheetName = suffix + sheet.SheetName });
+                }
+
+
+
                 sheet = excel.Sheets.Where(x => x.Name == "ETGNrxExclConfig").FirstOrDefault();
                 api = _config.APIS.Where(x => x.Name == "ETGNrxExclConfig").FirstOrDefault();
                 var etgnxe = await VM_Functions.APIGetResultAsync<ETG_CNFG_ETG_NRX_EXCLD>(api.BaseUrl, api.Url);
