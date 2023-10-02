@@ -125,7 +125,7 @@
                 <ColumnDefinition Width="20"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="600"/>
                 <ColumnDefinition Width="133"/>
                 <ColumnDefinition Width="133"/>
                 <ColumnDefinition Width="133"/>
@@ -138,7 +138,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" FontSize="19" Background="LightGray" FontFamily="Verdana"  FontWeight="ExtraBold" Text="{Binding CurrentTitle}"></TextBlock>
-            <TextBlock DataContext="{Binding UserMessageViewModel}"  Text="{Binding Message}" Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="3" >
+            <TextBlock DataContext="{Binding UserMessageViewModel}"  Text="{Binding Message}" Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="2" >
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
                         <!-- Set the default value here (if any). 
