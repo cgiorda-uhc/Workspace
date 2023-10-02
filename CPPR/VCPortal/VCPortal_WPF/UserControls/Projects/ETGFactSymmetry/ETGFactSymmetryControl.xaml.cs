@@ -128,6 +128,21 @@ public partial class ETGFactSymmetryControl : UserControl
         ETGGridView.FilterDescriptors.Clear();
     }
 
+    private void btnPTC_PEC_Click(object sender, RoutedEventArgs e)
+    {
+        RadButton button = sender as RadButton;
+        button.Background = Brushes.LightBlue;
+        if (button.Name == "btnPTC")
+        {
+            btnPEC.Background = new RadButton().Background;
+        }
+        else
+        {
+            btnPTC.Background = new RadButton().Background;
+        }
+     
+    }
+
 
 
     //private void UserControl_Loaded(object sender, RoutedEventArgs e)
