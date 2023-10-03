@@ -1455,12 +1455,12 @@ namespace ConsoleLibraryTesting
 
 
 
-        public async Task parseCSV(string filepath, string filetype = "csv",char chrDelimiter = '|', string schema = "stg")
+        public async Task parseCSV(string filepath,  string fileNamePrefix ="csvg_", string filetype = "csv",char chrDelimiter = '|', string schema = "stg", SearchOption so = SearchOption.TopDirectoryOnly)
         {
             List<string>? strLstColumnNames = null;
             StreamReader? csvreader = null;
             string _strTableName;
-            string[] strLstFiles = Directory.GetFiles(filepath, "*." + filetype, SearchOption.TopDirectoryOnly);
+            string[] strLstFiles = Directory.GetFiles(filepath, "*." + filetype, so);
             string? strInputLine = "";
             string[] csvArray;
             string strSQL;
@@ -1471,7 +1471,7 @@ namespace ConsoleLibraryTesting
             System.Data.DataRow? drCurrent = null;
             foreach (var strFile in strLstFiles)
             {
-                var filename = "inna_" + Path.GetFileName(strFile).Replace("." + filetype, "");
+                var filename = fileNamePrefix + Path.GetFileName(strFile).Replace("." + filetype, "");
 
                 var table = CommonFunctions.getCleanTableName(filename);
                 var tmp_table = table.Substring(0, Math.Min(28, table.Length)) + "_TMP";
