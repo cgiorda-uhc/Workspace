@@ -125,12 +125,12 @@
                 <ColumnDefinition Width="20"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="600"/>
-                <ColumnDefinition Width="133"/>
-                <ColumnDefinition Width="133"/>
-                <ColumnDefinition Width="133"/>
-                <ColumnDefinition Width="133"/>
-                <ColumnDefinition Width="133"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="110"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="123"/>
                 <ColumnDefinition Width="50"/>
                 <ColumnDefinition Width="50"/>
             </Grid.ColumnDefinitions>
@@ -138,7 +138,7 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" FontSize="19" Background="LightGray" FontFamily="Verdana"  FontWeight="ExtraBold" Text="{Binding CurrentTitle}"></TextBlock>
-            <TextBlock DataContext="{Binding UserMessageViewModel}"  Text="{Binding Message}" Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="2" >
+            <TextBlock DataContext="{Binding UserMessageViewModel}"  Text="{Binding Message}" Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="3" >
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
                         <!-- Set the default value here (if any). 
@@ -155,11 +155,11 @@
             </TextBlock>
 
 
-            <telerik:RadButton x:Name="btnSave" Grid.Row="0" Grid.Column="4" Width="130" Click="btnSave_Click" Command="{Binding SaveCallCommand}" IsEnabled="{Binding CanSave}" Content="Save"></telerik:RadButton>
-            <!--<telerik:RadButton x:Name="btnExporConfig" Grid.Row="0" Grid.Column="6" Width="130" Command="{Binding ExportConfigsCallCommand}" Click="btnExporConfig_Click"  Content="Export Configs"></telerik:RadButton>-->
+            <telerik:RadButton x:Name="btnSave" Grid.Row="0" Grid.Column="4" Width="95" Click="btnSave_Click" Command="{Binding SaveCallCommand}" IsEnabled="{Binding CanSave}" Content="Save"></telerik:RadButton>
+            <!--<telerik:RadButton x:Name="btnExporConfig" Grid.Row="0" Grid.Column="6" Width="95" Command="{Binding ExportConfigsCallCommand}" Click="btnExporConfig_Click"  Content="Export Configs"></telerik:RadButton>-->
 
 
-            <telerik:RadButton x:Name="btnExporConfig" Grid.Row="0" Grid.Column="5" Width="130" Command="{Binding ExportConfigsCallCommand}" Click="btnExporConfig_Click"  Content="Export Data">
+            <telerik:RadButton x:Name="btnExporConfig" Grid.Row="0" Grid.Column="5" Width="95" Command="{Binding ExportConfigsCallCommand}" Click="btnExporConfig_Click"  Content="Export Data">
                 <telerik:RadButton.IsEnabled>
                     <MultiBinding Converter="{StaticResource booleanAndConverter}">
                         <Binding Path="CanSave"  Converter="{StaticResource inverseBooleanConverter}" />
@@ -169,17 +169,17 @@
 
 
 
-            <!--<telerik:RadButton Grid.Row="0" Grid.Column="7" Width="130" Command="{Binding GetETGFactSymmetryDataCallCommand}" Content="Refresh Data"></telerik:RadButton>-->
+            <!--<telerik:RadButton Grid.Row="0" Grid.Column="7" Width="95" Command="{Binding GetETGFactSymmetryDataCallCommand}" Content="Refresh Data"></telerik:RadButton>-->
 
-            <components:YesNoButton Grid.Row="0" Grid.Column="6" Width="130" Command="{Binding GetETGFactSymmetryDataCallCommand}" CheckSaves="True" Question="You have unsaved changes. Refresh anyway?" Content="Refresh Data">
+            <components:YesNoButton Grid.Row="0" Grid.Column="6" Width="105" Command="{Binding GetETGFactSymmetryDataCallCommand}" CheckSaves="True" Question="You have unsaved changes. Refresh anyway?" Content="Refresh Data">
             </components:YesNoButton>
 
 
 
-            <telerik:RadButton x:Name="btnClearFilters" Grid.Row="0" Grid.Column="7" Width="130" Click="btnClearFilters_Click"  Content="Clear Filters"></telerik:RadButton>
+            <telerik:RadButton x:Name="btnClearFilters" Grid.Row="0" Grid.Column="7" Width="95" Click="btnClearFilters_Click"  Content="Clear Filters"></telerik:RadButton>
 
             <!--
-            <telerik:RadComboBox x:Name="Versions" Grid.Row="0" Grid.Column="8" Width="130" ItemsSource="{Binding DataContext.PdVersions, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" SelectedValue="{Binding CurrentVersion, UpdateSourceTrigger=PropertyChanged}">
+            <telerik:RadComboBox x:Name="Versions" Grid.Row="0" Grid.Column="8" Width="95" ItemsSource="{Binding DataContext.PdVersions, RelativeSource={RelativeSource AncestorType={x:Type UserControl}}}" SelectedValue="{Binding CurrentVersion, UpdateSourceTrigger=PropertyChanged}">
             </telerik:RadComboBox>-->
 
 
@@ -191,7 +191,7 @@
             <telerik:RadButton x:Name="btnPEC" Grid.Row="0" Grid.Column="10" Width="50" Command="{Binding PECSectionCallCommand}" Click="btnPTC_PEC_Click"  Content="PEC"></telerik:RadButton>
 
 
-            <!--<telerik:RadComboBox x:Name="Versions" Grid.Row="0" Grid.Column="8" Width="130" SelectedValue="{Binding CurrentVersion, Mode=TwoWay}" Text="No History">
+            <!--<telerik:RadComboBox x:Name="Versions" Grid.Row="0" Grid.Column="8" Width="95" SelectedValue="{Binding CurrentVersion, Mode=TwoWay}" Text="No History">
                 <telerik:RadComboBoxItem Content="No History" />
                 <telerik:RadComboBoxItem Content="17" />
                 <telerik:RadComboBoxItem Content="16" />
@@ -404,7 +404,7 @@
 
 
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Normalized_Pricing_Total_Cost, StringFormat={}{0:c0}}" Width="130" Header="PC Spec Normalized Price" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}" IsVisible="{Binding Is_PTC_Visibile}">
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding PC_Normalized_Pricing_Total_Cost, StringFormat={}{0:c0}}" Width="95" Header="PC Spec Normalized Price" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource pcHeader}" IsVisible="{Binding Is_PTC_Visibile}">
                     <telerik:GridViewDataColumn.CellStyle>
                         <Style TargetType="telerik:GridViewCell">
                             <Setter Property="HorizontalAlignment" Value="Right" />
@@ -564,7 +564,7 @@
                 </telerik:GridViewDataColumn>
 
 
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Normalized_Pricing_Total_Cost, StringFormat={}{0:c0}}" Width="130" Header="EC Spec Normalized Price" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}" IsVisible="{Binding Is_PEC_Visibile}">
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding EC_Normalized_Pricing_Total_Cost, StringFormat={}{0:c0}}" Width="95" Header="EC Spec Normalized Price" HeaderTextWrapping="Wrap" HeaderCellStyle="{StaticResource ecHeader}" IsVisible="{Binding Is_PEC_Visibile}">
                     <telerik:GridViewDataColumn.CellStyle>
                         <Style TargetType="telerik:GridViewCell">
                             <Setter Property="HorizontalAlignment" Value="Right" />

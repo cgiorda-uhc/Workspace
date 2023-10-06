@@ -59,6 +59,8 @@ using VCPortal_Models.Models.ETGFactSymmetry.Dataloads;
 using Teradata.Client.Provider;
 using VCPortal_Models.Models.PEG;
 using VCPortal_Models.Models.EBM;
+using DocumentFormat.OpenXml.Drawing;
+using NPOI.Util;
 
 
 var adHoc = new AdHoc();
@@ -98,30 +100,20 @@ adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Repor
 
 
 
-
-
-
-
-
-
-
-return;
-
-
 List<string> files_loaded = new List<string>();
 
-files_loaded.Add("Oxford July -Gastro Universe 2023.xlsx");
-files_loaded.Add("Oxford July-Radiology Cardiology Universe 2023.xlsx");
-files_loaded.Add("United PCP- Rad & Card_July_2023.xlsx");
-files_loaded.Add("Americhoice July -Radiology Cardiology Universe 2023.xlsx");
-files_loaded.Add("United PCP- Gastro_July_2023.xlsx");
+files_loaded.Add("Oxford August-Radiology Cardiology Universe 2023.xls");
+files_loaded.Add("United PCP - Gastro_August_2023.xls");
+files_loaded.Add("Oxford August - Gastro Universe 2023.xls");
+files_loaded.Add("Americhoice August - Radiology Cardiology Universe 2023.xlsx");
+files_loaded.Add("United PCP - Rad & Card_August_2023.xlsx");
 
 
 
 
-//await adHoc.cleanupMemberDataAsync(files_loaded);
+await adHoc.cleanupMemberDataAsync(files_loaded);
 
-await adHoc.transferMHPDataAsync(files_loaded);
+//await adHoc.transferMHPDataAsync(files_loaded);
 
 
 
