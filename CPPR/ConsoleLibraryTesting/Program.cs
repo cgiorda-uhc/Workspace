@@ -117,7 +117,7 @@ await adHoc.cleanupMemberDataAsync(files_loaded);
 
 
 
-
+return;
 
 
 
@@ -145,7 +145,7 @@ await adHoc.cleanupMemberDataAsync(files_loaded);
 //await adHoc.cleanupMemberDataAsync(files_loaded);
 
 
-await adHoc.transferMHPDataAsync(files_loaded);
+//await adHoc.transferMHPDataAsync(files_loaded);
 
 return;
 
