@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VCPortal_Models.Configuration.HeaderInterfaces.Abstract;
 using VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
+using VCPortal_WPF_ViewModel.Projects.EDCAdhoc;
 using VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;
 using VCPortal_WPF_ViewModel.Projects.Home;
 using VCPortal_WPF_ViewModel.Projects.MHP;
@@ -102,6 +103,14 @@ public class MainWindowViewModel : INotifyPropertyChanged
             {
                 NavigationViewModelTypesReports.Add(new TypeAndDisplay { Name = "MHP Reporting", VMType = typeof(MHPViewModel) });
             }
+
+
+            if (groups.Contains("ms\\mhp_universe", StringComparer.OrdinalIgnoreCase))
+            {
+                NavigationViewModelTypesReports.Add(new TypeAndDisplay { Name = "EDCAdhoc Reporting", VMType = typeof(EDCAdhocViewModel) });
+            }
+
+
 
             if (groups.Contains("ms\\pc_trends", StringComparer.OrdinalIgnoreCase))
             {

@@ -257,7 +257,7 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
             foreach (var t in tracked)
             {
                 t.update_date = date;
-                t.username = "cgiorda";
+                t.username = Authentication.UserName;
             }
 
             var api = _config.APIS.Where(x => x.Name == "ETGInsert").FirstOrDefault();

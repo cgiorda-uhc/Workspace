@@ -64,6 +64,14 @@ public partial class HomeViewModel : ObservableObject
             currentAccess.Add("MS\\MHP_Universe");
         }
 
+
+        if (groups.Contains("ms\\mhp_universe", StringComparer.OrdinalIgnoreCase))
+        {
+            currentAccess.Add("MS\\EDC_Adhoc");
+        }
+
+
+
         if (groups.Contains("ms\\pc_trends", StringComparer.OrdinalIgnoreCase))
         {
             currentAccess.Add("MS\\PC_Trends");

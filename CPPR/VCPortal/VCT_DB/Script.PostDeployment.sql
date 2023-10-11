@@ -1,12 +1,12 @@
 ﻿
 --ETG LOADS
-IF '$(ETGSymmRefresh)' = '1'
-BEGIN 
-    TRUNCATE TABLE  [vct].[ETG_Dim_Master];
-    TRUNCATE TABLE  [vct].[ETG_Dim_Premium_Spec_Master];
-    TRUNCATE TABLE  [etgsymm].[ETG_Fact_Symmetry];
-    Truncate table [etgsymm].[ETG_Fact_Symmetry_Update_Tracker];
-END
+--IF '$(ETGSymmRefresh)' = '1'
+--BEGIN 
+--    TRUNCATE TABLE  [vct].[ETG_Dim_Master];
+--    TRUNCATE TABLE  [vct].[ETG_Dim_Premium_Spec_Master];
+--    TRUNCATE TABLE  [etgsymm].[ETG_Fact_Symmetry];
+--    Truncate table [etgsymm].[ETG_Fact_Symmetry_Update_Tracker];
+--END
 
 IF NOT EXISTS (SELECT 1 from  [vct].[ETG_Dim_Master]) 
 BEGIN 

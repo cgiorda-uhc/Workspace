@@ -82,6 +82,7 @@
     <Folder Include="etg\Tables" />
     <Folder Include="etg\Views" />
     <Folder Include="pct" />
+    <Folder Include="edcadhoc" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\Views\vw_GetChemoTracking.sql" />
@@ -172,6 +173,8 @@
     <Build Include="etg\Tables\PrimarySpecWithCode_PDNDB_SOURCE.sql" />
     <Build Include="etg\Tables\ETG_Cancer_Flag_PD_SOURCE.sql" />
     <Build Include="etgsymm\StoredProcedures\sp_ETG_Symmetry_Adhoc.sql" />
+    <Build Include="etg\Tables\ETG_Spec_Bilateral.sql" />
+    <Build Include="etgsymm\Views\VW_ETG_Symmetry_CNFG_ETG_SPCL_TMP.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Cd_GetAll.sql" />
@@ -206,6 +209,7 @@
     <Build Include="etg\etg.sql" />
     <Build Include="etg\etg_index.sql" />
     <Build Include="pct\pct.sql" />
+    <None Include="edcadhoc\edcadhoc.sql" />
   </ItemGroup>
   <ItemGroup>
     <SqlCmdVariable Include="ChemoPXRefresh">
