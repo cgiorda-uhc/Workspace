@@ -41,6 +41,9 @@ builder.Services.AddTransient<ILog_Repo, Logs_Repo>();
 builder.Services.AddTransient<IChemotherapyPX_Repo, ChemotherapyPX_Repo>();
 builder.Services.AddTransient<IMHPUniverse_Repo, MHPUniverse_Repo>();
 builder.Services.AddTransient<IMHPData_Repo, MHPData_Repo>();
+
+builder.Services.AddTransient<IEDCAdhoc_Repo, EDCAdhoc_Repo>();
+
 builder.Services.AddTransient<IETGFactSymmetry_Repo, ETGFactSymmetry_Repo>();
 //builder.Services.AddSingleton<IChemotherapyPX_Repo, ChemotherapyPX_EF_Repo>();
 //builder.Services.AddSingleton<IConfiguration>(configuration);
@@ -102,6 +105,7 @@ try
     //EXTENSION METHOD WITHIN Api.cs
     //HANDLE ALL ENDPOINTS
     app.ConfigureMHPApi();
+    app.ConfigureEDCAdhocApi();
     app.ConfigureChemoPXApi();
     app.ConfigureGlobalApi();
     app.ConfigureETGFactSymmetryApi();

@@ -83,7 +83,7 @@ public partial class EDCAdhocViewModel : ObservableObject
         worker.RunWorkerCompleted += worker_RunWorkerCompleted;
 
 
-        CurrentTitle = "MHP EI Reporting";
+        CurrentTitle = "EDC Adhoc Reporting";
         EIFormVisibility = Visibility.Visible;
         CSFormVisibility = Visibility.Hidden;
         IFPFormVisibility = Visibility.Hidden;
@@ -104,7 +104,7 @@ public partial class EDCAdhocViewModel : ObservableObject
         {
             UserMessageViewModel.IsError = true;
             UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-            _logger.Error($"No Config found for MHP Universe Reporting");
+            _logger.Error($"No Config found for EDC Adhoc Reporting");
         }
 
 
@@ -327,7 +327,7 @@ public partial class EDCAdhocViewModel : ObservableObject
 
                 UserMessageViewModel.IsError = true;
                 UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("MHP EI Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+                _logger.Error("EDC Adhoc Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
                 return;
             }
             else
@@ -356,7 +356,7 @@ public partial class EDCAdhocViewModel : ObservableObject
 
                 UserMessageViewModel.IsError = true;
                 UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("MHP EI All Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+                _logger.Error("EDC Adhoc All Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
                 return;
             }
             else
@@ -388,7 +388,7 @@ public partial class EDCAdhocViewModel : ObservableObject
 
                 UserMessageViewModel.IsError = true;
                 UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("MHP EI Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+                _logger.Error("EDC Adhoc Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
                 return;
             }
             else
@@ -419,7 +419,7 @@ public partial class EDCAdhocViewModel : ObservableObject
 
             //    UserMessageViewModel.IsError = true;
             //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-            //    _logger.Error("MHP EI All Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+            //    _logger.Error("EDC Adhoc All Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
             //    return;
             //}
             //else
@@ -474,15 +474,15 @@ public partial class EDCAdhocViewModel : ObservableObject
             ProgressMessageViewModel.Message = _sbStatus.ToString();
 
             UserMessageViewModel.IsError = false;
-            UserMessageViewModel.Message = "MHP EI Report sucessfully generated";
-            _logger.Information("MHP EI Report sucessfully generated for {CurrentUser}...", Authentication.UserName);
+            UserMessageViewModel.Message = "EDC Adhoc Report sucessfully generated";
+            _logger.Information("EDC Adhoc Report sucessfully generated for {CurrentUser}...", Authentication.UserName);
 
         }
         catch (Exception ex)
         {
             UserMessageViewModel.IsError = true;
             UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-            _logger.Fatal(ex, "MHP EI Report threw an error for {CurrentUser}", Authentication.UserName);
+            _logger.Fatal(ex, "EDC Adhoc Report threw an error for {CurrentUser}", Authentication.UserName);
         }
 
 
@@ -751,7 +751,7 @@ public partial class EDCAdhocViewModel : ObservableObject
     [RelayCommand]
     private async Task EISectionCall()
     {
-        CurrentTitle = "MHP EI Reporting";
+        CurrentTitle = "EDC Adhoc Reporting";
         EIFormVisibility = Visibility.Visible;
         CSFormVisibility = Visibility.Hidden;
         IFPFormVisibility = Visibility.Hidden;
