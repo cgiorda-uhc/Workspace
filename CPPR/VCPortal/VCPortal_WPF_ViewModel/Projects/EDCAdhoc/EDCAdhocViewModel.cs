@@ -32,12 +32,6 @@ public partial class EDCAdhocViewModel : ObservableObject
 
     [ObservableProperty]
     private string currentTitle;
-    [ObservableProperty]
-    private Visibility eIFormVisibility;
-    [ObservableProperty]
-    private Visibility cSFormVisibility;
-    [ObservableProperty]
-    private Visibility iFPFormVisibility;
 
     [ObservableProperty]
     private bool isModalOpen;
@@ -83,10 +77,8 @@ public partial class EDCAdhocViewModel : ObservableObject
         worker.RunWorkerCompleted += worker_RunWorkerCompleted;
 
 
-        CurrentTitle = "EDC Adhoc Reporting";
-        EIFormVisibility = Visibility.Visible;
-        CSFormVisibility = Visibility.Hidden;
-        IFPFormVisibility = Visibility.Hidden;
+        CurrentTitle = "EDC EI Adhoc Reporting";
+
 
         _sbStatus = new StringBuilder();
         canRunReport = true;
@@ -119,38 +111,12 @@ public partial class EDCAdhocViewModel : ObservableObject
         ProgressMessageViewModel.Message = "";
         ProgressMessageViewModel.HasMessage = true;
 
-        if (callingFunction == "GenerateEIReport")
+        if (callingFunction == "GenerateReport")
         {
             ProgressMessageViewModel.HasMessage = true;
-            GenerateEIReport();
+            GenerateReport();
         }
-        else if (callingFunction == "GenerateCSReport")
-        {
-            ProgressMessageViewModel.HasMessage = true;
-            GenerateCSReport();
-        }
-        else if (callingFunction == "GenerateIFPReport")
-        {
-            ProgressMessageViewModel.HasMessage = true;
-            GenerateIFPReport();
-        }
-        //else if (callingFunction == "LoadData")
-        //{
-        //    ProgressMessageViewModel.HasMessage = true;
-        //    getETGFactSymmetryData();
 
-        //}
-        //else if (callingFunction == "InitialLoadData")
-        //{
-        //    ProgressMessageViewModel.HasMessage = true;
-        //    loadGridLists();
-        //    getETGFactSymmetryData();
-
-        //}
-        //else if (callingFunction == "SaveData")
-        //{
-        //    save();
-        //}
 
     }
     private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -212,37 +178,14 @@ public partial class EDCAdhocViewModel : ObservableObject
 
         UserMessageViewModel.Message = "";
         Mouse.OverrideCursor = Cursors.Wait;
-        await Task.Run(() => worker.RunWorkerAsync("GenerateEIReport"));
+        await Task.Run(() => worker.RunWorkerAsync("GenerateReport"));
         Mouse.OverrideCursor = null;
 
     }
 
-    [RelayCommand]
-    private async Task GenerateIFPReportCall(object item)
-    {
-        _params = item;
+    
 
-        UserMessageViewModel.Message = "";
-        Mouse.OverrideCursor = Cursors.Wait;
-        await Task.Run(() => worker.RunWorkerAsync("GenerateIFPReport"));
-        Mouse.OverrideCursor = null;
-
-    }
-
-    [RelayCommand]
-    private async Task GenerateCSReportCall(object item)
-    {
-        _params = item;
-
-        UserMessageViewModel.Message = "";
-        Mouse.OverrideCursor = Cursors.Wait;
-        await Task.Run(() => worker.RunWorkerAsync("GenerateCSReport"));
-        Mouse.OverrideCursor = null;
-
-    }
-
-
-    private async Task GenerateEIReport()
+    private async Task GenerateReport()
     {
 
         _logger.Information("Running MHP.GenerateEIReport for {CurrentUser}...", Authentication.UserName);
@@ -489,291 +432,26 @@ public partial class EDCAdhocViewModel : ObservableObject
 
     }
 
-    private async Task GenerateCSReport()
-    {
-        _logger.Information("Running MHP.GenerateCSReport for {CurrentUser}...", Authentication.UserName);
-
-        _sbStatus.Append("--Processing selected filters for CS" + Environment.NewLine);
-        ProgressMessageViewModel.Message = _sbStatus.ToString();
-
-        object[] parameters = _params as object[];
-
-        MHP_CS_Parameters cs_param = new MHP_CS_Parameters();
-
-
-        List<MHP_CS_Model> mhp_final;
-        List<MHPCSDetails_Model> mhp_details_final;
-        try
-        {
-            cs_param.State = "'" + String.Join(",", parameters[0].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-            cs_param.StartDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
-            cs_param.EndDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
-            cs_param.CS_Tadm_Prdct_Map = "'" + String.Join(",", parameters[3].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-
-            if (parameters[4] != "")
-            {
-                cs_param.GroupNumbers = "'" + String.Join(",", parameters[4].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-            }
-
-
-
-            _sbStatus.Append("--Retreiving CS summary data from Database" + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
-
-            var api = _config.APIS.Where(x => x.Name == "MHP_CS").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
-            var response = await WebAPIConsume.PostCall<MHP_CS_Parameters>(api.Url, cs_param);
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-
-                UserMessageViewModel.IsError = true;
-                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("MHP CS Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-                return;
-            }
-            else
-            {
-
-                var reponseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<MHP_CS_Model>>(reponseStream, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                mhp_final = result;
-
-            }
-
-
-            _sbStatus.Append("--Retreiving CS details data from Database" + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
-
-            api = _config.APIS.Where(x => x.Name == "MHP_CS_Details").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
-            response = await WebAPIConsume.PostCall<MHP_CS_Parameters>(api.Url, cs_param);
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-
-                UserMessageViewModel.IsError = true;
-                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("MHP CS Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-                return;
-            }
-            else
-            {
-
-                var reponseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<MHPCSDetails_Model>>(reponseStream, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                mhp_details_final = result;
-
-
-            }
-
-            CancellationTokenSource cancellationToken;
-            cancellationToken = new CancellationTokenSource();
-            var bytes = await MHPExcelExport.ExportCSToExcel(mhp_final, mhp_details_final, cs_param.CS_Tadm_Prdct_Map, () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
-
-            var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\MHP_CS_Report_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
-
-
-            _sbStatus.Append("--Saving Excel here: " + file + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
-
-            if (File.Exists(file))
-                File.Delete(file);
-
-            await File.WriteAllBytesAsync(file, bytes);
-
-
-            _sbStatus.Append("--Opening Excel" + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
-
-            var p = new Process();
-            p.StartInfo = new ProcessStartInfo(file)
-            {
-                UseShellExecute = true
-            };
-            p.Start();
-
-
-            _sbStatus.Append("--Process completed!" + Environment.NewLine + Environment.NewLine + Environment.NewLine);
-            _sbStatus.Append("--Ready" + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
-
-            UserMessageViewModel.IsError = false;
-            UserMessageViewModel.Message = "MHP CS Report sucessfully generated";
-            _logger.Information("MHP CS Report sucessfully generated for {CurrentUser}...", Authentication.UserName);
-
-        }
-        catch (Exception ex)
-        {
-            UserMessageViewModel.IsError = true;
-            UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-            _logger.Fatal(ex, "MHP CS Report threw an error for {CurrentUser}", Authentication.UserName);
-        }
-
-
-    }
-
-    private async Task GenerateIFPReport()
-    {
-        _logger.Information("Running MHP.GenerateIFPReport for {CurrentUser}...", Authentication.UserName);
-
-        _sbStatus.Append("--Processing selected filters for IFP" + Environment.NewLine);
-        ProgressMessageViewModel.Message = _sbStatus.ToString();
-
-        object[] parameters = _params as object[];
-
-        MHP_IFP_Parameters ifp_param = new MHP_IFP_Parameters();
-
-        List<MHP_IFP_Model> mhp_final;
-        List<MHPIFPDetails_Model> mhp_details_final;
-        try
-        {
-
-            ifp_param.State = "'" + String.Join(",", parameters[0].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'"; ;
-            ifp_param.StartDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
-            ifp_param.EndDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
-            ifp_param.ProductCodes = (string.IsNullOrEmpty(parameters[3].ToString()) ? null : new List<string>(parameters[3].ToString().Replace("--All--,", "").Split(',')));
-            for (int i = 0; i < ifp_param.ProductCodes.Count; i++)
-            {
-                ifp_param.ProductCodes[i] = ifp_param.ProductCodes[i].Split("-")[0].Trim();
-            }
-
-
-
-            _sbStatus.Append("--Retreiving IFP summary data from Database" + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
-
-            var api = _config.APIS.Where(x => x.Name == "MHP_IFP").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
-            var response = await WebAPIConsume.PostCall<MHP_IFP_Parameters>(api.Url, ifp_param);
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-
-                UserMessageViewModel.IsError = true;
-                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("MHP IFP Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-                return;
-            }
-            else
-            {
-
-                var reponseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<MHP_IFP_Model>>(reponseStream, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                mhp_final = result;
-
-            }
-
-
-            _sbStatus.Append("--Retreiving IFP details data from Database" + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
-
-            api = _config.APIS.Where(x => x.Name == "MHP_IFP_Details").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
-            response = await WebAPIConsume.PostCall<MHP_IFP_Parameters>(api.Url, ifp_param);
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-
-                UserMessageViewModel.IsError = true;
-                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("MHP IFP Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-                return;
-            }
-            else
-            {
-
-                var reponseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<MHPIFPDetails_Model>>(reponseStream, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                mhp_details_final = result;
-
-
-            }
-
-            CancellationTokenSource cancellationToken;
-            cancellationToken = new CancellationTokenSource();
-            var bytes = await MHPExcelExport.ExportIFPToExcel(mhp_final, mhp_details_final, () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
-
-            var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\MHP_IFP_Report_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
-
-
-            _sbStatus.Append("--Saving Excel here: " + file + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
-
-            if (File.Exists(file))
-                File.Delete(file);
-
-            await File.WriteAllBytesAsync(file, bytes);
-
-
-            _sbStatus.Append("--Opening Excel" + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
-
-            var p = new Process();
-            p.StartInfo = new ProcessStartInfo(file)
-            {
-                UseShellExecute = true
-            };
-            p.Start();
-
-
-            _sbStatus.Append("--Process completed!" + Environment.NewLine + Environment.NewLine + Environment.NewLine);
-            _sbStatus.Append("--Ready" + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
-
-            UserMessageViewModel.IsError = false;
-            UserMessageViewModel.Message = "MHP IFP Report sucessfully generated";
-            _logger.Information("MHP IFP Report sucessfully generated for {CurrentUser}...", Authentication.UserName);
-
-        }
-        catch (Exception ex)
-        {
-            UserMessageViewModel.IsError = true;
-            UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-            _logger.Fatal(ex, "MHP IFP Report threw an error for {CurrentUser}", Authentication.UserName);
-        }
-
-    }
-
+    
 
     [RelayCommand]
     private async Task EISectionCall()
     {
-        CurrentTitle = "EDC Adhoc Reporting";
-        EIFormVisibility = Visibility.Visible;
-        CSFormVisibility = Visibility.Hidden;
-        IFPFormVisibility = Visibility.Hidden;
+        CurrentTitle = "EDC EI Adhoc Reporting";
     }
 
 
     [RelayCommand]
-    private async Task IFPSectionCall()
+    private async Task MRSectionCall()
     {
-        CurrentTitle = "MHP IFP Reporting";
-        EIFormVisibility = Visibility.Hidden;
-        CSFormVisibility = Visibility.Hidden;
-        IFPFormVisibility = Visibility.Visible;
+        CurrentTitle = "EDC MR Adhoc Reporting";
     }
 
     [RelayCommand]
     private async Task CSSectionCall()
     {
-        CurrentTitle = "MHP CS Reporting";
-        EIFormVisibility = Visibility.Hidden;
-        CSFormVisibility = Visibility.Visible;
-        IFPFormVisibility = Visibility.Hidden;
+        CurrentTitle = "EDC CS Adhoc Reporting";
+
     }
 
 
@@ -781,7 +459,7 @@ public partial class EDCAdhocViewModel : ObservableObject
     {
         try
         {
-            var api = _config.APIS.Where(x => x.Name == "MHP_Filters").FirstOrDefault();
+            var api = _config.APIS.Where(x => x.Name == "EDCAdhoc_Filters").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("--Getting Cached Filters..." + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();

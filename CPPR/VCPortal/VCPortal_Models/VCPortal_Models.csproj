@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <Folder Include="Configuration\RoleInterfaces\" />
-    <Folder Include="Parameters\EDCAdhoc\" />
   </ItemGroup>
 
 </Project>

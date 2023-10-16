@@ -70,7 +70,7 @@ public partial class EDCAdhocControl : UserControl
 
 
     bool blJustProcessed;
-    private void cbxStateFilter_ItemSelectionChanged(object sender, Xceed.Wpf.Toolkit.Primitives.ItemSelectionChangedEventArgs e)
+    private void cbx_ItemSelectionChanged(object sender, Xceed.Wpf.Toolkit.Primitives.ItemSelectionChangedEventArgs e)
     {
         if (blJustProcessed)
         {
@@ -82,147 +82,14 @@ public partial class EDCAdhocControl : UserControl
         checkForAll(_checkComboBox, value, e.IsSelected);
     }
 
-
-    private void cbxStateFilter_Loaded(object sender, RoutedEventArgs e)
-    {
-        blJustProcessed = false;
-    }
-
-    private void cbxLegalEntityFilter_ItemSelectionChanged(object sender, Xceed.Wpf.Toolkit.Primitives.ItemSelectionChangedEventArgs e)
-    {
-        if (blJustProcessed)
-        {
-            blJustProcessed = false;
-            return;
-        }
-        var _checkComboBox = (SelectAllCheckComboBoxTilde)sender;
-        var value = e.Item.ToString();
-        checkForAll(_checkComboBox, value, e.IsSelected);
-    }
-
-    private void cbxLegalEntityFilter_Loaded(object sender, RoutedEventArgs e)
+    private void cbx_Loaded(object sender, RoutedEventArgs e)
     {
         blJustProcessed = false;
     }
 
 
-    private void CbxFINC_ARNG_CDFilter_ItemSelectionChanged(object sender, Xceed.Wpf.Toolkit.Primitives.ItemSelectionChangedEventArgs e)
-    {
-        if (blJustProcessed)
-        {
-            blJustProcessed = false;
-            return;
-        }
-        var _checkComboBox = (SelectAllCheckComboBox)sender;
-        var value = e.Item.ToString();
-        checkForAll(_checkComboBox, value, e.IsSelected);
-    }
 
 
-    private void CbxFINC_ARNG_CDFilter_Loaded(object sender, RoutedEventArgs e)
-    {
-        blJustProcessed = false;
-    }
-
-    private void CbxMKT_SEG_RLLP_DESCFilter_ItemSelectionChanged(object sender, Xceed.Wpf.Toolkit.Primitives.ItemSelectionChangedEventArgs e)
-    {
-        if (blJustProcessed)
-        {
-            blJustProcessed = false;
-            return;
-        }
-        var _checkComboBox = (SelectAllCheckComboBox)sender;
-        var value = e.Item.ToString();
-        checkForAll(_checkComboBox, value, e.IsSelected);
-    }
-
-    private void CbxMKT_SEG_RLLP_DESCFilter_Loaded(object sender, RoutedEventArgs e)
-    {
-        blJustProcessed = false;
-    }
-
-
-    private void CbxMKT_TYP_DESCFilter_Loaded(object sender, RoutedEventArgs e)
-    {
-        blJustProcessed = false;
-    }
-    private void CbxMKT_TYP_DESCFilter_ItemSelectionChanged(object sender, Xceed.Wpf.Toolkit.Primitives.ItemSelectionChangedEventArgs e)
-    {
-        if (blJustProcessed)
-        {
-            blJustProcessed = false;
-            return;
-        }
-        var _checkComboBox = (SelectAllCheckComboBox)sender;
-        var value = e.Item.ToString();
-        checkForAll(_checkComboBox, value, e.IsSelected);
-    }
-
-    private void CbxCS_TADM_PRDCT_MAP_ItemSelectionChanged(object sender, Xceed.Wpf.Toolkit.Primitives.ItemSelectionChangedEventArgs e)
-    {
-        if (blJustProcessed)
-        {
-            blJustProcessed = false;
-            return;
-        }
-        var _checkComboBox = (SelectAllCheckComboBox)sender;
-        var value = e.Item.ToString();
-        checkForAll(_checkComboBox, value, e.IsSelected);
-    }
-
-    private void CbxCS_TADM_PRDCT_MAP_Loaded(object sender, RoutedEventArgs e)
-    {
-        blJustProcessed = false;
-    }
-
-
-    private void CbxGroupNumbers_ItemSelectionChanged(object sender, Xceed.Wpf.Toolkit.Primitives.ItemSelectionChangedEventArgs e)
-    {
-        if (blJustProcessed)
-        {
-            blJustProcessed = false;
-            return;
-        }
-        var _checkComboBox = (SelectAllCheckComboBox)sender;
-        var value = e.Item.ToString();
-        checkForAll(_checkComboBox, value, e.IsSelected);
-    }
-
-    private void CbxGroupNumbers_Loaded(object sender, RoutedEventArgs e)
-    {
-        blJustProcessed = false;
-    }
-
-    private void CbxProductCode_ItemSelectionChanged(object sender, Xceed.Wpf.Toolkit.Primitives.ItemSelectionChangedEventArgs e)
-    {
-        if (blJustProcessed)
-        {
-            blJustProcessed = false;
-            return;
-        }
-        var _checkComboBox = (SelectAllCheckComboBox)sender;
-        var value = e.Item.ToString();
-        checkForAll(_checkComboBox, value, e.IsSelected);
-
-    }
-
-    private void CbxProductCode_Loaded(object sender, RoutedEventArgs e)
-    {
-        blJustProcessed = false;
-    }
-
-
-    private void CbxStateFilter_ItemSelectionChanged(object sender, Xceed.Wpf.Toolkit.Primitives.ItemSelectionChangedEventArgs e)
-    {
-        if (blJustProcessed)
-        {
-            blJustProcessed = false;
-            return;
-        }
-        var _checkComboBox = (SelectAllCheckComboBox)sender;
-        var value = e.Item.ToString();
-        checkForAll(_checkComboBox, value, e.IsSelected);
-    }
 
     private void checkForAll(SelectAllCheckComboBox _checkComboBox, string strValue, bool isSelected)
     {
@@ -243,6 +110,7 @@ public partial class EDCAdhocControl : UserControl
             }
         }
     }
+
 
     private void checkForAll(SelectAllCheckComboBoxTilde _checkComboBox, string strValue, bool isSelected)
     {
