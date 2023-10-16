@@ -37,35 +37,35 @@ public partial class EDCAdhocControl : UserControl
 
 
 
-    private void btnAddCustSeg_Click(object sender, RoutedEventArgs e)
+    private void btnAddAC_Click(object sender, RoutedEventArgs e)
     {
-        var value = txtCUST_SEGFilter.SearchText;
+        var value = txtAC_Filter.SearchText;
         if (string.IsNullOrEmpty(value))
         {
             return;
         }
 
-        lstSelectedCustSeg.Items.Add(value);
-        txtCUST_SEGFilter.SearchText = "";
+        lstACFilters.Items.Add(value);
+        txtAC_Filter.SearchText = "";
 
     }
 
 
-    private void btnRemoveSelected_Click(object sender, RoutedEventArgs e)
+    private void btnRemoveSelectedAC_Click(object sender, RoutedEventArgs e)
     {
-        var item = lstSelectedCustSeg.SelectedItem;
+        var item = lstACFilters.SelectedItem;
         if (item == null)
         {
             return;
         }
 
-        lstSelectedCustSeg.Items.Remove(item);
+        lstACFilters.Items.Remove(item);
 
     }
 
-    private void btnRemoveAll_Click(object sender, RoutedEventArgs e)
+    private void btnRemoveAllAC_Click(object sender, RoutedEventArgs e)
     {
-        lstSelectedCustSeg.Items.Clear();
+        lstACFilters.Items.Clear();
     }
 
 

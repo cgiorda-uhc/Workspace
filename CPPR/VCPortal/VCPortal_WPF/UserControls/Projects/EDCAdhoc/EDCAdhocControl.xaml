@@ -41,23 +41,8 @@
                 <Setter Property="Background" Value="LightBlue" />
             </Style>
 
-            <Style x:Key="EIBorder" TargetType="{x:Type Border}">
-                <Setter Property="BorderBrush" Value="Orange" />
-                <Setter Property="BorderThickness" Value="2 2 2 2" />
-                <Setter Property="Background" Value="White" />
-            </Style>
+  
 
-            <Style x:Key="MRBorder" TargetType="{x:Type Border}">
-                <Setter Property="BorderBrush" Value="Orange" />
-                <Setter Property="BorderThickness" Value="2 2 2 2" />
-                <Setter Property="Background" Value="White" />
-            </Style>
-
-            <Style x:Key="CSBorder" TargetType="{x:Type Border}">
-                <Setter Property="BorderBrush" Value="Orange" />
-                <Setter Property="BorderThickness" Value="2 2 2 2" />
-                <Setter Property="Background" Value="White" />
-            </Style>
 
             <converters:InverseAndBooleansToBooleanConverter x:Key="InverseAndBooleansToBooleanConverter"/>
             <converters:SearchFilterConverter x:Key="SearchFilterConverter"/>
@@ -123,6 +108,7 @@
                 <Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource InverseAndBooleansToBooleanConverter}" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                         <Binding ElementName="cbxProvStateFilter" Path="(SelectedItem)" />
+                        <Binding ElementName="cbxMemStateFilter" Path="(SelectedItem)" />
                         <Binding ElementName="dtStartDate" Path="(SelectedValue)" />
                         <Binding ElementName="dtEndDate" Path="(SelectedValue)" />
                         <Binding ElementName="cbxLegalEntityFilter" Path="(SelectedItem)" />
@@ -134,6 +120,7 @@
                 <Button.CommandParameter>
                     <MultiBinding Converter="{StaticResource SearchFilterConverter}" >
                         <Binding Path="SelectedValue" ElementName="cbxProvStateFilter" />
+                        <Binding Path="SelectedValue" ElementName="cbxMemStateFilter" />
                         <Binding Path="SelectedValue" ElementName="dtStartDate"/>
                         <Binding Path="SelectedValue" ElementName="dtEndDate"/>
                         <Binding Path="Text" ElementName="cbxLegalEntityFilter"/>
@@ -175,19 +162,23 @@
             </components:SelectAllCheckComboBox>
 
             <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
-            <telerik:Label Grid.Row="1"   Grid.Column="1" Content="* Select Member State(s):" Margin="4" HorizontalAlignment="Left" Style="{StaticResource ValidLabel}"  />
-            <components:SelectAllCheckComboBox x:Name="cbxMemStateFilter" Grid.Row="2"  Margin="10 10 10 10" Grid.Column="1" Command="{Binding StateChangedCommand}" ItemsSource="{Binding Path=States}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded"  >
+            <telerik:Label Grid.Row="1"   Grid.Column="2" Content="* Select Member State(s):" Margin="4" HorizontalAlignment="Left" Style="{StaticResource ValidLabel}"  />
+            <components:SelectAllCheckComboBox x:Name="cbxMemStateFilter" Grid.Row="2"  Margin="10 10 10 10" Grid.Column="2" Command="{Binding StateChangedCommand}" ItemsSource="{Binding Path=States}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded"  >
             </components:SelectAllCheckComboBox>
 
             <Border Grid.Column="3" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
-            <telerik:Label  Grid.Row="1"    Grid.Column="2" Content="* DOS Start:" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"   />
-            <telerik:RadDatePicker x:Name="dtStartDate"  Grid.Row="2"   Grid.Column="2"   Margin="10 10 10 10"  VerticalAlignment="Top" HorizontalAlignment="Left" SelectedValue="01/01/2022"/>
+            <telerik:Label  Grid.Row="1"    Grid.Column="3" Content="* DOS Start:" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"   />
+            <telerik:RadDatePicker x:Name="dtStartDate"  Grid.Row="2"   Grid.Column="3"   Margin="10 10 10 10"  VerticalAlignment="Top" HorizontalAlignment="Left" SelectedValue="01/01/2022"/>
 
             <Border Grid.Column="4" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
-            <telerik:Label  Grid.Row="1"    Grid.Column="3" Content="* DOS End:" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"  />
-            <telerik:RadDatePicker x:Name="dtEndDate"  Grid.Row="2"   Grid.Column="3"   Margin="10 10 10 10"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="115" SelectedValue="12/31/2022"/>
+            <telerik:Label  Grid.Row="1"    Grid.Column="4" Content="* DOS End:" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"  />
+            <telerik:RadDatePicker x:Name="dtEndDate"  Grid.Row="2"   Grid.Column="4"   Margin="10 10 10 10"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="115" SelectedValue="12/31/2022"/>
 
-            <Grid  Grid.Column="1" Grid.ColumnSpan="2"  Grid.Row="2">
+
+
+            <Border Grid.Column="1" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
+            <telerik:Label Grid.Row="3"   Grid.Column="1" Content="Select AC(s):" Style="{StaticResource OptionalLabel}" Margin="4" HorizontalAlignment="Left"  />
+            <Grid  Grid.Column="1"   Grid.Row="4">
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -197,7 +188,7 @@
                     <RowDefinition Height="40"/>
                 </Grid.RowDefinitions>
 
-                <telerik:RadAutoCompleteBox Grid.Column="1" Grid.Row="0"  Name="txtMPIN_Filter"  Margin="10 10 10 10" VerticalAlignment="Top" Height="32" ItemsSource="{Binding MPIN_Filter}"
+                <telerik:RadAutoCompleteBox Grid.Column="1" Grid.Row="0"  Name="txtAC_Filter"  Margin="10 10 10 10" VerticalAlignment="Top" Height="32" ItemsSource="{Binding AC_Filter}"
                  TextSearchMode="Contains" SelectionMode="Single" AutoCompleteMode="Suggest" 
                  WatermarkContent="Enter Customer Segment">
                     <telerik:RadAutoCompleteBox.FilteringBehavior>
@@ -205,16 +196,14 @@
                     </telerik:RadAutoCompleteBox.FilteringBehavior>
                 </telerik:RadAutoCompleteBox>
 
-                <telerik:RadButton x:Name="btnAddMPIN" Grid.Row="1" Grid.Column="1" Width="70" Background="LightGoldenrodYellow" Click="btnAddCustSeg_Click" HorizontalAlignment="Right" VerticalAlignment="Top"  Margin="10 -50 10 10" Content="Add"></telerik:RadButton>
+                <telerik:RadButton x:Name="btnAddAC" Grid.Row="1" Grid.Column="1" Width="70" Background="LightGoldenrodYellow" Click="btnAddAC_Click" HorizontalAlignment="Right" VerticalAlignment="Top"  Margin="10 -50 10 10" Content="Add"></telerik:RadButton>
 
 
             </Grid>
 
             <Border Grid.Column="2" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
-            <telerik:Label Grid.Row="3"   Grid.Column="2" Content="Filtered MPIN(s):" Style="{StaticResource OptionalLabel}" Margin="4" HorizontalAlignment="Left"  />
-
-
-            <Grid  Grid.Row="2"  Grid.ColumnSpan="2"  Grid.Column="3" >
+            <telerik:Label Grid.Row="3"   Grid.Column="2" Content="Filtered Items(s):" Style="{StaticResource OptionalLabel}" Margin="4" HorizontalAlignment="Left"  />
+            <Grid  Grid.Row="4"  Grid.Column="2" >
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -229,10 +218,10 @@
                 </Grid.RowDefinitions>
 
 
-                <telerik:RadListBox x:Name="lstSelectedCustSeg" Grid.ColumnSpan="5"  Grid.Row="0" Grid.Column="0"   Margin="10 10 10 10"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                <telerik:RadListBox x:Name="lstACFilters" Grid.ColumnSpan="5"  Grid.Row="0" Grid.Column="0"   Margin="10 10 10 10"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
 
-                <telerik:RadButton x:Name="btnRemoveSelected" Grid.Row="1" Grid.Column="3" Width="160" Background="LightGoldenrodYellow" Margin="10 10 -10 10"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Remove Selected" Click="btnRemoveSelected_Click"></telerik:RadButton>
-                <telerik:RadButton x:Name="btnRemoveAll" Grid.Row="1" Grid.Column="4" Width="123" Background="LightGoldenrodYellow" Margin="10 10 10 10"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Remove All" Click="btnRemoveAll_Click"></telerik:RadButton>
+                <telerik:RadButton x:Name="btnRemoveSelectedAC" Grid.Row="1" Grid.Column="3" Width="160" Background="LightGoldenrodYellow" Margin="10 10 -10 10"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Remove Selected" Click="btnRemoveSelectedAC_Click"></telerik:RadButton>
+                <telerik:RadButton x:Name="btnRemoveAllAC" Grid.Row="1" Grid.Column="4" Width="123" Background="LightGoldenrodYellow" Margin="10 10 10 10"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Remove All" Click="btnRemoveAllAC_Click"></telerik:RadButton>
 
             </Grid>
 

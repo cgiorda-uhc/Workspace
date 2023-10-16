@@ -459,7 +459,7 @@ public partial class EDCAdhocViewModel : ObservableObject
     {
         try
         {
-            var api = _config.APIS.Where(x => x.Name == "EDCAdhoc_Filters").FirstOrDefault();
+            var api = _config.APIS.Where(x => x.Name == "MHP_Filters").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("--Getting Cached Filters..." + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
