@@ -17,7 +17,7 @@ namespace MedicalNecessity_ACIS_Parser
     {
         static void Main(string[] args)
         {
-            HelperFunctions.HelperFunctions.Email("inna_rudi@uhc.com", "chris_giordano@uhc.com", "VC Automation Manager: ACIS MedNec Tables", "ACIS MedNec tables were updated with data for the month of September 2023", "chris_giordano@uhc.com", null, System.Net.Mail.MailPriority.Normal);
+            HelperFunctions.HelperFunctions.Email("inna_rudi@uhc.com", "chris_giordano@uhc.com", "VC Automation Manager: ACIS MedNec Tables", "ACIS MedNec tables were updated with data for the month of October 2023", "chris_giordano@uhc.com", null, System.Net.Mail.MailPriority.Normal);
 
 
 
