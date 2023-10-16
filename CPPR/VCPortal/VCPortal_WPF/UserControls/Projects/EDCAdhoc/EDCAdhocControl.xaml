@@ -152,6 +152,12 @@
                 <RowDefinition Height="50"/>
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
                 <RowDefinition Height="20"/>
             </Grid.RowDefinitions>
 
@@ -213,7 +219,7 @@
                     <ColumnDefinition Width="150"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="160"/>
+                    <RowDefinition Height="*"/>
                     <RowDefinition Height="50"/>
                 </Grid.RowDefinitions>
 
@@ -224,6 +230,51 @@
                 <telerik:RadButton x:Name="btnRemoveAllAC" Grid.Row="1" Grid.Column="4" Width="123" Background="LightGoldenrodYellow" Margin="10 10 10 10"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Remove All" Click="btnRemoveAllAC_Click"></telerik:RadButton>
 
             </Grid>
+
+
+            <Border Grid.Column="3" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
+            <telerik:Label Grid.Row="3"   Grid.Column="3" Content="* Select Service Current Indicator:" Margin="4" HorizontalAlignment="Left" Style="{StaticResource ValidLabel}"  />
+            <components:SelectAllCheckComboBox x:Name="cbxServiceCurrentIndicatorFilter" Grid.Row="4"  Margin="10 10 10 10" Grid.Column="3" Command="{Binding StateChangedCommand}" ItemsSource="{Binding Path=States}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded"  >
+            </components:SelectAllCheckComboBox>
+
+
+            <Border Grid.Column="4" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
+            <telerik:Label Grid.Row="3"   Grid.Column="4" Content="* Select Par Non-Par:" Margin="4" HorizontalAlignment="Left" Style="{StaticResource ValidLabel}"  />
+            <components:SelectAllCheckComboBox x:Name="cbxParNonParFilter" Grid.Row="4"  Margin="10 10 10 10" Grid.Column="4" Command="{Binding StateChangedCommand}" ItemsSource="{Binding Path=States}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded"  >
+            </components:SelectAllCheckComboBox>
+
+
+            
+            
+            
+            
+
+            <Border Grid.Column="1" Grid.Row="5" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
+            <telerik:Label Grid.Row="5"   Grid.Column="1" Content="* Select Proc Code:" Margin="4" HorizontalAlignment="Left" Style="{StaticResource ValidLabel}"  />
+            <components:SelectAllCheckComboBox x:Name="cbxProcCodeFilter" Grid.Row="6"  Margin="10 10 10 10" Grid.Column="1" Command="{Binding StateChangedCommand}" ItemsSource="{Binding Path=States}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded"  >
+            </components:SelectAllCheckComboBox>
+
+            <Border Grid.Column="2" Grid.Row="5" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
+            <telerik:Label Grid.Row="5"   Grid.Column="2" Content="* Select Claim Status:" Margin="4" HorizontalAlignment="Left" Style="{StaticResource ValidLabel}"  />
+            <components:SelectAllCheckComboBox x:Name="cbxClaimStatusFilter" Grid.Row="6"  Margin="10 10 10 10" Grid.Column="2" Command="{Binding StateChangedCommand}" ItemsSource="{Binding Path=States}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded"  >
+            </components:SelectAllCheckComboBox>
+
+            <Border Grid.Column="3" Grid.Row="5" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
+            <telerik:Label Grid.Row="5"   Grid.Column="3" Content="* Select Fund Description:" Margin="4" HorizontalAlignment="Left" Style="{StaticResource ValidLabel}"  />
+            <components:SelectAllCheckComboBox x:Name="cbxFundDescriptionFilter" Grid.Row="6"  Margin="10 10 10 10" Grid.Column="3" Command="{Binding StateChangedCommand}" ItemsSource="{Binding Path=States}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded"  >
+            </components:SelectAllCheckComboBox>
+
+
+            <Border Grid.Column="4" Grid.Row="5" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
+            <telerik:Label Grid.Row="5"   Grid.Column="4" Content="* Select Covid Indicator:" Margin="4" HorizontalAlignment="Left" Style="{StaticResource ValidLabel}"  />
+            <components:SelectAllCheckComboBox x:Name="cbxCovidIndicatorFilter" Grid.Row="6"  Margin="10 10 10 10" Grid.Column="4" Command="{Binding StateChangedCommand}" ItemsSource="{Binding Path=States}" ItemSelectionChanged="cbx_ItemSelectionChanged" Loaded="cbx_Loaded"  >
+            </components:SelectAllCheckComboBox>
+
+
+
+
+
+
 
 
         </Grid>
