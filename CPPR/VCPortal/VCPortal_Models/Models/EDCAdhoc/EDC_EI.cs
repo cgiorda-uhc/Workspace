@@ -11,7 +11,7 @@ public class EDC_EI
 	public string CLM_ID { get; set; }
 	public string ICN { get; set; }
 	public string PROV_TIN { get; set; } 
-	public Int64 MPIN { get; set; } 
+	public int MPIN { get; set; } 
 	public string SRVC_PROV_NM { get; set; } 
 	public DateTime FST_SRVC_DT { get; set; } 
 	public string BILLED_PROCEDURE_CODE { get; set; } 

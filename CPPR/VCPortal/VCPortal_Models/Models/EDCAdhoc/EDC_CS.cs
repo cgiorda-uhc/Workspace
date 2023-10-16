@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 namespace VCPortal_Models.Models.EDCAdhoc;
 public class EDC_CS
 {
-    public Int64 MPIN { get; set; }
+    public int MPIN { get; set; }
     public string IRS_TAX_ID { get; set; }
     public string CLCL_ID { get; set; }
-    public Int64 CDML_SEQ_NO { get; set; }
+    public int CDML_SEQ_NO { get; set; }
     public string CLCL_CUR_STS { get; set; }
     public string Proc_Cd { get; set; }
     public string PROC_DESC { get; set; }
