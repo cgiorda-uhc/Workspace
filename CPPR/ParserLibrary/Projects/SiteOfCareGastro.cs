@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DocumentFormat.OpenXml.Bibliography;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -54,7 +55,19 @@ public class SiteOfCareGastro : ISiteOfCare
 
             Log.Information($"Searching for new files...");
             //COMPARE LAST DATE WITH NEW FILESD
-            var newFiles = getNewFiles(_config.FileLists, lastestFileDate);
+            // var newFiles = getNewFiles(_config.FileLists, lastestFileDate);
+
+
+
+            var newFiles = new  List<string>();
+            newFiles.Add("C:\\Users\\cgiorda\\Desktop\\New folder (2)\\Oxford Gastro Monthly Reports - September 2023.zip");
+            _month = 9;
+            _year = 2023;
+            _destination = "stg.SiteOfCare_Gastro";
+
+
+
+
             if (newFiles.Count == 0)
             {
                 Log.Information($"No results found for SiteOfCare. Will try again next time");
@@ -86,8 +99,11 @@ public class SiteOfCareGastro : ISiteOfCare
             Log.Information($"Getting column mappings...");
             //MAP DB TO EXCEL COLUMN NAMES
             var closed_xml = new ClosedXMLFunctions();
+
             //GET STAGING FILES FOR PROCESSING
-            var workingFiles = Directory.GetFiles(workingPath, "*.xlsx", SearchOption.TopDirectoryOnly);
+            //var workingFiles = Directory.GetFiles(workingPath, "*.xlsx", SearchOption.TopDirectoryOnly);
+            string[] workingFiles = { "C:\\Users\\cgiorda\\Desktop\\Projects\\SiteOfCareGastro\\United Gastro SOC Waterfall_20231010.xlsx" };
+
 
             var config_sheet = _config.FileLists[0].ExcelConfigs[0];
             foreach (var file in workingFiles)
