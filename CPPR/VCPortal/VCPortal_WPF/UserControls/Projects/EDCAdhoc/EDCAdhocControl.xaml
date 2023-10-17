@@ -31,7 +31,7 @@
 
             <Style x:Key="OptionalLabel" TargetType="{x:Type Label}">
                 <Setter Property="FontFamily" Value="Calibri" />
-                <Setter Property="Foreground" Value="DarkGreen" />
+                <Setter Property="Foreground" Value="DarkOrchid" />
                 <Setter Property="FontWeight" Value="Normal" />
             </Style>
 
@@ -218,11 +218,11 @@
 
             <Border Grid.Column="3" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
             <telerik:Label  Grid.Row="1"    Grid.Column="3" Content="* DOS Start:" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"   />
-            <telerik:RadDatePicker x:Name="dtStartDate"  Grid.Row="2"   Grid.Column="3"   Margin="10 10 10 10"  VerticalAlignment="Top" HorizontalAlignment="Left" SelectedValue="01/01/2022"/>
+            <telerik:RadDatePicker x:Name="dtStartDate" Width="123"  Grid.Row="2"   Grid.Column="3"   Margin="10 10 10 10"  VerticalAlignment="Top" HorizontalAlignment="Left" SelectedValue="01/01/2022"/>
 
             <Border Grid.Column="4" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
             <telerik:Label  Grid.Row="1"    Grid.Column="4" Content="* DOS End:" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"  />
-            <telerik:RadDatePicker x:Name="dtEndDate"  Grid.Row="2"   Grid.Column="4"   Margin="10 10 10 10"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="115" SelectedValue="12/31/2022"/>
+            <telerik:RadDatePicker x:Name="dtEndDate"  Grid.Row="2"   Grid.Column="4"   Margin="10 10 10 10"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="123" SelectedValue="12/31/2022"/>
 
 
 
