@@ -26,7 +26,17 @@ namespace VCPortal_WPF.Converters
                     if (cnt == values.Length - 1)
                         continue;
 
-                    if (value + "" == "" || value + "" == "0")//NULL OR ZERO DISABLE!!!
+                    var t = value.GetType();
+                    if (t== typeof(System.Windows.Controls.ItemCollection))
+                    {
+                        if(( value as System.Windows.Controls.ItemCollection).Count <= 0)
+                        {
+                            return false;
+                        }
+                        
+                        
+                    }
+                    else if (value + "" == "" || value + "" == "0")//NULL OR ZERO DISABLE!!!
                     {
                         return false;
                     }

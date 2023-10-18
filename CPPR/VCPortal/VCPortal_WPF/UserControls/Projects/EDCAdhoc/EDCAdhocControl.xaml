@@ -142,8 +142,8 @@
                         <Binding Path="IsChecked" ElementName="radFundDescription3"/>
                         <Binding Path="IsChecked" ElementName="radFundDescription4"/>
                         
-                        <Binding Path="IsChecked" ElementName="radCovidIndicator5"/>
-                        <Binding Path="IsChecked" ElementName="radCovidIndicator6"/>
+                        <Binding Path="IsChecked" ElementName="radCovidIndicator1"/>
+                        <Binding Path="IsChecked" ElementName="radCovidIndicator2"/>
 
                         
                         
