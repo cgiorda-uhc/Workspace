@@ -45,23 +45,13 @@ public partial class EDCAdhocViewModel : ObservableObject
 
     [ObservableProperty]
     public List<string> _states;
-    [ObservableProperty]
-    public List<string> _mKT_SEG_RLLP_DESC;
-    [ObservableProperty]
-    public List<string> _fINC_ARNG_DESC;
-    [ObservableProperty]
-    public List<string> _lEG_ENTY;
-    [ObservableProperty]
-    public List<string> _cS_TADM_PRDCT_MAP;
-    [ObservableProperty]
-    public List<string> _mKT_TYP_DESC;
-    [ObservableProperty]
-    public List<string> _cUST_SEG;
+
 
     [ObservableProperty]
-    public ObservableCollection<string> _groupNumbers;
+    public List<string> _proc_Codes;
+
     [ObservableProperty]
-    public List<string> _productCode;
+    public List<string> id_Filter;
 
 
     public EDCAdhocViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
@@ -138,35 +128,6 @@ public partial class EDCAdhocViewModel : ObservableObject
         ProgressMessageViewModel.HasMessage = false;
     }
 
-
-    private List<string> _selected_states;
-    [RelayCommand]
-    private void StateChanged(object item)
-    {
-        string strItem = item.ToString();
-
-
-        if (_selected_states == null)
-            _selected_states = new List<string>();
-
-        if (strItem == "--All--")
-        {
-
-            _selected_states.Clear();
-        }
-        else if (_selected_states.Contains(strItem))
-        {
-            _selected_states.Remove(strItem);
-        }
-        else
-        {
-            _selected_states.Add(strItem);
-        }
-
-        cleanGroups();
-
-
-    }
 
 
     private object _params;
@@ -317,9 +278,6 @@ public partial class EDCAdhocViewModel : ObservableObject
             }
 
 
-
-
-
             _sbStatus.Append("--Retreiving EI details data from Database" + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
 
@@ -347,42 +305,6 @@ public partial class EDCAdhocViewModel : ObservableObject
 
 
             }
-
-
-
-            //NOT NEEDED!!!
-            //_sbStatus.Append("--Retreiving All EI details data from Database" + Environment.NewLine);
-            //ProgressMessageViewModel.Message = _sbStatus.ToString();
-
-            //api = _config.APIS.Where(x => x.Name == "MHP_EI_Details_All").FirstOrDefault();
-            //WebAPIConsume.BaseURI = api.BaseUrl;
-            //response = await WebAPIConsume.PostCall<MHP_EI_Parameters_All>(api.Url, ei_param_all);
-            //if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            //{
-
-            //    UserMessageViewModel.IsError = true;
-            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-            //    _logger.Error("EDC Adhoc All Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-            //    return;
-            //}
-            //else
-            //{
-
-            //    var reponseStream = await response.Content.ReadAsStreamAsync();
-            //    var result = await JsonSerializer.DeserializeAsync<List<MHPEIDetails_Model>>(reponseStream, new JsonSerializerOptions
-            //    {
-            //        PropertyNameCaseInsensitive = true
-            //    });
-
-            //    mhp_details_final_all = result;
-
-
-            //}
-
-
-
-
-
 
 
             CancellationTokenSource cancellationToken;
@@ -507,33 +429,24 @@ public partial class EDCAdhocViewModel : ObservableObject
                 _logger.Error("populateFilters.MHP_GroupState threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
             }
 
-
-            States = new List<string>(_mhpReportingFilters.Where(x => x.Filter_Type == "State_of_Issue").GroupBy(s => s.Filter_Value).Select(g => g.First()).OrderBy(s => s.Filter_Value).Select(g => g.Filter_Value).ToList() as List<string>);
+            var abbr = StatesArray.Abbreviations();
+            States = new List<string>(abbr);
             States.Insert(0, "--All--");
 
-            MKT_SEG_RLLP_DESC = new List<string>(_mhpReportingFilters.Where(x => x.Filter_Type == "MKT_SEG_RLLP_DESC").GroupBy(s => s.Filter_Value).Select(g => g.First()).OrderBy(s => s.Filter_Value).Select(g => g.Filter_Value).ToList() as List<string>);
-            MKT_SEG_RLLP_DESC.Insert(0, "--All--");
 
-            FINC_ARNG_DESC = new List<string>(_mhpReportingFilters.Where(x => x.Filter_Type == "FINC_ARNG_DESC").GroupBy(s => s.Filter_Value).Select(g => g.First()).OrderBy(s => s.Filter_Value).Select(g => g.Filter_Value).ToList() as List<string>);
-            FINC_ARNG_DESC.Insert(0, "--All--");
+            Proc_Codes = new List<string>();
+            Proc_Codes.Add("99281");
+            Proc_Codes.Add("99282");
+            Proc_Codes.Add("99283");
+            Proc_Codes.Add("99284");
+            Proc_Codes.Add("99285");
+            Proc_Codes.Add("G0380");
+            Proc_Codes.Add("G0381");
+            Proc_Codes.Add("G0382");
+            Proc_Codes.Add("G0383");
+            Proc_Codes.Add("G0384");
+            Proc_Codes.Insert(0, "--All--");
 
-            LEG_ENTY = new List<string>(_mhpReportingFilters.Where(x => x.Filter_Type == "LEG_ENTY").GroupBy(s => s.Filter_Value).Select(g => g.First()).OrderBy(s => s.Filter_Value).Select(g => g.Filter_Value).ToList() as List<string>);
-            LEG_ENTY.Insert(0, "--All--");
-
-            CS_TADM_PRDCT_MAP = new List<string>(_mhpReportingFilters.Where(x => x.Filter_Type == "CS_TADM_PRDCT_MAP").GroupBy(s => s.Filter_Value).Select(g => g.First()).OrderBy(s => s.Filter_Value).Select(g => g.Filter_Value).ToList() as List<string>);
-            CS_TADM_PRDCT_MAP.Insert(0, "--All--");
-
-            MKT_TYP_DESC = new List<string>(_mhpReportingFilters.Where(x => x.Filter_Type == "MKT_TYP_DESC").GroupBy(s => s.Filter_Value).Select(g => g.First()).OrderBy(s => s.Filter_Value).Select(g => g.Filter_Value).ToList() as List<string>);
-            MKT_TYP_DESC.Insert(0, "--All--");
-
-            CUST_SEG = new List<string>(_mhpReportingFilters.Where(x => x.Filter_Type == "CUST_SEG").GroupBy(s => s.Filter_Value).Select(g => g.First()).OrderBy(s => s.Filter_Value).Select(g => g.Filter_Value).ToList() as List<string>);
-            CUST_SEG.Insert(0, "--All--");
-
-            ProductCode = new List<string>(_mhpReportingFilters.Where(x => x.Filter_Type == "PRDCT_CD").GroupBy(s => s.Filter_Value).Select(g => g.First()).OrderBy(s => s.Filter_Value).Select(g => g.Filter_Value).ToList() as List<string>);
-            ProductCode.Insert(0, "--All--");
-
-            GroupNumbers = new ObservableCollection<string>(_mhpGroupState.GroupBy(s => s.Group_Number).Select(g => g.First()).OrderBy(s => s.Group_Number).Select(g => g.Group_Number).ToList() as List<string>);
-            GroupNumbers.Insert(0, "--All--");
 
         }
         catch (Exception ex)
@@ -544,25 +457,7 @@ public partial class EDCAdhocViewModel : ObservableObject
         }
     }
 
-    private void cleanGroups()
-    {
-
-        List<string> tmp;
-        this.GroupNumbers.Clear();
-
-        if (_selected_states.Count() > 0)
-            tmp = _mhpGroupState.Where(x => _selected_states.Contains(x.State_of_Issue)).GroupBy(s => s.Group_Number).Select(g => g.First()).OrderBy(s => s.Group_Number).Select(g => g.Group_Number).ToList();
-        else
-            tmp = _mhpGroupState.GroupBy(s => s.Group_Number).Select(g => g.First()).OrderBy(s => s.Group_Number).Select(g => g.Group_Number).ToList();
-
-        foreach (string s in tmp)
-        {
-            this.GroupNumbers.Add(s);
-        }
-        this.GroupNumbers.Insert(0, "--All--");
-    }
-
-
+  
     private IMHPUniverseConfig prepareConfig(IConfiguration config)
     {
 

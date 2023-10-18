@@ -18,5 +18,10 @@ public class SelectAllCheckComboBox : CheckComboBox
         {
             this.SetCurrentValue(CheckComboBox.TextProperty, newValue);
         }
+
+        //this.SelectAll();
     }
 }
+
+
+

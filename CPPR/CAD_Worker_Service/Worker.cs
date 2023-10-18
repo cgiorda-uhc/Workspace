@@ -138,15 +138,14 @@ namespace CAD_Worker_Service
             }
 
 
-            var cfg = options.Find(p => p.Name == "SiteOfCareGastro");
+            var cfg = options.Find(p => p.Name == "DataSourceVerification");
             if (cfg != null && _tasksManager != null)
             {
                 schedule = cfg.Schedule;
-
                 //CREATE NEW TIMER TASK
-                timer = new CronosTimer("8 13 * * *");
+                timer = new CronosTimer("7 9 * * *");
                 //USING TOKEN FROM EVENT
-                timer.Elapsed += HandleTimerElapsed(_tasksManager.SiteOfCareGastroDataRefreshAsync);
+                timer.Elapsed += HandleTimerElapsed(_tasksManager.CheckDataSourcesAsync);
                 // USING STOPPINGTOKEN
                 //timer.Elapsed += HandleTimerElapsed(_ => _tasksManager.CheckDataSourcesAsync(cancellationToken));
                 //ADD TO LIST FOR EASY DISPOSE ON STOP

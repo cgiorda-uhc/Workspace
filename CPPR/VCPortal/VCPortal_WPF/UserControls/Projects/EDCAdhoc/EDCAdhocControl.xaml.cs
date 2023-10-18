@@ -26,6 +26,7 @@ public partial class EDCAdhocControl : UserControl
         InitializeComponent();
 
         modalContentControl.Content = new StatusControl();
+
     }
 
 
@@ -85,10 +86,8 @@ public partial class EDCAdhocControl : UserControl
     private void cbx_Loaded(object sender, RoutedEventArgs e)
     {
         blJustProcessed = false;
+
     }
-
-
-
 
 
     private void checkForAll(SelectAllCheckComboBox _checkComboBox, string strValue, bool isSelected)
@@ -112,26 +111,11 @@ public partial class EDCAdhocControl : UserControl
     }
 
 
-    private void checkForAll(SelectAllCheckComboBoxTilde _checkComboBox, string strValue, bool isSelected)
+    private void OnSourceUpdated(Object sender, DataTransferEventArgs args)
     {
-        if (strValue == "-9999" || strValue == "--All--")
-        {
-            // Select All
-            if (isSelected)
-            {
-
-                blJustProcessed = true;
-                _checkComboBox.SelectAll();
-
-            }
-            else
-            {
-
-                _checkComboBox.UnSelectAll();
-            }
-        }
+        var i = args.Property;
+        var _checkComboBox = (SelectAllCheckComboBox)sender;
+        _checkComboBox.SelectAll();
     }
-
-
 
 }
