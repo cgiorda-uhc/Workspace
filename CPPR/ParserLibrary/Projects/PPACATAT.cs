@@ -62,7 +62,17 @@ namespace ProjectManagerLibrary.Projects
 
                 Log.Information($"Searching for new files...");
                 //COMPARE LAST DATE WITH NEW FILESD
-                var newFiles = getNewFiles(_config.FileLists, lastestFileDate);
+                // var newFiles = getNewFiles(_config.FileLists, lastestFileDate);
+
+
+
+                var newFiles = new List<string>();
+                newFiles.Add("C:\\Users\\cgiorda\\Desktop\\ManualProjects\\Over_All_September_2023.zip");
+                _month = 9;
+                _year = 2023;
+                _destination = "stg.EviCore_TAT";
+
+
 
                 if (newFiles.Count == 0)
                 {
@@ -100,7 +110,11 @@ namespace ProjectManagerLibrary.Projects
                 var closed_xml = new ClosedXMLFunctions();
                 closed_xml.Mappings = getColumnMappings();
                 //GET STAGING FILES FOR PROCESSING
-                var workingFiles = Directory.GetFiles(workingPath, "*.xlsx", SearchOption.TopDirectoryOnly);
+                //var workingFiles = Directory.GetFiles(workingPath, "*.xlsx", SearchOption.TopDirectoryOnly);
+
+                string[] workingFiles = { "C:\\Users\\cgiorda\\Desktop\\Projects\\PPACA_TAT\\United_Enterprise_Wide_Routine_TAT_UHC_Enterprise_2023_09.xlsx", "C:\\Users\\cgiorda\\Desktop\\Projects\\PPACA_TAT\\United_Enterprise_Wide_Urgent_TAT_UHC_Enterprise_2023_09.xlsx" };
+
+
                 foreach (var file in workingFiles)
                 {
                     //GET ALL SHEETS

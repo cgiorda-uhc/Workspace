@@ -95,9 +95,9 @@ adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Repor
 
 
 
+await adHoc.PPACA_TAT_Email();
 
-
-
+return;
 
 
 List<string> files_loaded = new List<string>();

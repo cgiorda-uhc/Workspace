@@ -50,7 +50,15 @@ public class EvicoreScorecard : IEvicoreScorecard
 
             Log.Information($"Searching for new files...");
             //COMPARE LAST DATE WITH NEW FILESD
-            var newFiles = getNewFiles(_config.FileLists, lastestFileDate);
+            //var newFiles = getNewFiles(_config.FileLists, lastestFileDate);
+
+
+            var newFiles = new List<string>();
+            newFiles.Add("C:\\Users\\cgiorda\\Desktop\\ManualProjects\\Over_All_September_2023.zip");
+            _month = 9;
+            _year = 2023;
+            _destination = "stg.EviCore_Scorecard";
+
 
             if (newFiles.Count == 0)
             {
@@ -99,7 +107,11 @@ public class EvicoreScorecard : IEvicoreScorecard
             var ignore = getColumnsToIgnore();
             var headerMappings = getHeaderMappings();
             //GET STAGING FILES FOR PROCESSING
-            var workingFiles = Directory.GetFiles(workingPath, "*.xls*", SearchOption.TopDirectoryOnly);
+            //var workingFiles = Directory.GetFiles(workingPath, "*.xls*", SearchOption.TopDirectoryOnly);
+
+
+            string[] workingFiles = { "C:\\Users\\cgiorda\\Desktop\\Projects\\EvicoreScorecard\\UHC_Scorecard_2023_09.xls" };
+
             foreach (var file in workingFiles)
             {
                 //RESET FOR NEW FILE
