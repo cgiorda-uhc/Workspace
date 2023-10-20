@@ -29,4 +29,4 @@ INNER JOIN (SELECT DISTINCT[ETG_BAS_CLSS_NBR],[TRT_CD],[NRX] FROM [etgsymm].[VW_
  AND  f.Has_NRX = 1
  AND  f.ETG_Base_Class <> 000000
 AND f.Premium_Specialty_Id IS NOT NULL
-AND f.ETG_Fact_Symmetry_Id IN  (SELECT ETG_Fact_Symmetry_Id FROM [etgsymm].[VW_ETG_Summary_Final] WHERE [UGAP_Changes] <> 'Not Mapped' AND PC_Current_Attribution in ('If Involved', 'Always Attributed'))
+AND f.ETG_Fact_Symmetry_Id IN  (SELECT ETG_Fact_Symmetry_Id FROM [etgsymm].[VW_ETG_Summary_Final_PTC] WHERE [UGAP_Changes] <> 'Not Mapped' AND PC_Current_Attribution in ('If Involved', 'Always Attributed'))

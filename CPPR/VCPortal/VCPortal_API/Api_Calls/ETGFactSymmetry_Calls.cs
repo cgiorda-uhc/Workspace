@@ -43,6 +43,36 @@ public static class ETGFactSymmetry_Calls
         });
 
 
+
+        //ALL OF MY API ENDPOINT MAPPING
+        app.MapGet(pattern: "/etgsymmetryptc", async (IETGFactSymmetry_Repo repo, CancellationToken token) =>
+        {
+            try
+            {
+                _log.Information("Requesting API GetETGFactSymmetryPTCDisplay()...");
+                ///RETURN HTTP 200
+                ///
+                var results = await repo.GetETGFactSymmetryPTCDisplayAsync(token);
+
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetETGFactSymmetryPTCDisplay() 404, not found");
+                return Results.NotFound(); //404
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, "API GetETGFactSymmetryPTCDisplay threw an error");
+                //RETURN ERROR
+                return Results.Problem(ex.Message);
+
+            }
+        });
+
+
+
         //ALL OF MY API ENDPOINT MAPPING
         app.MapGet(pattern: "/etgsymmetryadhoc/{version}", async (IETGFactSymmetry_Repo repo, int version) =>
         {
@@ -342,7 +372,31 @@ public static class ETGFactSymmetry_Calls
             }
         });
 
+        app.MapGet(pattern: "/etgsumfinalptc", async (IETGFactSymmetry_Repo repo, CancellationToken token) =>
+        {
+            try
+            {
+                _log.Information("Requesting API GetETGSummaryPTCFinalAsync()...");
+                ///RETURN HTTP 200
+                ///
+                var results = await repo.GetETGSummaryPTCFinalAsync(token);
 
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetETGSummaryPTCFinalAsync() 404, not found");
+                return Results.NotFound(); //404
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, "API GetETGSummaryPTCFinalAsync threw an error");
+                //RETURN ERROR
+                return Results.Problem(ex.Message);
+
+            }
+        });
 
         app.MapGet(pattern: "/etgpdversion", async (IETGFactSymmetry_Repo repo, CancellationToken token) =>
         {

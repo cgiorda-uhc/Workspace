@@ -39,6 +39,19 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
         return results;
     }
 
+    public Task<IEnumerable<ETGFactSymmetry_ReadDto>> GetETGFactSymmetryPTCDisplayAsync(CancellationToken token)
+    {
+
+        string strSQL = "SELECT * FROM [etgsymm].[VW_ETG_Symmetry_Main_Interface_PTC] ORDER BY Premium_Specialty, ETG_Description;";
+
+        var results = _db.LoadData<ETGFactSymmetry_ReadDto>(sql: strSQL, token, connectionId: "VCT_DB");
+
+        return results;
+    }
+
+
+
+
     public async Task<IEnumerable<ETGSummaryAdhocConfig>> GetETGFactSymmetryAdhocAsync(int version)
     {
         var results = await _db.LoadData<ETGSummaryAdhocConfig, dynamic>(storedProcedure: "etgsymm.sp_ETG_Symmetry_Adhoc", new { version = version });
@@ -168,6 +181,19 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
 
         return results;
     }
+
+
+
+    public Task<IEnumerable<ETGSummaryFinalConfig>> GetETGSummaryPTCFinalAsync(CancellationToken token)
+    {
+
+        string strSQL = "SELECT * FROM [etgsymm].[VW_ETG_Summary_Final_PTC] ORDER BY Premium_Specialty, ETG_Description;";
+
+        var results = _db.LoadData<ETGSummaryFinalConfig>(sql: strSQL, token, connectionId: "VCT_DB");
+
+        return results;
+    }
+
 
     public async Task InsertETGFactSymmetryTracking(List<ETGFactSymmetry_Tracking_UpdateDto> ETG, string connectionId)
     {

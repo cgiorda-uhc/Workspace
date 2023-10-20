@@ -173,7 +173,7 @@ namespace ConsoleLibraryTesting
                 //FIND CURRENT MEMBERS
                 var mhp_search = (await db_sql.LoadData<MHPMemberSearchModel>(connectionString: ConnectionStringMSSQL, sql));
                 total = mhp_search.Count();
-                Console.WriteLine(total + " records found");
+                Console.WriteLine(total + " records found for  SM:" + param.SearchMethod + "   LOS:" + param.LOS + "");
                 total_counter = 0;
                 limit_counter = 0;
 
@@ -322,7 +322,7 @@ namespace ConsoleLibraryTesting
             await db_sql.BulkSave<MHP_Reporting_Filters>(connectionString: ConnectionStringVC, "mhp.MHP_Universes_Filter_Cache", fs, columns, truncate: true);
 
 
-            //await SharedFunctions.EmailAsync("jon.piotrowski@uhc.com;renee_l_struck@uhc.com;hong_gao@uhc.com", "chris_giordano@uhc.com", "MHPUniverse was refreshed", "MHPUniverse was refreshed", "chris_giordano@uhc.com;laura_fischer@uhc.com;inna_rudi@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
+            //await SharedFunctions.EmailAsync("jon.piotrowski@uhc.com;renee_l_struck@uhc.com;hong_gao@uhc.com", "chris_giordano@uhc.com", "MHPUniverse August 2023 was refreshed", "MHPUniverse August 2023 was refreshed", "chris_giordano@uhc.com;laura_fischer@uhc.com;inna_rudi@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
         }
 
 
@@ -335,7 +335,10 @@ namespace ConsoleLibraryTesting
             //ETG DATA LOAD
 
             List<ETGVersion_Model> v = new List<ETGVersion_Model>();
-            v.Add(new ETGVersion_Model() { PD_Version = 16, Year = 2022 });
+
+            //v.Add(new ETGVersion_Model() { PD_Version = 18, Year = 2024 });
+            //v.Add(new ETGVersion_Model() { PD_Version = 17, Year = 2023 });
+            v.Add(new ETGVersion_Model() { PD_Version = 16, Year = 2022 }); //RUN
             v.Add(new ETGVersion_Model() { PD_Version = 15, Year = 2021 });
             v.Add(new ETGVersion_Model() { PD_Version = 14, Year = 2020 });
 
@@ -360,7 +363,7 @@ namespace ConsoleLibraryTesting
             lst_lob.Add("MEDICARE");
             lst_lob.Add("MEDICAID");
 
-            List<string> lst_yr = new List<string>();
+            List<string> lst_yr = new List<string>(); //July 2021 - June 2023
             lst_yr.Add("2021");
             lst_yr.Add("2022");
 
@@ -477,7 +480,7 @@ namespace ConsoleLibraryTesting
 
 
             //STEP 8 [etg].[ETG_Dataload_EC_AGG] CACHE
-            strSQL = "TRUNCATE TABLE [etg].[ETG_Dataload_EC_AGG];INSERT INTO [etg].[ETG_Dataload_EC_AGG] ([Premium_Specialty] ,[ETG_Base_Class] ,[EC_Treatment_Indicator] ,[EC_Episode_Count] ,[EC_Total_Cost] ,[EC_Average_Cost] ,[EC_Coefficients_of_Variation] ,[EC_Normalized_Pricing_Episode_Count] ,[EC_Normalized_Pricing_Total_Cost] ,[EC_Spec_Episode_Count] ,[EC_Spec_Total_Cost] ,[EC_Spec_Average_Cost] ,[EC_Spec_Coefficients_of_Variation] ,[EC_Spec_Percent_of_Episodes] ,[EC_Spec_Normalized_Pricing_Episode_Count] ,[EC_Spec_Normalized_Pricing_Total_Cost] ,[EC_CV3] ,[EC_Spec_Episode_Volume] ,[PD_Mapped]) SELECT [Premium_Specialty] ,[ETG_Base_Class] ,[EC_Treatment_Indicator] ,[EC_Episode_Count] ,[EC_Total_Cost] ,[EC_Average_Cost] ,[EC_Coefficients_of_Variation] ,[EC_Normalized_Pricing_Episode_Count] ,[EC_Normalized_Pricing_Total_Cost] ,[EC_Spec_Episode_Count] ,[EC_Spec_Total_Cost] ,[EC_Spec_Average_Cost] ,[EC_Spec_Coefficients_of_Variation] ,[EC_Spec_Percent_of_Episodes] ,[EC_Spec_Normalized_Pricing_Episode_Count] ,[EC_Spec_Normalized_Pricing_Total_Cost] ,[EC_CV3] ,[EC_Spec_Episode_Volume] ,[PD_Mapped] FROM [etg].[VW_ETG_Dataload_EC_AGG;";
+            strSQL = "TRUNCATE TABLE [etg].[ETG_Dataload_EC_AGG];INSERT INTO [etg].[ETG_Dataload_EC_AGG] ([Premium_Specialty] ,[ETG_Base_Class] ,[EC_Treatment_Indicator] ,[EC_Episode_Count] ,[EC_Total_Cost] ,[EC_Average_Cost] ,[EC_Coefficients_of_Variation] ,[EC_Normalized_Pricing_Episode_Count] ,[EC_Normalized_Pricing_Total_Cost] ,[EC_Spec_Episode_Count] ,[EC_Spec_Total_Cost] ,[EC_Spec_Average_Cost] ,[EC_Spec_Coefficients_of_Variation] ,[EC_Spec_Percent_of_Episodes] ,[EC_Spec_Normalized_Pricing_Episode_Count] ,[EC_Spec_Normalized_Pricing_Total_Cost] ,[EC_CV3] ,[EC_Spec_Episode_Volume] ,[PD_Mapped]) SELECT [Premium_Specialty] ,[ETG_Base_Class] ,[EC_Treatment_Indicator] ,[EC_Episode_Count] ,[EC_Total_Cost] ,[EC_Average_Cost] ,[EC_Coefficients_of_Variation] ,[EC_Normalized_Pricing_Episode_Count] ,[EC_Normalized_Pricing_Total_Cost] ,[EC_Spec_Episode_Count] ,[EC_Spec_Total_Cost] ,[EC_Spec_Average_Cost] ,[EC_Spec_Coefficients_of_Variation] ,[EC_Spec_Percent_of_Episodes] ,[EC_Spec_Normalized_Pricing_Episode_Count] ,[EC_Spec_Normalized_Pricing_Total_Cost] ,[EC_CV3] ,[EC_Spec_Episode_Volume] ,[PD_Mapped] FROM [etg].[VW_ETG_Dataload_EC_AGG];";
             await db_sql.Execute(ConnectionStringVC, strSQL);
 
 

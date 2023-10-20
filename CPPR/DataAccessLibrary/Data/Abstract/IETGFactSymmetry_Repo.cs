@@ -38,4 +38,7 @@ public interface IETGFactSymmetry_Repo
     Task UpdateETGFactSymmetry(ETGFactSymmetry_UpdateDto etg);
 
     Task InsertETGFactSymmetryTracking(List<ETGFactSymmetry_Tracking_UpdateDto> ETG, string connectionId);
+
+    Task<IEnumerable<ETGSummaryFinalConfig>> GetETGSummaryPTCFinalAsync(CancellationToken token);
+    Task<IEnumerable<ETGFactSymmetry_ReadDto>> GetETGFactSymmetryPTCDisplayAsync(CancellationToken token);
 }

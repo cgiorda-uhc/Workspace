@@ -175,6 +175,8 @@
     <Build Include="etgsymm\StoredProcedures\sp_ETG_Symmetry_Adhoc.sql" />
     <Build Include="etg\Tables\ETG_Spec_Bilateral.sql" />
     <Build Include="etgsymm\Views\VW_ETG_Symmetry_CNFG_ETG_SPCL_TMP.sql" />
+    <Build Include="etgsymm\Views\VW_ETG_Symmetry_Main_Interface_PTC.sql" />
+    <Build Include="etgsymm\Views\VW_ETG_Summary_Final_PTC.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Cd_GetAll.sql" />
