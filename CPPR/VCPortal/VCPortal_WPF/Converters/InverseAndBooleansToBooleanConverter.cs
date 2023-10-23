@@ -26,6 +26,9 @@ namespace VCPortal_WPF.Converters
                     if (cnt == values.Length - 1)
                         continue;
 
+                    if (value == null)
+                        continue;
+
                     var t = value.GetType();
                     if (t== typeof(System.Windows.Controls.ItemCollection))
                     {

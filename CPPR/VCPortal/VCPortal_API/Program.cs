@@ -12,6 +12,7 @@ var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").A
 
 Serilog.Debugging.SelfLog.Enable(msg => Console.WriteLine(msg));
 //LOGGING SERILOG
+
 var logger = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
 builder.Logging.ClearProviders();
 //builder.Logging.AddSerilog(logger);

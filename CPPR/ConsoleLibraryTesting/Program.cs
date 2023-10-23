@@ -76,7 +76,7 @@ adHoc.ConnectionStringVC = "data source=VCT_DB;server=localhost;Persist Security
 adHoc.ConnectionStringUHPD = "data source=UHPD_Reporting;server=WP000052579;Persist Security Info=True;database=PD_Reporting;Integrated Security=SSPI;connect timeout=300000;";
 
 //adHoc.ConnectionStringPD = "data source=UHPD_Analytics;server=DBSWP0662;Persis4t Security Info=True;database=UHPD_Analytics;Integrated Security=SSPI;connect timeout=300000;";
-adHoc.ConnectionStringPD = "data source=UHPD_Analytics;server=DBSWP200136;Persis4t Security Info=True;database=UHPD_Analytics;Integrated Security=SSPI;connect timeout=300000;";
+adHoc.ConnectionStringPD = "data source=UHPD_Analytics;server=DBSWP200136;Persist Security Info=True;database=UHPD_Analytics;Integrated Security=SSPI;connect timeout=300000;";
 
 adHoc.ConnectionStringUHN = "data source=UHN_Reporting;server=WP000074441CLS;Persist Security Info=True;database=UHN_Reporting;Integrated Security=SSPI;connect timeout=300000;";
 
@@ -95,6 +95,12 @@ adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Repor
 
 
 
+
+await adHoc.getETGSymmSourceDataAsync(16);
+
+
+return;
+
 //await adHoc.PPACA_TAT_Email();
 
 //return;
@@ -112,11 +118,11 @@ files_loaded.Add("Oxford August -Gastro Universe 2023.xls");
 
 //await adHoc.cleanupMemberDataAsync(files_loaded);
 
-await adHoc.transferMHPDataAsync(files_loaded);
+//await adHoc.transferMHPDataAsync(files_loaded);
 
 
 
-return;
+//return;
 
 
 

@@ -7,6 +7,7 @@ using Serilog;
 using Serilog.Core;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Security.Principal;
@@ -31,17 +32,24 @@ public partial class App : Application
     public App()
     {
         var appsettings = "appsettings.Development.json";
-        //var appsettings = "appsettings.json";
+       // var appsettings = "appsettings.json";
 
-        var configuration = new ConfigurationBuilder().AddJsonFile(appsettings).AddEnvironmentVariables().Build();
+        var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(appsettings).AddEnvironmentVariables().Build();
+        //var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: true, reloadOnChange: true).AddEnvironmentVariables().Build();
 
 
-       // Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
+        //Serilog.Debugging.SelfLog.Enable(msg => Console.WriteLine(msg));
+
+
+         //Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
         logger = new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger();
         Log.Logger = logger;
+
+
+        //Log.Information("Starting up VC Portal...");
         logger.Information("Starting up VC Portal...");
 
-
+        //Log.Information("Authicating user...");
         logger.Information("Authicating user...");
         getAuthentication(configuration);
 
@@ -76,7 +84,8 @@ public partial class App : Application
 
             var startupForm = AppHost.Services.GetRequiredService<MainWindow>();
             startupForm.DataContext = new MainWindowViewModel("", config, excel, logger);
-            startupForm.Show();
+        //startupForm.DataContext = new MainWindowViewModel("", config, excel, Log.Logger);
+        startupForm.Show();
 
             base.OnStartup(e);
  
@@ -106,8 +115,8 @@ public partial class App : Application
             }
         }
 
-
         Authentication.Log = logger;
+        //Authentication.Log = Log.Logger;
         Authentication.UserName = WindowsIdentity.GetCurrent().Name.Split('\\')[1];
         await Authentication.SetCurrentUserAsync(ecs.API.BaseUrl, ecs.API.Url + "/" + Authentication.UserName);
 

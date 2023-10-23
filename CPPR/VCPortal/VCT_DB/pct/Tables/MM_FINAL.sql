@@ -1,0 +1,17 @@
+﻿CREATE TABLE [pct].[MM_FINAL](
+	[source] [varchar](17) NULL,
+	[LOB] [varchar](3) NULL,
+	[year] [int] NULL,
+	[quarter] [int] NULL,
+	[HLTH_PLN_FUND_DESC] [varchar](10) NULL,
+	[REGION] [varchar](7) NULL,
+	[mapping_state] [varchar](20) NULL,
+	[PRDCT_LVL_1_NM] [varchar](30) NULL,
+	[CS_TADM_PRDCT_MAP] [varchar](30) NULL,
+	[CS_PRDCT_CD_DESC] [varchar](40) NULL,
+	[HCE_LEG_ENTY_ROLLUP_DESC] [varchar](20) NULL,
+	[SRC_SYS_GRP_DESC] [varchar](10) NULL,
+	[CS_DUAL_IND] [varchar](8) NULL,
+	[MR_DUAL_IND] [varchar](8) NULL,
+	[Mbr_Month] [float] NULL
+) ON [PRIMARY]
