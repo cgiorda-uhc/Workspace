@@ -154,63 +154,134 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
     }
 
 
+    private List<string> _selected_lobs;
+    private List<string> _selected_states;
     private List<string> _selected_regions;
+    private List<string> _selected_products;
+    private List<string> _selected_cs_products;
+    private List<string> _selected_funding_types;
+    private List<string> _selected_legal_entitys;
+    private List<string> _selected_sources;
+    private List<string> _selected_cs_dual_indicators;
+    private List<string> _selected_mr_dual_indicators;
+
+
+
+    [RelayCommand]
+    private void LOBChanged(object item)
+    {
+        cleanCurrentList(ref _selected_lobs, item);
+        cleanCurrentFilters();
+    }
+
     [RelayCommand]
     private void RegionChanged(object item)
     {
-        string strItem = item.ToString();
-
-
-        if (_selected_regions == null)
-            _selected_regions = new List<string>();
-
-        if (strItem == "--All--")
-        {
-
-            _selected_regions.Clear();
-        }
-        else if (_selected_regions.Contains(strItem))
-        {
-            _selected_regions.Remove(strItem);
-        }
-        else
-        {
-            _selected_regions.Add(strItem);
-        }
-
-        cleanGroups();
-      
-
+        cleanCurrentList(ref _selected_regions, item);
+        cleanCurrentFilters();
     }
 
-    private List<string> _selected_markets;
+
     [RelayCommand]
     private void StateChanged(object item)
     {
+        cleanCurrentList(ref _selected_states, item);
+        cleanCurrentFilters();
+    }
+
+
+    [RelayCommand]
+    private void ProductChanged(object item)
+    {
+        cleanCurrentList(ref _selected_products, item);
+        cleanCurrentFilters();
+    }
+
+    [RelayCommand]
+    private void CSProductChanged(object item)
+    {
+        cleanCurrentList(ref _selected_cs_products, item);
+        cleanCurrentFilters();
+    }
+
+
+    [RelayCommand]
+    private void FundingTypeChanged(object item)
+    {
+        cleanCurrentList(ref _selected_funding_types, item);
+        cleanCurrentFilters();
+    }
+
+    [RelayCommand]
+    private void LegalEntityChanged(object item)
+    {
+        cleanCurrentList(ref _selected_legal_entitys, item);
+        cleanCurrentFilters();
+    }
+
+    [RelayCommand]
+    private void SourceChanged(object item)
+    {
+        cleanCurrentList(ref _selected_sources, item);
+        cleanCurrentFilters();
+    }
+
+
+    [RelayCommand]
+    private void CSDualIndicatorChanged(object item)
+    {
+        cleanCurrentList(ref _selected_cs_dual_indicators, item);
+        cleanCurrentFilters();
+    }
+
+    [RelayCommand]
+    private void MRDualIndicatorChanged(object item)
+    {
+        cleanCurrentList(ref _selected_mr_dual_indicators, item);
+        cleanCurrentFilters();
+    }
+
+    private void cleanCurrentList(ref List<string> lst, object item)
+    {
         string strItem = item.ToString();
-
-
-        if (_selected_markets == null)
-            _selected_markets = new List<string>();
+        if (lst == null)
+            lst = new List<string>();
 
         if (strItem == "--All--")
         {
-
-            _selected_markets.Clear();
+            lst.Clear();
         }
-        else if (_selected_markets.Contains(strItem))
+        else if (lst.Contains(strItem))
         {
-            _selected_markets.Remove(strItem);
+            lst.Remove(strItem);
         }
         else
         {
-            _selected_markets.Add(strItem);
+            lst.Add(strItem);
         }
-
-        cleanGroups();
 
 
     }
+
+    private void cleanCurrentFilters()
+    {
+
+        //List<string> tmp;
+        //this.GroupNumbers.Clear();
+
+        //if (_selected_states.Count() > 0)
+        //    tmp = _mhpGroupState.Where(x => _selected_states.Contains(x.State_of_Issue)).GroupBy(s => s.Group_Number).Select(g => g.First()).OrderBy(s => s.Group_Number).Select(g => g.Group_Number).ToList();
+        //else
+        //    tmp = _mhpGroupState.GroupBy(s => s.Group_Number).Select(g => g.First()).OrderBy(s => s.Group_Number).Select(g => g.Group_Number).ToList();
+
+        //foreach (string s in tmp)
+        //{
+        //    this.GroupNumbers.Add(s);
+        //}
+        //this.GroupNumbers.Insert(0, "--All--");
+    }
+
+
 
 
     private object _params;
@@ -557,23 +628,6 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
         }
     }
 
-    private void cleanGroups()
-    {
-
-        //List<string> tmp;
-        //this.GroupNumbers.Clear();
-
-        //if (_selected_states.Count() > 0)
-        //    tmp = _mhpGroupState.Where(x => _selected_states.Contains(x.State_of_Issue)).GroupBy(s => s.Group_Number).Select(g => g.First()).OrderBy(s => s.Group_Number).Select(g => g.Group_Number).ToList();
-        //else
-        //    tmp = _mhpGroupState.GroupBy(s => s.Group_Number).Select(g => g.First()).OrderBy(s => s.Group_Number).Select(g => g.Group_Number).ToList();
-
-        //foreach (string s in tmp)
-        //{
-        //    this.GroupNumbers.Add(s);
-        //}
-        //this.GroupNumbers.Insert(0, "--All--");
-    }
 
 
     private IMHPUniverseConfig prepareConfig(IConfiguration config)
