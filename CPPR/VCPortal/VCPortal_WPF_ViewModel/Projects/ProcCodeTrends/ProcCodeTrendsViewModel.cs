@@ -25,6 +25,7 @@ using VCPortal_Models.Dtos.ChemoPx;
 using VCPortal_Models.Dtos.ETGFactSymmetry;
 using VCPortal_Models.Models.ChemoPx;
 using VCPortal_Models.Models.MHP;
+using VCPortal_Models.Models.ProcCodeTrends;
 using VCPortal_Models.Parameters.MHP;
 using VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
 using VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;
@@ -37,9 +38,8 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
     private readonly IMHPUniverseConfig ? _config;
     private readonly Serilog.ILogger _logger;
     private StringBuilder _sbStatus;
-    private List<MHP_Reporting_Filters> _mhpReportingFilters { get; set; }
+    private List<MM_FINAL_Model> _mM_Final_Filters { get; set; }
 
-    private List<MHP_Group_State_Model> _mhpGroupState { get; set; }
 
     private readonly BackgroundWorker worker = new BackgroundWorker();
 
@@ -57,34 +57,31 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
     public MessageViewModel ProgressMessageViewModel { get; }
     public MessageViewModel UserMessageViewModel { get; }
 
-
-
     [ObservableProperty]
-    public List<string> _region;//CENTRAL, EAST
+    public List<string> _lOB;
     [ObservableProperty]
-    public List<string> _market;//COLORADO MINOR, COLUMBUS MINOR
+    public List<string> _region;
     [ObservableProperty]
-    public List<string> _major_Market;//CALIFORNIA MAJOR
+    public List<string> _state;
 
 
+ 
     [ObservableProperty]
     public List<string> _product; //COMMERCIAL, NULL
     [ObservableProperty]
-    public List<string> _funding_Type; //ASO, INSURED
+    public List<string> _cSProduct; //OP, PHYS
     [ObservableProperty]
-    public List<string> _op_Phys; //OP, PHYS
+    public List<string> _fundingType; //ASO, INSURED
 
 
-
-
     [ObservableProperty]
-    public List<string> _service_Type; //AMBULANCE, DME;SUPPLIES,EMERGENCY ROOM
+    public List<string> _legalEntity;//HP OP HP JV, MAMSI, NEIGHBORHOOD
     [ObservableProperty]
-    public List<string> _pAR;//NON-PAR PROVIDER, PAR PROVIDER
+    public List<string> _source;//CIRRUS, OXFORD, TOPS/UNET
     [ObservableProperty]
-    public List<string> _legal_Entity;//HP OP HP JV, MAMSI, NEIGHBORHOOD
+    public List<string> _cSDualIndicator;
     [ObservableProperty]
-    public List<string> _source_System;//CIRRUS, OXFORD, TOPS/UNET
+    public List<string> _mRDualIndicator;
 
     public ProcCodeTrendsViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
     {
@@ -188,7 +185,7 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
     private List<string> _selected_markets;
     [RelayCommand]
-    private void MarketChanged(object item)
+    private void StateChanged(object item)
     {
         string strItem = item.ToString();
 
@@ -487,10 +484,8 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
     {
         try
         {
-            return;
 
-
-            var api = _config.APIS.Where(x => x.Name == "MHP_Filters").FirstOrDefault();
+            var api = _config.APIS.Where(x => x.Name == "PCT_MM_Final").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("--Getting Cached Filters..." + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
@@ -499,48 +494,57 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
             if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
             {
                 var reponseStream = await response.Result.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<MHP_Reporting_Filters>>(reponseStream, new JsonSerializerOptions
+                var result = await JsonSerializer.DeserializeAsync<List<MM_FINAL_Model>>(reponseStream, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
 
-                _mhpReportingFilters = result;
+                _mM_Final_Filters = result;
             }
             else
             {
                 UserMessageViewModel.IsError = true;
                 UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("populateFilters.MHP_Filters threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
+                _logger.Error("populateFilters.MM_Final_Filters threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
             }
 
-
-
-            api = _config.APIS.Where(x => x.Name == "MHP_GroupState").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
-            _sbStatus.Append("--Getting Group/State Mapping..." + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
-            await Task.Delay(TimeSpan.FromSeconds(1));
-            response = WebAPIConsume.GetCall(api.Url);
-            if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                var reponseStream = await response.Result.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<MHP_Group_State_Model>>(reponseStream, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                _mhpGroupState = result;
-            }
-            else
-            {
-                UserMessageViewModel.IsError = true;
-                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("populateFilters.MHP_GroupState threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
-            }
 
 
             //States = new List<string>(_mhpReportingFilters.Where(x=> x.Filter_Type == "State_of_Issue").GroupBy(s => s.Filter_Value).Select(g => g.First()).OrderBy(s => s.Filter_Value).Select(g => g.Filter_Value).ToList() as List<string>);
             //States.Insert(0, "--All--");
+
+
+            LOB  = _mM_Final_Filters.Select(x => x.LOB).Distinct().OrderBy(t => t).ToList();
+            LOB.Insert(0, "--All--");
+
+            Region = _mM_Final_Filters.Select(x => x.REGION).Distinct().OrderBy(t => t).ToList();
+            Region.Insert(0, "--All--");
+
+            State = _mM_Final_Filters.Select(x => x.mapping_state).Distinct().OrderBy(t => t).ToList();
+            State.Insert(0, "--All--");
+
+            Product = _mM_Final_Filters.Select(x => x.PRDCT_LVL_1_NM).Distinct().OrderBy(t => t).ToList();
+            Product.Insert(0, "--All--");
+
+            CSProduct = _mM_Final_Filters.Select(x => x.CS_TADM_PRDCT_MAP).Distinct().OrderBy(t => t).ToList();
+            CSProduct.Insert(0, "--All--");
+
+            FundingType = _mM_Final_Filters.Select(x => x.HLTH_PLN_FUND_DESC).Distinct().OrderBy(t => t).ToList();
+            FundingType.Insert(0, "--All--");
+
+            LegalEntity = _mM_Final_Filters.Select(x => x.HCE_LEG_ENTY_ROLLUP_DESC).Distinct().OrderBy(t => t).ToList();
+            LegalEntity.Insert(0, "--All--");
+
+            Source = _mM_Final_Filters.Select(x => x.SRC_SYS_GRP_DESC).Distinct().OrderBy(t => t).ToList();
+            Source.Insert(0, "--All--");
+
+            CSDualIndicator = _mM_Final_Filters.Select(x => x.CS_DUAL_IND).Distinct().OrderBy(t => t).ToList();
+            CSDualIndicator.Insert(0, "--All--");
+
+            MRDualIndicator = _mM_Final_Filters.Select(x => x.MR_DUAL_IND).Distinct().OrderBy(t => t).ToList();
+            MRDualIndicator.Insert(0, "--All--");
+
+
 
 
 

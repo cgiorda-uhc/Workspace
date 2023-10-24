@@ -1,4 +1,5 @@
 using DataAccessLibrary.Data.Concrete.ETGFactSymmetry;
+using DataAccessLibrary.Data.Concrete.ProcCodeTrends;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -42,7 +43,7 @@ builder.Services.AddTransient<ILog_Repo, Logs_Repo>();
 builder.Services.AddTransient<IChemotherapyPX_Repo, ChemotherapyPX_Repo>();
 builder.Services.AddTransient<IMHPUniverse_Repo, MHPUniverse_Repo>();
 builder.Services.AddTransient<IMHPData_Repo, MHPData_Repo>();
-
+builder.Services.AddTransient<IProcCodeTrends_Repo, ProcCodeTrends_Repo>();
 builder.Services.AddTransient<IEDCAdhoc_Repo, EDCAdhoc_Repo>();
 
 builder.Services.AddTransient<IETGFactSymmetry_Repo, ETGFactSymmetry_Repo>();
@@ -106,6 +107,7 @@ try
     //EXTENSION METHOD WITHIN Api.cs
     //HANDLE ALL ENDPOINTS
     app.ConfigureMHPApi();
+    app.ConfigureProcCodeTrendsApi();
     app.ConfigureEDCAdhocApi();
     app.ConfigureChemoPXApi();
     app.ConfigureGlobalApi();
