@@ -28,6 +28,7 @@ using VCPortal_Models.Models.ChemoPx;
 using VCPortal_Models.Models.MHP;
 using VCPortal_Models.Models.ProcCodeTrends;
 using VCPortal_Models.Parameters.MHP;
+using VCPortal_Models.Parameters.ProcCodeTrends;
 using VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
 using VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;
 using VCPortal_WPF_ViewModel.Shared;
@@ -158,23 +159,35 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
     [RelayCommand]
     private void LOBChanged(object item)
     {
-        cleanCurrentList(ref _selected_lobs, item);
+        if (item.ToString().Equals("--All--") && _selected_lobs.FirstOrDefault(x => x.Contains("--All--")) == null)
+        {
+            _selected_lobs = _mM_Final_Filters.Select(x => x.LOB).Distinct().OrderBy(t => t).ToList();
+            _selected_lobs.Insert(0, "--All--");
+        }
+        else
+            cleanCurrentList(ref _selected_lobs, item);
+
         cleanCurrentFilters("LOB");
     }
 
     [RelayCommand]
     private void RegionChanged(object item)
     {
-        cleanCurrentList(ref _selected_regions, item);
+        if (item.ToString().Equals("--All--") && _selected_regions.FirstOrDefault(x => x.Contains("--All--")) == null)
+        {
+            _selected_regions = _mM_Final_Filters.Select(x => x.REGION).Distinct().OrderBy(t => t).ToList();
+            _selected_regions.Insert(0, "--All--");
+        }
+        else
+            cleanCurrentList(ref _selected_regions, item);
+
         cleanCurrentFilters("Region");
     }
 
 
     private void cleanCurrentList(ref List<string> lst, object item)
     {
-        string strItem = item.ToString();
-        if (lst == null)
-            lst = new List<string>();
+        var strItem = item.ToString();
 
         if (strItem == "--All--")
         {
@@ -188,8 +201,6 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
         {
             lst.Add(strItem);
         }
-
-
     }
 
     private void cleanCurrentFilters(string triggeredBy)
@@ -304,241 +315,215 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
         object[] parameters = _params as object[];
 
-        var s = "";
-        //MHP_EI_Parameters ei_param = new MHP_EI_Parameters();
-        //MHP_EI_Parameters_All ei_param_all = new MHP_EI_Parameters_All();
-
-        //List<MHP_EI_Model> mhp_final;
-        //List<MHP_EI_Model> mhp_final_all;
-        //List<MHPEIDetails_Model> mhp_details_final;
-        //List<MHPEIDetails_Model> mhp_details_final_all;
-        //try
-        //{
-
-        //    ei_param.State = "'" + String.Join(",", parameters[0].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-        //    ei_param.StartDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
-        //    ei_param.EndDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
-
-
-        //    ei_param_all.State = "'" + String.Join(",", parameters[0].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-        //    ei_param_all.StartDate = DateTime.Parse(parameters[1].ToString()).ToShortDateString();
-        //    ei_param_all.EndDate = DateTime.Parse(parameters[2].ToString()).ToShortDateString();
-
-
-        //    StringBuilder sbLE = new StringBuilder();
-
-        //    var le = parameters[3].ToString().Replace("--All--~", "").Split('~');
-        //    foreach (var e in le)
-        //    {
-        //        if (ei_param.LegalEntities == null)
-        //        {
-        //            ei_param.LegalEntities = new List<string>();
-        //        }
 
+        ProcCodeTrends_Parameters pc_param = new ProcCodeTrends_Parameters();
 
-        //        var val = e.ToString().Replace(" ", "").Split('-')[0];
-        //        ei_param.LegalEntities.Add(val);
-        //        sbLE.Append("'" + val + "',");
-        //    }
+        //< Binding Path = "SelectedValue" ElementName = "cbxLOBFilter" />
+        //< Binding Path = "SelectedValue" ElementName = "cbxRegionFilter" />
+        //< Binding Path = "SelectedValue" ElementName = "cbxStateFilter" />
+        //< Binding Path = "SelectedValue" ElementName = "cbxProduct" />
+        //< Binding Path = "SelectedValue" ElementName = "cbxCSProduct" />
+        //< Binding Path = "SelectedValue" ElementName = "cbxFundingType" />
+        //< Binding Path = "SelectedValue" ElementName = "cbxLegalEntity" />
+        //< Binding Path = "SelectedValue" ElementName = "cbxSource" />
+        //< Binding Path = "SelectedValue" ElementName = "cbxCSDualIndicator" />
+        //< Binding Path = "SelectedValue" ElementName = "cbxMRDualIndicator" />
 
 
-        //    ei_param.Finc_Arng_Desc = "'" + String.Join(",", parameters[4].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-        //    ei_param.Mkt_Seg_Rllp_Desc = "'" + String.Join(",", parameters[5].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+        try
+        {
+            if (!string.IsNullOrEmpty(parameters[0] + ""))
+            {
+                pc_param.LOB = "'" + String.Join(",", parameters[0].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+            }
 
+            if (!string.IsNullOrEmpty(parameters[1] + ""))
+            {
+                pc_param.Region = "'" + String.Join(",", parameters[1].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+            }
 
-        //    ei_param_all.LegalEntities = sbLE.ToString().TrimEnd(',');
-        //    ei_param_all.Finc_Arng_Desc = "'" + String.Join(",", parameters[4].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-        //    ei_param_all.Mkt_Seg_Rllp_Desc = "'" + String.Join(",", parameters[5].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+            if (!string.IsNullOrEmpty(parameters[2] + ""))
+            {
+                pc_param.State = "'" + String.Join(",", parameters[2].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+            }
 
-        //    if (!string.IsNullOrEmpty(parameters[6] + ""))
-        //    {
-        //        ei_param.Mkt_Typ_Desc = "'" + String.Join(",", parameters[6].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-        //        ei_param_all.Mkt_Typ_Desc = "'" + String.Join(",", parameters[6].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-        //    }
+            if (!string.IsNullOrEmpty(parameters[3] + ""))
+            {
+                pc_param.Product = "'" + String.Join(",", parameters[3].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+            }
 
-        //    System.Collections.IList items = (System.Collections.IList)parameters[7];
-        //    StringBuilder sb = new StringBuilder();
-        //    foreach (var i in items)
-        //    {
-        //        sb.Append("'" + i.ToString().Split('-')[0].Trim() + "',");
-        //    }
-        //    if (sb.Length > 0)
-        //    {
-        //        ei_param.Cust_Seg = sb.ToString().TrimEnd(',');
-        //        ei_param_all.Cust_Seg = sb.ToString().TrimEnd(',');
-        //    }
+            if (!string.IsNullOrEmpty(parameters[4] + ""))
+            {
+                pc_param.CSProduct = "'" + String.Join(",", parameters[4].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+            }
 
+            if (!string.IsNullOrEmpty(parameters[5] + ""))
+            {
+                pc_param.FundingType = "'" + String.Join(",", parameters[5].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+            }
 
+            if (!string.IsNullOrEmpty(parameters[6] + ""))
+            {
+                pc_param.LegalEntity = "'" + String.Join(",", parameters[6].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+            }
 
-        //    _sbStatus.Append("--Retreiving EI summary data from Database" + Environment.NewLine);
-        //    ProgressMessageViewModel.Message = _sbStatus.ToString();
- 
-        //    var api = _config.APIS.Where(x => x.Name == "MHP_EI").FirstOrDefault();
-        //    WebAPIConsume.BaseURI = api.BaseUrl;
-        //    var response = await WebAPIConsume.PostCall<MHP_EI_Parameters>(api.Url, ei_param);
-        //    if (response.StatusCode != System.Net.HttpStatusCode.OK)
-        //    {
 
-        //        UserMessageViewModel.IsError = true;
-        //        UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-        //        _logger.Error("MHP EI Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-        //        return;
-        //    }
-        //    else
-        //    {
+            if (!string.IsNullOrEmpty(parameters[7] + ""))
+            {
+                pc_param.Source = "'" + String.Join(",", parameters[7].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+            }
 
-        //        var reponseStream = await response.Content.ReadAsStreamAsync();
-        //        var result = await JsonSerializer.DeserializeAsync<List<MHP_EI_Model>>(reponseStream, new JsonSerializerOptions
-        //        {
-        //            PropertyNameCaseInsensitive = true
-        //        });
 
-        //        mhp_final = result;
 
-        //    }
+            if (!string.IsNullOrEmpty(parameters[8] + ""))
+            {
+                pc_param.CSDualIndicator = "'" + String.Join(",", parameters[8].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+            }
 
 
-        //    //EI ALL SUMMARY
-        //    _sbStatus.Append("--Retreiving EI summary all data from Database" + Environment.NewLine);
-        //    ProgressMessageViewModel.Message = _sbStatus.ToString();
 
-        //    api = _config.APIS.Where(x => x.Name == "MHP_EI_All").FirstOrDefault();
-        //    WebAPIConsume.BaseURI = api.BaseUrl;
-        //    response = await WebAPIConsume.PostCall<MHP_EI_Parameters_All>(api.Url, ei_param_all);
-        //    if (response.StatusCode != System.Net.HttpStatusCode.OK)
-        //    {
+            if (!string.IsNullOrEmpty(parameters[9] + ""))
+            {
+                pc_param.MRDualIndicator = "'" + String.Join(",", parameters[9].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+            }
 
-        //        UserMessageViewModel.IsError = true;
-        //        UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-        //        _logger.Error("MHP EI All Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-        //        return;
-        //    }
-        //    else
-        //    {
 
-        //        var reponseStream = await response.Content.ReadAsStreamAsync();
-        //        var result = await JsonSerializer.DeserializeAsync<List<MHP_EI_Model>>(reponseStream, new JsonSerializerOptions
-        //        {
-        //            PropertyNameCaseInsensitive = true
-        //        });
 
-        //        mhp_final_all = result;
 
 
-        //    }
 
+            //_sbStatus.Append("--Retreiving EI summary data from Database" + Environment.NewLine);
+            //ProgressMessageViewModel.Message = _sbStatus.ToString();
 
+            //var api = _config.APIS.Where(x => x.Name == "MHP_EI").FirstOrDefault();
+            //WebAPIConsume.BaseURI = api.BaseUrl;
+            //var response = await WebAPIConsume.PostCall<MHP_EI_Parameters>(api.Url, ei_param);
+            //if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            //{
 
+            //    UserMessageViewModel.IsError = true;
+            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            //    _logger.Error("MHP EI Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+            //    return;
+            //}
+            //else
+            //{
 
+            //    var reponseStream = await response.Content.ReadAsStreamAsync();
+            //    var result = await JsonSerializer.DeserializeAsync<List<MHP_EI_Model>>(reponseStream, new JsonSerializerOptions
+            //    {
+            //        PropertyNameCaseInsensitive = true
+            //    });
 
-        //    _sbStatus.Append("--Retreiving EI details data from Database" + Environment.NewLine);
-        //    ProgressMessageViewModel.Message = _sbStatus.ToString();
+            //    mhp_final = result;
 
-        //    api = _config.APIS.Where(x => x.Name == "MHP_EI_Details").FirstOrDefault();
-        //    WebAPIConsume.BaseURI = api.BaseUrl;
-        //    response = await WebAPIConsume.PostCall<MHP_EI_Parameters>(api.Url, ei_param);
-        //    if (response.StatusCode != System.Net.HttpStatusCode.OK)
-        //    {
+            //}
 
-        //        UserMessageViewModel.IsError = true;
-        //        UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-        //        _logger.Error("MHP EI Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-        //        return;
-        //    }
-        //    else
-        //    {
 
-        //        var reponseStream = await response.Content.ReadAsStreamAsync();
-        //        var result = await JsonSerializer.DeserializeAsync<List<MHPEIDetails_Model>>(reponseStream, new JsonSerializerOptions
-        //        {
-        //            PropertyNameCaseInsensitive = true
-        //        });
+            ////EI ALL SUMMARY
+            //_sbStatus.Append("--Retreiving EI summary all data from Database" + Environment.NewLine);
+            //ProgressMessageViewModel.Message = _sbStatus.ToString();
 
-        //        mhp_details_final = result;
+            //api = _config.APIS.Where(x => x.Name == "MHP_EI_All").FirstOrDefault();
+            //WebAPIConsume.BaseURI = api.BaseUrl;
+            //response = await WebAPIConsume.PostCall<MHP_EI_Parameters_All>(api.Url, ei_param_all);
+            //if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            //{
 
+            //    UserMessageViewModel.IsError = true;
+            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            //    _logger.Error("MHP EI All Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+            //    return;
+            //}
+            //else
+            //{
 
-        //    }
+            //    var reponseStream = await response.Content.ReadAsStreamAsync();
+            //    var result = await JsonSerializer.DeserializeAsync<List<MHP_EI_Model>>(reponseStream, new JsonSerializerOptions
+            //    {
+            //        PropertyNameCaseInsensitive = true
+            //    });
 
+            //    mhp_final_all = result;
 
 
-        //    //NOT NEEDED!!!
-        //    //_sbStatus.Append("--Retreiving All EI details data from Database" + Environment.NewLine);
-        //    //ProgressMessageViewModel.Message = _sbStatus.ToString();
+            //}
 
-        //    //api = _config.APIS.Where(x => x.Name == "MHP_EI_Details_All").FirstOrDefault();
-        //    //WebAPIConsume.BaseURI = api.BaseUrl;
-        //    //response = await WebAPIConsume.PostCall<MHP_EI_Parameters_All>(api.Url, ei_param_all);
-        //    //if (response.StatusCode != System.Net.HttpStatusCode.OK)
-        //    //{
 
-        //    //    UserMessageViewModel.IsError = true;
-        //    //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-        //    //    _logger.Error("MHP EI All Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-        //    //    return;
-        //    //}
-        //    //else
-        //    //{
 
-        //    //    var reponseStream = await response.Content.ReadAsStreamAsync();
-        //    //    var result = await JsonSerializer.DeserializeAsync<List<MHPEIDetails_Model>>(reponseStream, new JsonSerializerOptions
-        //    //    {
-        //    //        PropertyNameCaseInsensitive = true
-        //    //    });
 
-        //    //    mhp_details_final_all = result;
 
+            //_sbStatus.Append("--Retreiving EI details data from Database" + Environment.NewLine);
+            //ProgressMessageViewModel.Message = _sbStatus.ToString();
 
-        //    //}
+            //api = _config.APIS.Where(x => x.Name == "MHP_EI_Details").FirstOrDefault();
+            //WebAPIConsume.BaseURI = api.BaseUrl;
+            //response = await WebAPIConsume.PostCall<MHP_EI_Parameters>(api.Url, ei_param);
+            //if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            //{
 
+            //    UserMessageViewModel.IsError = true;
+            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            //    _logger.Error("MHP EI Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+            //    return;
+            //}
+            //else
+            //{
 
+            //    var reponseStream = await response.Content.ReadAsStreamAsync();
+            //    var result = await JsonSerializer.DeserializeAsync<List<MHPEIDetails_Model>>(reponseStream, new JsonSerializerOptions
+            //    {
+            //        PropertyNameCaseInsensitive = true
+            //    });
 
+            //    mhp_details_final = result;
 
 
+            //}
 
+            //CancellationTokenSource cancellationToken;
+            //cancellationToken = new CancellationTokenSource();
+            //var bytes = await MHPExcelExport.ExportEIToExcel(mhp_final, mhp_final_all, mhp_details_final, () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
 
-        //    CancellationTokenSource cancellationToken;
-        //    cancellationToken = new CancellationTokenSource();
-        //    var bytes = await MHPExcelExport.ExportEIToExcel(mhp_final, mhp_final_all, mhp_details_final, () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
+            //var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\MHP_Report_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
 
-        //    var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\MHP_Report_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
 
+            //_sbStatus.Append("--Saving Excel here: " + file + Environment.NewLine);
+            //ProgressMessageViewModel.Message = _sbStatus.ToString();
 
-        //    _sbStatus.Append("--Saving Excel here: " + file + Environment.NewLine);
-        //    ProgressMessageViewModel.Message = _sbStatus.ToString();
+            //if (File.Exists(file))
+            //    File.Delete(file);
 
-        //    if (File.Exists(file))
-        //        File.Delete(file);
+            //await File.WriteAllBytesAsync(file, bytes);
 
-        //    await File.WriteAllBytesAsync(file, bytes);
 
+            //_sbStatus.Append("--Opening Excel" + Environment.NewLine);
+            //ProgressMessageViewModel.Message = _sbStatus.ToString();
 
-        //    _sbStatus.Append("--Opening Excel" + Environment.NewLine);
-        //    ProgressMessageViewModel.Message = _sbStatus.ToString();
+            //var p = new Process();
+            //p.StartInfo = new ProcessStartInfo(file)
+            //{
+            //    UseShellExecute = true
+            //};
+            //p.Start();
 
-        //    var p = new Process();
-        //    p.StartInfo = new ProcessStartInfo(file)
-        //    {
-        //        UseShellExecute = true
-        //    };
-        //    p.Start();
 
+            //_sbStatus.Append("--Process completed!" + Environment.NewLine + Environment.NewLine + Environment.NewLine);
+            //_sbStatus.Append("--Ready" + Environment.NewLine);
+            //ProgressMessageViewModel.Message = _sbStatus.ToString();
 
-        //    _sbStatus.Append("--Process completed!" + Environment.NewLine + Environment.NewLine + Environment.NewLine);
-        //    _sbStatus.Append("--Ready" + Environment.NewLine);
-        //    ProgressMessageViewModel.Message = _sbStatus.ToString();
+            //UserMessageViewModel.IsError = false;
+            //UserMessageViewModel.Message = "MHP EI Report sucessfully generated";
+            //_logger.Information("MHP EI Report sucessfully generated for {CurrentUser}...", Authentication.UserName);
 
-        //    UserMessageViewModel.IsError = false;
-        //    UserMessageViewModel.Message = "MHP EI Report sucessfully generated";
-        //    _logger.Information("MHP EI Report sucessfully generated for {CurrentUser}...", Authentication.UserName);
+        }
+        catch (Exception ex)
+        {
+            UserMessageViewModel.IsError = true;
+            UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            _logger.Fatal(ex, "ProcCodeTrends Report threw an error for {CurrentUser}", Authentication.UserName);
+        }
 
-        //}
-        //catch (Exception ex)
-        //{
-        //    UserMessageViewModel.IsError = true;
-        //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-        //    _logger.Fatal(ex, "MHP EI Report threw an error for {CurrentUser}", Authentication.UserName);
-        //}
-        
 
 
     }
@@ -605,6 +590,14 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
             MRDualIndicator = new ObservableCollection<string>(_mM_Final_Filters.Select(x => x.MR_DUAL_IND).Distinct().OrderBy(t => t).ToList() as List<string>);
             MRDualIndicator.Insert(0, "--All--");
+
+
+            _selected_lobs = new List<string>();
+            _selected_regions = new List<string>();
+
+            //_selected_lobs = LOB.Where(x=> x != "--All--").ToList();
+
+            //_selected_regions = Region.Where(x => x != "--All--").ToList();
 
 
         }
