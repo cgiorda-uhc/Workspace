@@ -59,22 +59,19 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
     public MessageViewModel UserMessageViewModel { get; }
 
     [ObservableProperty]
-    public ObservableCollection<string> _lOB;
+    public List<string> _lOB;
     [ObservableProperty]
-    public ObservableCollection<string> _region;
+    public List<string> _region;
+
+
     [ObservableProperty]
     public ObservableCollection<string> _state;
-
-
- 
     [ObservableProperty]
     public ObservableCollection<string> _product; //COMMERCIAL, NULL
     [ObservableProperty]
     public ObservableCollection<string> _cSProduct; //OP, PHYS
     [ObservableProperty]
     public ObservableCollection<string> _fundingType; //ASO, INSURED
-
-
     [ObservableProperty]
     public ObservableCollection<string> _legalEntity;//HP OP HP JV, MAMSI, NEIGHBORHOOD
     [ObservableProperty]
@@ -156,17 +153,7 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
 
     private List<string> _selected_lobs;
-    private List<string> _selected_states;
     private List<string> _selected_regions;
-    private List<string> _selected_products;
-    private List<string> _selected_cs_products;
-    private List<string> _selected_funding_types;
-    private List<string> _selected_legal_entitys;
-    private List<string> _selected_sources;
-    private List<string> _selected_cs_dual_indicators;
-    private List<string> _selected_mr_dual_indicators;
-
-
 
     [RelayCommand]
     private void LOBChanged(object item)
@@ -182,65 +169,6 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
         cleanCurrentFilters("Region");
     }
 
-
-    [RelayCommand]
-    private void StateChanged(object item)
-    {
-        cleanCurrentList(ref _selected_states, item);
-        cleanCurrentFilters("State");
-    }
-
-
-    [RelayCommand]
-    private void ProductChanged(object item)
-    {
-        cleanCurrentList(ref _selected_products, item);
-        cleanCurrentFilters("Product");
-    }
-
-    [RelayCommand]
-    private void CSProductChanged(object item)
-    {
-        cleanCurrentList(ref _selected_cs_products, item);
-        cleanCurrentFilters("CSProduct");
-    }
-
-
-    [RelayCommand]
-    private void FundingTypeChanged(object item)
-    {
-        cleanCurrentList(ref _selected_funding_types, item);
-        cleanCurrentFilters("FundingType");
-    }
-
-    [RelayCommand]
-    private void LegalEntityChanged(object item)
-    {
-        cleanCurrentList(ref _selected_legal_entitys, item);
-        cleanCurrentFilters("LegalEntity");
-    }
-
-    [RelayCommand]
-    private void SourceChanged(object item)
-    {
-        cleanCurrentList(ref _selected_sources, item);
-        cleanCurrentFilters("Source");
-    }
-
-
-    [RelayCommand]
-    private void CSDualIndicatorChanged(object item)
-    {
-        cleanCurrentList(ref _selected_cs_dual_indicators, item);
-        cleanCurrentFilters("CSDualIndicator");
-    }
-
-    [RelayCommand]
-    private void MRDualIndicatorChanged(object item)
-    {
-        cleanCurrentList(ref _selected_mr_dual_indicators, item);
-        cleanCurrentFilters("MRDualIndicator");
-    }
 
     private void cleanCurrentList(ref List<string> lst, object item)
     {
@@ -269,72 +197,13 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
         List<MM_FINAL_Model> tmp = _mM_Final_Filters;
 
-        if (_selected_lobs != null)
-            if (_selected_lobs.Count() > 0)
-                tmp = tmp.Where(x => _selected_lobs.Contains(x.LOB)).ToList();
-
-        if (_selected_states != null)
-            if (_selected_states.Count() > 0)
-                tmp = tmp.Where(x => _selected_states.Contains(x.mapping_state)).ToList();
-
-        if (_selected_regions != null)
-            if (_selected_regions.Count() > 0)
-                tmp = tmp.Where(x => _selected_regions.Contains(x.REGION)).ToList();
-
-        if (_selected_products != null)
-            if (_selected_products.Count() > 0)
-                tmp = tmp.Where(x => _selected_products.Contains(x.PRDCT_LVL_1_NM)).ToList();
-
-        if (_selected_cs_products != null)
-            if (_selected_cs_products.Count() > 0)
-                tmp = tmp.Where(x => _selected_cs_products.Contains(x.CS_TADM_PRDCT_MAP)).ToList();
-
-        if (_selected_funding_types != null)
-            if (_selected_funding_types.Count() > 0)
-                tmp = tmp.Where(x => _selected_funding_types.Contains(x.HLTH_PLN_FUND_DESC)).ToList();
-
-        if (_selected_legal_entitys != null)
-            if (_selected_legal_entitys.Count() > 0)
-                tmp = tmp.Where(x => _selected_legal_entitys.Contains(x.HCE_LEG_ENTY_ROLLUP_DESC)).ToList();
-
-        if (_selected_sources != null)
-            if (_selected_sources.Count() > 0)
-                tmp = tmp.Where(x => _selected_sources.Contains(x.SRC_SYS_GRP_DESC)).ToList();
-
-        if (_selected_cs_dual_indicators != null)
-            if (_selected_cs_dual_indicators.Count() > 0)
-                tmp = tmp.Where(x => _selected_cs_dual_indicators.Contains(x.CS_DUAL_IND)).ToList();
-
-        if (_selected_mr_dual_indicators != null)
-            if (_selected_mr_dual_indicators.Count() > 0)
-                tmp = tmp.Where(x => _selected_mr_dual_indicators.Contains(x.MR_DUAL_IND)).ToList();
-
-
-
-        if(triggeredBy != "LOB")
+        if(triggeredBy == "Region")
         {
-            LOB.Clear();
-            foreach (string s in tmp.Select(x => x.LOB).Distinct().OrderBy(t => t).ToList())
-            {
-                this.LOB.Add(s);
-            }
-            this.LOB.Insert(0, "--All--");
-        }
-        
+            if (_selected_regions != null)
+                if (_selected_regions.Count() > 0)
+                    tmp = tmp.Where(x => _selected_regions.Contains(x.REGION)).ToList();
 
-        if(triggeredBy != "Region")
-        {
-            Region.Clear();
-            foreach (string s in tmp.Select(x => x.REGION).Distinct().OrderBy(t => t).ToList())
-            {
-                this.Region.Add(s);
-            }
-            this.Region.Insert(0, "--All--");
-        }
-        
 
-        if(triggeredBy != "State")
-        {
             State.Clear();
             foreach (string s in tmp.Select(x => x.mapping_state).Distinct().OrderBy(t => t).ToList())
             {
@@ -342,76 +211,59 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
             }
             this.State.Insert(0, "--All--");
         }
-        
-
-        if(triggeredBy != "Product")
+        else if (triggeredBy == "LOB")
         {
+
+            if (_selected_lobs != null)
+                if (_selected_lobs.Count() > 0)
+                    tmp = tmp.Where(x => _selected_lobs.Contains(x.LOB)).ToList();
+
+
             Product.Clear();
             foreach (string s in tmp.Select(x => x.PRDCT_LVL_1_NM).Distinct().OrderBy(t => t).ToList())
             {
                 this.Product.Add(s);
             }
             this.Product.Insert(0, "--All--");
-        }
-        
 
-        if(triggeredBy != "CSProduct")
-        {
+
             CSProduct.Clear();
             foreach (string s in tmp.Select(x => x.CS_TADM_PRDCT_MAP).Distinct().OrderBy(t => t).ToList())
             {
                 this.CSProduct.Add(s);
             }
             this.CSProduct.Insert(0, "--All--");
-        }
-        
 
-        if(triggeredBy != "FundingType")
-        {
             FundingType.Clear();
             foreach (string s in tmp.Select(x => x.HLTH_PLN_FUND_DESC).Distinct().OrderBy(t => t).ToList())
             {
                 this.FundingType.Add(s);
             }
             this.FundingType.Insert(0, "--All--");
-        }
-        
 
-        if(triggeredBy != "LegalEntity")
-        {
             LegalEntity.Clear();
             foreach (string s in tmp.Select(x => x.HCE_LEG_ENTY_ROLLUP_DESC).Distinct().OrderBy(t => t).ToList())
             {
                 this.LegalEntity.Add(s);
             }
             this.LegalEntity.Insert(0, "--All--");
-        }
-        
 
-        if(triggeredBy != "Source")
-        {
+
             Source.Clear();
             foreach (string s in tmp.Select(x => x.SRC_SYS_GRP_DESC).Distinct().OrderBy(t => t).ToList())
             {
                 this.Source.Add(s);
             }
             this.Source.Insert(0, "--All--");
-        }
-        
 
-        if(triggeredBy != "CSDualIndicator")
-        {
+
             CSDualIndicator.Clear();
             foreach (string s in tmp.Select(x => x.CS_DUAL_IND).Distinct().OrderBy(t => t).ToList())
             {
                 this.CSDualIndicator.Add(s);
             }
             this.CSDualIndicator.Insert(0, "--All--");
-        }
-        
 
-        if(triggeredBy != "MRDualIndicator")
-        {
             MRDualIndicator.Clear();
             foreach (string s in tmp.Select(x => x.MR_DUAL_IND).Distinct().OrderBy(t => t).ToList())
             {
@@ -419,10 +271,8 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
             }
             this.MRDualIndicator.Insert(0, "--All--");
         }
-       
 
-
-
+    
     }
 
 
@@ -725,11 +575,11 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
 
 
-            LOB = new ObservableCollection<string>(_mM_Final_Filters.Select(x => x.LOB).Distinct().OrderBy(t => t).ToList() as List<string>);
+            LOB = new List<string>(_mM_Final_Filters.Select(x => x.LOB).Distinct().OrderBy(t => t).ToList() as List<string>);
             LOB.Insert(0, "--All--");
 
 
-            Region = new ObservableCollection<string>(_mM_Final_Filters.Select(x => x.REGION).Distinct().OrderBy(t => t).ToList() as List<string>);
+            Region = new List<string>(_mM_Final_Filters.Select(x => x.REGION).Distinct().OrderBy(t => t).ToList() as List<string>);
             Region.Insert(0, "--All--");
 
             State = new ObservableCollection<string>(_mM_Final_Filters.Select(x => x.mapping_state).Distinct().OrderBy(t => t).ToList() as List<string>);
