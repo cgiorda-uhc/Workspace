@@ -71,7 +71,7 @@ public static class ProcCodeTrends_Calls
         });
 
 
-        app.MapPost(pattern: "pct_clmpop", async ([FromBody] ProcCodeTrends_Parameters param, IProcCodeTrends_Repo repo, CancellationToken token) =>
+        app.MapPost(pattern: "pct_clmop", async ([FromBody] ProcCodeTrends_Parameters param, IProcCodeTrends_Repo repo, CancellationToken token) =>
         {
             try
             {
