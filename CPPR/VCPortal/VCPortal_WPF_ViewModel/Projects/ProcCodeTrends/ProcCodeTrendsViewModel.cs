@@ -308,27 +308,15 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
     private async Task GenerateReport()
     {
 
-        _logger.Information("Running MHP.GenerateEIReport for {CurrentUser}...", Authentication.UserName);
+        _logger.Information("Running ProcCodeTrends.GenerateReport for {CurrentUser}...", Authentication.UserName);
 
-        _sbStatus.Append("--Processing selected filters for EI" + Environment.NewLine);
+        _sbStatus.Append("--Processing selected filters for ProcCodeTrends" + Environment.NewLine);
         ProgressMessageViewModel.Message = _sbStatus.ToString();
 
         object[] parameters = _params as object[];
 
 
         ProcCodeTrends_Parameters pc_param = new ProcCodeTrends_Parameters();
-
-        //< Binding Path = "SelectedValue" ElementName = "cbxLOBFilter" />
-        //< Binding Path = "SelectedValue" ElementName = "cbxRegionFilter" />
-        //< Binding Path = "SelectedValue" ElementName = "cbxStateFilter" />
-        //< Binding Path = "SelectedValue" ElementName = "cbxProduct" />
-        //< Binding Path = "SelectedValue" ElementName = "cbxCSProduct" />
-        //< Binding Path = "SelectedValue" ElementName = "cbxFundingType" />
-        //< Binding Path = "SelectedValue" ElementName = "cbxLegalEntity" />
-        //< Binding Path = "SelectedValue" ElementName = "cbxSource" />
-        //< Binding Path = "SelectedValue" ElementName = "cbxCSDualIndicator" />
-        //< Binding Path = "SelectedValue" ElementName = "cbxMRDualIndicator" />
-
 
         try
         {
@@ -392,32 +380,32 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
 
 
-            //_sbStatus.Append("--Retreiving EI summary data from Database" + Environment.NewLine);
-            //ProgressMessageViewModel.Message = _sbStatus.ToString();
+            _sbStatus.Append("--Retreiving ProcCodeTrends claims data from Database" + Environment.NewLine);
+            ProgressMessageViewModel.Message = _sbStatus.ToString();
 
-            //var api = _config.APIS.Where(x => x.Name == "MHP_EI").FirstOrDefault();
-            //WebAPIConsume.BaseURI = api.BaseUrl;
-            //var response = await WebAPIConsume.PostCall<MHP_EI_Parameters>(api.Url, ei_param);
-            //if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            //{
+            var api = _config.APIS.Where(x => x.Name == "PCT_Clm_Phys").FirstOrDefault();
+            WebAPIConsume.BaseURI = api.BaseUrl;
+            var response = await WebAPIConsume.PostCall<ProcCodeTrends_Parameters>(api.Url, pc_param);
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
 
-            //    UserMessageViewModel.IsError = true;
-            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-            //    _logger.Error("MHP EI Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-            //    return;
-            //}
-            //else
-            //{
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                _logger.Error("Clm_Phys Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+                return;
+            }
+            else
+            {
 
-            //    var reponseStream = await response.Content.ReadAsStreamAsync();
-            //    var result = await JsonSerializer.DeserializeAsync<List<MHP_EI_Model>>(reponseStream, new JsonSerializerOptions
-            //    {
-            //        PropertyNameCaseInsensitive = true
-            //    });
+                var reponseStream = await response.Content.ReadAsStreamAsync();
+                var result = await JsonSerializer.DeserializeAsync<List<CLM_PHYS_Model>>(reponseStream, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
 
-            //    mhp_final = result;
+                var final = result;
 
-            //}
+            }
 
 
             ////EI ALL SUMMARY

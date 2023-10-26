@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VCPortal_Models.Models.ProcCodeTrends;
 using VCPortal_Models.Parameters.MHP;
+using VCPortal_Models.Parameters.ProcCodeTrends;
 
 namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 {
@@ -29,6 +30,25 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             return results;
         }
 
+        public Task<IEnumerable<CLM_PHYS_Model>> GetCLM_PHYS_Async(ProcCodeTrends_Parameters pct_param, CancellationToken token)
+        {
 
+            string strSQL = "SELECT * FROM [VCT_DB].[pct].[CLM_PHYS];";
+
+            var results = _db.LoadData<CLM_PHYS_Model>(sql: strSQL, token, connectionId: "VCT_DB");
+
+            return results;
+        }
+
+
+        public Task<IEnumerable<MM_FINAL_Model>> GetCLM_OP_Async(string LOB, string Region, string State, string Product, string CSProduct, string FundingType, string LegalEntity, string Source, string CSDualIndicator, string MRDualIndicator, CancellationToken token)
+        {
+
+            string strSQL = "SELECT * FROM [VCT_DB].[pct].[CLM_OP];";
+
+            var results = _db.LoadData<MM_FINAL_Model>(sql: strSQL, token, connectionId: "VCT_DB");
+
+            return results;
+        }
     }
 }
