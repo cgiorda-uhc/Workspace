@@ -380,9 +380,9 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
 
 
-            _sbStatus.Append("--Retreiving ProcCodeTrends claims data from Database" + Environment.NewLine);
+            _sbStatus.Append("--Retreiving ProcCodeTrends claims phys data from Database" + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
-
+            List<CLM_PHYS_Model> clm_phys_list;
             var api = _config.APIS.Where(x => x.Name == "PCT_Clm_Phys").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
             var response = await WebAPIConsume.PostCall<ProcCodeTrends_Parameters>(api.Url, pc_param);
@@ -391,7 +391,7 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
                 UserMessageViewModel.IsError = true;
                 UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("Clm_Phys Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+                _logger.Error("Clm_Phys_Phys Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
                 return;
             }
             else
@@ -403,10 +403,46 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
                     PropertyNameCaseInsensitive = true
                 });
 
-                var final = result;
+                clm_phys_list = result;
 
             }
 
+
+
+
+
+            _sbStatus.Append("--Retreiving ProcCodeTrends claims op data from Database" + Environment.NewLine);
+            ProgressMessageViewModel.Message = _sbStatus.ToString();
+            List<CLM_OP_Model> clm_op_list;
+            api = _config.APIS.Where(x => x.Name == "PCT_Clm_Op").FirstOrDefault();
+            WebAPIConsume.BaseURI = api.BaseUrl;
+            response = await WebAPIConsume.PostCall<ProcCodeTrends_Parameters>(api.Url, pc_param);
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                _logger.Error("Clm_Phys_Op Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+                return;
+            }
+            else
+            {
+
+                var reponseStream = await response.Content.ReadAsStreamAsync();
+                var result = await JsonSerializer.DeserializeAsync<List<CLM_OP_Model>>(reponseStream, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                clm_op_list = result;
+
+            }
+
+
+
+            var p = clm_phys_list;
+            var o = clm_op_list;
+            var s = "";
 
             ////EI ALL SUMMARY
             //_sbStatus.Append("--Retreiving EI summary all data from Database" + Environment.NewLine);

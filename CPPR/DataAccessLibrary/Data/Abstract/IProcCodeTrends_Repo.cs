@@ -10,6 +10,6 @@ namespace DataAccessLibrary.Data.Abstract
         Task<IEnumerable<CLM_PHYS_Model>> GetCLM_PHYS_Async(ProcCodeTrends_Parameters pct_param, CancellationToken token);
 
 
-        Task<IEnumerable<MM_FINAL_Model>> GetCLM_OP_Async(string LOB, string Region, string State, string Product, string CSProduct, string FundingType, string LegalEntity, string Source, string CSDualIndicator, string MRDualIndicator, CancellationToken token);
+        Task<IEnumerable<CLM_OP_Model>> GetCLM_OP_Async(ProcCodeTrends_Parameters pct_param, CancellationToken token);
     }
 }

@@ -41,12 +41,12 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
         }
 
 
-        public Task<IEnumerable<MM_FINAL_Model>> GetCLM_OP_Async(string LOB, string Region, string State, string Product, string CSProduct, string FundingType, string LegalEntity, string Source, string CSDualIndicator, string MRDualIndicator, CancellationToken token)
+        public Task<IEnumerable<CLM_OP_Model>> GetCLM_OP_Async(ProcCodeTrends_Parameters pct_param, CancellationToken token)
         {
 
             string strSQL = "SELECT * FROM [VCT_DB].[pct].[CLM_OP];";
 
-            var results = _db.LoadData<MM_FINAL_Model>(sql: strSQL, token, connectionId: "VCT_DB");
+            var results = _db.LoadData<CLM_OP_Model>(sql: strSQL, token, connectionId: "VCT_DB");
 
             return results;
         }
