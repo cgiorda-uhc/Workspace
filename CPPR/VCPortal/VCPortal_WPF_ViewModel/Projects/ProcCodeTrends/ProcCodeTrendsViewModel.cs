@@ -362,22 +362,16 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
             }
 
 
-
             if (!string.IsNullOrEmpty(parameters[8] + ""))
             {
                 pc_param.CSDualIndicator = "'" + String.Join(",", parameters[8].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
             }
 
 
-
             if (!string.IsNullOrEmpty(parameters[9] + ""))
             {
                 pc_param.MRDualIndicator = "'" + String.Join(",", parameters[9].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
             }
-
-
-
-
 
 
             _sbStatus.Append("--Retreiving ProcCodeTrends claims phys data from Database" + Environment.NewLine);
@@ -439,10 +433,6 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
             }
 
 
-
-            var p = clm_phys_list;
-            var o = clm_op_list;
-            var s = "";
 
             ////EI ALL SUMMARY
             //_sbStatus.Append("--Retreiving EI summary all data from Database" + Environment.NewLine);
