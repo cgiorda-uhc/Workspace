@@ -320,6 +320,7 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
         try
         {
+            
             if (!string.IsNullOrEmpty(parameters[0] + ""))
             {
                 pc_param.LOB = "'" + String.Join(",", parameters[0].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
@@ -355,18 +356,15 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
                 pc_param.LegalEntity = "'" + String.Join(",", parameters[6].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
             }
 
-
             if (!string.IsNullOrEmpty(parameters[7] + ""))
             {
                 pc_param.Source = "'" + String.Join(",", parameters[7].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
             }
 
-
             if (!string.IsNullOrEmpty(parameters[8] + ""))
             {
                 pc_param.CSDualIndicator = "'" + String.Join(",", parameters[8].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
             }
-
 
             if (!string.IsNullOrEmpty(parameters[9] + ""))
             {
@@ -400,8 +398,6 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
                 clm_phys_list = result;
 
             }
-
-
 
 
 
