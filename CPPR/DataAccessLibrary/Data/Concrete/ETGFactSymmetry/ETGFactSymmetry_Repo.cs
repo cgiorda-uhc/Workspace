@@ -130,6 +130,20 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
         return results;
     }
 
+
+
+    public Task<IEnumerable<ETG_CNFG_ETG_NRX_COMPARE>> GetETG_CNFG_ETG_NRX_COMPARE(CancellationToken token)
+    {
+
+        string strSQL = "SELECT * FROM [etgsymm].[VW_ETG_Symmetry_CNFG_ETG_NRX_COMPARE] v;";
+
+        var results = _db.LoadData<ETG_CNFG_ETG_NRX_COMPARE>(sql: strSQL, token, connectionId: "VCT_DB");
+
+        return results;
+    }
+
+
+
     public Task<IEnumerable<ETG_CNFG_ETG_SPCL>> GetETG_CNFG_ETG_SPCL(CancellationToken token)
     {
 

@@ -32,7 +32,7 @@ public partial class App : Application
     public App()
     {
         var appsettings = "appsettings.Development.json";
-       // var appsettings = "appsettings.json";
+        //var appsettings = "appsettings.json";
 
         var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(appsettings).AddEnvironmentVariables().Build();
         //var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: true, reloadOnChange: true).AddEnvironmentVariables().Build();

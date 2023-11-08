@@ -22,6 +22,8 @@ public interface IETGFactSymmetry_Repo
 
     Task<IEnumerable<ETG_CNFG_ETG_NRX_EXCLD>> GetETG_CNFG_ETG_NRX_EXCLD(CancellationToken token);
 
+    Task<IEnumerable<ETG_CNFG_ETG_NRX_COMPARE>> GetETG_CNFG_ETG_NRX_COMPARE(CancellationToken token);
+
     Task<IEnumerable<ETG_CNFG_ETG_SPCL>> GetETG_CNFG_ETG_SPCL(CancellationToken token);
 
 

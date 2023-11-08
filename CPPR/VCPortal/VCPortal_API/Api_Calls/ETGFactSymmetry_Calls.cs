@@ -239,6 +239,35 @@ public static class ETGFactSymmetry_Calls
         });
 
 
+
+        app.MapGet(pattern: "/etgnrxcompareconfig", async (IETGFactSymmetry_Repo repo, CancellationToken token) =>
+        {
+            try
+            {
+                _log.Information("Requesting API GetETG_CNFG_ETG_NRX_COMPARE()...");
+                ////RETURN HTTP 200
+                ///
+                var results = await repo.GetETG_CNFG_ETG_NRX_COMPARE(token);
+
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetETG_CNFG_ETG_NRX_COMPARE() 404, not found");
+                return Results.NotFound(); //404
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, "API GetETG_CNFG_ETG_NRX_COMPARE threw an error");
+                //RETURN ERROR
+                return Results.Problem(ex.Message);
+
+            }
+        });
+
+
+
         app.MapGet(pattern: "/etgspclconfig", async (IETGFactSymmetry_Repo repo, CancellationToken token) =>
         {
             try

@@ -492,6 +492,15 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
                 }
 
 
+                sheet = excel.Sheets.Where(x => x.Name == "ETGNrxCompareConfig").FirstOrDefault();
+                api = _config.APIS.Where(x => x.Name == "ETGNrxCompareConfig").FirstOrDefault();
+                var etgnxc = await VM_Functions.APIGetResultAsync<ETG_CNFG_ETG_NRX_COMPARE>(api.BaseUrl, api.Url);
+                if (etgnxc.Count > 0)
+                {
+                    export.Add(new ExcelExport() { ExportList = etgnxc.ToList<object>(), SheetName = sheet.SheetName });
+                }
+
+
                 sheet = excel.Sheets.Where(x => x.Name == "ETGSpclConfig").FirstOrDefault();
                 api = _config.APIS.Where(x => x.Name == "ETGSpclConfig").FirstOrDefault();
                 var etgspc = await VM_Functions.APIGetResultAsync<ETG_CNFG_ETG_SPCL>(api.BaseUrl, api.Url);
