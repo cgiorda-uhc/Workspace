@@ -135,7 +135,7 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
     public Task<IEnumerable<ETG_CNFG_ETG_NRX_COMPARE>> GetETG_CNFG_ETG_NRX_COMPARE(CancellationToken token)
     {
 
-        string strSQL = "SELECT * FROM [etgsymm].[VW_ETG_Symmetry_CNFG_ETG_NRX_COMPARE] v;";
+        string strSQL = "SELECT * FROM [etgsymm].[VW_ETG_Symmetry_CNFG_ETG_NRX_COMPARE] v ORDER BY v.ETG_BAS_CLSS_NBR;";
 
         var results = _db.LoadData<ETG_CNFG_ETG_NRX_COMPARE>(sql: strSQL, token, connectionId: "VCT_DB");
 
