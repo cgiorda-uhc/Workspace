@@ -215,8 +215,8 @@ f.EC_Change_Comments,
 
 
 
-f.Data_Period as Data_Period,
-fp.Data_Period as Data_Period_Previous,
+f.PD_Version as Data_Period,
+fp.PD_Version as Data_Period_Previous,
  f.Symmetry_Version as Symmetry_Version,
   fp.Symmetry_Version as Symmetry_Version_Previous
 
