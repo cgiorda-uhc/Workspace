@@ -217,6 +217,7 @@
     <Build Include="etg\etg_index.sql" />
     <Build Include="pct\pct.sql" />
     <Build Include="edcadhoc\edcadhoc.sql" />
+    <Build Include="pct\pct_index.sql" />
   </ItemGroup>
   <ItemGroup>
     <SqlCmdVariable Include="ChemoPXRefresh">
