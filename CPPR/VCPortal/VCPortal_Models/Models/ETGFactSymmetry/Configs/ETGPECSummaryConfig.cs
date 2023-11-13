@@ -52,10 +52,13 @@ public class ETGPECSummaryConfig
     public float EC_Total_Cost { get; set; }
     public float EC_Average_Cost { get; set; }
     public float EC_Spec_CV { get; set; }
-    public string EC_Changes_Made { get; set; }
+
 
     public string EC_Mapping_Previous { get; set; }
     public string EC_Mapping { get; set; }
+
+
+    public string EC_Changes_Made { get; set; }
 
     public string EC_Change_Comments { get; set; }
 
