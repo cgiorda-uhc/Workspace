@@ -127,6 +127,19 @@ public class SqlDataAccess : IRelationalDataAccess
 	}
 
 
+
+    public async Task<SqlMapper.GridReader> LoadDataMultiple(string sql, CancellationToken token, string connectionId = "VCT_DB")
+    {
+        using IDbConnection connection = new SqlConnection(_config.GetConnectionString(connectionId));
+
+        var cmd = new CommandDefinition(sql, cancellationToken: token, commandTimeout: 12000);
+        var result = await connection.QueryMultipleAsync(cmd);
+        return result;
+    }
+
+
+
+
     public async Task<object> ExecuteScalar<T>(string storedProcedure, T parameters, string connectionId = "VCT_DB")
     {
         using IDbConnection connection = new SqlConnection(_config.GetConnectionString(connectionId));

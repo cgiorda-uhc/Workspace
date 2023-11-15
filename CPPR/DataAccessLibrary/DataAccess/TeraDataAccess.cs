@@ -178,4 +178,9 @@ public class TeraDataAccess : IRelationalDataAccess
     {
         throw new NotImplementedException();
     }
+
+    public Task<SqlMapper.GridReader> LoadDataMultiple<T>(string sql, CancellationToken token, string connectionId = "VCT_DB")
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using Dapper;
+using System.Data;
 using System.Dynamic;
 
 namespace DataAccessLibrary.DataAccess;
@@ -15,6 +16,11 @@ public interface IRelationalDataAccess
     Task<IDataReader> LoadData(string connectionString, string sql);
 
     Task<DataTable> LoadDataTable(string connectionString, string sql);
+
+
+    Task<SqlMapper.GridReader> LoadDataMultiple(string sql, CancellationToken token, string connectionId = "VCT_DB");
+
+
 
     Task SaveData<T>(string storedProcedure, T parameters, string connectionId = "VCT_DB");
 

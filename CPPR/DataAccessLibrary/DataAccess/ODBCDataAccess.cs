@@ -118,4 +118,9 @@ public class ODBCDataAccess : IRelationalDataAccess
     {
         throw new NotImplementedException();
     }
+
+    public Task<SqlMapper.GridReader> LoadDataMultiple(string sql, CancellationToken token, string connectionId = "VCT_DB")
+    {
+        throw new NotImplementedException();
+    }
 }
