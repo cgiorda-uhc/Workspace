@@ -55,7 +55,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 
 
 
-        public Task<IEnumerable<DateSpan_Model>> GetDateSpan_Async(ProcCodeTrends_Parameters pct_param, CancellationToken token)
+        public Task<IEnumerable<DateSpan_Model>> GetDateSpan_Async(CancellationToken token)
         {
 
             //string strSQL = "SELECT MIN(year) as Year1, MAX(year) as Year2, (SELECT MIN(quarter) FROM [pct].[CLM_OP] WHERE year = (SELECT MIN(year) FROM [pct].[CLM_OP])) as First_Quarter FROM [pct].[CLM_OP];";
