@@ -99,7 +99,7 @@ public static class ProcCodeTrends_Calls
             }
         });
 
-        app.MapPost(pattern: "pct_datespan", async (IProcCodeTrends_Repo repo, CancellationToken token) =>
+        app.MapGet(pattern: "pct_datespan", async (IProcCodeTrends_Repo repo, CancellationToken token) =>
         {
             try
             {
@@ -127,12 +127,12 @@ public static class ProcCodeTrends_Calls
         });
 
 
-        app.MapPost(pattern: "pct_mainreport", async ([FromBody] ProcCodeTrends_Parameters param, [FromBody] List<DateSpan_Model> dsm, IProcCodeTrends_Repo repo, CancellationToken token) =>
+        app.MapPost(pattern: "pct_mainreport", async ([FromBody] ProcCodeTrends_Parameters param, IProcCodeTrends_Repo repo, CancellationToken token) =>
         {
             try
             {
                 ////RETURN HTTP 200
-                var results = await repo.GetMainPCTReport_Async(param, dsm, token);//200 SUCCESS
+                var results = await repo.GetMainPCTReport_Async(param,  token);//200 SUCCESS
 
                 if (results != null)
                 {

@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using System.Data;
 using System.Dynamic;
+using static Dapper.SqlMapper;
 
 namespace DataAccessLibrary.DataAccess;
 
@@ -20,7 +21,16 @@ public interface IRelationalDataAccess
 
     Task<SqlMapper.GridReader> LoadDataMultiple(string sql, CancellationToken token, string connectionId = "VCT_DB");
 
+    Tuple<IEnumerable<T1>, IEnumerable<T2>> GetMultiple<T1, T2>(string sql, CancellationToken token,
+                                    Func<GridReader, IEnumerable<T1>> func1,
+                                    Func<GridReader, IEnumerable<T2>> func2, string connectionId = "VCT_DB");
 
+
+
+    Tuple<IEnumerable<T1>, IEnumerable<T2>, IEnumerable<T3>> GetMultiple<T1, T2, T3>(string sql, CancellationToken token,
+                                    Func<GridReader, IEnumerable<T1>> func1,
+                                    Func<GridReader, IEnumerable<T2>> func2,
+                                    Func<GridReader, IEnumerable<T3>> func3, string connectionId = "VCT_DB");
 
     Task SaveData<T>(string storedProcedure, T parameters, string connectionId = "VCT_DB");
 

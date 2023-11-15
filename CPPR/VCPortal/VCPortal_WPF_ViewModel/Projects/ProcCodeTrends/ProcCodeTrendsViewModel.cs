@@ -1,36 +1,26 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DocumentFormat.OpenXml.Spreadsheet;
+
 using FileParsingLibrary.MSExcel;
-using FileParsingLibrary.MSExcel.Custom.MHP;
-using MathNet.Numerics;
-using MathNet.Numerics.Providers.SparseSolver;
+
 using Microsoft.Extensions.Configuration;
 using SharedFunctionsLibrary;
-using System;
-using System.Collections.Generic;
+
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Net.NetworkInformation;
+
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using System.Windows;
+
 using System.Windows.Input;
-using System.Xml.Linq;
+
 using VCPortal_Models.Configuration.HeaderInterfaces.Abstract;
 using VCPortal_Models.Configuration.HeaderInterfaces.Concrete;
-using VCPortal_Models.Dtos.ChemoPx;
-using VCPortal_Models.Dtos.ETGFactSymmetry;
-using VCPortal_Models.Models.ChemoPx;
-using VCPortal_Models.Models.MHP;
+
 using VCPortal_Models.Models.ProcCodeTrends;
-using VCPortal_Models.Parameters.MHP;
+
 using VCPortal_Models.Parameters.ProcCodeTrends;
-using VCPortal_WPF_ViewModel.Projects.ChemotherapyPX;
-using VCPortal_WPF_ViewModel.Projects.ETGFactSymmetry;
+
 using VCPortal_WPF_ViewModel.Shared;
 
 namespace VCPortal_WPF_ViewModel.Projects.ProcCodeTrends;
@@ -41,6 +31,8 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
     private readonly Serilog.ILogger _logger;
     private StringBuilder _sbStatus;
     private List<MM_FINAL_Model> _mM_Final_Filters { get; set; }
+
+    private List<DateSpan_Model> _date_span { get; set; }
 
 
     private readonly BackgroundWorker worker = new BackgroundWorker();
@@ -308,6 +300,16 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
     private async Task GenerateReport()
     {
 
+        if (_date_span == null)
+        {
+            UserMessageViewModel.IsError = true;
+            UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            _logger.Error("ProcCodeTrends.GenerateReport threw an error for {CurrentUser}: DateSpan had no values", Authentication.UserName);
+            return;
+        }
+
+
+
         _logger.Information("Running ProcCodeTrends.GenerateReport for {CurrentUser}...", Authentication.UserName);
 
         _sbStatus.Append("--Processing selected filters for ProcCodeTrends" + Environment.NewLine);
@@ -333,49 +335,52 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
             if (!string.IsNullOrEmpty(parameters[2] + ""))
             {
-                pc_param.State = "'" + String.Join(",", parameters[2].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+                pc_param.mapping_state = "'" + String.Join(",", parameters[2].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
             }
 
             if (!string.IsNullOrEmpty(parameters[3] + ""))
             {
-                pc_param.Product = "'" + String.Join(",", parameters[3].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+                pc_param.PRDCT_LVL_1_NM = "'" + String.Join(",", parameters[3].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
             }
 
             if (!string.IsNullOrEmpty(parameters[4] + ""))
             {
-                pc_param.CSProduct = "'" + String.Join(",", parameters[4].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+                pc_param.CS_TADM_PRDCT_MAP = "'" + String.Join(",", parameters[4].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
             }
 
             if (!string.IsNullOrEmpty(parameters[5] + ""))
             {
-                pc_param.FundingType = "'" + String.Join(",", parameters[5].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+                pc_param.HLTH_PLN_FUND_DESC = "'" + String.Join(",", parameters[5].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
             }
 
             if (!string.IsNullOrEmpty(parameters[6] + ""))
             {
-                pc_param.LegalEntity = "'" + String.Join(",", parameters[6].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+                pc_param.HCE_LEG_ENTY_ROLLUP_DESC = "'" + String.Join(",", parameters[6].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
             }
 
             if (!string.IsNullOrEmpty(parameters[7] + ""))
             {
-                pc_param.Source = "'" + String.Join(",", parameters[7].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+                pc_param.SRC_SYS_GRP_DESC = "'" + String.Join(",", parameters[7].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
             }
 
             if (!string.IsNullOrEmpty(parameters[8] + ""))
             {
-                pc_param.CSDualIndicator = "'" + String.Join(",", parameters[8].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+                pc_param.CS_DUAL_IND = "'" + String.Join(",", parameters[8].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
             }
 
             if (!string.IsNullOrEmpty(parameters[9] + ""))
             {
-                pc_param.MRDualIndicator = "'" + String.Join(",", parameters[9].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+                pc_param.MR_DUAL_IND = "'" + String.Join(",", parameters[9].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
             }
+
+            pc_param.DateSpanList = _date_span;
+
 
 
             _sbStatus.Append("--Retreiving ProcCodeTrends claims phys data from Database" + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
-            List<CLM_PHYS_Model> clm_phys_list;
-            var api = _config.APIS.Where(x => x.Name == "PCT_Clm_Phys").FirstOrDefault();
+            Task<CLM_OP_Report_Model> report_results;
+            var api = _config.APIS.Where(x => x.Name == "PCT_MainReport").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
             var response = await WebAPIConsume.PostCall<ProcCodeTrends_Parameters>(api.Url, pc_param);
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
@@ -383,50 +388,50 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
                 UserMessageViewModel.IsError = true;
                 UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("Clm_Phys_Phys Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+                _logger.Error("ProcCodeTrends.GenerateReport threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
                 return;
             }
             else
             {
 
                 var reponseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<CLM_PHYS_Model>>(reponseStream, new JsonSerializerOptions
+                var result = await JsonSerializer.DeserializeAsync<Task<CLM_OP_Report_Model>>(reponseStream, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
 
-                clm_phys_list = result;
+                report_results = result;
 
             }
 
 
 
-            _sbStatus.Append("--Retreiving ProcCodeTrends claims op data from Database" + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
-            List<CLM_OP_Model> clm_op_list;
-            api = _config.APIS.Where(x => x.Name == "PCT_Clm_Op").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
-            response = await WebAPIConsume.PostCall<ProcCodeTrends_Parameters>(api.Url, pc_param);
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            {
+            //_sbStatus.Append("--Retreiving ProcCodeTrends claims op data from Database" + Environment.NewLine);
+            //ProgressMessageViewModel.Message = _sbStatus.ToString();
+            //List<CLM_OP_Model> clm_op_list;
+            //api = _config.APIS.Where(x => x.Name == "PCT_Clm_Op").FirstOrDefault();
+            //WebAPIConsume.BaseURI = api.BaseUrl;
+            //response = await WebAPIConsume.PostCall<ProcCodeTrends_Parameters>(api.Url, pc_param);
+            //if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            //{
 
-                UserMessageViewModel.IsError = true;
-                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("Clm_Phys_Op Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-                return;
-            }
-            else
-            {
+            //    UserMessageViewModel.IsError = true;
+            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            //    _logger.Error("Clm_Phys_Op Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+            //    return;
+            //}
+            //else
+            //{
 
-                var reponseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<CLM_OP_Model>>(reponseStream, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
+            //    var reponseStream = await response.Content.ReadAsStreamAsync();
+            //    var result = await JsonSerializer.DeserializeAsync<List<CLM_OP_Model>>(reponseStream, new JsonSerializerOptions
+            //    {
+            //        PropertyNameCaseInsensitive = true
+            //    });
 
-                clm_op_list = result;
+            //    clm_op_list = result;
 
-            }
+            //}
 
 
 
@@ -600,6 +605,33 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
             MRDualIndicator = new ObservableCollection<string>(_mM_Final_Filters.Select(x => x.MR_DUAL_IND).Distinct().OrderBy(t => t).ToList() as List<string>);
             MRDualIndicator.Insert(0, "--All--");
+
+
+
+            api = _config.APIS.Where(x => x.Name == "PCT_DateSpan").FirstOrDefault();
+            WebAPIConsume.BaseURI = api.BaseUrl;
+            _sbStatus.Append("--Getting Current Date Span..." + Environment.NewLine);
+            ProgressMessageViewModel.Message = _sbStatus.ToString();
+            await Task.Delay(TimeSpan.FromSeconds(1));
+             response = WebAPIConsume.GetCall(api.Url);
+            if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var reponseStream = await response.Result.Content.ReadAsStreamAsync();
+                var result = await JsonSerializer.DeserializeAsync<List<DateSpan_Model>>(reponseStream, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                _date_span = result;
+            }
+            else
+            {
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                _logger.Error("populateFilters.DateSpan threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
+            }
+
+
 
 
             _selected_lobs = new List<string>();

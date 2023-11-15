@@ -5,6 +5,7 @@ using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using VCPortal_Models.Models.ProcCodeTrends;
@@ -68,68 +69,172 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 
 
 
-        public Task<SqlMapper.GridReader> GetMainPCTReport_Async(ProcCodeTrends_Parameters pct_param, List<DateSpan_Model> dsm, CancellationToken token)
+        public async Task<CLM_OP_Report_Model> GetMainPCTReport_Async(ProcCodeTrends_Parameters pct_param,  CancellationToken token)
         {
 
 
-            StringBuilder sbFilters = new StringBuilder();
+            int year_num = 1; //1, 2, 3,4
+            int? current_year = null;
+
+            string filters = getFilterString(pct_param);
             StringBuilder sbSQL = new StringBuilder();
 
             //CREATE RANK TMP TABLE
-            sbSQL.Append("IF OBJECT_ID('tempdb..#Rank') IS NOT NULL DROP TABLE #Rank SELECT t.px, t.px_desc, t.Y1Q1_allw_amt, t.Y2Q1_allw_amt, (t.Y2Q1_allw_amt - t.Y1Q1_allw_amt) as Y1Q1_Y2Q1_diff INTO #Rank FROM ( select px ,px_desc ,sum(case when year = 2021 and quarter = 1 then allw_amt end) as Y1Q1_allw_amt ,sum(case when year = 2022 and quarter = 1 then allw_amt end) as Y2Q1_allw_amt from pct.CLM_OP where op_phys_bucket = 'OP' "+ sbFilters.ToString() + " group by px, px_desc ) t");
+            //CREATE RANK TMP TABLE
+            //CREATE RANK TMP TABLE
+            sbSQL.Append("IF OBJECT_ID('tempdb..#Rank') IS NOT NULL DROP TABLE #Rank SELECT t.px, t.px_desc, t.Y1Q1_allw_amt, t.Y2Q1_allw_amt, (t.Y2Q1_allw_amt - t.Y1Q1_allw_amt) as Y1Q1_Y2Q1_diff INTO #Rank FROM ( select px ,px_desc ,sum(case when year = 2021 and quarter = 1 then allw_amt end) as Y1Q1_allw_amt ,sum(case when year = 2022 and quarter = 1 then allw_amt end) as Y2Q1_allw_amt from pct.CLM_OP where op_phys_bucket = 'OP' "+ filters + " group by px, px_desc ) t; ");
 
 
-            //unique individual
-            //unique individual
-            //unique individual
+
+            //unique individual start
+            //unique individual start
+            //unique individual start
             sbSQL.Append("SELECT DISTINCT TOP 10 t.px, t.px_desc ");
 
             //LOOP DSM!!!
-            //,t.Y1Q?_indv
-            //,t.Y2Q?_indv
+            foreach (var ds in pct_param.DateSpanList)
+            {
+                if (current_year == null)
+                {
+                    year_num = 1;
+                    current_year = ds.year;
+                }
+                else if (current_year != ds.year)
+                {
+                    year_num = 2;
+                }
+
+                sbSQL.Append(",t.Y"+ year_num + "Q" + ds.quarter + "_indv ");
+            }
+            current_year = null;
 
             //LOOP DSM!!
-            //, CASE WHEN t.Y1Q?_indv = 0 THEN 'N/A' ELSE  CAST(((t.Y2Q?_indv-t.Y1Q?_indv)/t.Y1Q?_indv) as varchar)  END as Y1Q?_Y2Q?_trend
-
+            foreach (var ds in pct_param.DateSpanList)
+            {
+                sbSQL.Append(", CASE WHEN t.Y1Q" + ds.quarter + "_indv = 0 THEN 'N/A' ELSE  CAST(((t.Y2Q" + ds.quarter + "_indv - t.Y1Q" + ds.quarter + "_indv)/t.Y1Q" + ds.quarter + "_indv) as varchar)  END as Y1Q" + ds.quarter + "_Y2Q" + ds.quarter + "_trend ");
+            }
             sbSQL.Append(" ,t.rank FROM ( select a.px ,a.px_desc ");
 
             //LOOP DSM!!!
-            //,sum(case when a.year = ? and a.quarter = ? then indv end) as Y1Q?_indv
-            //,sum(case when a.year = ? and a.quarter = ? then indv end) as Y2Q?_indv
+            foreach (var ds in pct_param.DateSpanList)
+            {
+                if (current_year == null)
+                {
+                    year_num = 1;
+                    current_year = ds.year;
+                }
+                else if (current_year != ds.year)
+                {
+                    year_num = 2;
+                }
 
-            sbSQL.Append(",b.Y1Q1_Y2Q1_diff as rank from pct.CLM_OP a left join #Rank b on a.px = b.px and a.px_desc = b.px_desc where a.op_phys_bucket = 'OP'  " + sbFilters.ToString() + " group by b.Y1Q1_Y2Q1_diff,a.px, a.px_desc ) t order by t.rank DESC");
+                sbSQL.Append(",sum(case when a.year = " + ds.year + " and a.quarter = " + ds.quarter + " then indv end) as Y" + year_num + "Q" + ds.quarter + "_indv ");
+            }
+            current_year = null;
+
+            sbSQL.Append(",b.Y1Q1_Y2Q1_diff as rank from pct.CLM_OP a left join #Rank b on a.px = b.px and a.px_desc = b.px_desc where a.op_phys_bucket = 'OP'  " + filters + " group by b.Y1Q1_Y2Q1_diff,a.px, a.px_desc ) t order by t.rank DESC; ");
+            //unique individual end
+            //unique individual end
+            //unique individual end
 
 
 
 
-
-            //events
-            //events
-            //events
-            sbSQL.Append("SELECT DISTINCT TOP 10 t.px ,t.px_desc");
+            //events start
+            //events start
+            //events start
+            sbSQL.Append("SELECT DISTINCT TOP 10 t.px ,t.px_desc ");
             //LOOP DSM!!!
-            //,t.Y1Q?_events
-            //,t.Y2Q?_events
+            foreach (var ds in pct_param.DateSpanList)
+            {
+                if (current_year == null)
+                {
+                    year_num = 1;
+                    current_year = ds.year;
+                }
+                else if (current_year != ds.year)
+                {
+                    year_num = 2;
+                }
 
+                sbSQL.Append(",t.Y" + year_num + "Q" + ds.quarter + "_events ");
+            }
+            current_year = null;
             //LOOP DSM!!
-            //, CASE WHEN t.Y1Q?_events = 0 THEN 'N/A' ELSE  CAST(((t.Y2Q?_events-t.Y1Q?_events)/t.Y1Q?_events) as varchar)  END as Y1Q?_Y2Q?_trend
-
-            sbSQL.Append("FROM ( select distinct a.px ,a.px_desc");
+            foreach (var ds in pct_param.DateSpanList)
+            {
+                sbSQL.Append(", CASE WHEN t.Y1Q" + ds.quarter + "_events = 0 THEN 'N/A' ELSE  CAST(((t.Y2Q" + ds.quarter + "_events - t.Y1Q" + ds.quarter + "_events)/t.Y1Q" + ds.quarter + "_events) as varchar)  END as Y1Q" + ds.quarter + "_Y2Q" + ds.quarter + "_trend ");
+            }
+            sbSQL.Append(",t.rank FROM ( select distinct a.px ,a.px_desc ");
             //LOOP DSM!!!
-            //,sum(case when a.year = ? and a.quarter = ? then events end) as Y1Q?_events
-            //,sum(case when a.year = ? and a.quarter = ? then events end) as Y2Q?_events
+            foreach (var ds in pct_param.DateSpanList)
+            {
+                if (current_year == null)
+                {
+                    year_num = 1;
+                    current_year = ds.year;
+                }
+                else if(current_year != ds.year) 
+                {
+                    year_num = 2;
+                }
 
-            sbSQL.Append(",b.Y1Q1_Y2Q1_diff as rank from pct.CLM_OP a left join #Rank b on a.px = b.px and a.px_desc = b.px_desc where a.op_phys_bucket = 'OP' " + sbFilters.ToString() + " group by b.Y1Q1_Y2Q1_diff,a.px, a.px_desc ) t order by t.rank DESC");
+                sbSQL.Append(",sum(case when a.year = " + ds.year + " and a.quarter = " + ds.quarter + " then evnts end) as Y"+ year_num + "Q" + ds.quarter + "_events ");
 
-            var results = _db.LoadDataMultiple(sql: sbSQL.ToString(), token, connectionId: "VCT_DB");
+            }
+            current_year = null;
 
-            return results;
+            sbSQL.Append(",b.Y1Q1_Y2Q1_diff as rank from pct.CLM_OP a left join #Rank b on a.px = b.px and a.px_desc = b.px_desc where a.op_phys_bucket = 'OP' " + filters + " group by b.Y1Q1_Y2Q1_diff,a.px, a.px_desc ) t order by t.rank DESC; ");
+            //events end
+            //events end
+            //events end
+
+
+
+
+            //var results = await _db.LoadDataMultiple(sql: sbSQL.ToString(), token, connectionId: "VCT_DB");
+
+
+
+
+            var results = _db.GetMultiple(sql: sbSQL.ToString(), token, gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>());
+
+            CLM_OP_Report_Model claims_final = new CLM_OP_Report_Model();
+            claims_final.unique_individual = results.Item1.ToList();
+            claims_final.events = results.Item2.ToList();
+
+
+
+
+
+
+            return claims_final;
+    
         }
 
 
-        private string getFilterString()
+        private string getFilterString(ProcCodeTrends_Parameters pct_param)
         {
             StringBuilder sbFilters = new StringBuilder();
+
+
+            PropertyInfo[] rootProperties = typeof(ProcCodeTrends_Parameters).GetProperties();
+            foreach (PropertyInfo property in rootProperties)
+            {
+                if(property.PropertyType == typeof(string))
+                {
+                    var value = property.GetValue(pct_param);
+                    if (value != null)
+                    {
+
+                        sbFilters.Append("AND " + property.Name + " in ("+ value + ") ");
+
+                    }
+                        
+                }
+                
+ 
+            }
 
             return sbFilters.ToString();
         }

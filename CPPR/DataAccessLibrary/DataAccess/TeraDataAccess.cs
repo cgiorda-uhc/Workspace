@@ -179,7 +179,18 @@ public class TeraDataAccess : IRelationalDataAccess
         throw new NotImplementedException();
     }
 
-    public Task<SqlMapper.GridReader> LoadDataMultiple<T>(string sql, CancellationToken token, string connectionId = "VCT_DB")
+
+    public Task<SqlMapper.GridReader> LoadDataMultiple(string sql, CancellationToken token, string connectionId = "VCT_DB")
+    {
+        throw new NotImplementedException();
+    }
+
+    public Tuple<IEnumerable<T1>, IEnumerable<T2>> GetMultiple<T1, T2>(string sql, CancellationToken token, Func<SqlMapper.GridReader, IEnumerable<T1>> func1, Func<SqlMapper.GridReader, IEnumerable<T2>> func2, string connectionId = "VCT_DB")
+    {
+        throw new NotImplementedException();
+    }
+
+    public Tuple<IEnumerable<T1>, IEnumerable<T2>, IEnumerable<T3>> GetMultiple<T1, T2, T3>(string sql, CancellationToken token, Func<SqlMapper.GridReader, IEnumerable<T1>> func1, Func<SqlMapper.GridReader, IEnumerable<T2>> func2, Func<SqlMapper.GridReader, IEnumerable<T3>> func3, string connectionId = "VCT_DB")
     {
         throw new NotImplementedException();
     }

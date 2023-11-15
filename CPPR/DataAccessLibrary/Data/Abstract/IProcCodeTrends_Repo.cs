@@ -15,6 +15,6 @@ namespace DataAccessLibrary.Data.Abstract
 
         Task<IEnumerable<DateSpan_Model>> GetDateSpan_Async( CancellationToken token);
 
-        Task<SqlMapper.GridReader> GetMainPCTReport_Async(ProcCodeTrends_Parameters pct_param, List<DateSpan_Model> dsm, CancellationToken token);
+        Task<CLM_OP_Report_Model> GetMainPCTReport_Async(ProcCodeTrends_Parameters pct_param, CancellationToken token);
     }
 }
