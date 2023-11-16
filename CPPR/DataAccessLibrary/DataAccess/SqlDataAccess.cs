@@ -9,6 +9,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using MongoDB.Driver.Core.Configuration;
 using Teradata.Client.Provider;
 using static Dapper.SqlMapper;
+using System;
 
 namespace DataAccessLibrary.DataAccess;
 public class SqlDataAccess : IRelationalDataAccess
@@ -129,33 +130,78 @@ public class SqlDataAccess : IRelationalDataAccess
 
 
 
-    public async Task<SqlMapper.GridReader> LoadDataMultiple(string sql, CancellationToken token, string connectionId = "VCT_DB")
+    //public async Task<SqlMapper.GridReader> LoadDataMultiple(string sql, CancellationToken token, string connectionId = "VCT_DB")
+    //{
+    //    using IDbConnection connection = new SqlConnection(_config.GetConnectionString(connectionId));
+
+    //    var cmd = new CommandDefinition(sql, cancellationToken: token, commandTimeout: 12000);
+    //    var result = await connection.QueryMultipleAsync(cmd);
+    //    return result;
+    //}
+
+
+    //public Tuple<IEnumerable<T1>, IEnumerable<T2>, IEnumerable<T3>, IEnumerable<T4>, IEnumerable<T5>, IEnumerable<T6>, IEnumerable<T7>> LoadDataMultiple<T1, T2, T3, T4, T5, T6, T7>(string sql, CancellationToken token,
+    //                            Func<GridReader, IEnumerable<T1>> func1,
+    //                            Func<GridReader, IEnumerable<T2>> func2,
+    //                            Func<GridReader, IEnumerable<T3>> func3 = null,
+    //                            Func<GridReader, IEnumerable<T4>> func4 = null,
+    //                            Func<GridReader, IEnumerable<T5>> func5 = null,
+    //                            Func<GridReader, IEnumerable<T6>> func6 = null,
+    //                            Func<GridReader, IEnumerable<T7>> func7 = null,
+    //                            string connectionId = "VCT_DB")
+    //{
+    //    var objs = getMultiple(sql, connectionId, func1, func2, func3, func4, func5, func6, func7);
+    //    return Tuple.Create(objs[0] as IEnumerable<T1>, objs[1] as IEnumerable<T2>, objs[2] as IEnumerable<T3>, objs[3] as IEnumerable<T4>, objs[4] as IEnumerable<T5>, objs[5] as IEnumerable<T6>, objs[6] as IEnumerable<T7>);
+    //}
+
+
+
+    public List<object> LoadDataMultiple<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22, T23, T24, T25, T26, T27, T28, T29, T30, T31, T32, T33, T34, T35, T36, T37, T38, T39, T40  >(string sql, CancellationToken token,
+                                Func<GridReader, IEnumerable<T1>> func1,
+                                Func<GridReader, IEnumerable<T2>> func2,
+                                Func<GridReader, IEnumerable<T3>> func3 = null,
+                                Func<GridReader, IEnumerable<T4>> func4 = null,
+                                Func<GridReader, IEnumerable<T5>> func5 = null,
+                                Func<GridReader, IEnumerable<T6>> func6 = null,
+                                Func<GridReader, IEnumerable<T7>> func7 = null,
+                                Func<GridReader, IEnumerable<T8>> func8 = null,
+                                Func<GridReader, IEnumerable<T9>> func9 = null,
+                                Func<GridReader, IEnumerable<T10>> func10 = null,
+                                Func<GridReader, IEnumerable<T11>> func11 = null,
+                                Func<GridReader, IEnumerable<T12>> func12 = null,
+                                Func<GridReader, IEnumerable<T13>> func13 = null,
+                                Func<GridReader, IEnumerable<T14>> func14 = null,
+                                Func<GridReader, IEnumerable<T15>> func15 = null,
+                                Func<GridReader, IEnumerable<T16>> func16 = null,
+                                Func<GridReader, IEnumerable<T17>> func17 = null,
+                                Func<GridReader, IEnumerable<T18>> func18 = null,
+                                Func<GridReader, IEnumerable<T19>> func19 = null,
+                                Func<GridReader, IEnumerable<T20>> func20 = null,
+                                Func<GridReader, IEnumerable<T21>> func21 = null,
+                                Func<GridReader, IEnumerable<T22>> func22 = null,
+                                Func<GridReader, IEnumerable<T23>> func23 = null,
+                                Func<GridReader, IEnumerable<T24>> func24 = null,
+                                Func<GridReader, IEnumerable<T25>> func25 = null,
+                                Func<GridReader, IEnumerable<T26>> func26 = null,
+                                Func<GridReader, IEnumerable<T27>> func27 = null,
+                                Func<GridReader, IEnumerable<T28>> func28 = null,
+                                Func<GridReader, IEnumerable<T29>> func29 = null,
+                                Func<GridReader, IEnumerable<T30>> func30 = null,
+                                Func<GridReader, IEnumerable<T31>> func31 = null,
+                                Func<GridReader, IEnumerable<T32>> func32 = null,
+                                Func<GridReader, IEnumerable<T33>> func33 = null,
+                                Func<GridReader, IEnumerable<T34>> func34 = null,
+                                Func<GridReader, IEnumerable<T35>> func35 = null,
+                                Func<GridReader, IEnumerable<T36>> func36 = null,
+                                Func<GridReader, IEnumerable<T37>> func37 = null,
+                                Func<GridReader, IEnumerable<T38>> func38 = null,
+                                Func<GridReader, IEnumerable<T39>> func39 = null,
+                                Func<GridReader, IEnumerable<T40>> func40 = null,
+                                string connectionId = "VCT_DB")
     {
-        using IDbConnection connection = new SqlConnection(_config.GetConnectionString(connectionId));
-
-        var cmd = new CommandDefinition(sql, cancellationToken: token, commandTimeout: 12000);
-        var result = await connection.QueryMultipleAsync(cmd);
-        return result;
+        var objs = getMultiple(sql, connectionId, func1, func2, func3, func4, func5, func6, func7, func8, func9, func10, func11, func12, func13, func14, func15, func16, func17, func18, func19, func20, func21, func22, func23, func24, func25, func26, func27, func28, func29, func30, func31, func32, func33, func34, func35, func36, func37, func38, func39, func40);
+        return objs;
     }
-
-
-    public Tuple<IEnumerable<T1>, IEnumerable<T2>> GetMultiple<T1, T2>(string sql, CancellationToken token,
-                                        Func<GridReader, IEnumerable<T1>> func1,
-                                        Func<GridReader, IEnumerable<T2>> func2, string connectionId = "VCT_DB")
-    {
-        var objs = getMultiple(sql, connectionId, func1, func2);
-        return Tuple.Create(objs[0] as IEnumerable<T1>, objs[1] as IEnumerable<T2>);
-    }
-
-    public Tuple<IEnumerable<T1>, IEnumerable<T2>, IEnumerable<T3>> GetMultiple<T1, T2, T3>(string sql, CancellationToken token,
-                                    Func<GridReader, IEnumerable<T1>> func1,
-                                    Func<GridReader, IEnumerable<T2>> func2,
-                                    Func<GridReader, IEnumerable<T3>> func3, string connectionId = "VCT_DB")
-    {
-        var objs = getMultiple(sql,  connectionId, func1, func2, func3);
-        return Tuple.Create(objs[0] as IEnumerable<T1>, objs[1] as IEnumerable<T2>, objs[2] as IEnumerable<T3>);
-    }
-
     private List<object> getMultiple(string sql, string connectionId, params Func<GridReader, object>[] readerFuncs)
     {
         var returnResults = new List<object>();
@@ -165,8 +211,15 @@ public class SqlDataAccess : IRelationalDataAccess
 
             foreach (var readerFunc in readerFuncs)
             {
-                var obj = readerFunc(gridReader);
-                returnResults.Add(obj);
+                if(gridReader.Command != null)
+                {
+                    var obj = readerFunc(gridReader);
+                    returnResults.Add(obj);
+                }
+                else
+                {
+                    returnResults.Add(null);
+                }
             }
         }
 

@@ -197,11 +197,11 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 
 
 
-            var results = _db.GetMultiple(sql: sbSQL.ToString(), token, gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>());
+            var results = _db.LoadDataMultiple(sql: sbSQL.ToString(), token, gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), "VCT_DB");
 
             CLM_OP_Report_Model claims_final = new CLM_OP_Report_Model();
-            claims_final.unique_individual = results.Item1.ToList();
-            claims_final.events = results.Item2.ToList();
+            claims_final.unique_individual = ( results[0] as List<Unique_Individual_Model>);
+            claims_final.events = (results[1] as List<Events_Model>);
 
 
 

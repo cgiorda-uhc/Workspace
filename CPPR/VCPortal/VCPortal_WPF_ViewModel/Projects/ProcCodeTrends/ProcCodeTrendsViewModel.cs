@@ -379,7 +379,7 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
             _sbStatus.Append("--Retreiving ProcCodeTrends claims phys data from Database" + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
-            Task<CLM_OP_Report_Model> report_results;
+            CLM_OP_Report_Model report_results;
             var api = _config.APIS.Where(x => x.Name == "PCT_MainReport").FirstOrDefault();
             WebAPIConsume.BaseURI = api.BaseUrl;
             var response = await WebAPIConsume.PostCall<ProcCodeTrends_Parameters>(api.Url, pc_param);
@@ -395,7 +395,7 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
             {
 
                 var reponseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<Task<CLM_OP_Report_Model>>(reponseStream, new JsonSerializerOptions
+                var result = await JsonSerializer.DeserializeAsync<CLM_OP_Report_Model>(reponseStream, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });
