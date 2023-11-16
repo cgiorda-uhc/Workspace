@@ -73,8 +73,6 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
         {
 
 
-            int year_num = 1; //1, 2, 3,4
-            int? current_year = null;
 
             string filters = getFilterString(pct_param);
             StringBuilder sbSQL = new StringBuilder();
@@ -92,21 +90,10 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             sbSQL.Append("SELECT DISTINCT TOP 10 t.px, t.px_desc ");
 
             //LOOP DSM!!!
-            foreach (var ds in pct_param.DateSpanList)
+            for (int i = 0;i <= pct_param.DateSpanList.Count; i++)
             {
-                if (current_year == null)
-                {
-                    year_num = 1;
-                    current_year = ds.year;
-                }
-                else if (current_year != ds.year)
-                {
-                    year_num = 2;
-                }
-
-                sbSQL.Append(",t.Y"+ year_num + "Q" + ds.quarter + "_indv ");
+                sbSQL.Append(",t.Y"+ ((i +1) % 2 == 0 ? "2" : "1") + "Q" + pct_param.DateSpanList[i].quarter + "_indv ");
             }
-            current_year = null;
 
             //LOOP DSM!!
             foreach (var ds in pct_param.DateSpanList)
@@ -116,21 +103,11 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             sbSQL.Append(" ,t.rank FROM ( select a.px ,a.px_desc ");
 
             //LOOP DSM!!!
-            foreach (var ds in pct_param.DateSpanList)
+            for (int i = 0; i <= pct_param.DateSpanList.Count; i++)
             {
-                if (current_year == null)
-                {
-                    year_num = 1;
-                    current_year = ds.year;
-                }
-                else if (current_year != ds.year)
-                {
-                    year_num = 2;
-                }
-
-                sbSQL.Append(",sum(case when a.year = " + ds.year + " and a.quarter = " + ds.quarter + " then indv end) as Y" + year_num + "Q" + ds.quarter + "_indv ");
+                sbSQL.Append(",t.Y" + ((i + 1) % 2 == 0 ? "2" : "1") + "Q" + pct_param.DateSpanList[i].quarter + "_indv ");
+                sbSQL.Append(",sum(case when a.year = " + pct_param.DateSpanList[i].year + " and a.quarter = " + pct_param.DateSpanList[i].quarter + " then indv end) as Y" + ((i + 1) % 2 == 0 ? "2" : "1") + "Q" + pct_param.DateSpanList[i].quarter + "_indv ");
             }
-            current_year = null;
 
             sbSQL.Append(",b.Y1Q1_Y2Q1_diff as rank from pct.CLM_OP a left join #Rank b on a.px = b.px and a.px_desc = b.px_desc where a.op_phys_bucket = 'OP'  " + filters + " group by b.Y1Q1_Y2Q1_diff,a.px, a.px_desc ) t order by t.rank DESC; ");
             //unique individual end
@@ -145,21 +122,10 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             //events start
             sbSQL.Append("SELECT DISTINCT TOP 10 t.px ,t.px_desc ");
             //LOOP DSM!!!
-            foreach (var ds in pct_param.DateSpanList)
+            for (int i = 0; i <= pct_param.DateSpanList.Count; i++)
             {
-                if (current_year == null)
-                {
-                    year_num = 1;
-                    current_year = ds.year;
-                }
-                else if (current_year != ds.year)
-                {
-                    year_num = 2;
-                }
-
-                sbSQL.Append(",t.Y" + year_num + "Q" + ds.quarter + "_events ");
+                sbSQL.Append(",t.Y" + ((i + 1) % 2 == 0 ? "2" : "1") + "Q" + pct_param.DateSpanList[i].quarter + "_events ");
             }
-            current_year = null;
             //LOOP DSM!!
             foreach (var ds in pct_param.DateSpanList)
             {
@@ -167,22 +133,10 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             }
             sbSQL.Append(",t.rank FROM ( select distinct a.px ,a.px_desc ");
             //LOOP DSM!!!
-            foreach (var ds in pct_param.DateSpanList)
+            for (int i = 0; i <= pct_param.DateSpanList.Count; i++)
             {
-                if (current_year == null)
-                {
-                    year_num = 1;
-                    current_year = ds.year;
-                }
-                else if(current_year != ds.year) 
-                {
-                    year_num = 2;
-                }
-
-                sbSQL.Append(",sum(case when a.year = " + ds.year + " and a.quarter = " + ds.quarter + " then evnts end) as Y"+ year_num + "Q" + ds.quarter + "_events ");
-
+                sbSQL.Append(",sum(case when a.year = " + pct_param.DateSpanList[i].year + " and a.quarter = " + pct_param.DateSpanList[i].quarter + " then evnts end) as Y" + ((i + 1) % 2 == 0 ? "2" : "1") + "Q" + pct_param.DateSpanList[i].quarter + "_events ");
             }
-            current_year = null;
 
             sbSQL.Append(",b.Y1Q1_Y2Q1_diff as rank from pct.CLM_OP a left join #Rank b on a.px = b.px and a.px_desc = b.px_desc where a.op_phys_bucket = 'OP' " + filters + " group by b.Y1Q1_Y2Q1_diff,a.px, a.px_desc ) t order by t.rank DESC; ");
             //events end
