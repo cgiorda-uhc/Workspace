@@ -88,18 +88,18 @@ adHoc.Limit = 3000;
 
 
 
-adHoc.PEGReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\PEG Template\\341 PEG DQ&C Results - Template.xlsx";
+//adHoc.PEGReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\PEG Template\\341 PEG DQ&C Results - Template.xlsx";
 
-adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\EBM Template\\342 EBM DQ&C Results - Template.xlsx";
-
-
+//adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\EBM Template\\342 EBM DQ&C Results - Template.xlsx";
 
 
 
-await adHoc.getETGSymmSourceDataAsync(16);
 
 
-return;
+//await adHoc.getETGSymmSourceDataAsync(16);
+
+
+//return;
 
 //await adHoc.PPACA_TAT_Email();
 
@@ -109,14 +109,14 @@ return;
 List<string> files_loaded = new List<string>();
 
 
-files_loaded.Add("Americhoice August -Radiology Cardiology Universe 2023.xlsx");
-files_loaded.Add("United PCP- Rad & Card_August_2023.xlsx");
-files_loaded.Add("United PCP- Gastro_August_2023.xls");
-files_loaded.Add("Oxford August-Radiology Cardiology Universe 2023.xls");
-files_loaded.Add("Oxford August -Gastro Universe 2023.xls");
+files_loaded.Add("United PCP- Rad & Card_September_2023.xlsx");
+files_loaded.Add("Oxford September-Radiology Cardiology Universe 2023.xlsx");
+files_loaded.Add("Oxford September -Gastro Universe 2023.xlsx");
+files_loaded.Add("Americhoice September -Radiology Cardiology Universe 2023.xlsx");
+files_loaded.Add("United PCP- Gastro_September_2023.xlsx");
 
 
-//await adHoc.cleanupMemberDataAsync(files_loaded);
+await adHoc.cleanupMemberDataAsync(files_loaded);
 
 //await adHoc.transferMHPDataAsync(files_loaded);
 
