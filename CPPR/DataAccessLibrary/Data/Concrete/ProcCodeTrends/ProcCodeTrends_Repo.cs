@@ -90,7 +90,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             sbSQL.Append("SELECT DISTINCT TOP 10 t.px, t.px_desc ");
 
             //LOOP DSM!!!
-            for (int i = 0;i <= pct_param.DateSpanList.Count; i++)
+            for (int i = 0;i < pct_param.DateSpanList.Count; i++)
             {
                 sbSQL.Append(",t.Y"+ ((i +1) % 2 == 0 ? "2" : "1") + "Q" + pct_param.DateSpanList[i].quarter + "_indv ");
             }
@@ -103,7 +103,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             sbSQL.Append(" ,t.rank FROM ( select a.px ,a.px_desc ");
 
             //LOOP DSM!!!
-            for (int i = 0; i <= pct_param.DateSpanList.Count; i++)
+            for (int i = 0; i < pct_param.DateSpanList.Count; i++)
             {
                 sbSQL.Append(",t.Y" + ((i + 1) % 2 == 0 ? "2" : "1") + "Q" + pct_param.DateSpanList[i].quarter + "_indv ");
                 sbSQL.Append(",sum(case when a.year = " + pct_param.DateSpanList[i].year + " and a.quarter = " + pct_param.DateSpanList[i].quarter + " then indv end) as Y" + ((i + 1) % 2 == 0 ? "2" : "1") + "Q" + pct_param.DateSpanList[i].quarter + "_indv ");
@@ -122,7 +122,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             //events start
             sbSQL.Append("SELECT DISTINCT TOP 10 t.px ,t.px_desc ");
             //LOOP DSM!!!
-            for (int i = 0; i <= pct_param.DateSpanList.Count; i++)
+            for (int i = 0; i < pct_param.DateSpanList.Count; i++)
             {
                 sbSQL.Append(",t.Y" + ((i + 1) % 2 == 0 ? "2" : "1") + "Q" + pct_param.DateSpanList[i].quarter + "_events ");
             }
@@ -133,7 +133,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             }
             sbSQL.Append(",t.rank FROM ( select distinct a.px ,a.px_desc ");
             //LOOP DSM!!!
-            for (int i = 0; i <= pct_param.DateSpanList.Count; i++)
+            for (int i = 0; i < pct_param.DateSpanList.Count; i++)
             {
                 sbSQL.Append(",sum(case when a.year = " + pct_param.DateSpanList[i].year + " and a.quarter = " + pct_param.DateSpanList[i].quarter + " then evnts end) as Y" + ((i + 1) % 2 == 0 ? "2" : "1") + "Q" + pct_param.DateSpanList[i].quarter + "_events ");
             }
@@ -146,7 +146,10 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 
 
 
-            //var results = await _db.LoadDataMultiple(sql: sbSQL.ToString(), token, connectionId: "VCT_DB");
+
+
+
+
 
 
 
@@ -156,8 +159,6 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             CLM_OP_Report_Model claims_final = new CLM_OP_Report_Model();
             claims_final.unique_individual = ( results[0] as List<Unique_Individual_Model>);
             claims_final.events = (results[1] as List<Events_Model>);
-
-
 
 
 
