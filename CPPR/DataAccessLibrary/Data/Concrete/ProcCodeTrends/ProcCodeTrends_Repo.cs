@@ -84,6 +84,51 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             sbSQL.Append("IF OBJECT_ID('tempdb..#Rank') IS NOT NULL DROP TABLE #Rank SELECT t.px, t.px_desc, t.Y1Q1_allw_amt, t.Y2Q1_allw_amt, (t.Y2Q1_allw_amt - t.Y1Q1_allw_amt) as Y1Q1_Y2Q1_diff INTO #Rank FROM ( select px ,px_desc ,sum(case when year = 2021 and quarter = 1 then allw_amt end) as Y1Q1_allw_amt ,sum(case when year = 2022 and quarter = 1 then allw_amt end) as Y2Q1_allw_amt from pct.CLM_OP where op_phys_bucket = 'OP' "+ filters + " group by px, px_desc ) t; ");
 
 
+            //CREATE MemberMonth TMP TABLE START
+            //CREATE MemberMonth TMP TABLE START
+            //CREATE MemberMonth TMP TABLE START
+            sbSQL.Append("IF OBJECT_ID('tempdb..#MemberMonth') IS  NOT NULL DROP TABLE #MemberMonth ");
+            sbSQL.Append("SELECT DISTINCT TOP 10 t.Metric ");
+
+            //LOOP DSM!!!
+            for (int i = 0; i < pct_param.DateSpanList.Count; i++)
+            {
+                sbSQL.Append(",t.Y" + ((i + 1) % 2 == 0 ? "2" : "1") + "Q" + pct_param.DateSpanList[i].quarter + "_Mbr_Month ");
+            }
+
+            //LOOP DSM!!
+            for (int i = 0; i < pct_param.DateSpanList.Count; i++)
+            {
+
+                if (i % 2 != 0)
+                {
+                    continue;
+                }
+
+                var quarter = pct_param.DateSpanList[i].quarter;
+
+                sbSQL.Append(", CASE WHEN t.Y1Q" + quarter + "_Mbr_Month = 0 THEN 'N/A' ELSE  CAST(((t.Y2Q" + quarter + "_Mbr_Month - t.Y1Q" + quarter + "_Mbr_Month)/t.Y1Q" + quarter + "_Mbr_Month) as varchar)  END as Y1Q" + quarter + "_Y2Q" + quarter + "_trend ");
+            }
+            sbSQL.Append("INTO #MemberMonth FROM ( select distinct 'Member Month' as Metric ");
+
+            //LOOP DSM!!!
+            for (int i = 0; i < pct_param.DateSpanList.Count; i++)
+            {
+
+                var year = ((i + 1) % 2 == 0 ? "2" : "1");
+                var quarter = pct_param.DateSpanList[i].quarter;
+                var year_full = pct_param.DateSpanList[i].year;
+
+                sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter + " then Mbr_Month end) as Y" + year + "Q" + quarter + "_Mbr_Month ");
+            }
+
+            sbSQL.Append("from pct.MM_FINAL a where 1 = 1  " + filters + ") t ");
+
+            //CREATE MemberMonth TMP TABLE END
+            //CREATE MemberMonth TMP TABLE END
+            //CREATE MemberMonth TMP TABLE END
+
+
 
             //unique individual start
             //unique individual start
@@ -229,19 +274,127 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 
 
 
+            //allowed start
+            //allowed start
+            //allowed start
+            sbSQL.Append("SELECT DISTINCT TOP 10 t.px ,t.px_desc ");
+            //LOOP DSM!!!
+            for (int i = 0; i < pct_param.DateSpanList.Count; i++)
+            {
+                var year = ((i + 1) % 2 == 0 ? "2" : "1");
+                var quarter = pct_param.DateSpanList[i].quarter;
+
+                sbSQL.Append(",t.Y" + year + "Q" + quarter + "_allw_amt ");
+            }
+            //LOOP DSM!!
+            for (int i = 0; i < pct_param.DateSpanList.Count; i++)
+            {
+
+                if (i % 2 != 0)
+                {
+                    continue;
+                }
+                var quarter = pct_param.DateSpanList[i].quarter;
+
+                sbSQL.Append(", CASE WHEN t.Y1Q" + quarter + "_allw_amt = 0 THEN 'N/A' ELSE  CAST(((t.Y2Q" + quarter + "_allw_amt - t.Y1Q" + quarter + "_allw_amt)/t.Y1Q" + quarter + "_allw_amt) as varchar)  END as Y1Q" + quarter + "_Y2Q" + quarter + "_trend ");
+            }
+            sbSQL.Append(",t.rank FROM ( select distinct a.px ,a.px_desc ");
+            //LOOP DSM!!!
+            for (int i = 0; i < pct_param.DateSpanList.Count; i++)
+            {
+                var year = ((i + 1) % 2 == 0 ? "2" : "1");
+                var quarter = pct_param.DateSpanList[i].quarter;
+                var year_full = pct_param.DateSpanList[i].year;
+
+                sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter + " then allw_amt end) as Y" + year + "Q" + quarter + "_allw_amt ");
+            }
+
+            sbSQL.Append(",b.Y1Q1_Y2Q1_diff as rank from pct.CLM_OP a left join #Rank b on a.px = b.px and a.px_desc = b.px_desc where a.op_phys_bucket = 'OP' " + filters + " group by b.Y1Q1_Y2Q1_diff,a.px, a.px_desc ) t order by t.rank DESC; ");
+            //allowed end
+            //allowed end
+            //allowed end
 
 
+            //member month start
+            //member month start
+            //member month start
+            sbSQL.Append("SELECT * FROM #MemberMonth; ");
+            //member month end
+            //member month end
+            //member month end
 
 
+            //Allowed PMPM start
+            //Allowed PMPM start
+            //Allowed PMPM start 
+            sbSQL.Append("SELECT DISTINCT TOP 10 x.px ,x.px_desc ");
+            //LOOP DSM!!!
+            for (int i = 0; i < pct_param.DateSpanList.Count; i++)
+            {
+                var year = ((i + 1) % 2 == 0 ? "2" : "1");
+                var quarter = pct_param.DateSpanList[i].quarter;
+
+                sbSQL.Append(",x.Y" + year + "Q" + quarter + "_allw_PMPM ");
+            }
+            //LOOP DSM!!
+            for (int i = 0; i < pct_param.DateSpanList.Count; i++)
+            {
+
+                if (i % 2 != 0)
+                {
+                    continue;
+                }
+                var quarter = pct_param.DateSpanList[i].quarter;
+
+                sbSQL.Append(", CASE WHEN x.Y1Q" + quarter + "_allw_PMPM = 0 THEN 'N/A' ELSE  CAST(((x.Y2Q" + quarter + "_allw_PMPM - x.Y1Q" + quarter + "_allw_PMPM)/x.Y1Q" + quarter + "_allw_PMPM) as varchar)  END as Y1Q" + quarter + "_Y2Q" + quarter + "_trend ");
+            }
+
+            sbSQL.Append(",y.Y1Q1_Y2Q1_diff  as rank FROM ( select distinct a.px ,a.px_desc ");
 
 
-            var results = _db.LoadDataMultiple(sql: sbSQL.ToString(), token, gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Claims_Model>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), "VCT_DB");
+            for (int i = 0; i < pct_param.DateSpanList.Count; i++)
+            {
+
+                if (i % 2 != 0)
+                {
+                    continue;
+                }
+                var quarter = pct_param.DateSpanList[i].quarter;
+
+                sbSQL.Append(",a.Y1Q" + quarter + "_allw_amt/(SELECT Y1Q" + quarter + "_Mbr_Month FROM #MemberMonth) as Y1Q" + quarter + "_allw_PMPM ");
+                sbSQL.Append(",a.Y2Q" + quarter + "_allw_amt/(SELECT Y2Q" + quarter + "_Mbr_Month FROM #MemberMonth) as Y2Q" + quarter + "_allw_PMPM ");
+            }
+
+
+            sbSQL.Append(" FROM ( select distinct px ,px_desc ");
+            //LOOP DSM!!!
+            for (int i = 0; i < pct_param.DateSpanList.Count; i++)
+            {
+                var year = ((i + 1) % 2 == 0 ? "2" : "1");
+                var quarter = pct_param.DateSpanList[i].quarter;
+                var year_full = pct_param.DateSpanList[i].year;
+
+                sbSQL.Append(",sum(case when year = " + year_full + " and quarter = " + quarter + " then allw_amt end) as Y" + year + "Q" + quarter + "_allw_amt ");
+            }
+
+            sbSQL.Append("from pct.CLM_OP where op_phys_bucket = 'OP' " + filters + " group by px, px_desc ) a ) x  ");
+            sbSQL.Append("left join #Rank y   on x.px = y.px and x.px_desc = y.px_desc  ");
+            sbSQL.Append("order by y.Y1Q1_Y2Q1_diff DESC ");
+            //Allowed PMPM end
+            //Allowed PMPM end
+            //Allowed PMPM end
+
+
+            var results = _db.LoadDataMultiple(sql: sbSQL.ToString(), token, gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read<Member_Month_Model>(), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), "VCT_DB");
 
             CLM_OP_Report_Model claims_final = new CLM_OP_Report_Model();
             claims_final.unique_individual = ( results[0] as List<Unique_Individual_Model>);
             claims_final.events = (results[1] as List<Events_Model>);
             claims_final.claims = (results[2] as List<Claims_Model>);
-           
+            claims_final.allowed = (results[3] as List<Allowed_Model>);
+            claims_final.member_month = (results[4] as List<Member_Month_Model>);
+            claims_final.allowed_pmpm = (results[5] as List<Allowed_PMPM_Model>);
+
 
 
             return claims_final;
