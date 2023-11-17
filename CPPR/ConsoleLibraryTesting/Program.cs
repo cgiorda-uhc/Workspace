@@ -116,13 +116,13 @@ files_loaded.Add("Americhoice September -Radiology Cardiology Universe 2023.xlsx
 files_loaded.Add("United PCP- Gastro_September_2023.xlsx");
 
 
-await adHoc.cleanupMemberDataAsync(files_loaded);
+//await adHoc.cleanupMemberDataAsync(files_loaded);
 
-//await adHoc.transferMHPDataAsync(files_loaded);
+await adHoc.transferMHPDataAsync(files_loaded);
 
 
 
-//return;
+return;
 
 
 

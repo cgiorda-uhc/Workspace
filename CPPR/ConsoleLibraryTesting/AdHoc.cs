@@ -322,7 +322,7 @@ namespace ConsoleLibraryTesting
             await db_sql.BulkSave<MHP_Reporting_Filters>(connectionString: ConnectionStringVC, "mhp.MHP_Universes_Filter_Cache", fs, columns, truncate: true);
 
 
-            //await SharedFunctions.EmailAsync("jon.piotrowski@uhc.com;renee_l_struck@uhc.com;hong_gao@uhc.com", "chris_giordano@uhc.com", "MHPUniverse August 2023 was refreshed", "MHPUniverse August 2023 was refreshed", "chris_giordano@uhc.com;laura_fischer@uhc.com;inna_rudi@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
+            //await SharedFunctions.EmailAsync("jon.piotrowski@uhc.com;renee_l_struck@uhc.com;hong_gao@uhc.com", "chris_giordano@uhc.com", "MHPUniverse September 2023 was refreshed", "MHPUniverse September 2023 was refreshed", "chris_giordano@uhc.com;laura_fischer@uhc.com;inna_rudi@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
         }
 
 
