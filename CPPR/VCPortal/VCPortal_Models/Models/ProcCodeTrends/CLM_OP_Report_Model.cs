@@ -17,4 +17,11 @@ public class CLM_OP_Report_Model
     public List<Allowed_PMPM_Model> allowed_pmpm { get; set; }
 
     public List<Member_Month_Model> member_month { get; set; }
+
+
+    public List<Utilization000_Model> utilization000 { get; set; }
+
+    public List<Unit_Cost1_Model> unit_cost1 { get; set; }
+
+    public List<Unit_Cost2_Model> unit_cost2 { get; set; }
 }
