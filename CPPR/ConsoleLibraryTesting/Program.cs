@@ -109,16 +109,16 @@ adHoc.Limit = 3000;
 List<string> files_loaded = new List<string>();
 
 
-files_loaded.Add("United PCP- Rad & Card_September_2023.xlsx");
-files_loaded.Add("Oxford September-Radiology Cardiology Universe 2023.xlsx");
-files_loaded.Add("Oxford September -Gastro Universe 2023.xlsx");
-files_loaded.Add("Americhoice September -Radiology Cardiology Universe 2023.xlsx");
-files_loaded.Add("United PCP- Gastro_September_2023.xlsx");
+files_loaded.Add("United PCP- Rad & Card_October_2023.xlsx");
+files_loaded.Add("Oxford October - Radiology Cardiology Universe 2023.xlsx");
+files_loaded.Add("Oxford October -Gastro Universe 2023.xlsx");
+files_loaded.Add("Americhoice October -Radiology Cardiology Universe 2023.xlsx");
+files_loaded.Add("United PCP- Gastro_October_2023.xlsx");
 
 
-//await adHoc.cleanupMemberDataAsync(files_loaded);
+await adHoc.cleanupMemberDataAsync(files_loaded);
 
-await adHoc.transferMHPDataAsync(files_loaded);
+//await adHoc.transferMHPDataAsync(files_loaded);
 
 
 

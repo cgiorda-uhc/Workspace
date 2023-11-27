@@ -55,15 +55,15 @@ public class SiteOfCareGastro : ISiteOfCare
 
             Log.Information($"Searching for new files...");
             //COMPARE LAST DATE WITH NEW FILESD
-            // var newFiles = getNewFiles(_config.FileLists, lastestFileDate);
+             var newFiles = getNewFiles(_config.FileLists, lastestFileDate);
 
 
 
-            var newFiles = new  List<string>();
-            newFiles.Add("C:\\Users\\cgiorda\\Desktop\\New folder (2)\\Oxford Gastro Monthly Reports - September 2023.zip");
-            _month = 9;
-            _year = 2023;
-            _destination = "stg.SiteOfCare_Gastro";
+            //var newFiles = new  List<string>();
+            //newFiles.Add("C:\\Users\\cgiorda\\Desktop\\New folder (2)\\Oxford Gastro Monthly Reports - September 2023.zip");
+            //_month = 9;
+            //_year = 2023;
+            //_destination = "stg.SiteOfCare_Gastro";
 
 
 
@@ -101,8 +101,8 @@ public class SiteOfCareGastro : ISiteOfCare
             var closed_xml = new ClosedXMLFunctions();
 
             //GET STAGING FILES FOR PROCESSING
-            //var workingFiles = Directory.GetFiles(workingPath, "*.xlsx", SearchOption.TopDirectoryOnly);
-            string[] workingFiles = { "C:\\Users\\cgiorda\\Desktop\\Projects\\SiteOfCareGastro\\United Gastro SOC Waterfall_20231010.xlsx" };
+            var workingFiles = Directory.GetFiles(workingPath, "*.xlsx", SearchOption.TopDirectoryOnly);
+            //string[] workingFiles = { "C:\\Users\\cgiorda\\Desktop\\Projects\\SiteOfCareGastro\\United Gastro SOC Waterfall_20231010.xlsx" };
 
 
             var config_sheet = _config.FileLists[0].ExcelConfigs[0];
