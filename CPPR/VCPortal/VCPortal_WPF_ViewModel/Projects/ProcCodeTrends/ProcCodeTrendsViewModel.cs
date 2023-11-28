@@ -2,13 +2,13 @@
 using CommunityToolkit.Mvvm.Input;
 
 using FileParsingLibrary.MSExcel;
-
+using FileParsingLibrary.MSExcel.Custom.ProcCodeTrends;
 using Microsoft.Extensions.Configuration;
 using SharedFunctionsLibrary;
 
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-
+using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 
@@ -406,130 +406,40 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
 
 
-            //_sbStatus.Append("--Retreiving ProcCodeTrends claims op data from Database" + Environment.NewLine);
-            //ProgressMessageViewModel.Message = _sbStatus.ToString();
-            //List<CLM_OP_Model> clm_op_list;
-            //api = _config.APIS.Where(x => x.Name == "PCT_Clm_Op").FirstOrDefault();
-            //WebAPIConsume.BaseURI = api.BaseUrl;
-            //response = await WebAPIConsume.PostCall<ProcCodeTrends_Parameters>(api.Url, pc_param);
-            //if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            //{
+            CancellationTokenSource cancellationToken;
+            cancellationToken = new CancellationTokenSource();
+            var bytes = await ProcCodeTrendsExport.ExportProcDataToExcel(report_results,  () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
 
-            //    UserMessageViewModel.IsError = true;
-            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-            //    _logger.Error("Clm_Phys_Op Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-            //    return;
-            //}
-            //else
-            //{
-
-            //    var reponseStream = await response.Content.ReadAsStreamAsync();
-            //    var result = await JsonSerializer.DeserializeAsync<List<CLM_OP_Model>>(reponseStream, new JsonSerializerOptions
-            //    {
-            //        PropertyNameCaseInsensitive = true
-            //    });
-
-            //    clm_op_list = result;
-
-            //}
+            var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\Proc_Code_Trend_Report_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
 
 
+            _sbStatus.Append("--Saving Excel here: " + file + Environment.NewLine);
+            ProgressMessageViewModel.Message = _sbStatus.ToString();
 
-            ////EI ALL SUMMARY
-            //_sbStatus.Append("--Retreiving EI summary all data from Database" + Environment.NewLine);
-            //ProgressMessageViewModel.Message = _sbStatus.ToString();
+            if (File.Exists(file))
+                File.Delete(file);
 
-            //api = _config.APIS.Where(x => x.Name == "MHP_EI_All").FirstOrDefault();
-            //WebAPIConsume.BaseURI = api.BaseUrl;
-            //response = await WebAPIConsume.PostCall<MHP_EI_Parameters_All>(api.Url, ei_param_all);
-            //if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            //{
-
-            //    UserMessageViewModel.IsError = true;
-            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-            //    _logger.Error("MHP EI All Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-            //    return;
-            //}
-            //else
-            //{
-
-            //    var reponseStream = await response.Content.ReadAsStreamAsync();
-            //    var result = await JsonSerializer.DeserializeAsync<List<MHP_EI_Model>>(reponseStream, new JsonSerializerOptions
-            //    {
-            //        PropertyNameCaseInsensitive = true
-            //    });
-
-            //    mhp_final_all = result;
+            await File.WriteAllBytesAsync(file, bytes);
 
 
-            //}
+            _sbStatus.Append("--Opening Excel" + Environment.NewLine);
+            ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(file)
+            {
+                UseShellExecute = true
+            };
+            p.Start();
 
 
+            _sbStatus.Append("--Process completed!" + Environment.NewLine + Environment.NewLine + Environment.NewLine);
+            _sbStatus.Append("--Ready" + Environment.NewLine);
+            ProgressMessageViewModel.Message = _sbStatus.ToString();
 
-
-
-            //_sbStatus.Append("--Retreiving EI details data from Database" + Environment.NewLine);
-            //ProgressMessageViewModel.Message = _sbStatus.ToString();
-
-            //api = _config.APIS.Where(x => x.Name == "MHP_EI_Details").FirstOrDefault();
-            //WebAPIConsume.BaseURI = api.BaseUrl;
-            //response = await WebAPIConsume.PostCall<MHP_EI_Parameters>(api.Url, ei_param);
-            //if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            //{
-
-            //    UserMessageViewModel.IsError = true;
-            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-            //    _logger.Error("MHP EI Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-            //    return;
-            //}
-            //else
-            //{
-
-            //    var reponseStream = await response.Content.ReadAsStreamAsync();
-            //    var result = await JsonSerializer.DeserializeAsync<List<MHPEIDetails_Model>>(reponseStream, new JsonSerializerOptions
-            //    {
-            //        PropertyNameCaseInsensitive = true
-            //    });
-
-            //    mhp_details_final = result;
-
-
-            //}
-
-            //CancellationTokenSource cancellationToken;
-            //cancellationToken = new CancellationTokenSource();
-            //var bytes = await MHPExcelExport.ExportEIToExcel(mhp_final, mhp_final_all, mhp_details_final, () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
-
-            //var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\MHP_Report_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
-
-
-            //_sbStatus.Append("--Saving Excel here: " + file + Environment.NewLine);
-            //ProgressMessageViewModel.Message = _sbStatus.ToString();
-
-            //if (File.Exists(file))
-            //    File.Delete(file);
-
-            //await File.WriteAllBytesAsync(file, bytes);
-
-
-            //_sbStatus.Append("--Opening Excel" + Environment.NewLine);
-            //ProgressMessageViewModel.Message = _sbStatus.ToString();
-
-            //var p = new Process();
-            //p.StartInfo = new ProcessStartInfo(file)
-            //{
-            //    UseShellExecute = true
-            //};
-            //p.Start();
-
-
-            //_sbStatus.Append("--Process completed!" + Environment.NewLine + Environment.NewLine + Environment.NewLine);
-            //_sbStatus.Append("--Ready" + Environment.NewLine);
-            //ProgressMessageViewModel.Message = _sbStatus.ToString();
-
-            //UserMessageViewModel.IsError = false;
-            //UserMessageViewModel.Message = "MHP EI Report sucessfully generated";
-            //_logger.Information("MHP EI Report sucessfully generated for {CurrentUser}...", Authentication.UserName);
+            UserMessageViewModel.IsError = false;
+            UserMessageViewModel.Message = "Proc Code Trend Report sucessfully generated";
+            _logger.Information("Proc Code Trend Report sucessfully generated for {CurrentUser}...", Authentication.UserName);
 
         }
         catch (Exception ex)

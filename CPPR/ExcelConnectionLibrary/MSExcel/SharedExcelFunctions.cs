@@ -26,16 +26,16 @@ namespace FileParsingLibrary.MSExcel
 
         public static void AddClosedXMLBorders(ref IXLCell cell)
         {
-            cell.Style.Border.RightBorder = XLBorderStyleValues.Thick;
+            cell.Style.Border.RightBorder = XLBorderStyleValues.Thin;
             cell.Style.Border.RightBorderColor = XLColor.Black;
 
-            cell.Style.Border.LeftBorder = XLBorderStyleValues.Thick;
+            cell.Style.Border.LeftBorder = XLBorderStyleValues.Thin;
             cell.Style.Border.LeftBorderColor = XLColor.Black;
 
-            cell.Style.Border.TopBorder = XLBorderStyleValues.Thick;
+            cell.Style.Border.TopBorder = XLBorderStyleValues.Thin;
             cell.Style.Border.TopBorderColor = XLColor.Black;
 
-            cell.Style.Border.BottomBorder = XLBorderStyleValues.Thick;
+            cell.Style.Border.BottomBorder = XLBorderStyleValues.Thin;
             cell.Style.Border.BottomBorderColor = XLColor.Black;
         }
 
