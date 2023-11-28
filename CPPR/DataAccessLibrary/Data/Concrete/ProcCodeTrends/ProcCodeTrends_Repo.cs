@@ -122,7 +122,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                 sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter + " then Mbr_Month end) as Y" + year + "Q" + quarter + "_Mbr_Month ");
             }
 
-            sbSQL.Append("from pct.MM_FINAL a where 1 = 1  " + filters + ") t ");
+            sbSQL.Append("from pct.MM_FINAL a where 1 = 1  " + filters + ") t; ");
 
             //CREATE MemberMonth TMP TABLE END
             //CREATE MemberMonth TMP TABLE END
@@ -379,7 +379,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 
             sbSQL.Append("from pct.CLM_OP where op_phys_bucket = 'OP' " + filters + " group by px, px_desc ) a ) x  ");
             sbSQL.Append("left join #Rank y   on x.px = y.px and x.px_desc = y.px_desc  ");
-            sbSQL.Append("order by y.Y1Q1_Y2Q1_diff DESC ");
+            sbSQL.Append("order by y.Y1Q1_Y2Q1_diff DESC; ");
             //Allowed PMPM end
             //Allowed PMPM end
             //Allowed PMPM end
@@ -441,7 +441,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 
             sbSQL.Append("from pct.CLM_OP where op_phys_bucket = 'OP' " + filters + " group by px, px_desc ) a ) x  ");
             sbSQL.Append("left join #Rank y   on x.px = y.px and x.px_desc = y.px_desc  ");
-            sbSQL.Append("order by y.Y1Q1_Y2Q1_diff DESC ");
+            sbSQL.Append("order by y.Y1Q1_Y2Q1_diff DESC; ");
             //Utilization/000 end
             //Utilization/000 end
             //Utilization/000 end
@@ -506,7 +506,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 
             sbSQL.Append("from pct.CLM_OP where op_phys_bucket = 'OP' " + filters + " group by px, px_desc ) t   ");
             sbSQL.Append("left join #Rank y   on t.px = y.px and t.px_desc = y.px_desc ) t1  ");
-            sbSQL.Append("order by t1.rank DESC ");
+            sbSQL.Append("order by t1.rank DESC; ");
             //Unit Cost 1 end
             //Unit Cost 1 end
             //Unit Cost 1 end
@@ -573,17 +573,22 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 
             sbSQL.Append("from pct.CLM_OP where op_phys_bucket = 'OP' " + filters + " group by px, px_desc ) t   ");
             sbSQL.Append("left join #Rank y   on t.px = y.px and t.px_desc = y.px_desc ) t1  ");
-            sbSQL.Append("order by t1.rank DESC ");
+            sbSQL.Append("order by t1.rank DESC; ");
             //Unit Cost 2 end
             //Unit Cost 2 end
             //Unit Cost 2 end
 
 
+            //Year Quarter Start
+            //Year Quarter Start
+            //Year Quarter Start
+            sbSQL.Append("SELECT DISTINCT [year], [quarter] from pct.CLM_OP ORDER BY [year], [quarter];");
+            //Year Quarter End
+            //Year Quarter End
+            //Year Quarter End
 
 
-
-
-            var results = _db.LoadDataMultiple(sql: sbSQL.ToString(), token, gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read<Member_Month_Model>(), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), "VCT_DB");
+            var results = _db.LoadDataMultiple(sql: sbSQL.ToString(), token, gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read<Member_Month_Model>(), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), "VCT_DB");
 
             CLM_OP_Report_Model claims_final = new CLM_OP_Report_Model();
             claims_final.unique_individual = ( results[0] as List<Unique_Individual_Model>);
@@ -595,6 +600,8 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             claims_final.utilization000 = (results[6] as List<Utilization000_Model>);
             claims_final.unit_cost1 = (results[7] as List<Unit_Cost1_Model>);
             claims_final.unit_cost2 = (results[8] as List<Unit_Cost2_Model>);
+            claims_final.year_quarter = (results[9] as List<YearQuarter_Model>);
+
 
             return claims_final;
     
