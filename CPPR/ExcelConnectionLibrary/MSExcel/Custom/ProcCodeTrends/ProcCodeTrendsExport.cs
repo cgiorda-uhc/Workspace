@@ -194,6 +194,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                 rowCnt++;
                 colCnt = 1;
             }
+            wsSource.Columns().AdjustToContents();
             //CLM OP Unique Individual END
             //CLM OP Unique Individual END
             //CLM OP Unique Individual END
