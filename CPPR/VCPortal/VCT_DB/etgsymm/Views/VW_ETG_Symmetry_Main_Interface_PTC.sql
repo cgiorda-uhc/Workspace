@@ -216,9 +216,9 @@ f.EC_Change_Comments,
 
 
 f.PD_Version as Data_Period,
-fp.PD_Version as Data_Period_Previous,
+(CASE WHEN fp.PD_Version IS NULL OR fp.PD_Version = 0  THEN (SELECT TOP 1 PD_Version FROM etgsymm.ETG_Fact_Symmetry WHERE Symmetry_Version < (SELECT MAX(Symmetry_Version) FROM etgsymm.ETG_Fact_Symmetry)) ELSE fp.PD_Version END ) as Data_Period_Previous,
  f.Symmetry_Version as Symmetry_Version,
-  fp.Symmetry_Version as Symmetry_Version_Previous
+(CASE WHEN fp.Symmetry_Version IS NULL OR fp.Symmetry_Version = 0 THEN (SELECT TOP 1 Symmetry_Version FROM etgsymm.ETG_Fact_Symmetry WHERE Symmetry_Version < (SELECT MAX(Symmetry_Version) FROM etgsymm.ETG_Fact_Symmetry)) ELSE fp.Symmetry_Version END )as Symmetry_Version_Previous
 
 
 

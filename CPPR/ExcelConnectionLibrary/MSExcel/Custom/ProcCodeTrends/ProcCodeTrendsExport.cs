@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VCPortal_Models.Models.MHP;
 using VCPortal_Models.Models.ProcCodeTrends;
+using Task = System.Threading.Tasks.Task;
 
 namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
 {

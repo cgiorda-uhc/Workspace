@@ -49,6 +49,14 @@ public class ETGPTCSummaryConfig
     public float PC_Spec_Total_Cost { get; set; }
     public float PC_Spec_Average_Cost { get; set; }
     public float PC_Spec_CV { get; set; }
+
+
+    public string PC_Attribution_Previous { get; set; }
+    public string PC_Attribution { get; set; }
+
+
+
+
     public string PC_Changes_Made { get; set; }
     public string PC_Change_Comments { get; set; }
 
