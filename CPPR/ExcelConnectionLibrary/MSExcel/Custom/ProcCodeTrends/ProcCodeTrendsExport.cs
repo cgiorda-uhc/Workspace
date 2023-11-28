@@ -85,6 +85,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             SharedExcelFunctions.AddClosedXMLBorders(ref cell);
 
             colCnt = 3;
+            //LOOP YQ COLUMN HEADERS
             foreach (var yq in  clm_op_results.year_quarter)
             {
                 columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
@@ -97,12 +98,29 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                 colCnt++;
             }
 
+            //MERGE YQ "Unique Individual"
             columnLetter = SharedExcelFunctions.GetColumnName(colCnt - 1);
             wsSource.Range("D1:"+ columnLetter + "1").Merge();
 
+            //LOOP TREND COLUMN HEADERS
+            foreach (var yq in clm_op_results.year_quarter)
+            {
+                columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+                cell = wsSource.Cell(columnLetter + rowCnt);
+
+                cell.Value = yq.year + "Q" + yq.quarter;
+                cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+                SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+
+                colCnt++;
+            }
+
+            //MERGE YQ "Trend"
+            columnLetter = SharedExcelFunctions.GetColumnName(colCnt - 1);
+            wsSource.Range("D1:" + columnLetter + "1").Merge();
 
 
-
+            //POPULATE DATA
             Int16 cnt = 1;
             foreach (var c in clm_op_results.unique_individual)
             {
