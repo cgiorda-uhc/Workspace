@@ -82,10 +82,13 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             string year = "";
             string quarter = "";
 
+
+        
+
             //CREATE RANK TMP TABLE
             //CREATE RANK TMP TABLE
             //CREATE RANK TMP TABLE
-            sbSQL.Append("IF OBJECT_ID('tempdb..#Rank') IS NOT NULL DROP TABLE #Rank SELECT t.px, t.px_desc, t.Y1Q1_allw_amt, t.Y2Q1_allw_amt, (t.Y2Q1_allw_amt - t.Y1Q1_allw_amt) as Y1Q1_Y2Q1_diff INTO #Rank FROM ( select px ,px_desc ,sum(case when year = 2021 and quarter = 1 then allw_amt end) as Y1Q1_allw_amt ,sum(case when year = 2022 and quarter = 1 then allw_amt end) as Y2Q1_allw_amt from pct.CLM_OP where op_phys_bucket = 'OP' "+ filters + " group by px, px_desc ) t; ");
+            sbSQL.Append("IF OBJECT_ID('tempdb..#Rank') IS NOT NULL DROP TABLE #Rank SELECT t.px, t.px_desc, t.Y1Q1_allw_amt, t.Y2Q1_allw_amt, (t.Y2Q1_allw_amt - t.Y1Q1_allw_amt) as Y1Q1_Y2Q1_diff INTO #Rank FROM ( select px ,px_desc ,sum(case when year = "+ pct_param.DateSpanList[0].year + " and quarter = "+ pct_param.DateSpanList[0].quarter + " then allw_amt end) as Y1Q1_allw_amt ,sum(case when year = "+ pct_param.DateSpanList[4].year + " and quarter = "+ pct_param.DateSpanList[4].quarter + " then allw_amt end) as Y2Q1_allw_amt from pct.CLM_OP where op_phys_bucket = 'OP' " + filters + " group by px, px_desc ) t; ");
 
 
             //CREATE MemberMonth TMP TABLE START
@@ -117,7 +120,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             for (int i = 1; i < 5; i++)
             {
 
-                sbSQL.Append(", CASE WHEN t.Y1Q" + i+ "_Mbr_Month = 0 THEN 'N/A' ELSE  CAST(((t.Y2Q" + i + "_Mbr_Month - t.Y1Q" + i + "_Mbr_Month)/t.Y1Q" + i + "_Mbr_Month) as varchar)  END as Y1Q" + i + "_Y2Q" + i + "_trend ");
+                sbSQL.Append(", CASE WHEN t.Y1Q" + i+ "_Mbr_Month = 0 THEN 'N/A' ELSE  CAST(FORMAT(((t.Y2Q" + i + "_Mbr_Month - t.Y1Q" + i + "_Mbr_Month)/t.Y1Q" + i + "_Mbr_Month),'P') as varchar)  END as Y1Q" + i + "_Y2Q" + i + "_trend ");
      
             }
             sbSQL.Append("INTO #MemberMonth FROM ( select distinct 'Member Month' as Metric ");
@@ -154,7 +157,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             //unique individual start
             //unique individual start
             //unique individual start
-            sbSQL.Append("SELECT DISTINCT TOP 10 t.px, t.px_desc ");
+            sbSQL.Append("SELECT DISTINCT TOP 10000 t.px, t.px_desc ");
 
             //LOOP DSM!!!
             for (int i = 0; i < pct_param.DateSpanList.Count; i++)
@@ -193,7 +196,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             for (int i = 1; i < 5; i++)
             {
 
-                sbSQL.Append(", CASE WHEN t.Y1Q" + i + "_indv = 0 THEN 'N/A' ELSE  CAST(((t.Y2Q" + i + "_indv - t.Y1Q" + i + "_indv)/t.Y1Q" + i + "_indv) as varchar)  END as Y1Q" + i + "_Y2Q" + i + "_trend ");
+                sbSQL.Append(", CASE WHEN t.Y1Q" + i + "_indv = 0 THEN 'N/A' ELSE  CAST(FORMAT(((t.Y2Q" + i + "_indv - t.Y1Q" + i + "_indv)/t.Y1Q" + i + "_indv),'P') as varchar)  END as Y1Q" + i + "_Y2Q" + i + "_trend ");
 
             }
 
@@ -243,32 +246,54 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             ////LOOP DSM!!!
             //for (int i = 0; i < pct_param.DateSpanList.Count; i++)
             //{
-            //    var year = ((i + 1) % 2 == 0 ? "2" : "1");
-            //    var quarter = pct_param.DateSpanList[i].quarter;
+            //    if (i <= 3)
+            //    {
+            //        year = "1";
+            //        quarter = (i + 1).ToString();
+            //    }
+            //    else
+            //    {
+            //        year = "2";
+            //        quarter = ((i + 1) - 4).ToString();
+            //    }
 
+
+            //    //sbSQL.Append(",t.Y" + ((i + 1) % 2 == 0 ? "2" : "1") + "Q" + pct_param.DateSpanList[i].quarter + "_Mbr_Month ");
             //    sbSQL.Append(",t.Y" + year + "Q" + quarter + "_events ");
             //}
+
+
             ////LOOP DSM!!
-            //for (int i = 0; i < pct_param.DateSpanList.Count; i++)
+            //for (int i = 1; i < 5; i++)
             //{
 
-            //    if (i % 2 != 0)
-            //    {
-            //        continue;
-            //    }
-            //    var quarter = pct_param.DateSpanList[i].quarter;
+            //    sbSQL.Append(", CASE WHEN t.Y1Q" + i + "_events = 0 THEN 'N/A' ELSE  CAST(((t.Y2Q" + i + "_events - t.Y1Q" + i + "_events)/t.Y1Q" + i + "_events) as varchar)  END as Y1Q" + i + "_Y2Q" + i + "_trend ");
 
-            //    sbSQL.Append(", CASE WHEN t.Y1Q" + quarter + "_events = 0 THEN 'N/A' ELSE  CAST(((t.Y2Q" + quarter + "_events - t.Y1Q" + quarter + "_events)/t.Y1Q" + quarter + "_events) as varchar)  END as Y1Q" + quarter + "_Y2Q" + quarter + "_trend ");
             //}
+
+
             //sbSQL.Append(",t.rank FROM ( select distinct a.px ,a.px_desc ");
             ////LOOP DSM!!!
             //for (int i = 0; i < pct_param.DateSpanList.Count; i++)
             //{
-            //    var year = ((i + 1) % 2 == 0 ? "2" : "1");
-            //    var quarter = pct_param.DateSpanList[i].quarter;
-            //    var year_full = pct_param.DateSpanList[i].year;
 
-            //    sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter + " then evnts end) as Y" + year + "Q" + quarter + "_events ");
+
+            //    if (i <= 3)
+            //    {
+            //        year = "1";
+            //        quarter = (i + 1).ToString();
+            //    }
+            //    else
+            //    {
+            //        year = "2";
+            //        quarter = ((i + 1) - 4).ToString();
+            //    }
+
+            //    var year_full = pct_param.DateSpanList[i].year;
+            //    var quarter_actual = pct_param.DateSpanList[i].quarter;
+
+            //    sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then evnts end) as Y" + year + "Q" + quarter + "_events ");
+
             //}
 
             //sbSQL.Append(",b.Y1Q1_Y2Q1_diff as rank from pct.CLM_OP a left join #Rank b on a.px = b.px and a.px_desc = b.px_desc where a.op_phys_bucket = 'OP' " + filters + " group by b.Y1Q1_Y2Q1_diff,a.px, a.px_desc ) t order by t.rank DESC; ");

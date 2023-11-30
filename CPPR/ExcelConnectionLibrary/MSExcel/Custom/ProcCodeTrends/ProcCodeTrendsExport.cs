@@ -183,10 +183,28 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
 
                 foreach (PropertyInfo propertyInfo in c.GetType().GetProperties())
                 {
+
+                    object val = propertyInfo.GetValue(c, null);
                     columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
                     cell = wsSource.Cell(columnLetter + rowCnt);
-                    cell.Value = propertyInfo.GetValue(c, null) + "";
+  
+
+                    //decimal test = 0;
+                    //if (decimal.TryParse(val + "", out test))
+                    //{
+                    //    cell.Value = decimal.Parse(val.ToString());
+                    //    cell.Style.NumberFormat.SetNumberFormatId((int)XLPredefinedFormat.Number.Integer);
+                    //}
+                    //else
+                    //{
+                    //    cell.Value = val.ToString();
+                    //}
+
+                    cell.Value = val + "";
+
+
                     SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+
                     colCnt++;
                 }
 
