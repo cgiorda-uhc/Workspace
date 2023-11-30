@@ -1,0 +1,416 @@
+--CREATE RANK TMP TABLE
+--CREATE RANK TMP TABLE
+--CREATE RANK TMP TABLE
+IF OBJECT_ID('tempdb..#Rank') IS  NOT NULL DROP TABLE #Rank
+SELECT 
+t.px, 
+t.px_desc, 
+t.Y2021Q1_allw_amt, 
+t.Y2022Q1_allw_amt, 
+(t.Y2022Q1_allw_amt - t.Y2021Q1_allw_amt) as Y21Q1_Y22Q1_diff 
+INTO #Rank
+FROM (
+
+	select px
+		 ,px_desc
+		 ,sum(case when year = 2021 and quarter = 1 then allw_amt end) as Y2021Q1_allw_amt 
+		 ,sum(case when year = 2022 and quarter = 1 then allw_amt end) as Y2022Q1_allw_amt
+	from pct.CLM_OP
+	where op_phys_bucket = 'OP'
+
+	--DYNAMIC FILTERS
+	AND LOB in ('CS','MR')
+	AND Region in ('CENTRAL')
+	AND mapping_state in ('MICHIGAN')
+	AND PRDCT_LVL_1_NM in ('MEDICAID')
+	AND CS_TADM_PRDCT_MAP in ('MEDICAID')
+	AND HLTH_PLN_FUND_DESC in ('INSURED')
+	AND HCE_LEG_ENTY_ROLLUP_DESC in ('N/A')
+	AND SRC_SYS_GRP_DESC in ('SMART')
+	AND CS_DUAL_IND in ('NON-DUAL')
+	AND MR_DUAL_IND in ('NON-DUAL')
+
+
+	group by px, px_desc
+
+) t
+
+--report page - unique individual
+--report page - unique individual
+--report page - unique individual
+SELECT DISTINCT TOP 10
+t.px
+,t.px_desc
+,t.Y2021Q1_indv
+,t.Y2022Q1_indv
+, CASE WHEN t.Y2021Q1_indv = 0 THEN 'N/A' ELSE  CAST(((t.Y2022Q1_indv-t.Y2021Q1_indv)/t.Y2021Q1_indv) as varchar)  END as Y21Q1_Y22Q1_trend
+,t.rank
+FROM (
+
+
+	select a.px
+		 ,a.px_desc
+		 ,sum(case when a.year = 2021 and a.quarter = 1 then indv end) as Y2021Q1_indv
+		 ,sum(case when a.year = 2022 and a.quarter = 1 then indv end) as Y2022Q1_indv
+		 ,b.Y21Q1_Y22Q1_diff  as rank
+	from pct.CLM_OP  a
+	left join #Rank     b on a.px = b.px and a.px_desc = b.px_desc
+	where a.op_phys_bucket = 'OP'
+
+	--DYNAMIC FILTERS
+	AND LOB in ('CS','MR')
+	AND Region in ('CENTRAL')
+	AND mapping_state in ('MICHIGAN')
+	AND PRDCT_LVL_1_NM in ('MEDICAID')
+	AND CS_TADM_PRDCT_MAP in ('MEDICAID')
+	AND HLTH_PLN_FUND_DESC in ('INSURED')
+	AND HCE_LEG_ENTY_ROLLUP_DESC in ('N/A')
+	AND SRC_SYS_GRP_DESC in ('SMART')
+	AND CS_DUAL_IND in ('NON-DUAL')
+	AND MR_DUAL_IND in ('NON-DUAL')
+
+
+	group by b.Y21Q1_Y22Q1_diff,a.px, a.px_desc
+
+) t
+order by t.rank DESC
+
+
+--report page - events 
+--report page - events 
+--report page - events 
+SELECT DISTINCT TOP 10 t.px
+,t.px_desc
+,t.Y2021Q1_events
+,t.Y2022Q1_events
+,CASE WHEN t.Y2021Q1_events = 0 THEN 'N/A' ELSE  CAST(((t.Y2022Q1_events-t.Y2021Q1_events)/t.Y2021Q1_events) as varchar) END as Y21Q1_Y22Q1_trend
+,t.rank
+
+FROM
+(
+
+	select distinct a.px
+     ,a.px_desc
+     ,sum(case when a.year = 2021 and a.quarter = 1 then evnts end) as Y2021Q1_events 
+     ,sum(case when a.year = 2022 and a.quarter = 1 then evnts end) as Y2022Q1_events 
+		 ,b.Y21Q1_Y22Q1_diff  as rank
+	from pct.CLM_OP  a
+	left join #Rank     b on a.px = b.px and a.px_desc = b.px_desc
+	where a.op_phys_bucket = 'OP'
+
+	--DYNAMIC FILTERS
+	AND LOB in ('CS','MR')
+	AND Region in ('CENTRAL')
+	AND mapping_state in ('MICHIGAN')
+	AND PRDCT_LVL_1_NM in ('MEDICAID')
+	AND CS_TADM_PRDCT_MAP in ('MEDICAID')
+	AND HLTH_PLN_FUND_DESC in ('INSURED')
+	AND HCE_LEG_ENTY_ROLLUP_DESC in ('N/A')
+	AND SRC_SYS_GRP_DESC in ('SMART')
+	AND CS_DUAL_IND in ('NON-DUAL')
+	AND MR_DUAL_IND in ('NON-DUAL')
+
+
+	group by b.Y21Q1_Y22Q1_diff,a.px, a.px_desc
+
+) t
+order by t.rank DESC
+
+
+
+--report page - claims 
+--report page - claims 
+--report page - claims 
+SELECT DISTINCT TOP 10 t.px
+,t.px_desc
+     ,t.Y2021Q1_claims 
+     ,t.Y2021Q1_fac_claims 
+     ,t.Y2021Q1_phy_claims
+     ,t.Y2021Q1_oth_claims
+     ,t.Y2022Q1_claims
+     ,t.Y2022Q1_fac_claims 
+     ,t.Y2022Q1_phy_claims
+     ,t.Y2022Q1_oth_claims
+     ,CASE WHEN t.Y2021Q1_claims = 0 THEN 'N/A' ELSE  CAST(((t.Y2022Q1_claims-t.Y2021Q1_claims)/t.Y2021Q1_claims) as varchar) END as Y21Q1_Y22Q1_trend_claims
+     ,CASE WHEN t.Y2021Q1_fac_claims = 0 THEN 'N/A' ELSE  CAST((t.Y2022Q1_fac_claims-t.Y2021Q1_fac_claims)/t.Y2021Q1_fac_claims as varchar)  END as Y21Q1_Y22Q1_trend_fac_claims
+     ,CASE WHEN t.Y2021Q1_phy_claims = 0 THEN 'N/A' ELSE  CAST((t.Y2022Q1_fac_claims-t.Y2021Q1_phy_claims)/t.Y2021Q1_phy_claims  as varchar) END Y21Q1_Y22Q1_trend_phy_claims
+     ,CASE WHEN t.Y2021Q1_oth_claims = 0 THEN 'N/A' ELSE  CAST((t.Y2022Q1_oth_claims-t.Y2021Q1_oth_claims)/t.Y2021Q1_oth_claims as varchar)  END Y21Q1_Y22Q1_trend_oth_claims
+     ,t.rank
+FROM
+(
+
+	select distinct a.px
+     ,a.px_desc
+     ,sum(case when a.year = 2021 and a.quarter = 1 then claims end) as Y2021Q1_claims
+     ,sum(case when a.year = 2021 and a.quarter = 1 then fac_clms end) as Y2021Q1_fac_claims
+     ,sum(case when a.year = 2021 and a.quarter = 1 then phy_clms end) as Y2021Q1_phy_claims
+     ,sum(case when a.year = 2021 and a.quarter = 1 then oth_clms end) as Y2021Q1_oth_claims
+     ,sum(case when a.year = 2022 and a.quarter = 1 then claims end) as Y2022Q1_claims
+     ,sum(case when a.year = 2022 and a.quarter = 1 then fac_clms end) as Y2022Q1_fac_claims
+     ,sum(case when a.year = 2022 and a.quarter = 1 then phy_clms end) as Y2022Q1_phy_claims
+     ,sum(case when a.year = 2022 and a.quarter = 1 then oth_clms end) as Y2022Q1_oth_claims
+     ,b.Y21Q1_Y22Q1_diff as rank
+	from pct.CLM_OP  a
+	left join #Rank     b on a.px = b.px and a.px_desc = b.px_desc
+	where a.op_phys_bucket = 'OP'
+
+	--DYNAMIC FILTERS
+	AND LOB in ('CS','MR')
+	AND Region in ('CENTRAL')
+	AND mapping_state in ('MICHIGAN')
+	AND PRDCT_LVL_1_NM in ('MEDICAID')
+	AND CS_TADM_PRDCT_MAP in ('MEDICAID')
+	AND HLTH_PLN_FUND_DESC in ('INSURED')
+	AND HCE_LEG_ENTY_ROLLUP_DESC in ('N/A')
+	AND SRC_SYS_GRP_DESC in ('SMART')
+	AND CS_DUAL_IND in ('NON-DUAL')
+	AND MR_DUAL_IND in ('NON-DUAL')
+
+
+	group by b.Y21Q1_Y22Q1_diff,a.px, a.px_desc
+
+) t
+order by t.rank DESC
+
+
+
+--report page - allowed
+--report page - allowed
+--report page - allowed
+SELECT DISTINCT TOP 10 t.px
+,t.px_desc
+,t.Y2021Q1_allw_amt
+,t.Y2022Q1_allw_amt
+,CASE WHEN t.Y2021Q1_allw_amt = 0 THEN 'N/A' ELSE  CAST(((t.Y2022Q1_allw_amt-t.Y2021Q1_allw_amt)/t.Y2021Q1_allw_amt) as varchar) END as Y21Q1_Y22Q1_trend
+,t.rank
+
+FROM
+(
+	select distinct a.px
+     ,a.px_desc
+     ,sum(case when a.year = 2021 and a.quarter = 1 then allw_amt end) as Y2021Q1_allw_amt
+     ,sum(case when a.year = 2022 and a.quarter = 1 then allw_amt end) as Y2022Q1_allw_amt
+	 ,b.Y21Q1_Y22Q1_diff  as rank
+	from pct.CLM_OP  a
+	left join #Rank b on a.px = b.px and a.px_desc = b.px_desc
+	where a.op_phys_bucket = 'OP'
+
+	--DYNAMIC FILTERS
+	AND LOB in ('CS','MR')
+	AND Region in ('CENTRAL')
+	AND mapping_state in ('MICHIGAN')
+	AND PRDCT_LVL_1_NM in ('MEDICAID')
+	AND CS_TADM_PRDCT_MAP in ('MEDICAID')
+	AND HLTH_PLN_FUND_DESC in ('INSURED')
+	AND HCE_LEG_ENTY_ROLLUP_DESC in ('N/A')
+	AND SRC_SYS_GRP_DESC in ('SMART')
+	AND CS_DUAL_IND in ('NON-DUAL')
+	AND MR_DUAL_IND in ('NON-DUAL')
+
+
+	group by b.Y21Q1_Y22Q1_diff,a.px, a.px_desc
+
+) t
+order by t.rank DESC
+
+
+--report page - member month
+--report page - member month
+--report page - member month
+IF OBJECT_ID('tempdb..#MemberMonth') IS  NOT NULL DROP TABLE #MemberMonth
+SELECT TOP 10 t.Metric
+     ,t.Y2021Q1_Mbr_Month
+     ,t.Y2022Q1_Mbr_Month
+	 ,CASE WHEN t.Y2021Q1_Mbr_Month= 0 THEN 'N/A' ELSE  CAST(((t.Y2022Q1_Mbr_Month-t.Y2021Q1_Mbr_Month)/t.Y2021Q1_Mbr_Month) as varchar) END as Y21Q1_Y22Q1_trend
+	 INTO #MemberMonth
+	 FROM (
+
+
+	select distinct 'Member Month' as Metric
+		 ,sum(case when year = 2021 and quarter = 1 then Mbr_Month end) as Y2021Q1_Mbr_Month
+		 ,sum(case when year=2022 and quarter=1 then Mbr_Month end) as Y2022Q1_Mbr_Month
+	from pct.MM_FINAL
+	WHERE 1=1
+	--DYNAMIC FILTERS
+	AND LOB in ('CS','MR')
+	AND Region in ('CENTRAL')
+	AND mapping_state in ('MICHIGAN')
+	AND PRDCT_LVL_1_NM in ('MEDICAID')
+	AND CS_TADM_PRDCT_MAP in ('MEDICAID')
+	AND HLTH_PLN_FUND_DESC in ('INSURED')
+	AND HCE_LEG_ENTY_ROLLUP_DESC in ('N/A')
+	AND SRC_SYS_GRP_DESC in ('SMART')
+	AND CS_DUAL_IND in ('NON-DUAL')
+	AND MR_DUAL_IND in ('NON-DUAL')
+) t
+
+SELECT * FROM #MemberMonth;
+
+
+--report page - Allowed PMPM
+--report page - Allowed PMPM
+--report page - Allowed PMPM
+select distinct  TOP 10 x.px
+           ,x.px_desc
+           ,x.Y2021Q1_allw_PMPM 
+           ,x.Y2022Q1_allw_PMPM
+		   ,CASE WHEN x.Y2021Q1_allw_PMPM = 0 THEN 'N/A' ELSE CAST((x.Y2022Q1_allw_PMPM - x.Y2021Q1_allw_PMPM)/x.Y2021Q1_allw_PMPM as varchar)  END as Y21Q1_Y22Q1_trend
+           ,y.Y21Q1_Y22Q1_diff  as rank
+from (select distinct a.px
+                ,a.px_desc
+                ,a.Y2021Q1_allw_amt/(SELECT Y2021Q1_Mbr_Month FROM #MemberMonth) as Y2021Q1_allw_PMPM
+                ,a.Y2022Q1_allw_amt/(SELECT Y2022Q1_Mbr_Month FROM #MemberMonth) as Y2022Q1_allw_PMPM
+                
+                from (
+				
+				
+					select distinct px
+									,px_desc
+									,sum(case when year = 2021 and quarter = 1 then allw_amt end) as Y2021Q1_allw_amt 
+									,sum(case when year = 2022 and quarter = 1 then allw_amt end) as Y2022Q1_allw_amt 
+						   from pct.CLM_OP
+						   where op_phys_bucket = 'OP'
+						  --DYNAMIC FILTERS
+						AND LOB in ('CS','MR')
+						AND Region in ('CENTRAL')
+						AND mapping_state in ('MICHIGAN')
+						AND PRDCT_LVL_1_NM in ('MEDICAID')
+						AND CS_TADM_PRDCT_MAP in ('MEDICAID')
+						AND HLTH_PLN_FUND_DESC in ('INSURED')
+						AND HCE_LEG_ENTY_ROLLUP_DESC in ('N/A')
+						AND SRC_SYS_GRP_DESC in ('SMART')
+						AND CS_DUAL_IND in ('NON-DUAL')
+						AND MR_DUAL_IND in ('NON-DUAL')
+					  group by px, px_desc
+				  
+				  ) a
+                ) x
+left join #Rank y   on x.px = y.px and x.px_desc = y.px_desc
+order by y.Y21Q1_Y22Q1_diff DESC
+
+
+--report page - Utilization/000
+--report page - Utilization/000
+--report page - Utilization/000
+select distinct  TOP 10 x.px
+           ,x.px_desc
+           ,x.Y2021Q1_util000
+           ,x.Y2022Q1_util000
+		   ,CASE WHEN x.Y2021Q1_util000= 0 THEN 'N/A' ELSE CAST((x.Y2022Q1_util000 - x.Y2021Q1_util000)/x.Y2021Q1_util000 as varchar)  END as Y21Q1_Y22Q1_trend
+           ,y.Y21Q1_Y22Q1_diff  as rank
+from (select distinct a.px
+                ,a.px_desc
+                ,a.Y2021Q1_px_cnt/(SELECT Y2021Q1_Mbr_Month FROM #MemberMonth) as Y2021Q1_util000
+                ,a.Y2022Q1_px_cnt/(SELECT Y2022Q1_Mbr_Month FROM #MemberMonth) as Y2022Q1_util000
+                
+                from (
+				
+				
+					select distinct px
+									,px_desc
+									,sum(case when year = 2021 and quarter = 1 then px_cnt end) as Y2021Q1_px_cnt 
+									,sum(case when year = 2022 and quarter = 1 then px_cnt end) as Y2022Q1_px_cnt
+						   from pct.CLM_OP
+						   where op_phys_bucket = 'OP'
+						   	--DYNAMIC FILTERS
+						AND LOB in ('CS','MR')
+						AND Region in ('CENTRAL')
+						AND mapping_state in ('MICHIGAN')
+						AND PRDCT_LVL_1_NM in ('MEDICAID')
+						AND CS_TADM_PRDCT_MAP in ('MEDICAID')
+						AND HLTH_PLN_FUND_DESC in ('INSURED')
+						AND HCE_LEG_ENTY_ROLLUP_DESC in ('N/A')
+						AND SRC_SYS_GRP_DESC in ('SMART')
+						AND CS_DUAL_IND in ('NON-DUAL')
+						AND MR_DUAL_IND in ('NON-DUAL')
+					  group by px, px_desc
+				  
+				  ) a
+                ) x
+left join #Rank y   on x.px = y.px and x.px_desc = y.px_desc
+order by y.Y21Q1_Y22Q1_diff DESC
+
+
+--report page - Unit Cost 1
+--report page - Unit Cost 1
+--report page - Unit Cost 1
+select TOP 10 t1.px
+           ,t1.px_desc
+                ,t1.Y2021Q1_Unit_Cost1
+                ,t1.Y2022Q1_Unit_Cost1
+                ,CASE WHEN t1.Y2021Q1_Unit_Cost1= 0 THEN 'N/A' ELSE CAST(((t1.Y2022Q1_Unit_Cost1 - t1.Y2021Q1_Unit_Cost1)/t1.Y2021Q1_Unit_Cost1)as varchar) END as Y21Q1_Y22Q1_trend 
+FROM(
+
+
+select distinct t.px
+           ,t.px_desc
+                ,CASE WHEN t.Y2021Q1_events  = 0 THEN NULL ELSE t.Y2021Q1_allw_amt/t.Y2021Q1_events END as Y2021Q1_Unit_Cost1
+                ,CASE WHEN t.Y2022Q1_events = 0 THEN NULL ELSE t.Y2022Q1_allw_amt/t.Y2022Q1_events END as Y2022Q1_Unit_Cost1
+           ,y.Y21Q1_Y22Q1_diff  as rank
+from (select distinct px
+                ,px_desc
+                ,sum(case when year = 2021 and quarter = 1 then allw_amt end) as Y2021Q1_allw_amt
+                ,sum(case when year = 2022 and quarter = 1 then allw_amt end) as Y2022Q1_allw_amt
+                ,sum(case when year = 2021 and quarter = 1 then evnts end) as Y2021Q1_events
+                ,sum(case when year = 2022 and quarter = 1 then evnts end) as Y2022Q1_events
+
+       from pct.CLM_OP
+       where op_phys_bucket = 'OP'
+	   	--DYNAMIC FILTERS
+		AND LOB in ('CS','MR')
+		AND Region in ('CENTRAL')
+		AND mapping_state in ('MICHIGAN')
+		AND PRDCT_LVL_1_NM in ('MEDICAID')
+		AND CS_TADM_PRDCT_MAP in ('MEDICAID')
+		AND HLTH_PLN_FUND_DESC in ('INSURED')
+		AND HCE_LEG_ENTY_ROLLUP_DESC in ('N/A')
+		AND SRC_SYS_GRP_DESC in ('SMART')
+		AND CS_DUAL_IND in ('NON-DUAL')
+		AND MR_DUAL_IND in ('NON-DUAL')
+       group by px, px_desc) t
+left join #Rank  y on t.px = y.px and t.px_desc = y.px_desc
+)t1
+order by t1.rank DESC
+
+
+
+--report page - Unit Cost 2
+--report page - Unit Cost 2
+--report page - Unit Cost 2
+select TOP 10 t1.px
+           ,t1.px_desc
+                ,t1.Y2021Q1_Unit_Cost2
+                ,t1.Y2022Q1_Unit_Cost2
+                ,CASE WHEN t1.Y2021Q1_Unit_Cost2= 0 THEN 'N/A' ELSE CAST(((t1.Y2022Q1_Unit_Cost2 - t1.Y2021Q1_Unit_Cost2)/t1.Y2021Q1_Unit_Cost2)as varchar) END as Y21Q1_Y22Q1_trend 
+FROM(
+
+
+select distinct t.px
+           ,t.px_desc
+                ,CASE WHEN t.Y2021Q1_adj_srv_uni = 0 THEN NULL ELSE t.Y2021Q1_allw_amt/t.Y2021Q1_adj_srv_uni END as Y2021Q1_Unit_Cost2
+                ,CASE WHEN t.Y2022Q1_adj_srv_uni = 0 THEN NULL ELSE t.Y2022Q1_allw_amt/t.Y2022Q1_adj_srv_uni END as Y2022Q1_Unit_Cost2
+           ,y.Y21Q1_Y22Q1_diff  as rank
+from (select distinct px
+                ,px_desc
+                ,sum(case when year = 2021 and quarter = 1 then allw_amt end) as Y2021Q1_allw_amt
+                ,sum(case when year = 2022 and quarter = 1 then allw_amt end) as Y2022Q1_allw_amt
+                ,sum(case when year = 2021 and quarter = 1 then adj_srv_uni end) as Y2021Q1_adj_srv_uni
+                ,sum(case when year = 2022 and quarter = 1 then adj_srv_uni end) as Y2022Q1_adj_srv_uni
+
+       from pct.CLM_OP
+       where op_phys_bucket = 'OP'
+	   	--DYNAMIC FILTERS
+		AND LOB in ('CS','MR')
+		AND Region in ('CENTRAL')
+		AND mapping_state in ('MICHIGAN')
+		AND PRDCT_LVL_1_NM in ('MEDICAID')
+		AND CS_TADM_PRDCT_MAP in ('MEDICAID')
+		AND HLTH_PLN_FUND_DESC in ('INSURED')
+		AND HCE_LEG_ENTY_ROLLUP_DESC in ('N/A')
+		AND SRC_SYS_GRP_DESC in ('SMART')
+		AND CS_DUAL_IND in ('NON-DUAL')
+		AND MR_DUAL_IND in ('NON-DUAL')
+       group by px, px_desc) t
+left join #Rank  y on t.px = y.px and t.px_desc = y.px_desc
+)t1
+order by t1.rank DESC

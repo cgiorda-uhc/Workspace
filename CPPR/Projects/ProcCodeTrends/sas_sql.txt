@@ -1,0 +1,221 @@
+Hi Chris:
+
+Below is the queries used to generate the report as an FYI.
+
+Please let me know if you have any questions.
+
+Thanks!
+Tiffany
+
+
+
+
+/* before generating the final report page, determine the order of procedure codes first -- based on the difference (not percentage) of allowed PMPM */
+proc sql;
+create table rank as
+select distinct px
+     ,px_desc
+     ,sum(case when year = 2021 and quarter = 1 then allw_amt end) as Y2021Q1_allw_amt format=dollar15.0
+     ,sum(case when year = 2022 and quarter = 1 then allw_amt end) as Y2022Q1_allw_amt format=dollar15.0
+     ,(calculated Y2022Q1_allw_amt-calculated Y2021Q1_allw_amt) as Y21Q1_Y22Q1_diff format=dollar15.0
+from perm.clm_final
+where op_phys_bucket = 'OP'
+group by px, px_desc
+order by calculated Y21Q1_Y22Q1_diff desc
+;quit;
+/* assign rank */
+data rank;
+set rank;
+rank = _N_;
+run;
+
+
+/* report page - unique individual */
+proc sql;
+create table r1 as
+select distinct a.px
+     ,a.px_desc
+     ,sum(case when a.year = 2021 and a.quarter = 1 then indv end) as Y2021Q1_indv format=comma15.0
+     ,sum(case when a.year = 2022 and a.quarter = 1 then indv end) as Y2022Q1_indv format=comma15.0
+     ,(calculated Y2022Q1_indv-calculated Y2021Q1_indv)/calculated Y2021Q1_indv as Y21Q1_Y22Q1_trend format=percent15.0
+     ,b.rank
+from perm.clm_final   a
+left join rank        b on a.px = b.px and a.px_desc = b.px_desc
+where a.op_phys_bucket = 'OP'
+group by a.px, a.px_desc
+order by b.rank
+;quit;
+
+/* report page - events */
+proc sql;
+create table r2 as
+select distinct a.px
+     ,a.px_desc
+     ,sum(case when a.year = 2021 and a.quarter = 1 then evnts end) as Y2021Q1_events format=comma15.0
+     ,sum(case when a.year = 2022 and a.quarter = 1 then evnts end) as Y2022Q1_events format=comma15.0
+     ,(calculated Y2022Q1_events-calculated Y2021Q1_events)/calculated Y2021Q1_events as Y21Q1_Y22Q1_trend format=percent15.0
+     ,b.rank
+from perm.clm_final a
+left join rank        b on a.px = b.px and a.px_desc = b.px_desc
+where a.op_phys_bucket = 'OP'
+group by a.px, a.px_desc
+order by b.rank
+;quit;
+
+/* report page - claims */
+proc sql;
+create table r3 as
+select distinct a.px
+     ,a.px_desc
+     ,sum(case when a.year = 2021 and a.quarter = 1 then claims end) as Y2021Q1_claims format=comma15.0
+     ,sum(case when a.year = 2021 and a.quarter = 1 then fac_clms end) as Y2021Q1_fac_claims format=comma15.0
+     ,sum(case when a.year = 2021 and a.quarter = 1 then phy_clms end) as Y2021Q1_phy_claims format=comma15.0
+     ,sum(case when a.year = 2021 and a.quarter = 1 then oth_clms end) as Y2021Q1_oth_claims format=comma15.0
+     ,sum(case when a.year = 2022 and a.quarter = 1 then claims end) as Y2022Q1_claims format=comma15.0
+     ,sum(case when a.year = 2022 and a.quarter = 1 then fac_clms end) as Y2022Q1_fac_claims format=comma15.0
+     ,sum(case when a.year = 2022 and a.quarter = 1 then phy_clms end) as Y2022Q1_phy_claims format=comma15.0
+     ,sum(case when a.year = 2022 and a.quarter = 1 then oth_clms end) as Y2022Q1_oth_claims format=comma15.0
+     ,(calculated Y2022Q1_claims-calculated Y2021Q1_claims)/calculated Y2021Q1_claims as Y21Q1_Y22Q1_trend_claims format=percent15.0
+     ,(calculated Y2022Q1_fac_claims-calculated Y2021Q1_fac_claims)/calculated Y2021Q1_fac_claims as Y21Q1_Y22Q1_trend_fac_claims format=percent15.0
+     ,(calculated Y2022Q1_fac_claims-calculated Y2021Q1_phy_claims)/calculated Y2021Q1_phy_claims as Y21Q1_Y22Q1_trend_phy_claims format=percent15.0
+     ,(calculated Y2022Q1_oth_claims-calculated Y2021Q1_oth_claims)/calculated Y2021Q1_oth_claims as Y21Q1_Y22Q1_trend_oth_claims format=percent15.0
+     ,b.rank
+from perm.clm_final a
+left join rank        b on a.px = b.px and a.px_desc = b.px_desc
+where a.op_phys_bucket = 'OP'
+group by a.px, a.px_desc
+order by b.rank
+;quit;
+
+/* report page - allowed */
+proc sql;
+create table r4 as
+select distinct a.px
+     ,a.px_desc
+     ,sum(case when a.year = 2021 and a.quarter = 1 then allw_amt end) as Y2021Q1_allw_amt format=comma15.0
+     ,sum(case when a.year = 2022 and a.quarter = 1 then allw_amt end) as Y2022Q1_allw_amt format=comma15.0
+     ,(calculated Y2022Q1_allw_amt-calculated Y2021Q1_allw_amt)/calculated Y2021Q1_allw_amt as Y21Q1_Y22Q1_trend format=percent15.0
+     ,b.rank
+from perm.clm_final a
+left join rank        b on a.px = b.px and a.px_desc = b.px_desc
+where a.op_phys_bucket = 'OP'
+group by a.px, a.px_desc
+order by b.rank
+;quit;
+
+
+/* report page - member month */
+proc sql;
+create table member_month as
+select distinct 'Member Month' as Metric
+     ,sum(case when year = 2021 and quarter = 1 then Mbr_Month end) as Y2021Q1_Mbr_Month format=comma15.0
+     ,sum(case when year=2022 and quarter=1 then Mbr_Month end) as Y2022Q1_Mbr_Month format=comma15.0
+     ,(calculated Y2022Q1_Mbr_Month-calculated Y2021Q1_Mbr_Month)/calculated Y2021Q1_Mbr_Month as Y21Q1_Y22Q1_trend format=percent15.0
+from perm.mm_final
+;quit;
+
+/* report page - Allowed PMPM */
+proc sql;
+create table allowed_PMPM as
+select distinct x.px
+           ,x.px_desc
+           ,x.Y2021Q1_allw_PMPM format=dollar15.2
+           ,x.Y2022Q1_allw_PMPM format=dollar15.2
+           ,x.Y21Q1_Y22Q1_trend format=percent15.0
+           ,y.rank
+from (select distinct a.px
+                ,a.px_desc
+                ,a.Y2021Q1_allw_amt/b.Y2021Q1_Mbr_Month as Y2021Q1_allw_PMPM format=dollar15.2
+                ,a.Y2022Q1_allw_amt/b.Y2022Q1_Mbr_Month as Y2022Q1_allw_PMPM format=dollar15.2
+                ,(calculated Y2022Q1_allw_PMPM - calculated Y2021Q1_allw_PMPM)/calculated Y2021Q1_allw_PMPM as Y21Q1_Y22Q1_trend format=percent15.0
+                from (select distinct px
+                                ,px_desc
+                                ,sum(case when year = 2021 and quarter = 1 then allw_amt end) as Y2021Q1_allw_amt format=dollar15.0
+                                ,sum(case when year = 2022 and quarter = 1 then allw_amt end) as Y2022Q1_allw_amt format=dollar15.0
+                       from perm.clm_final
+                       where op_phys_bucket = 'OP'
+                  group by px, px_desc)     a
+                ,member_month b) x
+left join rank  y on x.px = y.px and x.px_desc = y.px_desc
+order by y.rank
+;quit;
+
+/* report page - Utilization/000 */
+
+proc sql;
+create table util000 as
+select distinct x.px
+           ,x.px_desc
+           ,x.Y2021Q1_util000 format=comma15.1
+           ,x.Y2022Q1_util000 format=comma15.1
+           ,x.Y21Q1_Y22Q1_trend format=percent15.0
+           ,y.rank
+from (select distinct a.px
+                ,a.px_desc
+                ,a.Y2021Q1_px_cnt*12000/b.Y2021Q1_Mbr_Month as Y2021Q1_util000 format=comma15.1
+                ,a.Y2022Q1_px_cnt*12000/b.Y2022Q1_Mbr_Month as Y2022Q1_util000 format=comma15.1
+                ,(calculated Y2022Q1_util000 - calculated Y2021Q1_util000)/calculated Y2021Q1_util000 as Y21Q1_Y22Q1_trend format=percent15.0
+                from (select distinct px
+                                ,px_desc
+                                ,sum(case when year = 2021 and quarter = 1 then px_cnt end) as Y2021Q1_px_cnt format=comma15.0
+                                ,sum(case when year = 2022 and quarter = 1 then px_cnt end) as Y2022Q1_px_cnt format=comma15.0
+                       from perm.clm_final
+                       where op_phys_bucket = 'OP'
+                  group by px, px_desc)     a
+                ,member_month b) x
+left join rank  y on x.px = y.px and x.px_desc = y.px_desc
+order by y.rank
+;quit;
+
+/* report page - Unit Cost 1 */
+
+proc sql;
+create table unit_cost1 as
+select distinct x.px
+           ,x.px_desc
+           ,x.Y2021Q1_Unit_Cost1 format=dollar15.0
+           ,x.Y2022Q1_Unit_Cost1 format=dollar15.0
+           ,x.Y21Q1_Y22Q1_trend format=percent15.0
+           ,y.rank
+from (select distinct px
+                ,px_desc
+                ,sum(case when year = 2021 and quarter = 1 then allw_amt end) as Y2021Q1_allw_amt format=comma15.0
+                ,sum(case when year = 2022 and quarter = 1 then allw_amt end) as Y2022Q1_allw_amt format=comma15.0
+                ,sum(case when year = 2021 and quarter = 1 then evnts end) as Y2021Q1_events format=comma15.0
+                ,sum(case when year = 2022 and quarter = 1 then evnts end) as Y2022Q1_events format=comma15.0
+                ,calculated Y2021Q1_allw_amt/calculated Y2021Q1_events as Y2021Q1_Unit_Cost1 format=dollar15.0
+                ,calculated Y2022Q1_allw_amt/calculated Y2022Q1_events as Y2022Q1_Unit_Cost1 format=dollar15.0
+                ,(calculated Y2022Q1_Unit_Cost1 - calculated Y2021Q1_Unit_Cost1)/calculated Y2021Q1_Unit_Cost1 as Y21Q1_Y22Q1_trend format=percent15.0
+       from perm.clm_final
+       where op_phys_bucket = 'OP'
+       group by px, px_desc) x
+left join rank  y on x.px = y.px and x.px_desc = y.px_desc
+order by y.rank
+;quit;
+
+/* report page - Unit Cost 2 */
+
+proc sql;
+create table unit_cost2 as
+select distinct x.px
+           ,x.px_desc
+           ,x.Y2021Q1_Unit_Cost2 format=dollar15.0
+           ,x.Y2022Q1_Unit_Cost2 format=dollar15.0
+           ,x.Y21Q1_Y22Q1_trend format=percent15.0
+           ,y.rank
+from (select distinct px
+                ,px_desc
+                ,sum(case when year = 2021 and quarter = 1 then allw_amt end) as Y2021Q1_allw_amt format=comma15.0
+                ,sum(case when year = 2022 and quarter = 1 then allw_amt end) as Y2022Q1_allw_amt format=comma15.0
+                ,sum(case when year = 2021 and quarter = 1 then adj_srv_uni end) as Y2021Q1_adj_srv_uni format=comma15.0
+                ,sum(case when year = 2022 and quarter = 1 then adj_srv_uni end) as Y2022Q1_adj_srv_uni format=comma15.0
+                ,calculated Y2021Q1_allw_amt/calculated Y2021Q1_adj_srv_uni as Y2021Q1_Unit_Cost2 format=dollar15.0
+                ,calculated Y2022Q1_allw_amt/calculated Y2022Q1_adj_srv_uni as Y2022Q1_Unit_Cost2 format=dollar15.0
+                ,(calculated Y2022Q1_Unit_Cost2 - calculated Y2021Q1_Unit_Cost2)/calculated Y2021Q1_Unit_Cost2 as Y21Q1_Y22Q1_trend format=percent15.0
+       from perm.clm_final
+       where op_phys_bucket = 'OP'
+       group by px, px_desc) x
+left join rank  y on x.px = y.px and x.px_desc = y.px_desc
+order by y.rank
+;quit;
+
