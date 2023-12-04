@@ -78,6 +78,11 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
     [ObservableProperty]
     public List<string> _proc_Cd;
 
+
+    [ObservableProperty]
+    public int _topRows = 100;
+
+
     public ProcCodeTrendsViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
     {
         _logger = logger;

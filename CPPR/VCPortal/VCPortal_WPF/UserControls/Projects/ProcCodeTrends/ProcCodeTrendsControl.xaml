@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:VCPortal_WPF.UserControls.Projects.ProcCodeTrends"
              xmlns:modalcontrol="clr-namespace:ModalControl;assembly=ModalControl" xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation" xmlns:components="clr-namespace:VCPortal_WPF.Components" xmlns:converters="clr-namespace:VCPortal_WPF.Converters"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="650" d:DesignWidth="1200">
     <UserControl.Resources>
 
     </UserControl.Resources>
@@ -89,8 +89,8 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="55"/>
-                <ColumnDefinition Width="55"/>
-                <ColumnDefinition Width="55"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="200"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -112,6 +112,9 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
+
+            <telerik:Label Grid.Row="0" Grid.Column="6"  Content="Row Count:" Margin="1" HorizontalAlignment="Left" Style="{StaticResource OptionalLabel}"  />
+            <telerik:RadNumericUpDown Grid.Row="0" Grid.Column="7" NumberDecimalDigits="0" Value="{Binding TopRows}" Minimum="100" Maximum="10000000" SmallChange="100" />
 
             <telerik:RadButton x:Name="btnGenerateReport"  Grid.Row="0" Grid.Column="8" Width="170" Command="{Binding GenerateReportCallCommand}"  Content="Generate Report">
                 <!--<Button.IsEnabled>
@@ -255,7 +258,7 @@
             <!--<TextBox Name="txtCUST_SEGFilter"  Grid.Column="1"  Grid.Row="4" Margin="10 10 10 10"   >
 </TextBox>-->
 
-            <Grid  Grid.Column="2"  Grid.Row="8">
+            <Grid  Grid.Column="2" Grid.RowSpan="3" Grid.Row="8">
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -280,7 +283,7 @@
 
             <Border Grid.Column="3" Grid.Row="7" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
             <telerik:Label Grid.Row="7"   Grid.Column="3" Content="Filtered Proc Code(s):" Style="{StaticResource OptionalLabel}" Margin="4" HorizontalAlignment="Left"  />
-            <Grid  Grid.Row="8"  Grid.Column="3" >
+            <Grid  Grid.Row="8" Grid.RowSpan="3" Grid.Column="3" >
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
