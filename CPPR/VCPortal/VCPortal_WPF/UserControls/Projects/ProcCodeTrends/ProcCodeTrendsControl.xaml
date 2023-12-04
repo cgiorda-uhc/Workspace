@@ -144,6 +144,7 @@
                         <Binding Path="SelectedValue" ElementName="cbxSource"/>
                         <Binding Path="SelectedValue" ElementName="cbxCSDualIndicator"/>
                         <Binding Path="SelectedValue" ElementName="cbxMRDualIndicator"/>
+                        <Binding Path="Items" ElementName="lstSelectedProcCode"/>
                     </MultiBinding>
                 </Button.CommandParameter>
 

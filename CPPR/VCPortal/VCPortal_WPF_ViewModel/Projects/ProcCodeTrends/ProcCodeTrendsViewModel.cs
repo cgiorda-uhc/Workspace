@@ -382,6 +382,20 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
                 pc_param.MR_DUAL_IND = "'" + String.Join(",", parameters[9].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
             }
 
+            System.Collections.IList items = (System.Collections.IList)parameters[10];
+            StringBuilder sb = new StringBuilder();
+            foreach (var i in items)
+            {
+                sb.Append("'" + i.ToString().Split('-')[0].Trim() + "',");
+            }
+            if (sb.Length > 0)
+            {
+                pc_param.Proc_Code = sb.ToString().TrimEnd(',');
+            }
+
+            pc_param.RowCount = _topRows;
+
+
             pc_param.DateSpanList = _date_span;
 
 

@@ -19,5 +19,9 @@ public class ProcCodeTrends_Parameters
     public string CS_DUAL_IND { get; set; }
     public string MR_DUAL_IND { get; set; }
 
+    public string Proc_Code { get; set; }
+
+    public int RowCount { get; set; }
+
     public List<DateSpan_Model> DateSpanList { get; set; }
 }
