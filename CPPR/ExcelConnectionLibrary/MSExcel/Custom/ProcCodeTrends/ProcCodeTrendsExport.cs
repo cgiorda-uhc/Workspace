@@ -200,7 +200,17 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                     //    cell.Value = val.ToString();
                     //}
 
-                    cell.Value = val + "";
+                    if(propertyInfo.GetType() == typeof(int) || propertyInfo.GetType() == typeof(int?))   
+                     {
+                        if(val != null)
+                        {
+                            cell.Value = int.Parse(val.ToString()); 
+                        }
+                    }
+                    else
+                    {
+                        cell.Value = val + "";
+                    }
 
 
                     SharedExcelFunctions.AddClosedXMLBorders(ref cell);
