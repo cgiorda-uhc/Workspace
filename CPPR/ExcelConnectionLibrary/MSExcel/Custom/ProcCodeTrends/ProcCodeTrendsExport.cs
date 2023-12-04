@@ -200,7 +200,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                     //    cell.Value = val.ToString();
                     //}
 
-                    if(propertyInfo.GetType() == typeof(int) || propertyInfo.GetType() == typeof(int?))   
+                    if(propertyInfo.PropertyType == typeof(int) || propertyInfo.PropertyType == typeof(int?))   
                      {
                         if(val != null)
                         {
