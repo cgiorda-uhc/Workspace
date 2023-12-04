@@ -74,6 +74,10 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
     [ObservableProperty]
     public ObservableCollection<string> _mRDualIndicator;
 
+
+    [ObservableProperty]
+    public List<string> _proc_Cd;
+
     public ProcCodeTrendsViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
     {
         _logger = logger;
@@ -542,7 +546,28 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
             }
 
 
+            api = _config.APIS.Where(x => x.Name == "PCT_Proc_Cd").FirstOrDefault();
+            WebAPIConsume.BaseURI = api.BaseUrl;
+            _sbStatus.Append("--Getting Proc Code Filters..." + Environment.NewLine);
+            ProgressMessageViewModel.Message = _sbStatus.ToString();
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            response = WebAPIConsume.GetCall(api.Url);
+            if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
+            {
+                var reponseStream = await response.Result.Content.ReadAsStreamAsync();
+                var result = await JsonSerializer.DeserializeAsync<List<string>>(reponseStream, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
 
+                Proc_Cd = result;
+            }
+            else
+            {
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                _logger.Error("populateFilters.ProcCode threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
+            }
 
             _selected_lobs = new List<string>();
             _selected_regions = new List<string>();

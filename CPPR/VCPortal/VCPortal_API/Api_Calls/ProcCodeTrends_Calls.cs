@@ -44,6 +44,37 @@ public static class ProcCodeTrends_Calls
             }
         });
 
+        app.MapGet(pattern: "/pct_proc_cd", async (IProcCodeTrends_Repo repo, CancellationToken token) =>
+        {
+            try
+            {
+
+                ////RETURN HTTP 200
+                var results = await repo.GetPROC_CD_Async(token);//200 SUCCESS
+
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetPROC_CD_Async 404, not found");
+                return Results.NotFound(); //404
+
+
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, "API GetPROC_CD_Async threw an error");
+
+                //RETURN ERROR
+                return Results.Problem(ex.Message);
+
+            }
+        });
+
+
+
+
         app.MapPost(pattern: "pct_clmphys", async ([FromBody] ProcCodeTrends_Parameters param, IProcCodeTrends_Repo repo, CancellationToken token) =>
         {
             try

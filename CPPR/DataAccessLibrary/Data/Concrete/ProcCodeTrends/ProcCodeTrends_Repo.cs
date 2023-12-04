@@ -57,6 +57,18 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 
 
 
+        public Task<IEnumerable<string>> GetPROC_CD_Async(CancellationToken token)
+        {
+
+            string strSQL = "SELECT px + ' - ' + px_desc FROM [VCT_DB].[pct].[PROC_CD];";
+
+            var results = _db.LoadData<string>(sql: strSQL, token, connectionId: "VCT_DB");
+
+            return results;
+        }
+
+
+
         public Task<IEnumerable<DateSpan_Model>> GetDateSpan_Async(CancellationToken token)
         {
 

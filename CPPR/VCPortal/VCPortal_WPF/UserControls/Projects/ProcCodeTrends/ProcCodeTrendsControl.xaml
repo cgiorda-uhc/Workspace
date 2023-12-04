@@ -169,7 +169,7 @@
 
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="50"/>
-                <RowDefinition Height="40"/>
+                <RowDefinition Height="200"/>
 
 
 
@@ -248,9 +248,60 @@
 
             
 
-            <Border Grid.Column="2" Grid.Row="7" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
+        
 
-            <Border Grid.Column="3" Grid.Row="7" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
+            <Border Grid.Column="2" Grid.Row="7" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
+            <telerik:Label Grid.Row="7"   Grid.Column="2" Content="Select Proc Code(s):" Style="{StaticResource OptionalLabel}" Margin="4" HorizontalAlignment="Left"  />
+            <!--<TextBox Name="txtCUST_SEGFilter"  Grid.Column="1"  Grid.Row="4" Margin="10 10 10 10"   >
+</TextBox>-->
+
+            <Grid  Grid.Column="2"  Grid.Row="8">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100"/>
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
+
+                <telerik:RadAutoCompleteBox Grid.Column="1" Grid.Row="0"  Name="txtProc_CodeFilter"  Margin="10 10 10 10" VerticalAlignment="Top" Height="32" ItemsSource="{Binding Proc_Cd}"
+                TextSearchMode="Contains" SelectionMode="Single" AutoCompleteMode="Suggest" 
+                WatermarkContent="Enter Proc Code or Desc">
+                    <telerik:RadAutoCompleteBox.FilteringBehavior>
+                        <telerik:AsyncFilteringBehavior />
+                    </telerik:RadAutoCompleteBox.FilteringBehavior>
+                </telerik:RadAutoCompleteBox>
+
+                <telerik:RadButton x:Name="btnAddProcCd" Grid.Row="1" Grid.Column="1" Width="70" Background="LightGoldenrodYellow" Click="btnAddProcCd_Click" HorizontalAlignment="Right" VerticalAlignment="Top"  Margin="10 -50 10 10" Content="Add"></telerik:RadButton>
+
+
+            </Grid>
+
+            <Border Grid.Column="3" Grid.Row="7" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
+            <telerik:Label Grid.Row="7"   Grid.Column="3" Content="Filtered Proc Code(s):" Style="{StaticResource OptionalLabel}" Margin="4" HorizontalAlignment="Left"  />
+            <Grid  Grid.Row="8"  Grid.Column="3" >
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="180"/>
+                    <ColumnDefinition Width="150"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="160"/>
+                    <RowDefinition Height="50"/>
+                </Grid.RowDefinitions>
+
+
+                <telerik:RadListBox x:Name="lstSelectedProcCode" Grid.ColumnSpan="5"  Grid.Row="0" Grid.Column="0"   Margin="10 10 10 10"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+
+                <telerik:RadButton x:Name="btnRemoveSelected" Grid.Row="1" Grid.Column="3" Width="160" Background="LightGoldenrodYellow" Margin="10 10 -10 10"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Remove Selected" Click="btnRemoveSelected_Click"></telerik:RadButton>
+                <telerik:RadButton x:Name="btnRemoveAll" Grid.Row="1" Grid.Column="4" Width="123" Background="LightGoldenrodYellow" Margin="10 10 10 10"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Remove All" Click="btnRemoveAll_Click"></telerik:RadButton>
+
+            </Grid>
+
 
         </Grid>
 

@@ -28,6 +28,43 @@ public partial class ProcCodeTrendsControl : UserControl
         modalContentControl.Content = new StatusControl();
     }
 
+
+
+
+    private void btnAddProcCd_Click(object sender, RoutedEventArgs e)
+    {
+        var value = txtProc_CodeFilter.SearchText;
+        if (string.IsNullOrEmpty(value))
+        {
+            return;
+        }
+
+        lstSelectedProcCode.Items.Add(value);
+        txtProc_CodeFilter.SearchText = "";
+
+    }
+
+
+    private void btnRemoveSelected_Click(object sender, RoutedEventArgs e)
+    {
+        var item = lstSelectedProcCode.SelectedItem;
+        if (item == null)
+        {
+            return;
+        }
+
+        lstSelectedProcCode.Items.Remove(item);
+
+    }
+
+    private void btnRemoveAll_Click(object sender, RoutedEventArgs e)
+    {
+        lstSelectedProcCode.Items.Clear();
+    }
+
+
+
+
     bool blJustProcessed;
     private void cbx_ItemSelectionChanged(object sender, Xceed.Wpf.Toolkit.Primitives.ItemSelectionChangedEventArgs e)
     {

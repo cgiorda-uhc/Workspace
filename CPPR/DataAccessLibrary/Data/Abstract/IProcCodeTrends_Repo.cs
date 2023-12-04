@@ -8,6 +8,8 @@ namespace DataAccessLibrary.Data.Abstract
     {
         Task<IEnumerable<MM_FINAL_Model>> GetMM_FINAL_Async(CancellationToken token);
 
+        Task<IEnumerable<string>> GetPROC_CD_Async(CancellationToken token);
+
         Task<IEnumerable<CLM_PHYS_Model>> GetCLM_PHYS_Async(ProcCodeTrends_Parameters pct_param, CancellationToken token);
 
 

@@ -182,6 +182,7 @@
     <Build Include="pct\Tables\CLM_PHYS.sql" />
     <Build Include="pct\Tables\MM_FINAL.sql" />
     <Build Include="etgsymm\Views\VW_ETG_Symmetry_CNFG_ETG_NRX_COMPARE.sql" />
+    <Build Include="pct\Tables\PROC_CD.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Cd_GetAll.sql" />
