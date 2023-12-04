@@ -390,7 +390,7 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
             }
             if (sb.Length > 0)
             {
-                pc_param.Proc_Code = sb.ToString().TrimEnd(',');
+                pc_param.px = sb.ToString().TrimEnd(',');
             }
 
             pc_param.RowCount = _topRows;

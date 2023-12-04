@@ -114,7 +114,7 @@
             </TextBlock>
 
             <telerik:Label Grid.Row="0" Grid.Column="6"  Content="Row Count:" Margin="1" HorizontalAlignment="Left" Style="{StaticResource OptionalLabel}"  />
-            <telerik:RadNumericUpDown Grid.Row="0" Grid.Column="7" NumberDecimalDigits="0" Value="{Binding TopRows}" Minimum="100" Maximum="10000000" SmallChange="100" />
+            <telerik:RadNumericUpDown Grid.Row="0" Grid.Column="7" NumberDecimalDigits="0" Value="{Binding TopRows}" Minimum="1" Maximum="10000000" SmallChange="100" />
 
             <telerik:RadButton x:Name="btnGenerateReport"  Grid.Row="0" Grid.Column="8" Width="170" Command="{Binding GenerateReportCallCommand}"  Content="Generate Report">
                 <!--<Button.IsEnabled>

@@ -100,14 +100,14 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             //CREATE RANK TMP TABLE
             //CREATE RANK TMP TABLE
             //CREATE RANK TMP TABLE
-            sbSQL.Append("IF OBJECT_ID('tempdb..#Rank') IS NOT NULL DROP TABLE #Rank SELECT t.px, t.px_desc, t.Y1Q1_allw_amt, t.Y2Q1_allw_amt, (t.Y2Q1_allw_amt - t.Y1Q1_allw_amt) as Y1Q1_Y2Q1_diff INTO #Rank FROM ( select px ,px_desc ,sum(case when year = "+ pct_param.DateSpanList[0].year + " and quarter = "+ pct_param.DateSpanList[0].quarter + " then allw_amt end) as Y1Q1_allw_amt ,sum(case when year = "+ pct_param.DateSpanList[4].year + " and quarter = "+ pct_param.DateSpanList[4].quarter + " then allw_amt end) as Y2Q1_allw_amt from pct.CLM_OP where op_phys_bucket = 'OP' " + filters + " group by px, px_desc ) t; ");
+            sbSQL.Append("IF OBJECT_ID('tempdb..#Rank') IS NOT NULL DROP TABLE #Rank SELECT t.px, t.px_desc, t.Y1Q1_allw_amt, t.Y2Q1_allw_amt, (t.Y2Q1_allw_amt - t.Y1Q1_allw_amt) as Y1Q1_Y2Q1_diff INTO #Rank FROM ( select px ,px_desc ,sum(case when year = "+ pct_param.DateSpanList[0].year + " and quarter = "+ pct_param.DateSpanList[0].quarter + " then allw_amt end) as Y1Q1_allw_amt ,sum(case when year = "+ pct_param.DateSpanList[4].year + " and quarter = "+ pct_param.DateSpanList[4].quarter + " then allw_amt end) as Y2Q1_allw_amt from pct.CLM_OP a where a.op_phys_bucket = 'OP' " + filters + " group by px, px_desc ) t; ");
 
 
             //CREATE MemberMonth TMP TABLE START
             //CREATE MemberMonth TMP TABLE START
             //CREATE MemberMonth TMP TABLE START
             sbSQL.Append("IF OBJECT_ID('tempdb..#MemberMonth') IS  NOT NULL DROP TABLE #MemberMonth ");
-            sbSQL.Append("SELECT DISTINCT TOP 10 t.Metric ");
+            sbSQL.Append("SELECT DISTINCT TOP "+ pct_param.RowCount +" t.Metric ");
 
             //LOOP DSM!!!
             for (int i = 0; i < pct_param.DateSpanList.Count; i++)
@@ -158,7 +158,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                 sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then Mbr_Month end) as Y" + year + "Q" + quarter + "_Mbr_Month ");
             }
 
-            sbSQL.Append("from pct.MM_FINAL a where 1 = 1  " + filters + ") t; ");
+            sbSQL.Append("from pct.MM_FINAL a where 1 = 1  " + _no_proc_codes_filters + ") t; "); //NO PX IN pct.MM_FINAL TABLE
 
             //CREATE MemberMonth TMP TABLE END
             //CREATE MemberMonth TMP TABLE END
@@ -169,7 +169,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             //unique individual start
             //unique individual start
             //unique individual start
-            sbSQL.Append("SELECT DISTINCT TOP 10000 t.px, t.px_desc ");
+            sbSQL.Append("SELECT DISTINCT TOP "+ pct_param.RowCount +" t.px, t.px_desc ");
 
             //LOOP DSM!!!
             for (int i = 0; i < pct_param.DateSpanList.Count; i++)
@@ -716,10 +716,12 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
         }
 
 
+        //THIS FILTER IS USE TO ALLOW DYNAMIC FILTERS WHEN HAS NOT PX 
+        private string _no_proc_codes_filters;
         private string getFilterString(ProcCodeTrends_Parameters pct_param)
         {
             StringBuilder sbFilters = new StringBuilder();
-
+            StringBuilder sbFiltersNoProc = new StringBuilder();
 
             PropertyInfo[] rootProperties = typeof(ProcCodeTrends_Parameters).GetProperties();
             foreach (PropertyInfo property in rootProperties)
@@ -730,7 +732,12 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                     if (value != null)
                     {
 
-                        sbFilters.Append("AND " + property.Name + " in ("+ value + ") ");
+                        if(property.Name != "px") //THIS FILTER IS USE TO ALLOW DYNAMIC FILTERS WHEN HAS NOT PX 
+                        {
+                            sbFiltersNoProc.Append("AND a." + property.Name + " in (" + value + ") ");
+                        }
+
+                        sbFilters.Append("AND a." + property.Name + " in (" + value + ") ");
 
                     }
                         
@@ -739,6 +746,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
  
             }
 
+            _no_proc_codes_filters = sbFiltersNoProc.ToString();
             return sbFilters.ToString();
         }
 
