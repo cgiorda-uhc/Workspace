@@ -1,11 +1,13 @@
 ﻿using Dapper;
 using DataAccessLibrary.Data.Abstract;
 using DataAccessLibrary.DataAccess;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Intrinsics.X86;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -95,8 +97,6 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             string quarter = "";
 
 
-        
-
             //CREATE RANK TMP TABLE
             //CREATE RANK TMP TABLE
             //CREATE RANK TMP TABLE
@@ -165,16 +165,45 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             //CREATE MemberMonth TMP TABLE END
 
 
+            //Year Quarter Start
+            //Year Quarter Start
+            //Year Quarter Start
+            sbSQL.Append("SELECT DISTINCT [year], [quarter] from pct.CLM_OP ORDER BY [year], [quarter];");
+            //Year Quarter End
+            //Year Quarter End
+            //Year Quarter End
+
+
 
             //unique individual start
             //unique individual start
             //unique individual start
-            sbSQL.Append("SELECT DISTINCT TOP "+ pct_param.RowCount +" t.px, t.px_desc ");
+            var sql = generateGenericSQL("indv", "indv", pct_param.RowCount, filters, pct_param.DateSpanList);
+            sbSQL.Append(sql);
+            //unique individual end
+            //unique individual end
+            //unique individual end
 
+
+
+            //events start
+            //events start
+            //events start
+            sql = generateGenericSQL("evnts", "events", pct_param.RowCount, filters, pct_param.DateSpanList);
+            sbSQL.Append(sql);
+            //events end
+            //events end
+            //events end
+
+
+
+            //claims start
+            //claims start
+            //claims start
+            sbSQL.Append("SELECT DISTINCT TOP "+ pct_param.RowCount +" t.px ,t.px_desc ");
             //LOOP DSM!!!
             for (int i = 0; i < pct_param.DateSpanList.Count; i++)
             {
-
                 if (i <= 3)
                 {
                     year = "1";
@@ -185,46 +214,29 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                     year = "2";
                     quarter = ((i + 1) - 4).ToString();
                 }
-
-                // sbSQL.Append(",t.Y" + ((i + 1) % 2 == 0 ? "2" : "1") + "Q" + pct_param.DateSpanList[i].quarter + "_indv ");
-                sbSQL.Append(",t.Y" + year + "Q" + quarter + "_indv ");
-
+    
+                sbSQL.Append(",t.Y" + year + "Q" + quarter + "_claims ");
+                sbSQL.Append(",t.Y" + year + "Q" + quarter + "_fac_claims ");
+                sbSQL.Append(",t.Y" + year + "Q" + quarter + "_phy_claims ");
+                sbSQL.Append(",t.Y" + year + "Q" + quarter + "_oth_claims ");
             }
 
-            ////LOOP DSM!!
-            //for (int i = 0; i < pct_param.DateSpanList.Count; i++)
-            //{
-
-            //    if (i % 2 != 0)
-            //    {
-            //        continue;
-            //    }
-
-            //    var quarter = pct_param.DateSpanList[i].quarter;
-
-            //    sbSQL.Append(", CASE WHEN t.Y1Q" + quarter + "_indv = 0 THEN 'N/A' ELSE  CAST(((t.Y2Q" + quarter + "_indv - t.Y1Q" + quarter + "_indv)/t.Y1Q" + quarter + "_indv) as varchar)  END as Y1Q" + quarter + "_Y2Q" + quarter + "_trend ");
-            //}
             //LOOP DSM!!
             for (int i = 1; i < 5; i++)
             {
 
-                sbSQL.Append(", CASE WHEN t.Y1Q" + i + "_indv = 0 THEN 'N/A' ELSE  CAST(FORMAT(((t.Y2Q" + i + "_indv - t.Y1Q" + i + "_indv)/t.Y1Q" + i + "_indv),'P') as varchar)  END as Y1Q" + i + "_Y2Q" + i + "_trend ");
+                sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_claims = 0 THEN 'N/A' ELSE  CAST(FORMAT(((t.Y2Q" + i + "_claims-t.Y1Q" + i + "_claims)/t.Y1Q" + i + "_claims),'P') as varchar) END as Y1Q" + i + "_Y2Q" + i + "_trend_claims ");
+                sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_fac_claims = 0 THEN 'N/A' ELSE  CAST(FORMAT(((t.Y2Q" + i + "_fac_claims-t.Y1Q" + i + "_fac_claims)/t.Y1Q" + i + "_fac_claims),'P') as varchar)  END as Y1Q" + i + "_Y2Q" + i + "_trend_fac_claims ");
+                sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_phy_claims = 0 THEN 'N/A' ELSE  CAST(FORMAT(((t.Y2Q" + i + "_fac_claims-t.Y1Q" + i + "_phy_claims)/t.Y1Q" + i + "_phy_claims),'P') as varchar) END Y1Q" + i + "_Y2Q" + i + "_trend_phy_claims ");
+                sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_oth_claims = 0 THEN 'N/A' ELSE  CAST(FORMAT(((t.Y2Q" + i + "_oth_claims-t.Y1Q" + i + "_oth_claims)/t.Y1Q" + i + "_oth_claims),'P') as varchar)  END Y1Q" + i + "_Y2Q" + i + "_trend_oth_claims ");
 
             }
 
 
-
-            sbSQL.Append(" ,t.rank FROM ( select a.px ,a.px_desc ");
-
+            sbSQL.Append(",t.rank FROM ( select distinct a.px ,a.px_desc ");
             //LOOP DSM!!!
             for (int i = 0; i < pct_param.DateSpanList.Count; i++)
             {
-
-                //var year = ((i + 1) % 2 == 0 ? "2" : "1");
-                //var quarter = pct_param.DateSpanList[i].quarter;
-                //var year_full = pct_param.DateSpanList[i].year;
-
-                //sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter + " then indv end) as Y" + year + "Q" + quarter + "_indv ");
 
                 if (i <= 3)
                 {
@@ -240,183 +252,33 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                 var year_full = pct_param.DateSpanList[i].year;
                 var quarter_actual = pct_param.DateSpanList[i].quarter;
 
-                sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then indv  end) as Y" + year + "Q" + quarter + "_indv ");
-
+                sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then claims end) as Y" + year + "Q" + quarter + "_claims ");
+                sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then fac_clms end) as Y" + year + "Q" + quarter + "_fac_claims ");
+                sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then phy_clms end) as Y" + year + "Q" + quarter + "_phy_claims ");
+                sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then oth_clms end) as Y" + year + "Q" + quarter + "_oth_claims ");
 
             }
 
-            sbSQL.Append(",b.Y1Q1_Y2Q1_diff as rank from pct.CLM_OP a left join #Rank b on a.px = b.px and a.px_desc = b.px_desc where a.op_phys_bucket = 'OP'  " + filters + " group by b.Y1Q1_Y2Q1_diff,a.px, a.px_desc ) t order by t.rank DESC; ");
-            //unique individual end
-            //unique individual end
-            //unique individual end
+            sbSQL.Append(",b.Y1Q1_Y2Q1_diff as rank from pct.CLM_OP a left join #Rank b on a.px = b.px and a.px_desc = b.px_desc where a.op_phys_bucket = 'OP' " + filters + " group by b.Y1Q1_Y2Q1_diff,a.px, a.px_desc ) t order by t.rank DESC; ");
+            //claims end
+            //claims end
+            //claims end
 
 
-            ////events start
-            ////events start
-            ////events start
-            //sbSQL.Append("SELECT DISTINCT TOP 10 t.px ,t.px_desc ");
-            ////LOOP DSM!!!
-            //for (int i = 0; i < pct_param.DateSpanList.Count; i++)
-            //{
-            //    if (i <= 3)
-            //    {
-            //        year = "1";
-            //        quarter = (i + 1).ToString();
-            //    }
-            //    else
-            //    {
-            //        year = "2";
-            //        quarter = ((i + 1) - 4).ToString();
-            //    }
-
-
-            //    //sbSQL.Append(",t.Y" + ((i + 1) % 2 == 0 ? "2" : "1") + "Q" + pct_param.DateSpanList[i].quarter + "_Mbr_Month ");
-            //    sbSQL.Append(",t.Y" + year + "Q" + quarter + "_events ");
-            //}
-
-
-            ////LOOP DSM!!
-            //for (int i = 1; i < 5; i++)
-            //{
-
-            //    sbSQL.Append(", CASE WHEN t.Y1Q" + i + "_events = 0 THEN 'N/A' ELSE  CAST(((t.Y2Q" + i + "_events - t.Y1Q" + i + "_events)/t.Y1Q" + i + "_events) as varchar)  END as Y1Q" + i + "_Y2Q" + i + "_trend ");
-
-            //}
-
-
-            //sbSQL.Append(",t.rank FROM ( select distinct a.px ,a.px_desc ");
-            ////LOOP DSM!!!
-            //for (int i = 0; i < pct_param.DateSpanList.Count; i++)
-            //{
-
-
-            //    if (i <= 3)
-            //    {
-            //        year = "1";
-            //        quarter = (i + 1).ToString();
-            //    }
-            //    else
-            //    {
-            //        year = "2";
-            //        quarter = ((i + 1) - 4).ToString();
-            //    }
-
-            //    var year_full = pct_param.DateSpanList[i].year;
-            //    var quarter_actual = pct_param.DateSpanList[i].quarter;
-
-            //    sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then evnts end) as Y" + year + "Q" + quarter + "_events ");
-
-            //}
-
-            //sbSQL.Append(",b.Y1Q1_Y2Q1_diff as rank from pct.CLM_OP a left join #Rank b on a.px = b.px and a.px_desc = b.px_desc where a.op_phys_bucket = 'OP' " + filters + " group by b.Y1Q1_Y2Q1_diff,a.px, a.px_desc ) t order by t.rank DESC; ");
-            ////events end
-            ////events end
-            ////events end
-
-
-
-            ////claims start
-            ////claims start
-            ////claims start
-            //sbSQL.Append("SELECT DISTINCT TOP 10 t.px ,t.px_desc ");
-            ////LOOP DSM!!!
-            //for (int i = 0; i < pct_param.DateSpanList.Count; i++)
-            //{
-            //    var year = ((i + 1) % 2 == 0 ? "2" : "1");
-            //    var quarter = pct_param.DateSpanList[i].quarter;
-
-            //    sbSQL.Append(",t.Y" + year + "Q" + quarter + "_claims ");
-            //    sbSQL.Append(",t.Y" + year + "Q" + quarter + "_fac_claims ");
-            //    sbSQL.Append(",t.Y" + year + "Q" + quarter + "_phy_claims ");
-            //    sbSQL.Append(",t.Y" + year + "Q" + quarter + "_oth_claims ");
-            //}
-            ////LOOP DSM!!
-            //for (int i = 0; i < pct_param.DateSpanList.Count; i++)
-            //{
-            //    if (i % 2 != 0)
-            //    {
-            //        continue;
-            //    }
-
-            //    //var year = ((i + 1) % 2 == 0 ? "2" : "1");
-            //    var quarter = pct_param.DateSpanList[i].quarter;
-
-            //    sbSQL.Append(",CASE WHEN t.Y1Q" + quarter + "_claims = 0 THEN 'N/A' ELSE  CAST(((t.Y2Q" + quarter + "_claims-t.Y1Q" + quarter + "_claims)/t.Y1Q" + quarter + "_claims) as varchar) END as Y1Q" + quarter + "_Y2Q" + quarter + "_trend_claims ");
-            //    sbSQL.Append(",CASE WHEN t.Y1Q" + quarter + "_fac_claims = 0 THEN 'N/A' ELSE  CAST((t.Y2Q" + quarter + "_fac_claims-t.Y1Q" + quarter + "_fac_claims)/t.Y1Q" + quarter + "_fac_claims as varchar)  END as Y1Q" + quarter + "_Y2Q" + quarter + "_trend_fac_claims ");
-            //    sbSQL.Append(",CASE WHEN t.Y1Q" + quarter + "_phy_claims = 0 THEN 'N/A' ELSE  CAST((t.Y2Q" + quarter + "_fac_claims-t.Y1Q" + quarter + "_phy_claims)/t.Y1Q" + quarter + "_phy_claims  as varchar) END Y1Q" + quarter + "_Y2Q" + quarter + "_trend_phy_claims ");
-            //    sbSQL.Append(",CASE WHEN t.Y1Q" + quarter + "_oth_claims = 0 THEN 'N/A' ELSE  CAST((t.Y2Q" + quarter + "_oth_claims-t.Y1Q" + quarter + "_oth_claims)/t.Y1Q" + quarter + "_oth_claims as varchar)  END Y1Q" + quarter + "_Y2Q" + quarter + "_trend_oth_claims ");
-            //}
-
-
-            //sbSQL.Append(",t.rank FROM ( select distinct a.px ,a.px_desc ");
-            ////LOOP DSM!!!
-            //for (int i = 0; i < pct_param.DateSpanList.Count; i++)
-            //{
-
-            //    var year = ((i + 1) % 2 == 0 ? "2" : "1");
-            //    var quarter = pct_param.DateSpanList[i].quarter;
-            //    var year_full = pct_param.DateSpanList[i].year;
-
-            //    sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter + " then claims end) as Y" + year + "Q" + quarter + "_claims ");
-            //    sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter + " then fac_clms end) as Y" + year + "Q" + quarter + "_fac_claims ");
-            //    sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter + " then phy_clms end) as Y" + year + "Q" + quarter + "_phy_claims ");
-            //    sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter + " then oth_clms end) as Y" + year + "Q" + quarter + "_oth_claims ");
-
-            //}
-
-            //sbSQL.Append(",b.Y1Q1_Y2Q1_diff as rank from pct.CLM_OP a left join #Rank b on a.px = b.px and a.px_desc = b.px_desc where a.op_phys_bucket = 'OP' " + filters + " group by b.Y1Q1_Y2Q1_diff,a.px, a.px_desc ) t order by t.rank DESC; ");
-            ////claims end
-            ////claims end
-            ////claims end
-
-
-
-
-            ////allowed start
-            ////allowed start
-            ////allowed start
-            //sbSQL.Append("SELECT DISTINCT TOP 10 t.px ,t.px_desc ");
-            ////LOOP DSM!!!
-            //for (int i = 0; i < pct_param.DateSpanList.Count; i++)
-            //{
-            //    var year = ((i + 1) % 2 == 0 ? "2" : "1");
-            //    var quarter = pct_param.DateSpanList[i].quarter;
-
-            //    sbSQL.Append(",t.Y" + year + "Q" + quarter + "_allw_amt ");
-            //}
-            ////LOOP DSM!!
-            //for (int i = 0; i < pct_param.DateSpanList.Count; i++)
-            //{
-
-            //    if (i % 2 != 0)
-            //    {
-            //        continue;
-            //    }
-            //    var quarter = pct_param.DateSpanList[i].quarter;
-
-            //    sbSQL.Append(", CASE WHEN t.Y1Q" + quarter + "_allw_amt = 0 THEN 'N/A' ELSE  CAST(((t.Y2Q" + quarter + "_allw_amt - t.Y1Q" + quarter + "_allw_amt)/t.Y1Q" + quarter + "_allw_amt) as varchar)  END as Y1Q" + quarter + "_Y2Q" + quarter + "_trend ");
-            //}
-            //sbSQL.Append(",t.rank FROM ( select distinct a.px ,a.px_desc ");
-            ////LOOP DSM!!!
-            //for (int i = 0; i < pct_param.DateSpanList.Count; i++)
-            //{
-            //    var year = ((i + 1) % 2 == 0 ? "2" : "1");
-            //    var quarter = pct_param.DateSpanList[i].quarter;
-            //    var year_full = pct_param.DateSpanList[i].year;
-
-            //    sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter + " then allw_amt end) as Y" + year + "Q" + quarter + "_allw_amt ");
-            //}
-
-            //sbSQL.Append(",b.Y1Q1_Y2Q1_diff as rank from pct.CLM_OP a left join #Rank b on a.px = b.px and a.px_desc = b.px_desc where a.op_phys_bucket = 'OP' " + filters + " group by b.Y1Q1_Y2Q1_diff,a.px, a.px_desc ) t order by t.rank DESC; ");
-            ////allowed end
-            ////allowed end
-            ////allowed end
+            //allowed start
+            //allowed start
+            //allowed start
+             sql = generateGenericSQL("allw_amt", "allw_amt", pct_param.RowCount, filters, pct_param.DateSpanList);
+            sbSQL.Append(sql);
+            //allowed end
+            //allowed end
+            //allowed end
 
 
             ////member month start
             ////member month start
             ////member month start
-            //sbSQL.Append("SELECT * FROM #MemberMonth; ");
+            sbSQL.Append("SELECT * FROM #MemberMonth; ");
             ////member month end
             ////member month end
             ////member month end
@@ -677,23 +539,19 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             ////Unit Cost 2 end
 
 
-            //Year Quarter Start
-            //Year Quarter Start
-            //Year Quarter Start
-            sbSQL.Append("SELECT DISTINCT [year], [quarter] from pct.CLM_OP ORDER BY [year], [quarter];");
-            //Year Quarter End
-            //Year Quarter End
-            //Year Quarter End
 
 
 
-            var results = _db.LoadDataMultiple(sql: sbSQL.ToString(), token, gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), "VCT_DB");
+
+            var results = _db.LoadDataMultiple(sql: sbSQL.ToString(), token, gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read<Member_Month_Model>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), "VCT_DB");
 
             CLM_OP_Report_Model claims_final = new CLM_OP_Report_Model();
-            claims_final.unique_individual = (results[0] as List<Unique_Individual_Model>);
-            claims_final.year_quarter = (results[1] as List<YearQuarter_Model>);
-
-
+            claims_final.year_quarter = (results[0] as List<YearQuarter_Model>);
+            claims_final.unique_individual = (results[1] as List<Unique_Individual_Model>);
+            claims_final.events = (results[2] as List<Events_Model>);
+            claims_final.claims = (results[3] as List<Claims_Model>);
+            claims_final.allowed = (results[4] as List<Allowed_Model>);
+            claims_final.member_month = (results[5] as List<Member_Month_Model>);
 
 
             //var results = _db.LoadDataMultiple(sql: sbSQL.ToString(), token, gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read<Member_Month_Model>(), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), "VCT_DB");
@@ -714,6 +572,71 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             return claims_final;
     
         }
+
+
+        private string generateGenericSQL(string columnName, string displayName, int RowCnt, string filters, List<DateSpan_Model> DateSpanList)
+        {
+
+
+            string year = "";
+            string quarter = "";
+
+            StringBuilder sbSQL = new StringBuilder();
+            sbSQL.Append("SELECT DISTINCT TOP " + RowCnt + " t.px ,t.px_desc ");
+            //LOOP DSM!!!
+            for (int i = 0; i < DateSpanList.Count; i++)
+            {
+                if (i <= 3)
+                {
+                    year = "1";
+                    quarter = (i + 1).ToString();
+                }
+                else
+                {
+                    year = "2";
+                    quarter = ((i + 1) - 4).ToString();
+                }
+
+                sbSQL.Append(",t.Y" + year + "Q" + quarter + "_" + displayName);
+            }
+            //LOOP DSM!!
+            for (int i = 1; i < 5; i++)
+            {
+
+                sbSQL.Append(", CASE WHEN t.Y1Q" + i + "_" + displayName + " = 0 THEN 'N/A' ELSE  CAST(FORMAT(((t.Y2Q" + i + "_" +  displayName +" - t.Y1Q" + i + "_" + displayName + ")/t.Y1Q" + i + "_" + displayName + "),'P') as varchar) END as Y1Q" + i + "_Y2Q" + i + "_trend ");
+
+            }
+
+
+            sbSQL.Append(",t.rank FROM ( select distinct a.px ,a.px_desc ");
+            //LOOP DSM!!!
+            for (int i = 0; i < DateSpanList.Count; i++)
+            {
+                if (i <= 3)
+                {
+                    year = "1";
+                    quarter = (i + 1).ToString();
+                }
+                else
+                {
+                    year = "2";
+                    quarter = ((i + 1) - 4).ToString();
+                }
+
+                var year_full = DateSpanList[i].year;
+                var quarter_actual = DateSpanList[i].quarter;
+
+                sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then "+ columnName + " end) as Y" + year + "Q" + quarter + "_" + displayName);
+            }
+
+            sbSQL.Append(",b.Y1Q1_Y2Q1_diff as rank from pct.CLM_OP a left join #Rank b on a.px = b.px and a.px_desc = b.px_desc where a.op_phys_bucket = 'OP' " + filters + " group by b.Y1Q1_Y2Q1_diff,a.px, a.px_desc ) t order by t.rank DESC; ");
+
+
+            return sbSQL.ToString();
+        }
+
+
+
 
 
         //THIS FILTER IS USE TO ALLOW DYNAMIC FILTERS WHEN HAS NOT PX 

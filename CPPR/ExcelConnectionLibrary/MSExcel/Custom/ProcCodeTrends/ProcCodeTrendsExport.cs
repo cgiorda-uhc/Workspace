@@ -1,11 +1,16 @@
 ﻿using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Wordprocessing;
+using Irony.Parsing;
 using Microsoft.Office.Interop.Excel;
 using Microsoft.Office.Interop.Word;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Threading.Tasks;
 using VCPortal_Models.Models.MHP;
@@ -37,13 +42,9 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             string columnLetter;
             string columnLetterLast;
             string bgcolor = "#D9D9D9";
-            string sheet = "OP";
-
-            sbStatus.Append("--Creating sheet for " + sheet + Environment.NewLine);
-            setterStatus(sbStatus.ToString());
+     
 
 
-            wsSource = wb.Worksheets.Add(sheet);
 
 
             Int16 colCnt = 1;
@@ -55,183 +56,78 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             //CLM OP Unique Individual START
             header = "Unique Individual";
 
-            //MAIN HEADER 'Unique Individual' ROW
-            rowCnt = 1;
 
-            colCnt = 1;
-            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
-            wsSource.Cell(columnLetter + rowCnt).Value = header;
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+       
+            genertateGenericWorksheet<Events_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.events);
 
-            colCnt = 3;
-            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
-            cell = wsSource.Cell(columnLetter + rowCnt);
-            cell.Value = header;
-            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
-            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
-
-            //COLUMN HEADER ROW
-            rowCnt = 2;
-
-            colCnt = 1;
-            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
-            cell = wsSource.Cell(columnLetter + rowCnt);
-            cell.Value = "Proc" + Environment.NewLine + "Code";
-            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
-            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
-
-  
-            colCnt = 2;
-            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
-            cell = wsSource.Cell(columnLetter + rowCnt);
-            cell.Value = "Proc Desc";
-            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
-            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
-
-            colCnt = 3;
-            //LOOP YQ COLUMN HEADERS
-            foreach (var yq in  clm_op_results.year_quarter)
-            {
-                columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
-                cell = wsSource.Cell(columnLetter + rowCnt);
-
-                cell.Value = yq.year + "Q" + yq.quarter;
-                cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
-                SharedExcelFunctions.AddClosedXMLBorders(ref cell);
-
-                colCnt++;
-            }
-
-            //MERGE YQ "Unique Individual"
-            columnLetter = SharedExcelFunctions.GetColumnName(colCnt - 1);
-            columnLetterLast = SharedExcelFunctions.GetColumnName(colCnt);
-            range = wsSource.Range("D1:" + columnLetter + "1");
-            range.Merge();
-
-            //ADD MAIN HEADER 'Trend' ROW
-            rowCnt = 1;
-            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
-            cell = wsSource.Cell(columnLetter + rowCnt);
-            cell.Value = "Trend";
-            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
-
-
-            //COLUMN HEADER ROW
-            rowCnt = 2;
-            //LOOP TREND COLUMN HEADERS
-
-            var t = clm_op_results.year_quarter[0].year.ToString().Substring(2,2) + "Q" + clm_op_results.year_quarter[0].quarter +"/" + clm_op_results.year_quarter[4].year.ToString().Substring(2, 2) + "Q" + clm_op_results.year_quarter[4].quarter;
-            cell = wsSource.Cell(columnLetter + rowCnt);
-            cell.Value = t;
-            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
-            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
-
-
-            t = clm_op_results.year_quarter[1].year.ToString().Substring(2, 2) + "Q" + clm_op_results.year_quarter[1].quarter + "/" + clm_op_results.year_quarter[5].year.ToString().Substring(2, 2) + "Q" + clm_op_results.year_quarter[5].quarter;
-            colCnt++;
-            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
-            cell = wsSource.Cell(columnLetter + rowCnt);
-            cell.Value = t;
-            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
-            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
-
-
-
-            t = clm_op_results.year_quarter[2].year.ToString().Substring(2, 2) + "Q" + clm_op_results.year_quarter[2].quarter + "/" + clm_op_results.year_quarter[6].year.ToString().Substring(2, 2) + "Q" + clm_op_results.year_quarter[6].quarter;
-            colCnt++;
-            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
-            cell = wsSource.Cell(columnLetter + rowCnt);
-            cell.Value = t;
-            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
-            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
-
-
-
-            t = clm_op_results.year_quarter[3].year.ToString().Substring(2, 2) + "Q" + clm_op_results.year_quarter[3].quarter + "/" + clm_op_results.year_quarter[7].year.ToString().Substring(2, 2) + "Q" + clm_op_results.year_quarter[7].quarter;
-            colCnt++;
-            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
-            cell = wsSource.Cell(columnLetter + rowCnt);
-            cell.Value = t;
-            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
-            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
-
-
-            //MERGE YQ "Trend"
-            range = wsSource.Range(columnLetterLast + "1:" + columnLetter + "1");
-            range.Merge();
-            range.Style.Border.RightBorderColor = XLColor.Black;
-            range.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-
-
-            //DATA ROW
-            rowCnt = 3;
-
-            //START FROM FIRST COLUMN
-            colCnt = 1;
-            //POPULATE DATA
-            foreach (var c in clm_op_results.unique_individual)
-            {
-                if (token.IsCancellationRequested)
-                {
-                    break;
-                }
-
-                sbStatus.Append("--Populating data for CLM OP Unique Individual" + Environment.NewLine);
-                setterStatus(sbStatus.ToString());
-
-
-
-
-                foreach (PropertyInfo propertyInfo in c.GetType().GetProperties())
-                {
-
-                    object val = propertyInfo.GetValue(c, null);
-                    columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
-                    cell = wsSource.Cell(columnLetter + rowCnt);
-  
-
-                    //decimal test = 0;
-                    //if (decimal.TryParse(val + "", out test))
-                    //{
-                    //    cell.Value = decimal.Parse(val.ToString());
-                    //    cell.Style.NumberFormat.SetNumberFormatId((int)XLPredefinedFormat.Number.Integer);
-                    //}
-                    //else
-                    //{
-                    //    cell.Value = val.ToString();
-                    //}
-
-                    if(propertyInfo.PropertyType == typeof(int) || propertyInfo.PropertyType == typeof(int?))   
-                     {
-                        if(val != null)
-                        {
-                            cell.Value = int.Parse(val.ToString()); 
-                        }
-                    }
-                    else
-                    {
-                        cell.Value = val + "";
-                    }
-
-
-                    SharedExcelFunctions.AddClosedXMLBorders(ref cell);
-
-                    colCnt++;
-                }
-
-
-                rowCnt++;
-                colCnt = 1;
-            }
-            wsSource.Columns().AdjustToContents();
             //CLM OP Unique Individual END
             //CLM OP Unique Individual END
             //CLM OP Unique Individual END
 
 
 
+            //Events START
+            //Events START
+            //Events START
+            header = "Events";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            genertateGenericWorksheet<Events_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.events);
 
 
+            ////Events END
+            ////Events END
+            ////Events END
+        
 
+
+            //Claims START 
+            //Claims START
+            //Claims START
+            header = "Claims";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+            //ADD CUSTOM!!!!!!
+            genertateGenericWorksheet<Claims_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.claims);
+
+            ////Claims END
+            ////Claims END
+            ////Claims END
+
+
+            //Allowed Amount START 
+            //Allowed Amount START
+            //Allowed Amount START
+            header = "Allowed Amount";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            genertateGenericWorksheet<Allowed_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.allowed);
+
+            ////Allowed Amount END
+            ////Allowed Amount END
+            ////Allowed Amount END
+            ///
+
+
+            //Member Month START
+            //Member Month START
+            //Member Month START
+            header = "Member Month";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+            //ADD CUSTOM!!!!!!
+            genertateGenericWorksheet<Member_Month_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.member_month);
+            //Member Month END
+            //Member Month END
+            //Member Month END
 
             if (token.IsCancellationRequested)
             {
@@ -253,6 +149,178 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             await Task.CompletedTask;
             return final;
         }
+
+
+        private static void genertateGenericWorksheet<T>(ref XLWorkbook  wb,  string header, string bgcolor, List<YearQuarter_Model> year_quarter, List<T> data_list)
+        {
+
+
+            string columnLetter;
+            string columnLetterLast;
+            IXLRange range;
+            IXLCell cell;
+
+
+            Int16 colCnt = 1;
+            Int16 rowCnt = 1;
+
+
+            var wsSource = wb.Worksheets.Add(header);
+
+
+            //MAIN HEADER 'Events' ROW
+            rowCnt = 1;
+
+            colCnt = 0;
+            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+            wsSource.Cell(columnLetter + rowCnt).Value = header;
+
+            colCnt = 2;
+            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+            cell = wsSource.Cell(columnLetter + rowCnt);
+            cell.Value = header;
+            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+
+            //COLUMN HEADER ROW
+            rowCnt = 2;
+
+            colCnt = 0;
+            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+            cell = wsSource.Cell(columnLetter + rowCnt);
+            cell.Value = "Proc" + Environment.NewLine + "Code";
+            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+
+
+            colCnt = 1;
+            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+            cell = wsSource.Cell(columnLetter + rowCnt);
+            cell.Value = "Proc Desc";
+            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+
+            colCnt = 2;
+            //LOOP YQ COLUMN HEADERS
+            foreach (var yq in year_quarter)
+            {
+                columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+                cell = wsSource.Cell(columnLetter + rowCnt);
+
+                cell.Value = yq.year + "Q" + yq.quarter;
+                cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+                SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+
+                colCnt++;
+            }
+
+            //MERGE YQ "Unique Individual"
+            columnLetter = SharedExcelFunctions.GetColumnName(colCnt - 1);
+            columnLetterLast = SharedExcelFunctions.GetColumnName(colCnt);
+            range = wsSource.Range("C1:" + columnLetter + "1");
+            range.Merge();
+
+            //ADD MAIN HEADER 'Trend' ROW
+            rowCnt = 1;
+            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+            cell = wsSource.Cell(columnLetter + rowCnt);
+            cell.Value = "Trend";
+            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+
+
+            //COLUMN HEADER ROW
+            rowCnt = 2;
+            //LOOP TREND COLUMN HEADERS
+
+            var t = year_quarter[0].year.ToString().Substring(2, 2) + "Q" + year_quarter[0].quarter + "/" + year_quarter[4].year.ToString().Substring(2, 2) + "Q" + year_quarter[4].quarter;
+            cell = wsSource.Cell(columnLetter + rowCnt);
+            cell.Value = t;
+            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+
+
+            t = year_quarter[1].year.ToString().Substring(2, 2) + "Q" + year_quarter[1].quarter + "/" + year_quarter[5].year.ToString().Substring(2, 2) + "Q" + year_quarter[5].quarter;
+            colCnt++;
+            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+            cell = wsSource.Cell(columnLetter + rowCnt);
+            cell.Value = t;
+            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+
+
+
+            t = year_quarter[2].year.ToString().Substring(2, 2) + "Q" + year_quarter[2].quarter + "/" + year_quarter[6].year.ToString().Substring(2, 2) + "Q" + year_quarter[6].quarter;
+            colCnt++;
+            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+            cell = wsSource.Cell(columnLetter + rowCnt);
+            cell.Value = t;
+            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+
+
+
+            t = year_quarter[3].year.ToString().Substring(2, 2) + "Q" + year_quarter[3].quarter + "/" + year_quarter[7].year.ToString().Substring(2, 2) + "Q" + year_quarter[7].quarter;
+            colCnt++;
+            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+            cell = wsSource.Cell(columnLetter + rowCnt);
+            cell.Value = t;
+            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+
+
+            //MERGE YQ "Trend"
+            range = wsSource.Range(columnLetterLast + "1:" + columnLetter + "1");
+            range.Merge();
+            range.Style.Border.RightBorderColor = XLColor.Black;
+            range.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+
+
+            //DATA ROW
+            rowCnt = 3;
+
+            //START FROM FIRST COLUMN
+            colCnt = 0;
+            //POPULATE DATA
+            foreach (var c in data_list)
+            {
+
+                foreach (PropertyInfo propertyInfo in c.GetType().GetProperties())
+                {
+
+                    object val = propertyInfo.GetValue(c, null);
+                    columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+                    cell = wsSource.Cell(columnLetter + rowCnt);
+
+                    if (propertyInfo.PropertyType == typeof(int) || propertyInfo.PropertyType == typeof(int?))
+                    {
+                        if (val != null)
+                        {
+                            cell.Value = int.Parse(val.ToString());
+                        }
+                    }
+                    else
+                    {
+                        cell.Value = val + "";
+                    }
+
+
+                    SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+
+                    colCnt++;
+                }
+
+
+                rowCnt++;
+                colCnt = 0;
+            }
+            wsSource.Columns().AdjustToContents();
+            //Events END
+            //Events END
+            //Events END
+        }
+
+
+
 
     }
 }
