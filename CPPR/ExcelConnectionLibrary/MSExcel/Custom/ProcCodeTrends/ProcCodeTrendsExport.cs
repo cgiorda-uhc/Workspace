@@ -124,7 +124,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
             setterStatus(sbStatus.ToString());
             //ADD CUSTOM!!!!!!
-            genertateGenericWorksheet<Member_Month_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.member_month);
+            genertateMemberMonthWorksheet<Member_Month_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.member_month);
             //Member Month END
             //Member Month END
             //Member Month END
@@ -399,7 +399,132 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
         }
 
 
+        private static void genertateMemberMonthWorksheet<T>(ref XLWorkbook wb, string header, string bgcolor, List<YearQuarter_Model> year_quarter, List<T> data_list)
+        {
 
+
+            string columnLetter;
+            string columnLetterLast;
+            IXLRange range;
+            IXLCell cell;
+
+
+            Int16 colCnt = 1;
+            Int16 rowCnt = 1;
+
+
+            var wsSource = wb.Worksheets.Add(header);
+
+
+            //MAIN HEADER 'Events' ROW
+            rowCnt = 1;
+
+            colCnt = 1;
+            //LOOP YQ COLUMN HEADERS
+            foreach (var yq in year_quarter)
+            {
+                columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+                cell = wsSource.Cell(columnLetter + rowCnt);
+
+                cell.Value = yq.year + "Q" + yq.quarter;
+                cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+                SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+
+                colCnt++;
+            }
+
+
+            //COLUMN HEADER ROW
+            rowCnt = 1;
+            //LOOP TREND COLUMN HEADERS
+
+            var t = year_quarter[0].year.ToString().Substring(2, 2) + "Q" + year_quarter[0].quarter + "/" + year_quarter[4].year.ToString().Substring(2, 2) + "Q" + year_quarter[4].quarter;
+            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+            cell = wsSource.Cell(columnLetter + rowCnt);
+            cell.Value = t;
+            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+
+
+            t = year_quarter[1].year.ToString().Substring(2, 2) + "Q" + year_quarter[1].quarter + "/" + year_quarter[5].year.ToString().Substring(2, 2) + "Q" + year_quarter[5].quarter;
+            colCnt++;
+            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+            cell = wsSource.Cell(columnLetter + rowCnt);
+            cell.Value = t;
+            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+
+
+
+            t = year_quarter[2].year.ToString().Substring(2, 2) + "Q" + year_quarter[2].quarter + "/" + year_quarter[6].year.ToString().Substring(2, 2) + "Q" + year_quarter[6].quarter;
+            colCnt++;
+            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+            cell = wsSource.Cell(columnLetter + rowCnt);
+            cell.Value = t;
+            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+
+
+
+            t = year_quarter[3].year.ToString().Substring(2, 2) + "Q" + year_quarter[3].quarter + "/" + year_quarter[7].year.ToString().Substring(2, 2) + "Q" + year_quarter[7].quarter;
+            colCnt++;
+            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+            cell = wsSource.Cell(columnLetter + rowCnt);
+            cell.Value = t;
+            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+
+            //DATA ROW
+            rowCnt = 2;
+
+            //START FROM FIRST COLUMN
+            colCnt = 0;
+
+            //POPULATE DATA
+            foreach (var c in data_list)
+            {
+
+                
+                foreach (PropertyInfo propertyInfo in c.GetType().GetProperties())
+                {
+
+                    object val = propertyInfo.GetValue(c, null);
+                    columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+                    cell = wsSource.Cell(columnLetter + rowCnt);
+
+                    if (propertyInfo.PropertyType == typeof(int) || propertyInfo.PropertyType == typeof(int?))
+                    {
+                        if (val != null)
+                        {
+                            cell.Value = int.Parse(val.ToString());
+                        }
+                    }
+                    else if (propertyInfo.PropertyType == typeof(double) || propertyInfo.PropertyType == typeof(double?))
+                    {
+                        if (val != null)
+                        {
+                            cell.Value = double.Parse(val.ToString());
+                        }
+                    }
+                    else
+                    {
+                        cell.Value = val + "";
+                    }
+
+
+                    SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+
+                    colCnt++;
+                }
+
+
+                rowCnt++;
+                colCnt = 0;
+            }
+            wsSource.Columns().AdjustToContents();
+
+
+        }
 
     }
 }
