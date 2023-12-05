@@ -43,4 +43,6 @@ public interface IETGFactSymmetry_Repo
 
     Task<IEnumerable<ETGSummaryFinalConfig>> GetETGSummaryPTCFinalAsync(CancellationToken token);
     Task<IEnumerable<ETGFactSymmetry_ReadDto>> GetETGFactSymmetryPTCDisplayAsync(CancellationToken token);
+
+    Task<IEnumerable<ETG_Lastest_Model>> GetETGLatestAsync(CancellationToken token);
 }

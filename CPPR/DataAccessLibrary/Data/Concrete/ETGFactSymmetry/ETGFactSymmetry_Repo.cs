@@ -209,6 +209,18 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
     }
 
 
+    public Task<IEnumerable<ETG_Lastest_Model>> GetETGLatestAsync(CancellationToken token)
+    {
+
+        string strSQL = "SELECT * FROM [etgsymm].[VW_ETG_Latest_Model];";
+
+        var results = _db.LoadData<ETG_Lastest_Model>(sql: strSQL, token, connectionId: "VCT_DB");
+
+        return results;
+    }
+
+
+
     public async Task InsertETGFactSymmetryTracking(List<ETGFactSymmetry_Tracking_UpdateDto> ETG, string connectionId)
     {
         string[] columns = typeof(ETGFactSymmetry_Tracking_UpdateDto).GetProperties().Select(p => p.Name).ToArray();

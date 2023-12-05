@@ -515,8 +515,16 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
             if (tracking.Count > 0)
             {
                 export.Add(new ExcelExport() { ExportList = tracking.ToList<object>(), SheetName = "Tracking" });
-            
+
             }
+
+
+
+            api = _config.APIS.Where(x => x.Name == "ETGLatest").FirstOrDefault();
+            var latest = await VM_Functions.APIGetResultAsync<ETG_Lastest_Model>(api.BaseUrl, api.Url);
+            export.Add(new ExcelExport() { ExportList = latest.ToList<object>(), SheetName = "ETGLatest" });
+            
+        
 
             if(CurrentVersion.IsNumeric())
             {

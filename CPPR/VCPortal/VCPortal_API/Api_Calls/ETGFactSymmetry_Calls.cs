@@ -100,7 +100,32 @@ public static class ETGFactSymmetry_Calls
             }
         });
 
+        //ALL OF MY API ENDPOINT MAPPING
+        app.MapGet(pattern: "/etglatest", async (IETGFactSymmetry_Repo repo, CancellationToken token) =>
+        {
+            try
+            {
+                _log.Information("Requesting API GetETGLatestAsync()...");
+                ///RETURN HTTP 200
+                ///
+                var results = await repo.GetETGLatestAsync(token);
 
+                if (results != null)
+                {
+                    return Results.Ok(results);//200 SUCCESS
+
+                }
+                _log.Warning("API GetETGLatestAsync() 404, not found");
+                return Results.NotFound(); //404
+            }
+            catch (Exception ex)
+            {
+                _log.Error(ex, "API GetETGLatestAsync threw an error");
+                //RETURN ERROR
+                return Results.Problem(ex.Message);
+
+            }
+        });
 
         app.MapGet(pattern: "/etgsymmetrytracking", async (IETGFactSymmetry_Repo repo, CancellationToken token) =>
         {
