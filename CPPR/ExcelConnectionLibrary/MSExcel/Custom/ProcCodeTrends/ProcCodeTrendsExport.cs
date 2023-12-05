@@ -148,7 +148,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             //Utilization/000  START 
             //Utilization/000 START
             //Utilization/000 START
-            header = "Utilization000";
+            header = "Utilization/000";
 
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
             setterStatus(sbStatus.ToString());
@@ -159,7 +159,34 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             ////Utilization/000 END
             ////Utilization/000 END
 
+            //Unit Cost 1  START 
+            //Unit Cost 1 START
+            //Unit Cost 1 START
+            header = "Unit Cost 1";
 
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            genertateGenericWorksheet<Unit_Cost1_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.unit_cost1);
+
+            ////Unit Cost 1 END
+            ////Unit Cost 1 END
+            ////Unit Cost 1 END
+            ///
+
+            //Unit Cost 2  START 
+            //Unit Cost 2 START
+            //Unit Cost 2 START
+            header = "Unit Cost 2";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            genertateGenericWorksheet<Unit_Cost2_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.unit_cost2);
+
+            ////Unit Cost 2 END
+            ////Unit Cost 2 END
+            ////Unit Cost 2 END
 
             if (token.IsCancellationRequested)
             {
@@ -197,7 +224,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             Int16 rowCnt = 1;
 
 
-            var wsSource = wb.Worksheets.Add(header);
+            var wsSource = wb.Worksheets.Add(header.Replace("/", ""));
 
 
             //MAIN HEADER 'Events' ROW
@@ -205,7 +232,9 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
 
             colCnt = 0;
             columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
-            wsSource.Cell(columnLetter + rowCnt).Value = header + (note != null ? " *": "");
+            cell = wsSource.Cell(columnLetter + rowCnt);
+            cell.Value = header + (note != null ? " *" : "");
+            cell.Style.Font.SetBold(true);
 
             colCnt = 2;
             columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
@@ -251,6 +280,9 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             columnLetterLast = SharedExcelFunctions.GetColumnName(colCnt);
             range = wsSource.Range("C1:" + columnLetter + "1");
             range.Merge();
+            range.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            range.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+            range.Style.Font.SetBold(true);
 
             //ADD MAIN HEADER 'Trend' ROW
             rowCnt = 1;
@@ -305,7 +337,9 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             range.Merge();
             range.Style.Border.RightBorderColor = XLColor.Black;
             range.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-
+            range.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            range.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+            range.Style.Font.SetBold(true);
 
             //DATA ROW
             rowCnt = 3;
