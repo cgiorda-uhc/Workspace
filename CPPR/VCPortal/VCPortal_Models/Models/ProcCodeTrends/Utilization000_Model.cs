@@ -10,23 +10,23 @@ public class Utilization000_Model
     public string px { get; set; }
     public string px_desc { get; set; }
 
-    public int Y1Q1_util000 { get; set; }
+    public double? Y1Q1_util000 { get; set; }
 
-    public int Y2Q1_util000 { get; set; }
-
-
-    public int Y1Q2_util000 { get; set; }
-
-    public int Y2Q2_util000 { get; set; }
+    public double? Y2Q1_util000 { get; set; }
 
 
-    public int Y1Q3_util000 { get; set; }
+    public double? Y1Q2_util000 { get; set; }
 
-    public int Y2Q3_util000 { get; set; }
+    public double? Y2Q2_util000 { get; set; }
 
-    public int Y1Q4_util000 { get; set; }
 
-    public int Y2Q4_util000 { get; set; }
+    public double? Y1Q3_util000 { get; set; }
+
+    public double? Y2Q3_util000 { get; set; }
+
+    public double? Y1Q4_util000 { get; set; }
+
+    public double? Y2Q4_util000 { get; set; }
 
     public string Y1Q1_Y2Q1_trend { get; set; }
 
@@ -36,5 +36,4 @@ public class Utilization000_Model
 
     public string Y1Q4_Y2Q4_trend { get; set; }
 
-    public double rank { get; set; }
 }

@@ -617,7 +617,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                     quarter = ((i + 1) - 4).ToString();
                 }
 
-                sbSQL.Append(",x.Y" + year + "Q" + quarter + "_allw_PMPM ");
+                sbSQL.Append(",x.Y" + year + "Q" + quarter + "_" + displayName + " ");
             }
 
             //LOOP DSM!!

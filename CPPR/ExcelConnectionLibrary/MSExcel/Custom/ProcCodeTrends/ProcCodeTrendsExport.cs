@@ -148,7 +148,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             //Utilization/000  START 
             //Utilization/000 START
             //Utilization/000 START
-            header = "Utilization/000";
+            header = "Utilization000";
 
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
             setterStatus(sbStatus.ToString());
@@ -328,6 +328,13 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                         if (val != null)
                         {
                             cell.Value = int.Parse(val.ToString());
+                        }
+                    }
+                    else if (propertyInfo.PropertyType == typeof(double) || propertyInfo.PropertyType == typeof(double?))
+                    {
+                        if (val != null)
+                        {
+                            cell.Value = double.Parse(val.ToString());
                         }
                     }
                     else
