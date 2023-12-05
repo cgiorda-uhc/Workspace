@@ -234,7 +234,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
             cell = wsSource.Cell(columnLetter + rowCnt);
             cell.Value = header + (note != null ? " *" : "");
-            cell.Style.Font.SetBold(true);
+            //cell.Style.Font.SetBold(true);
 
             colCnt = 2;
             columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
@@ -251,6 +251,8 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             cell = wsSource.Cell(columnLetter + rowCnt);
             cell.Value = "Proc" + Environment.NewLine + "Code";
             cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
             SharedExcelFunctions.AddClosedXMLBorders(ref cell);
 
 
@@ -259,6 +261,8 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             cell = wsSource.Cell(columnLetter + rowCnt);
             cell.Value = "Proc Desc";
             cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
             SharedExcelFunctions.AddClosedXMLBorders(ref cell);
 
             colCnt = 2;
@@ -270,6 +274,8 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
 
                 cell.Value = yq.year + "Q" + yq.quarter;
                 cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+                cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
                 SharedExcelFunctions.AddClosedXMLBorders(ref cell);
 
                 colCnt++;
@@ -300,6 +306,8 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             cell = wsSource.Cell(columnLetter + rowCnt);
             cell.Value = t;
             cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
             SharedExcelFunctions.AddClosedXMLBorders(ref cell);
 
 
@@ -309,6 +317,8 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             cell = wsSource.Cell(columnLetter + rowCnt);
             cell.Value = t;
             cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
             SharedExcelFunctions.AddClosedXMLBorders(ref cell);
 
 
@@ -319,6 +329,8 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             cell = wsSource.Cell(columnLetter + rowCnt);
             cell.Value = t;
             cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
             SharedExcelFunctions.AddClosedXMLBorders(ref cell);
 
 
@@ -329,6 +341,8 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             cell = wsSource.Cell(columnLetter + rowCnt);
             cell.Value = t;
             cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
             SharedExcelFunctions.AddClosedXMLBorders(ref cell);
 
 
@@ -362,6 +376,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                         if (val != null)
                         {
                             cell.Value = int.Parse(val.ToString());
+                            cell.Style.NumberFormat.Format = "_( #,##0_)";
                         }
                     }
                     else if (propertyInfo.PropertyType == typeof(double) || propertyInfo.PropertyType == typeof(double?))
@@ -428,6 +443,8 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
 
                 cell.Value = yq.year + "Q" + yq.quarter;
                 cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+                cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
                 SharedExcelFunctions.AddClosedXMLBorders(ref cell);
 
                 colCnt++;
@@ -443,6 +460,8 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             cell = wsSource.Cell(columnLetter + rowCnt);
             cell.Value = t;
             cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
             SharedExcelFunctions.AddClosedXMLBorders(ref cell);
 
 
@@ -452,6 +471,8 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             cell = wsSource.Cell(columnLetter + rowCnt);
             cell.Value = t;
             cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
             SharedExcelFunctions.AddClosedXMLBorders(ref cell);
 
 
@@ -462,6 +483,8 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             cell = wsSource.Cell(columnLetter + rowCnt);
             cell.Value = t;
             cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
             SharedExcelFunctions.AddClosedXMLBorders(ref cell);
 
 
@@ -472,6 +495,8 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             cell = wsSource.Cell(columnLetter + rowCnt);
             cell.Value = t;
             cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+            cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
             SharedExcelFunctions.AddClosedXMLBorders(ref cell);
 
             //DATA ROW
@@ -497,6 +522,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                         if (val != null)
                         {
                             cell.Value = int.Parse(val.ToString());
+                            cell.Style.NumberFormat.Format = "_( #,##0_)";
                         }
                     }
                     else if (propertyInfo.PropertyType == typeof(double) || propertyInfo.PropertyType == typeof(double?))
