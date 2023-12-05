@@ -36,6 +36,5 @@ public class Allowed_PMPM_Model
 
     public string Y1Q4_Y2Q4_trend { get; set; }
 
-    public double rank { get; set; }
 
 }

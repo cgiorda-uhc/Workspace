@@ -129,6 +129,38 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             //Member Month END
             //Member Month END
 
+
+            //Allowed Amount PMPM START 
+            //Allowed Amount PMPM START
+            //Allowed Amount PMPM START
+            header = "Allowed Amount PMPM";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            genertateGenericWorksheet<Allowed_PMPM_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.allowed_pmpm);
+
+            ////Allowed Amount PMPM END
+            ////Allowed Amount PMPM END
+            ////Allowed Amount PMPM END
+            ///
+
+            //Utilization/000  START 
+            //Utilization/000 START
+            //Utilization/000 START
+            header = "Utilization/000";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            genertateGenericWorksheet<Utilization000_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.utilization000, "* Utilization/000 = Proc Count*12000/Member Month");
+
+            ////Utilization/000 END
+            ////Utilization/000 END
+            ////Utilization/000 END
+
+
+
             if (token.IsCancellationRequested)
             {
                 setterStatus("~~~Report Generation Cancelled~~~");
@@ -151,7 +183,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
         }
 
 
-        private static void genertateGenericWorksheet<T>(ref XLWorkbook  wb,  string header, string bgcolor, List<YearQuarter_Model> year_quarter, List<T> data_list)
+        private static void genertateGenericWorksheet<T>(ref XLWorkbook  wb,  string header, string bgcolor, List<YearQuarter_Model> year_quarter, List<T> data_list, string note = null)
         {
 
 
@@ -173,7 +205,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
 
             colCnt = 0;
             columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
-            wsSource.Cell(columnLetter + rowCnt).Value = header;
+            wsSource.Cell(columnLetter + rowCnt).Value = header + (note != null ? " *": "");
 
             colCnt = 2;
             columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
@@ -314,9 +346,15 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                 colCnt = 0;
             }
             wsSource.Columns().AdjustToContents();
-            //Events END
-            //Events END
-            //Events END
+
+
+            if(note != null )
+            {
+                columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+                cell = wsSource.Cell(columnLetter + rowCnt);
+                cell.Value = note;
+            }
+
         }
 
 
