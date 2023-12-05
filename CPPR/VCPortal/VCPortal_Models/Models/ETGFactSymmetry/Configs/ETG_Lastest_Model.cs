@@ -23,7 +23,7 @@ public class ETG_Lastest_Model
       public double? PC_Spec_Percent_of_Episodes { get; set; }
       public int? PC_Spec_Normalized_Pricing_Episode_Count { get; set; }
       public double? PC_Spec_Normalized_Pricing_Total_Cost { get; set; }
-      public double? PC_Spec_Epsd_Volume { get; set; }
+      public string PC_Spec_Epsd_Volume { get; set; }
       public int? EC_Episode_Count { get; set; }
       public double? EC_Total_Cost { get; set; }
       public double? EC_Average_Cost { get; set; }
