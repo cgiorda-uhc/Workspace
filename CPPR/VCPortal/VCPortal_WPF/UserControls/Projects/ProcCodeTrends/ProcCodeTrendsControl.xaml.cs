@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http.Metadata;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Telerik.Windows.Data;
 using VCPortal_WPF.Components;
 using VCPortal_WPF.UserControls.Shared;
 
@@ -103,5 +105,28 @@ public partial class ProcCodeTrendsControl : UserControl
         }
     }
 
+    private void btnPasteProcCd_Click(object sender, RoutedEventArgs e)
+    {
+        var pasted_items = txtProcCodes.Text.Trim().Replace("\r\n", ",").Replace("|",",").Split(',');
+        var proc_codes = txtProc_CodeFilter.ItemsSource;
 
+        foreach ( var proc_code in proc_codes )
+        {
+            var value = proc_code.ToString();
+
+            foreach (var item in pasted_items)
+            {
+
+                if( value.ToLower().Trim().StartsWith(item.ToLower().Trim()))
+                {
+
+                    lstSelectedProcCode.Items.Add(value);
+                    break;
+                }
+
+            }
+        }
+
+        txtProcCodes.Text = "";
+    }
 }
