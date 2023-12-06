@@ -5,7 +5,7 @@ SELECT  c.[Premium_Specialty]
 
 
 	  ,p.[PC_Episode_Count] as PC_Episode_Count_Previous
-      ,c.[PC_Episode_Count] as EC_Episode_Count_Currrent
+      ,c.[PC_Episode_Count] as PC_Episode_Count_Currrent
 
 	  ,p.[PC_Total_Cost] as PC_Total_Cost_Previous
       ,c.[PC_Total_Cost] as PC_Total_Cost_Currrent
