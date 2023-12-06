@@ -433,7 +433,7 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
             cancellationToken = new CancellationTokenSource();
             var bytes = await ProcCodeTrendsExport.ExportProcDataToExcel(report_results,  () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
 
-            var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\Proc_Code_Trend_Report_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
+            var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\Proc_Code_Trend_CLM_OP_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
 
 
             _sbStatus.Append("--Saving Excel here: " + file + Environment.NewLine);
