@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http.Metadata;
+﻿using DocumentFormat.OpenXml.Drawing;
+using Microsoft.AspNetCore.Http.Metadata;
+using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Telerik.Windows.Core;
 using Telerik.Windows.Data;
 using VCPortal_WPF.Components;
 using VCPortal_WPF.UserControls.Shared;
@@ -49,14 +52,24 @@ public partial class ProcCodeTrendsControl : UserControl
 
     private void btnRemoveSelected_Click(object sender, RoutedEventArgs e)
     {
-        var item = lstSelectedProcCode.SelectedItem;
-        if (item == null)
-        {
+
+        if (lstSelectedProcCode.SelectedItems == null)
             return;
+        
+        var items = lstSelectedProcCode.SelectedItems; //CANT CAST, MANUAL TRANSFER
+
+        List<string> list = new List<string>();
+        foreach (var item in items)
+        {
+            list.Add(item.ToString());
         }
 
-        lstSelectedProcCode.Items.Remove(item);
-
+        foreach (var l in list) 
+        {
+           
+            lstSelectedProcCode.Items.Remove(l);
+        }
+   
     }
 
     private void btnRemoveAll_Click(object sender, RoutedEventArgs e)
@@ -112,15 +125,15 @@ public partial class ProcCodeTrendsControl : UserControl
 
         foreach ( var proc_code in proc_codes )
         {
-            var value = proc_code.ToString();
+            var value = proc_code.ToString().ToLower().Trim();
 
             foreach (var item in pasted_items)
             {
 
-                if( value.ToLower().Trim().StartsWith(item.ToLower().Trim()))
+                if( value.StartsWith(item.ToLower().Trim() + " - "))
                 {
 
-                    lstSelectedProcCode.Items.Add(value);
+                    lstSelectedProcCode.Items.Add(proc_code);
                     break;
                 }
 

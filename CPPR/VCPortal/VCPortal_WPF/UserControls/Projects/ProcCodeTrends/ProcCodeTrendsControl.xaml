@@ -158,41 +158,35 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="20"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="20"/>
+                
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="50"/>
-                <RowDefinition Height="40"/>
-
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="50"/>
-
 
                 <RowDefinition Height="40"/>
                 <RowDefinition Height="50"/>
-                <RowDefinition Height="223"/>
-
+                
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="100"/>
 
 
                 <RowDefinition Height="40"/>
-                <RowDefinition Height="50"/>
-                <RowDefinition Height="40"/>
-
-
                 <RowDefinition Height="*"/>
+         
                 <RowDefinition Height="20"/>
             </Grid.RowDefinitions>
 
-            
+
 
             <Border Grid.Column="1" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
             <telerik:Label Grid.Row="1"   Grid.Column="1" Content="Select LOB(s):" Margin="4" HorizontalAlignment="Left" Style="{StaticResource OptionalLabel}"  />
             <components:SelectAllCheckComboBox  x:Name="cbxLOBFilter" Grid.Row="2"  Margin="10 10 10 10" Grid.Column="1" Command="{Binding LOBChangedCommand}" ItemsSource="{Binding Path=LOB}" ItemSelectionChanged="cbx_ItemSelectionChanged">
             </components:SelectAllCheckComboBox>
-            
+
             <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
             <telerik:Label  Grid.Row="1"    Grid.Column="2" Content="Select Region(s):" Style="{StaticResource OptionalLabel}" Margin="4"  HorizontalAlignment="Left"   />
             <components:SelectAllCheckComboBox  x:Name="cbxRegionFilter" Grid.Row="2"  Margin="10 10 10 10" Grid.Column="2" Command="{Binding RegionChangedCommand}" ItemsSource="{Binding Path=Region}" ItemSelectionChanged="cbx_ItemSelectionChanged">
@@ -203,77 +197,76 @@
             <components:SelectAllCheckComboBox  x:Name="cbxStateFilter" Grid.Row="2"  Margin="10 10 10 10" Grid.Column="3" ItemsSource="{Binding Path=State}" ItemSelectionChanged="cbx_ItemSelectionChanged">
             </components:SelectAllCheckComboBox>
 
-
-
-
-            <Border Grid.Column="1" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
-            <telerik:Label Grid.Row="3"   Grid.Column="1" Content="Select Product(s):" Margin="4" HorizontalAlignment="Left" Style="{StaticResource OptionalLabel}"  />
-            <components:SelectAllCheckComboBox  x:Name="cbxProduct" Grid.Row="4"  Margin="10 10 10 10" Grid.Column="1" ItemsSource="{Binding Path=Product}" ItemSelectionChanged="cbx_ItemSelectionChanged">
+            <Border Grid.Column="4" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
+            <telerik:Label Grid.Row="1"   Grid.Column="4" Content="Select Product(s):" Margin="4" HorizontalAlignment="Left" Style="{StaticResource OptionalLabel}"  />
+            <components:SelectAllCheckComboBox  x:Name="cbxProduct" Grid.Row="2"  Margin="10 10 10 10" Grid.Column="4" ItemsSource="{Binding Path=Product}" ItemSelectionChanged="cbx_ItemSelectionChanged">
             </components:SelectAllCheckComboBox>
 
+
+
+
+
+
+
+            <Border Grid.Column="1" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
+            <telerik:Label  Grid.Row="3"    Grid.Column="1" Content="Select CS Product(s):" Style="{StaticResource OptionalLabel}" Margin="4"  HorizontalAlignment="Left"  />
+            <components:SelectAllCheckComboBox  x:Name="cbxCSProduct" Grid.Row="4"  Margin="10 10 10 10" Grid.Column="1" ItemsSource="{Binding Path=CSProduct}" ItemSelectionChanged="cbx_ItemSelectionChanged">
+            </components:SelectAllCheckComboBox>
 
             <Border Grid.Column="2" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
-            <telerik:Label  Grid.Row="3"    Grid.Column="2" Content="Select CS Product(s):" Style="{StaticResource OptionalLabel}" Margin="4"  HorizontalAlignment="Left"  />
-            <components:SelectAllCheckComboBox  x:Name="cbxCSProduct" Grid.Row="4"  Margin="10 10 10 10" Grid.Column="2" ItemsSource="{Binding Path=CSProduct}" ItemSelectionChanged="cbx_ItemSelectionChanged">
+            <telerik:Label  Grid.Row="3"    Grid.Column="2" Content="Select Funding Type(s):" Style="{StaticResource OptionalLabel}" Margin="4"  HorizontalAlignment="Left"   />
+            <components:SelectAllCheckComboBox  x:Name="cbxFundingType" Grid.Row="4"  Margin="10 10 10 10" Grid.Column="2" ItemsSource="{Binding Path=FundingType}" ItemSelectionChanged="cbx_ItemSelectionChanged">
             </components:SelectAllCheckComboBox>
 
+
             <Border Grid.Column="3" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
-            <telerik:Label  Grid.Row="3"    Grid.Column="3" Content="Select Funding Type(s):" Style="{StaticResource OptionalLabel}" Margin="4"  HorizontalAlignment="Left"   />
-            <components:SelectAllCheckComboBox  x:Name="cbxFundingType" Grid.Row="4"  Margin="10 10 10 10" Grid.Column="3" ItemsSource="{Binding Path=FundingType}" ItemSelectionChanged="cbx_ItemSelectionChanged">
+            <telerik:Label  Grid.Row="3"    Grid.Column="3" Content="Select Legal Entity(s):" Style="{StaticResource OptionalLabel}" Margin="4"  HorizontalAlignment="Left"   />
+            <components:SelectAllCheckComboBox  x:Name="cbxLegalEntity" Grid.Row="4"  Margin="10 10 10 10" Grid.Column="3" ItemsSource="{Binding Path=LegalEntity}" ItemSelectionChanged="cbx_ItemSelectionChanged">
             </components:SelectAllCheckComboBox>
+
+
+            <Border Grid.Column="4" Grid.Row="3" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
+            <telerik:Label  Grid.Row="3"    Grid.Column="4" Content="Select Source(s):" Style="{StaticResource OptionalLabel}" Margin="4"  HorizontalAlignment="Left"   />
+            <components:SelectAllCheckComboBox  x:Name="cbxSource" Grid.Row="4"  Margin="10 10 10 10" Grid.Column="4" ItemsSource="{Binding Path=Source}" ItemSelectionChanged="cbx_ItemSelectionChanged">
+            </components:SelectAllCheckComboBox>
+
+
+
+
 
 
 
 
             <Border Grid.Column="1" Grid.Row="5" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
-            <telerik:Label  Grid.Row="5"    Grid.Column="1" Content="Select Legal Entity(s):" Style="{StaticResource OptionalLabel}" Margin="4"  HorizontalAlignment="Left"   />
-            <components:SelectAllCheckComboBox  x:Name="cbxLegalEntity" Grid.Row="6"  Margin="10 10 10 10" Grid.Column="1" ItemsSource="{Binding Path=LegalEntity}" ItemSelectionChanged="cbx_ItemSelectionChanged">
+            <telerik:Label  Grid.Row="5"    Grid.Column="1" Content="Select CS Dual Indicator(s):" Style="{StaticResource OptionalLabel}" Margin="4"  HorizontalAlignment="Left"   />
+            <components:SelectAllCheckComboBox  x:Name="cbxCSDualIndicator" Grid.Row="6"  Margin="10 10 10 10" VerticalAlignment="Top" Height="32"  Grid.Column="1" ItemsSource="{Binding Path=CSDualIndicator}" ItemSelectionChanged="cbx_ItemSelectionChanged">
             </components:SelectAllCheckComboBox>
 
 
             <Border Grid.Column="2" Grid.Row="5" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
-            <telerik:Label  Grid.Row="5"    Grid.Column="2" Content="Select Source(s):" Style="{StaticResource OptionalLabel}" Margin="4"  HorizontalAlignment="Left"   />
-            <components:SelectAllCheckComboBox  x:Name="cbxSource" Grid.Row="6"  Margin="10 10 10 10" Grid.Column="2" ItemsSource="{Binding Path=Source}" ItemSelectionChanged="cbx_ItemSelectionChanged">
+            <telerik:Label  Grid.Row="5"    Grid.Column="2" Content="Select MR Dual Indicator(s):" Style="{StaticResource OptionalLabel}" Margin="4"  HorizontalAlignment="Left"  />
+            <components:SelectAllCheckComboBox  x:Name="cbxMRDualIndicator" Grid.Row="6"  Margin="10 10 10 10" VerticalAlignment="Top" Height="32"  Grid.Column="2" ItemsSource="{Binding Path=MRDualIndicator}" ItemSelectionChanged="cbx_ItemSelectionChanged">
             </components:SelectAllCheckComboBox>
 
 
             <Border Grid.Column="3" Grid.Row="5" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
-            <telerik:Label  Grid.Row="5"    Grid.Column="3" Content="Select CS Dual Indicator(s):" Style="{StaticResource OptionalLabel}" Margin="4"  HorizontalAlignment="Left"   />
-            <components:SelectAllCheckComboBox  x:Name="cbxCSDualIndicator" Grid.Row="6"  Margin="10 10 10 10" Grid.Column="3" ItemsSource="{Binding Path=CSDualIndicator}" ItemSelectionChanged="cbx_ItemSelectionChanged">
-            </components:SelectAllCheckComboBox>
-
-    
-            
-
-            <Border Grid.Column="1" Grid.Row="7" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
-            <telerik:Label  Grid.Row="7"    Grid.Column="1" Content="Select MR Dual Indicator(s):" Style="{StaticResource OptionalLabel}" Margin="4"  HorizontalAlignment="Left"  />
-            <components:SelectAllCheckComboBox  x:Name="cbxMRDualIndicator" Grid.Row="8"  Margin="10 10 10 10" Grid.Column="1" ItemsSource="{Binding Path=MRDualIndicator}" ItemSelectionChanged="cbx_ItemSelectionChanged">
-            </components:SelectAllCheckComboBox>
-
-            
-
-        
-
-            <Border Grid.Column="2" Grid.Row="7" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
-            <telerik:Label Grid.Row="7"   Grid.Column="2" Content="Select Proc Code(s):" Style="{StaticResource OptionalLabel}" Margin="4" HorizontalAlignment="Left"  />
+            <telerik:Label Grid.Row="5"   Grid.Column="3" Content="Select Proc Code(s):" Style="{StaticResource OptionalLabel}" Margin="4" HorizontalAlignment="Left"  />
             <!--<TextBox Name="txtCUST_SEGFilter"  Grid.Column="1"  Grid.Row="4" Margin="10 10 10 10"   >
 </TextBox>-->
 
-            <Grid  Grid.Column="2" Grid.RowSpan="3" Grid.Row="8">
+            <Grid  Grid.Column="3"  Grid.Row="6">
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="1"/>
                     <RowDefinition Height="100"/>
-                    <RowDefinition Height="10"/>
-
-                    <RowDefinition Height="50"/>
-                    <RowDefinition Height="323"/>
-                    <RowDefinition Height="100"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="1"/>
                 </Grid.RowDefinitions>
 
-                <telerik:RadAutoCompleteBox Grid.Column="1" Grid.Row="0"  Name="txtProc_CodeFilter"  Margin="10 10 10 10" VerticalAlignment="Top" Height="32" ItemsSource="{Binding Proc_Cd}"
+                <telerik:RadAutoCompleteBox Grid.Column="1" Grid.Row="1"  Name="txtProc_CodeFilter"  Margin="10 10 10 10" VerticalAlignment="Top" Height="32" ItemsSource="{Binding Proc_Cd}"
                 TextSearchMode="Contains" SelectionMode="Single" AutoCompleteMode="Suggest" 
                 WatermarkContent="Enter Proc Code or Desc">
                     <telerik:RadAutoCompleteBox.FilteringBehavior>
@@ -281,43 +274,89 @@
                     </telerik:RadAutoCompleteBox.FilteringBehavior>
                 </telerik:RadAutoCompleteBox>
 
-                <telerik:RadButton x:Name="btnAddProcCd" Grid.Row="1" Grid.Column="1" Width="70" Background="LightGoldenrodYellow" Click="btnAddProcCd_Click" HorizontalAlignment="Right" VerticalAlignment="Top"  Margin="10 -50 10 10" Content="Add"></telerik:RadButton>
-
-
-                <telerik:Label Grid.Row="2" Grid.Column="1"  Content="Paste Proc Code(s):" Style="{StaticResource OptionalLabel}" Margin="10 -100 10 10" HorizontalAlignment="Left"  />
-
-                <TextBox x:Name="txtProcCodes" Grid.Row="3" Grid.Column="1" Height="123"  TextWrapping="Wrap" AcceptsReturn="True" Margin="10 -300 10 10"  HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"/>
-
-                <telerik:RadButton x:Name="btnPasteProcCd" Grid.Row="4" Grid.Column="1" Width="70" Background="LightGoldenrodYellow" Click="btnPasteProcCd_Click" HorizontalAlignment="Right" VerticalAlignment="Top"  Margin="10 -250 10 10" Content="Add"></telerik:RadButton>
+                <telerik:RadButton x:Name="btnAddProcCd" Grid.Row="2" Margin="0 -45 10 0" Grid.Column="1" Width="70" Background="LightGoldenrodYellow" Click="btnAddProcCd_Click" HorizontalAlignment="Right" VerticalAlignment="Top"   Content="Add"></telerik:RadButton>
 
             </Grid>
 
-            <Border Grid.Column="3" Grid.Row="7" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
-            <telerik:Label Grid.Row="7"   Grid.Column="3" Content="Filtered Proc Code(s):" Style="{StaticResource OptionalLabel}" Margin="4" HorizontalAlignment="Left"  />
-            <Grid  Grid.Row="8" Grid.RowSpan="3" Grid.Column="3" >
 
+            <Border Grid.Column="4" Grid.RowSpan="3" Grid.Row="5" Style="{StaticResource DefaultBorder}" />
+            <telerik:Label Grid.Row="5"   Grid.Column="4" Content="Paste Proc Code(s):" Style="{StaticResource OptionalLabel}" Margin="4" HorizontalAlignment="Left"  />
+            <!--<TextBox Name="txtCUST_SEGFilter"  Grid.Column="1"  Grid.Row="4" Margin="10 10 10 10"   >
+</TextBox>-->
+
+            <Grid  Grid.Column="4"  Grid.Row="6">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="180"/>
-                    <ColumnDefinition Width="150"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="160"/>
-                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="1"/>
+                    <RowDefinition Height="100"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="1"/>
                 </Grid.RowDefinitions>
 
 
-                <telerik:RadListBox x:Name="lstSelectedProcCode" Grid.ColumnSpan="5"  Grid.Row="0" Grid.Column="0"   Margin="10 10 10 10"  HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                <TextBox x:Name="txtProcCodes" Grid.Row="1" Grid.Column="1"  Margin="10 10 10 10" VerticalAlignment="Top" Height="32" TextWrapping="Wrap" AcceptsReturn="True" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"/>
 
-                <telerik:RadButton x:Name="btnRemoveSelected" Grid.Row="1" Grid.Column="3" Width="160" Background="LightGoldenrodYellow" Margin="10 10 -10 10"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Remove Selected" Click="btnRemoveSelected_Click"></telerik:RadButton>
-                <telerik:RadButton x:Name="btnRemoveAll" Grid.Row="1" Grid.Column="4" Width="123" Background="LightGoldenrodYellow" Margin="10 10 10 10"  VerticalAlignment="Bottom" HorizontalAlignment="Right" Content="Remove All" Click="btnRemoveAll_Click"></telerik:RadButton>
+                <telerik:RadButton x:Name="btnPasteProcCd" Grid.Row="2" Margin="0 -45 10 0"   Grid.Column="1" Width="70" Background="LightGoldenrodYellow" Click="btnPasteProcCd_Click" HorizontalAlignment="Right" VerticalAlignment="Top"  Content="Add"></telerik:RadButton>
 
             </Grid>
 
+            <Border Grid.Column="1" Grid.ColumnSpan="4"  Grid.Row="7" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}"/>
+            <telerik:Label Grid.Row="7" Grid.ColumnSpan="4"   Grid.Column="1" Content="Filtered Proc Code(s):" Style="{StaticResource OptionalLabel}" Margin="4" HorizontalAlignment="Left"  />
+            <Grid  Grid.Row="8" Grid.ColumnSpan="4" Grid.Column="1" >
+                
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1"/>
+                    <RowDefinition Height="4*"/>
+                    <RowDefinition Height="1"/>
+                    <RowDefinition Height="2*"/>
+                    <RowDefinition Height="1"/>
+                </Grid.RowDefinitions>
+
+
+                <telerik:RadListBox x:Name="lstSelectedProcCode" Margin="0 0 0 0" SelectionMode="Multiple" VerticalAlignment="Stretch"  Width="1230"  Grid.Row="1" Grid.Column="1"  HorizontalAlignment="Left"  />
+
+
+
+                <Grid  Grid.Row="3"  Grid.Column="1" >
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="10"/>
+                        <ColumnDefinition Width="160"/>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="10"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="1"/>
+                    </Grid.RowDefinitions>
+
+
+                    <telerik:RadButton x:Name="btnRemoveSelected"   Width="160" Height="40" Grid.Row="1" Grid.Column="1"  Background="LightGoldenrodYellow"   Content="Remove Selected" Click="btnRemoveSelected_Click"></telerik:RadButton>
+
+                    <telerik:RadButton x:Name="btnRemoveAll"  Grid.Row="1" Grid.Column="2" Width="150" Height="40" Background="LightGoldenrodYellow"   Content="Remove All" Click="btnRemoveAll_Click"></telerik:RadButton>
+
+                </Grid>
+
+
+            </Grid>
+
+            
+            
+            
+            
 
         </Grid>
-
     </Grid>
 </UserControl>
