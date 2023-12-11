@@ -14,10 +14,10 @@ public class ETG_CNFG_ETG_NRX_COMPARE
 
 
 
-    public Int16? MEMBER_COUNT { get; set; }
-    public Int16? EPSD_COUNT { get; set; }
-    public Int16? ETGD_TOT_ALLW_AMT { get; set; }
-    public Int16? ETGD_RX_ALLW_AMT { get; set; }
+    public Int64? Current_MEMBER_COUNT { get; set; }
+    public Int64? Current_EPSD_COUNT { get; set; }
+    public Int64? Current_ETGD_TOT_ALLW_AMT { get; set; }
+    public Int64? Current_ETGD_RX_ALLW_AMT { get; set; }
 
 
 
