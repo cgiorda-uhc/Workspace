@@ -11,7 +11,11 @@
 		end as Has_NRX,
 	b.RX_RATE,
 	b.RX,
-	b.NRX 
+	b.NRX ,
+				b.MEMBER_COUNT,
+			b.EPSD_COUNT,
+			b.ETGD_TOT_ALLW_AMT,
+			b.ETGD_RX_ALLW_AMT
 from 
 	(
 	select a.ETG_BAS_CLSS_NBR,
@@ -23,7 +27,14 @@ from
 				when Sum(a.ETGD_RX_ALLW_AMT) * 1.0 / Sum(a.ETGD_TOT_ALLW_AMT) > 0.3 then 'N' 
 				else 'Y' 
 			end as NRX,
-		'Y' as RX 
+		'Y' as RX ,
+
+			SUM(a.MEMBER_COUNT) as MEMBER_COUNT,
+			SUM(a.EPSD_COUNT) as EPSD_COUNT,
+			SUM(a.ETGD_TOT_ALLW_AMT) as ETGD_TOT_ALLW_AMT,
+			SUM(a.ETGD_RX_ALLW_AMT) as ETGD_RX_ALLW_AMT
+
+
 	from 
 		(
 		select NRX.ETG_BAS_CLSS_NBR,

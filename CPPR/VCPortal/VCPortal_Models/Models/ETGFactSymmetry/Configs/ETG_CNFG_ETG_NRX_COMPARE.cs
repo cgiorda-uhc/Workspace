@@ -10,6 +10,17 @@ public class ETG_CNFG_ETG_NRX_COMPARE
 
     public string ETG_BAS_CLSS_NBR { get; set; }
     public string ETG_BASE_CLS_TRT_RPT_DESC { get; set; }
+
+
+
+
+    public Int16? MEMBER_COUNT { get; set; }
+    public Int16? EPSD_COUNT { get; set; }
+    public Int16? ETGD_TOT_ALLW_AMT { get; set; }
+    public Int16? ETGD_RX_ALLW_AMT { get; set; }
+
+
+
     public float Prior_RX_Rate { get; set; }
     public string Prior_RX_NRX { get; set; }
     public float Current_RX_Rate { get; set; }

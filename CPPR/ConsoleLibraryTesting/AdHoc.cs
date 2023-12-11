@@ -475,7 +475,7 @@ namespace ConsoleLibraryTesting
 
 
             //STEP 7 [etg].[ETG_Dataload_NRX_AGG] CACHE
-            strSQL = "TRUNCATE TABLE [etg].[ETG_Dataload_NRX_AGG];INSERT INTO [etg].[ETG_Dataload_NRX_AGG] ([ETG_Base_Class] ,[RX_NRX] ,[Has_RX] ,[Has_NRX] ,[RX_RATE] ,[RX] ,[NRX]) SELECT [ETG_Base_Class] ,[RX_NRX] ,[Has_RX] ,[Has_NRX] ,[RX_RATE] ,[RX] ,[NRX] FROM [etg].[VW_ETG_Dataload_NRX_AGG];";
+            strSQL = "TRUNCATE TABLE [etg].[ETG_Dataload_NRX_AGG]; INSERT INTO [etg].[ETG_Dataload_NRX_AGG] ([ETG_Base_Class] ,MEMBER_COUNT,EPSD_COUNT,ETGD_TOT_ALLW_AMT,ETGD_RX_ALLW_AMT,[RX_NRX] ,[Has_RX] ,[Has_NRX] ,[RX_RATE] ,[RX] ,[NRX]) SELECT [ETG_Base_Class] ,MEMBER_COUNT,EPSD_COUNT,ETGD_TOT_ALLW_AMT,ETGD_RX_ALLW_AMT,[RX_NRX] ,[Has_RX] ,[Has_NRX] ,[RX_RATE] ,[RX] ,[NRX] FROM [etg].[VW_ETG_Dataload_NRX_AGG];";
             await db_sql.Execute(ConnectionStringVC, strSQL);
 
 
