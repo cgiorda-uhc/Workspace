@@ -354,7 +354,7 @@ namespace ConsoleLibraryTesting
             var nrxx = await db_td.LoadData<NRX_Cost_UGAPModel>(connectionString: ConnectionStringTD, strSQL);
 
             string[] columns = typeof(NRX_Cost_UGAPModel).GetProperties().Select(p => p.Name).ToArray();
-            await db_sql.BulkSave<NRX_Cost_UGAPModel>(connectionString: ConnectionStringVC, "etg.NRX_Cost_UGAP_SOURCE_2021", nrxx, columns, truncate: true);
+            await db_sql.BulkSave<NRX_Cost_UGAPModel>(connectionString: ConnectionStringVC, "etg.NRX_Cost_UGAP_SOURCE", nrxx, columns, truncate: true);
 
             //STEP 2 etg.ETG_Episodes_UGAP_SOURCE
             //BROKEN APART DUE TO 200+ MILLION ROWS
