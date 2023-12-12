@@ -220,6 +220,7 @@
     <Build Include="pct\pct.sql" />
     <Build Include="edcadhoc\edcadhoc.sql" />
     <Build Include="pct\pct_index.sql" />
+    <None Include="pct\dynamic_sql_sample.sql" />
   </ItemGroup>
   <ItemGroup>
     <SqlCmdVariable Include="ChemoPXRefresh">

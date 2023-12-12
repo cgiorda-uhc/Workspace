@@ -322,7 +322,7 @@ namespace ConsoleLibraryTesting
             await db_sql.BulkSave<MHP_Reporting_Filters>(connectionString: ConnectionStringVC, "mhp.MHP_Universes_Filter_Cache", fs, columns, truncate: true);
 
 
-            //await SharedFunctions.EmailAsync("jon.piotrowski@uhc.com;renee_l_struck@uhc.com;hong_gao@uhc.com", "chris_giordano@uhc.com", "MHPUniverse September 2023 was refreshed", "MHPUniverse September 2023 was refreshed", "chris_giordano@uhc.com;laura_fischer@uhc.com;inna_rudi@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
+            await SharedFunctions.EmailAsync("jon.piotrowski@uhc.com;renee_l_struck@uhc.com;hong_gao@uhc.com", "chris_giordano@uhc.com", "MHPUniverse October 2023 was refreshed", "MHPUniverse October 2023 was refreshed", "chris_giordano@uhc.com;laura_fischer@uhc.com;inna_rudi@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
         }
 
 
@@ -354,7 +354,7 @@ namespace ConsoleLibraryTesting
             var nrxx = await db_td.LoadData<NRX_Cost_UGAPModel>(connectionString: ConnectionStringTD, strSQL);
 
             string[] columns = typeof(NRX_Cost_UGAPModel).GetProperties().Select(p => p.Name).ToArray();
-            await db_sql.BulkSave<NRX_Cost_UGAPModel>(connectionString: ConnectionStringVC, "etg.NRX_Cost_UGAP_SOURCE", nrxx, columns, truncate: true);
+            await db_sql.BulkSave<NRX_Cost_UGAPModel>(connectionString: ConnectionStringVC, "etg.NRX_Cost_UGAP_SOURCE_2021", nrxx, columns, truncate: true);
 
             //STEP 2 etg.ETG_Episodes_UGAP_SOURCE
             //BROKEN APART DUE TO 200+ MILLION ROWS
