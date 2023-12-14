@@ -9,7 +9,7 @@
 		,n.ETGD_TOT_ALLW_AMT as Current_ETGD_TOT_ALLW_AMT
 			,n.ETGD_RX_ALLW_AMT as Current_ETGD_RX_ALLW_AMT
 
-
+    ,n.CNCR_IND as Current_CNCR_IND
 
 
       ,a.[RX_RATE] as [Prior_RX_Rate]

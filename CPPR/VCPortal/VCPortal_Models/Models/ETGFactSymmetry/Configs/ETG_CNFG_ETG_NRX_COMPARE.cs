@@ -11,7 +11,7 @@ public class ETG_CNFG_ETG_NRX_COMPARE
     public string ETG_BAS_CLSS_NBR { get; set; }
     public string ETG_BASE_CLS_TRT_RPT_DESC { get; set; }
 
-
+    public char CNCR_IND { get; set; }
 
 
     public Int64? Current_MEMBER_COUNT { get; set; }

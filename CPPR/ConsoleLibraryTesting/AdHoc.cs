@@ -421,9 +421,12 @@ namespace ConsoleLibraryTesting
 
             }
 
-
+            //CHANGE SOURCE wp000074680 DB name is SourceData
+            //CHANGE SOURCE wp000074680 DB name is SourceData
+            //CHANGE SOURCE wp000074680 DB name is SourceData
+            //CHANGE SOURCE wp000074680 DB name is SourceData
             //STEP 3 etg.PrimarySpecWithCode_PDNDB_SOURCE
-            //1 NDB
+            //1 NDB  NDB NDB NDB NDB  NDB NDB NDB NDB NDB NDB NDB NDB
             strSQL = "Select prov.MPIN, prov.ProvType, prov.PrimSpec NDB_SPCL_CD, spcl.SpecTypeCd, spcl.PrimaryInd, spcltyp.ShortDesc From dbo.PROVIDER As prov Left Join dbo.PROV_SPECIALTIES spcl On prov.MPIN = spcl.MPIN And spcl.PractInSpecInd = 'Y' Left Join dbo.SPECIALTY_TYPES spcltyp On spcl.SpecTypeCd = spcltyp.SpecTypeCd;";
             var ndb = await db_sql.LoadData<PrimarySpecUHNModel>(connectionString: ConnectionStringUHN, strSQL);
             //2 PD
@@ -630,7 +633,7 @@ namespace ConsoleLibraryTesting
 
 
             //STEP 7 [etg].[ETG_Dataload_NRX_AGG] CACHE
-            strSQL = "TRUNCATE TABLE [etg].[ETG_Dataload_NRX_AGG];INSERT INTO [etg].[ETG_Dataload_NRX_AGG] ([ETG_Base_Class] ,[RX_NRX] ,[Has_RX] ,[Has_NRX] ,[RX_RATE] ,[RX] ,[NRX]) SELECT [ETG_Base_Class] ,[RX_NRX] ,[Has_RX] ,[Has_NRX] ,[RX_RATE] ,[RX] ,[NRX] FROM [etg].[VW_ETG_Dataload_NRX_AGG];";
+            strSQL = "TRUNCATE TABLE [etg].[ETG_Dataload_NRX_AGG];INSERT INTO [etg].[ETG_Dataload_NRX_AGG] ([ETG_Base_Class], [CNCR_IND], MEMBER_COUNT,EPSD_COUNT,ETGD_TOT_ALLW_AMT,ETGD_RX_ALLW_AMT ,[RX_NRX] ,[Has_RX] ,[Has_NRX] ,[RX_RATE] ,[RX] ,[NRX]) SELECT [ETG_Base_Class], [CNCR_IND], MEMBER_COUNT,EPSD_COUNT,ETGD_TOT_ALLW_AMT,ETGD_RX_ALLW_AMT  ,[RX_NRX] ,[Has_RX] ,[Has_NRX] ,[RX_RATE] ,[RX] ,[NRX] FROM [etg].[VW_ETG_Dataload_NRX_AGG];";
             await db_sql.Execute(ConnectionStringVC, strSQL);
 
 

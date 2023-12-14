@@ -138,15 +138,14 @@ namespace CAD_Worker_Service
             }
 
 
-            var cfg = options.Find(p => p.Name == "EviCoreYTDMetrics");
+            var cfg = options.Find(p => p.Name == "DataSourceVerification");
             if (cfg != null && _tasksManager != null)
             {
                 schedule = cfg.Schedule;
-
                 //CREATE NEW TIMER TASK
-                timer = new CronosTimer("48 9 * * *");
+                timer = new CronosTimer("20 9 * * *");
                 //USING TOKEN FROM EVENT
-                timer.Elapsed += HandleTimerElapsed(_tasksManager.EviCoreYTDMetricsDataRefreshAsync);
+                timer.Elapsed += HandleTimerElapsed(_tasksManager.CheckDataSourcesAsync);
                 // USING STOPPINGTOKEN
                 //timer.Elapsed += HandleTimerElapsed(_ => _tasksManager.CheckDataSourcesAsync(cancellationToken));
                 //ADD TO LIST FOR EASY DISPOSE ON STOP
