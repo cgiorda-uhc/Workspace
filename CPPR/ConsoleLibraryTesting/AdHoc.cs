@@ -421,10 +421,6 @@ namespace ConsoleLibraryTesting
 
             }
 
-            //CHANGE SOURCE wp000074680 DB name is SourceData
-            //CHANGE SOURCE wp000074680 DB name is SourceData
-            //CHANGE SOURCE wp000074680 DB name is SourceData
-            //CHANGE SOURCE wp000074680 DB name is SourceData
             //STEP 3 etg.PrimarySpecWithCode_PDNDB_SOURCE
             //1 NDB  NDB NDB NDB NDB  NDB NDB NDB NDB NDB NDB NDB NDB
             strSQL = "Select prov.MPIN, prov.ProvType, prov.PrimSpec NDB_SPCL_CD, spcl.SpecTypeCd, spcl.PrimaryInd, spcltyp.ShortDesc From dbo.PROVIDER As prov Left Join dbo.PROV_SPECIALTIES spcl On prov.MPIN = spcl.MPIN And spcl.PractInSpecInd = 'Y' Left Join dbo.SPECIALTY_TYPES spcltyp On spcl.SpecTypeCd = spcltyp.SpecTypeCd;";

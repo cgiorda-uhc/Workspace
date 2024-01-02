@@ -78,7 +78,8 @@ adHoc.ConnectionStringUHPD = "data source=UHPD_Reporting;server=WP000052579;Pers
 //adHoc.ConnectionStringPD = "data source=UHPD_Analytics;server=DBSWP0662;Persis4t Security Info=True;database=UHPD_Analytics;Integrated Security=SSPI;connect timeout=300000;";
 adHoc.ConnectionStringPD = "data source=UHPD_Analytics;server=DBSWP200136;Persist Security Info=True;database=UHPD_Analytics;Integrated Security=SSPI;connect timeout=300000;";
 
-adHoc.ConnectionStringUHN = "data source=UHN_Reporting;server=WP000074441CLS;Persist Security Info=True;database=UHN_Reporting;Integrated Security=SSPI;connect timeout=300000;";
+//adHoc.ConnectionStringUHN = "data source=UHN_Reporting;server=WP000074441CLS;Persist Security Info=True;database=UHN_Reporting;Integrated Security=SSPI;connect timeout=300000;";
+adHoc.ConnectionStringUHN = "data source=UHN_Reporting;server=WP000074680;Persist Security Info=True;database=SourceData;Integrated Security=SSPI;connect timeout=300000;";
 
 adHoc.TableUGAP = "stg.MHP_Yearly_Universes_UGAP";
 adHoc.Limit = 3000;
