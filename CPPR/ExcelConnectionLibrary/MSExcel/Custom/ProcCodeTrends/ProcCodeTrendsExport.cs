@@ -210,7 +210,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
         }
 
 
-        private static void genertateGenericWorksheet<T>(ref XLWorkbook  wb,  string header, string bgcolor, List<YearQuarter_Model> year_quarter, List<T> data_list, string note = null)
+        private static void genertateGenericWorksheet<T>(ref XLWorkbook  wb,  string header, string bgcolor, List<YearQuarter_Model> year_quarter, List<T> data_list, string note = null, string display = null)
         {
 
 
@@ -376,7 +376,16 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                         if (val != null)
                         {
                             cell.Value = int.Parse(val.ToString());
-                            cell.Style.NumberFormat.Format = "_( #,##0_)";
+                            if(display==null)
+                            {
+                                cell.Style.NumberFormat.Format = "_( #,##0_)";
+                            }
+                            else if(display == "Dollars")
+                            {
+
+                                cell.Style.NumberFormat.Format = "_( #,##0_)";
+                            }
+
                         }
                     }
                     else if (propertyInfo.PropertyType == typeof(double) || propertyInfo.PropertyType == typeof(double?))

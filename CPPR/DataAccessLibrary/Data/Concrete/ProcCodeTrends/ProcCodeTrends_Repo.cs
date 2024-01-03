@@ -508,7 +508,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             for (int i = 1; i < 5; i++)
             {
 
-                sbSQL.Append(", CASE WHEN t.Y1Q" + i + "_" + displayName + " = 0 THEN 'N/A' ELSE  CAST(FORMAT(((t.Y2Q" + i + "_" +  displayName +" - t.Y1Q" + i + "_" + displayName + ")/t.Y1Q" + i + "_" + displayName + "),'P') as varchar) END as Y1Q" + i + "_Y2Q" + i + "_trend ");
+                sbSQL.Append(", CASE WHEN t.Y1Q" + i + "_" + displayName + " = 0 THEN 'N/A' ELSE  CAST(FORMAT(((t.Y2Q" + i + "_" +  displayName +" - t.Y1Q" + i + "_" + displayName + ")/t.Y1Q" + i + "_" + displayName + "),'P0') as varchar) END as Y1Q" + i + "_Y2Q" + i + "_trend ");
 
             }
 
@@ -571,7 +571,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             for (int i = 1; i < 5; i++)
             {
 
-                sbSQL.Append(", CASE WHEN x.Y1Q" + i + "_" + displayName + " = 0 THEN 'N/A' ELSE  CAST(FORMAT(((x.Y2Q" + i + "_" + displayName + " - x.Y1Q" + i + "_" + displayName + ")/x.Y1Q" + i + "_" + displayName + "),'P') as varchar) END as Y1Q" + i + "_Y2Q" + i + "_trend ");
+                sbSQL.Append(", CASE WHEN x.Y1Q" + i + "_" + displayName + " = 0 THEN 'N/A' ELSE  CAST(FORMAT(((x.Y2Q" + i + "_" + displayName + " - x.Y1Q" + i + "_" + displayName + ")/x.Y1Q" + i + "_" + displayName + "),'P0') as varchar) END as Y1Q" + i + "_Y2Q" + i + "_trend ");
             }
 
             sbSQL.Append(",y.Y1Q1_Y2Q1_diff  as rank FROM ( select distinct a.px ,a.px_desc ");
