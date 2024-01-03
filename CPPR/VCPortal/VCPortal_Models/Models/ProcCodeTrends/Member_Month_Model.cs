@@ -11,19 +11,25 @@ public class Member_Month_Model
 
     public int? Y1Q1_Mbr_Month { get; set; }
 
-    public int? Y2Q1_Mbr_Month { get; set; }
-
-
     public int? Y1Q2_Mbr_Month { get; set; }
-
-    public int? Y2Q2_Mbr_Month { get; set; }
 
 
     public int? Y1Q3_Mbr_Month { get; set; }
 
+    public int? Y1Q4_Mbr_Month { get; set; }
+
+    public int? Y2Q1_Mbr_Month { get; set; }
+
+
+
+
+    public int? Y2Q2_Mbr_Month { get; set; }
+
+
+
     public int? Y2Q3_Mbr_Month { get; set; }
 
-    public int? Y1Q4_Mbr_Month { get; set; }
+
 
     public int? Y2Q4_Mbr_Month { get; set; }
 

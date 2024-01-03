@@ -10,30 +10,30 @@ public class Unit_Cost2_Model
     public string px { get; set; }
     public string px_desc { get; set; }
 
-    public int Y1Q1_Unit_Cost2 { get; set; }
+    public int? Y1Q1_Unit_Cost2 { get; set; }
 
-    public int Y1Q2_Unit_Cost2 { get; set; }
+    public int? Y1Q2_Unit_Cost2 { get; set; }
 
-    public int Y1Q3_Unit_Cost2 { get; set; }
-
-
-    public int Y1Q4_Unit_Cost2 { get; set; }
-
-    public int Y2Q1_Unit_Cost2 { get; set; }
+    public int? Y1Q3_Unit_Cost2 { get; set; }
 
 
+    public int? Y1Q4_Unit_Cost2 { get; set; }
 
-
-    public int Y2Q2_Unit_Cost2 { get; set; }
+    public int? Y2Q1_Unit_Cost2 { get; set; }
 
 
 
 
-    public int Y2Q3_Unit_Cost2 { get; set; }
+    public int? Y2Q2_Unit_Cost2 { get; set; }
 
 
 
-    public int Y2Q4_Unit_Cost2 { get; set; }
+
+    public int? Y2Q3_Unit_Cost2 { get; set; }
+
+
+
+    public int? Y2Q4_Unit_Cost2 { get; set; }
 
     public string Y1Q1_Y2Q1_trend { get; set; }
 

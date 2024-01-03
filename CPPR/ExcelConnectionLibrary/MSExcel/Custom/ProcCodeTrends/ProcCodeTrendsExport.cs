@@ -108,7 +108,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
             setterStatus(sbStatus.ToString());
 
-            genertateGenericWorksheet<Allowed_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.allowed);
+            genertateGenericWorksheet<Allowed_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.allowed, display: "Dollars");
 
             ////Allowed Amount END
             ////Allowed Amount END
@@ -138,7 +138,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
             setterStatus(sbStatus.ToString());
 
-            genertateGenericWorksheet<Allowed_PMPM_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.allowed_pmpm);
+            genertateGenericWorksheet<Allowed_PMPM_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.allowed_pmpm, display: "Dollars");
 
             ////Allowed Amount PMPM END
             ////Allowed Amount PMPM END
@@ -167,7 +167,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
             setterStatus(sbStatus.ToString());
 
-            genertateGenericWorksheet<Unit_Cost1_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.unit_cost1);
+            genertateGenericWorksheet<Unit_Cost1_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.unit_cost1, display: "Dollars");
 
             ////Unit Cost 1 END
             ////Unit Cost 1 END
@@ -182,7 +182,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
             setterStatus(sbStatus.ToString());
 
-            genertateGenericWorksheet<Unit_Cost2_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.unit_cost2);
+            genertateGenericWorksheet<Unit_Cost2_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.unit_cost2, display: "Dollars");
 
             ////Unit Cost 2 END
             ////Unit Cost 2 END
@@ -378,21 +378,29 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                             cell.Value = int.Parse(val.ToString());
                             if(display==null)
                             {
-                                cell.Style.NumberFormat.Format = "_( #,##0_)";
+                                cell.Style.NumberFormat.Format = "_(#,##0_)";
                             }
                             else if(display == "Dollars")
                             {
 
-                                cell.Style.NumberFormat.Format = "_( #,##0_)";
+                                cell.Style.NumberFormat.Format = "_($#,##0_)";
                             }
 
                         }
                     }
-                    else if (propertyInfo.PropertyType == typeof(double) || propertyInfo.PropertyType == typeof(double?))
+                    else if (propertyInfo.PropertyType == typeof(double) || propertyInfo.PropertyType == typeof(double?)|| propertyInfo.PropertyType == typeof(float) || propertyInfo.PropertyType == typeof(float?))
                     {
                         if (val != null)
                         {
                             cell.Value = double.Parse(val.ToString());
+
+                            if (display == "Dollars")
+                            {
+
+                                cell.Style.NumberFormat.Format = "_($#,##0.00_)";
+                            }
+
+
                         }
                     }
                     else
@@ -534,7 +542,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                             cell.Style.NumberFormat.Format = "_( #,##0_)";
                         }
                     }
-                    else if (propertyInfo.PropertyType == typeof(double) || propertyInfo.PropertyType == typeof(double?))
+                    else if (propertyInfo.PropertyType == typeof(double) || propertyInfo.PropertyType == typeof(double?) || propertyInfo.PropertyType == typeof(float) || propertyInfo.PropertyType == typeof(float?))
                     {
                         if (val != null)
                         {
