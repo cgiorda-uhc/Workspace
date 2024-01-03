@@ -60,7 +60,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
             setterStatus(sbStatus.ToString());
        
-            genertateGenericWorksheet<Events_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.events);
+            genertateGenericWorksheet<Unique_Individual_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.unique_individual);
 
             //CLM OP Unique Individual END
             //CLM OP Unique Individual END

@@ -12,19 +12,22 @@ public class Utilization000_Model
 
     public double? Y1Q1_util000 { get; set; }
 
+    public double? Y1Q2_util000 { get; set; }
+
+    public double? Y1Q3_util000 { get; set; }
+
+    public double? Y1Q4_util000 { get; set; }
+
+
+
     public double? Y2Q1_util000 { get; set; }
 
-
-    public double? Y1Q2_util000 { get; set; }
 
     public double? Y2Q2_util000 { get; set; }
 
 
-    public double? Y1Q3_util000 { get; set; }
-
     public double? Y2Q3_util000 { get; set; }
 
-    public double? Y1Q4_util000 { get; set; }
 
     public double? Y2Q4_util000 { get; set; }
 

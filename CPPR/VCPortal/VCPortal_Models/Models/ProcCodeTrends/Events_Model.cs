@@ -12,19 +12,19 @@ public class Events_Model
 
     public int? Y1Q1_events { get; set; }
 
+    public int? Y1Q2_events { get; set; }
+
+    public int? Y1Q3_events { get; set; }
+
+    public int? Y1Q4_events { get; set; }
+
     public int? Y2Q1_events { get; set; }
 
-
-    public int? Y1Q2_events { get; set; }
 
     public int? Y2Q2_events { get; set; }
 
 
-    public int? Y1Q3_events { get; set; }
-
     public int? Y2Q3_events { get; set; }
-
-    public int? Y1Q4_events { get; set; }
 
     public int? Y2Q4_events { get; set; }
 

@@ -12,19 +12,22 @@ public class Allowed_Model
 
     public int? Y1Q1_allw_amt { get; set; }
 
-    public int? Y2Q1_allw_amt { get; set; }
-
-
     public int? Y1Q2_allw_amt { get; set; }
-
-    public int? Y2Q2_allw_amt { get; set; }
 
 
     public int? Y1Q3_allw_amt { get; set; }
 
+    public int? Y1Q4_allw_amt { get; set; }
+
+    public int? Y2Q1_allw_amt { get; set; }
+
+
+    public int? Y2Q2_allw_amt { get; set; }
+
+
+
     public int? Y2Q3_allw_amt { get; set; }
 
-    public int? Y1Q4_allw_amt { get; set; }
 
     public int? Y2Q4_allw_amt { get; set; }
 
