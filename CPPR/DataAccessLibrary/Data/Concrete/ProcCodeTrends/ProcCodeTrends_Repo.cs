@@ -301,7 +301,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             ////Utilization/000 start
             ////Utilization/000 start 
 
-            sql = generateGenericMemberMonthSQL("px_cnt", "util000", pct_param.RowCount, filters, pct_param.DateSpanList);
+            sql = generateGenericMemberMonthSQL("adj_srv_uni", "util000", pct_param.RowCount, filters, pct_param.DateSpanList, round : "2", denominator:"3000");
             sbSQL.Append(sql);
 
             ////Utilization/000 end
@@ -542,7 +542,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
         }
 
 
-        private string generateGenericMemberMonthSQL(string columnName, string displayName, int RowCnt, string filters, List<DateSpan_Model> DateSpanList)
+        private string generateGenericMemberMonthSQL(string columnName, string displayName, int RowCnt, string filters, List<DateSpan_Model> DateSpanList, string round = "2", string denominator = null)
         {
 
 
@@ -565,7 +565,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                     quarter = ((i + 1) - 4).ToString();
                 }
 
-                sbSQL.Append(",ROUND(x.Y" + year + "Q" + quarter + "_" + displayName + ", 2) as Y" + year + "Q" + quarter + "_" + displayName );
+                sbSQL.Append(",ROUND(x.Y" + year + "Q" + quarter + "_" + displayName + ", "+ round + ") as Y" + year + "Q" + quarter + "_" + displayName );
             }
 
             //LOOP DSM!!
@@ -580,8 +580,8 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             for (int i = 1; i < 5; i++)
             {
 
-                sbSQL.Append(",a.Y1Q" + i + "_" + columnName + "/(SELECT Y1Q" + i + "_Mbr_Month FROM #MemberMonth) as Y1Q" + i + "_" + displayName + " ");
-                sbSQL.Append(",a.Y2Q" + i + "_" + columnName + "/(SELECT Y2Q" + i + "_Mbr_Month FROM #MemberMonth) as Y2Q" + i + "_" + displayName + " ");
+                sbSQL.Append(",a.Y1Q" + i + "_" + columnName + (denominator == null ? "" : " * " + denominator)  + "/(SELECT Y1Q" + i + "_Mbr_Month FROM #MemberMonth) as Y1Q" + i + "_" + displayName + " ");
+                sbSQL.Append(",a.Y2Q" + i + "_" + columnName + (denominator == null ? "" : " * " + denominator) + "/(SELECT Y2Q" + i + "_Mbr_Month FROM #MemberMonth) as Y2Q" + i + "_" + displayName + " ");
 
             }
 
