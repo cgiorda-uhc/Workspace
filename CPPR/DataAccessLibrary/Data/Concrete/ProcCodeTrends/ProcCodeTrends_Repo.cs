@@ -301,7 +301,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             ////Utilization/000 start
             ////Utilization/000 start 
 
-            sql = generateGenericMemberMonthSQL("adj_srv_uni", "util000", pct_param.RowCount, filters, pct_param.DateSpanList, round : "2", denominator:"3000");
+            sql = generateGenericMemberMonthSQL("adj_srv_uni", "util000", pct_param.RowCount, filters, pct_param.DateSpanList, round : "1", denominator:"3000");
             sbSQL.Append(sql);
 
             ////Utilization/000 end

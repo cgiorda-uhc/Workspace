@@ -167,7 +167,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
             setterStatus(sbStatus.ToString());
 
-            genertateGenericWorksheet<Unit_Cost1_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.unit_cost1, display: "Dollars");
+            genertateGenericWorksheet<Unit_Cost1_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.unit_cost1, display: "Dollars", custom_sheet_name: "Event Cost");
 
             ////Unit Cost 1 END
             ////Unit Cost 1 END
@@ -182,7 +182,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
             setterStatus(sbStatus.ToString());
 
-            genertateGenericWorksheet<Unit_Cost2_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.unit_cost2, display: "Dollars");
+            genertateGenericWorksheet<Unit_Cost2_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter, clm_op_results.unit_cost2, display: "Dollars", custom_sheet_name: "Adj Unit Cost");
 
             ////Unit Cost 2 END
             ////Unit Cost 2 END
@@ -210,7 +210,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
         }
 
 
-        private static void genertateGenericWorksheet<T>(ref XLWorkbook  wb,  string header, string bgcolor, List<YearQuarter_Model> year_quarter, List<T> data_list, string note = null, string display = null)
+        private static void genertateGenericWorksheet<T>(ref XLWorkbook wb, string header, string bgcolor, List<YearQuarter_Model> year_quarter, List<T> data_list, string note = null, string display = null, string custom_sheet_name = null)
         {
 
 
@@ -224,7 +224,10 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             Int16 rowCnt = 1;
 
 
-            var wsSource = wb.Worksheets.Add(header.Replace("/", ""));
+            var sheet_name = (custom_sheet_name == null ? header.Replace("/", "") : custom_sheet_name);
+
+
+            var wsSource = wb.Worksheets.Add(sheet_name);
 
 
             //MAIN HEADER 'Events' ROW
