@@ -114,7 +114,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                 //CREATE MemberMonth TMP TABLE START
                 //CREATE MemberMonth TMP TABLE START
                 //CREATE MemberMonth TMP TABLE START
-                sbSQL.Append("IF OBJECT_ID('tempdb..#MemberMonth') IS  NOT NULL DROP TABLE #MemberMonth ");
+                sbSQL.Append("IF OBJECT_ID('tempdb..#MemberMonth_"+ cat + "') IS  NOT NULL DROP TABLE #MemberMonth_"+ cat + " ");
                 sbSQL.Append("SELECT DISTINCT TOP " + pct_param.RowCount + " t.Metric ");
 
                 //LOOP DSM!!!
@@ -143,7 +143,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                     sbSQL.Append(", CASE WHEN t.Y1Q" + i + "_Mbr_Month = 0 THEN 'N/A' ELSE  CAST(FORMAT(((t.Y2Q" + i + "_Mbr_Month - t.Y1Q" + i + "_Mbr_Month)/t.Y1Q" + i + "_Mbr_Month),'P0') as varchar)  END as Y1Q" + i + "_Y2Q" + i + "_trend ");
 
                 }
-                sbSQL.Append("INTO #MemberMonth FROM ( select distinct 'Member Month' as Metric ");
+                sbSQL.Append("INTO #MemberMonth_"+ cat + " FROM ( select distinct 'Member Month' as Metric ");
 
                 //LOOP DSM!!!
                 for (int i = 0; i < pct_param.DateSpanList.Count; i++)
@@ -286,7 +286,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                 ////member month start
                 ////member month start
                 ////member month start
-                sbSQL.Append("SELECT * FROM #MemberMonth; ");
+                sbSQL.Append("SELECT * FROM #MemberMonth_"+ cat + "; ");
                 ////member month end
                 ////member month end
                 ////member month end
@@ -471,10 +471,10 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 
 
 
-            var results = _db.LoadDataMultiple(sql: sbSQL.ToString(), token, gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read<Member_Month_Model>(), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read <Member_Month_Model> (), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), "VCT_DB");
+            var results = _db.LoadDataMultiple(sql: sbSQL.ToString(), token, gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read<Member_Month_Model>(), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read <Member_Month_Model> (), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), "VCT_DB");
 
             CLM_OP_Report_Model claims_final = new CLM_OP_Report_Model();
-            claims_final.year_quarter = (results[0] as List<YearQuarter_Model>);
+            claims_final.year_quarter_op = (results[0] as List<YearQuarter_Model>);
             claims_final.unique_individual_op = (results[1] as List<Unique_Individual_Model>);
             claims_final.events_op = (results[2] as List<Events_Model>);
             claims_final.claims_op = (results[3] as List<Claims_Model>);
@@ -484,15 +484,16 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             claims_final.utilization000_op = (results[7] as List<Utilization000_Model>);
             claims_final.unit_cost1_op = (results[8] as List<Unit_Cost1_Model>);
             claims_final.unit_cost2_op = (results[9] as List<Unit_Cost2_Model>);
-            claims_final.unique_individual_phys = (results[10] as List<Unique_Individual_Model>);
-            claims_final.events_phys = (results[11] as List<Events_Model>);
-            claims_final.claims_phys = (results[12] as List<Claims_Model>);
-            claims_final.allowed_phys = (results[13] as List<Allowed_Model>);
-            claims_final.member_month_phys = (results[14] as List<Member_Month_Model>);
-            claims_final.allowed_pmpm_phys = (results[15] as List<Allowed_PMPM_Model>);
-            claims_final.utilization000_phys = (results[16] as List<Utilization000_Model>);
-            claims_final.unit_cost1_phys = (results[17] as List<Unit_Cost1_Model>);
-            claims_final.unit_cost2_phys = (results[18] as List<Unit_Cost2_Model>);
+            claims_final.year_quarter_phys = (results[10] as List<YearQuarter_Model>);
+            claims_final.unique_individual_phys = (results[11] as List<Unique_Individual_Model>);
+            claims_final.events_phys = (results[12] as List<Events_Model>);
+            claims_final.claims_phys = (results[13] as List<Claims_Model>);
+            claims_final.allowed_phys = (results[14] as List<Allowed_Model>);
+            claims_final.member_month_phys = (results[15] as List<Member_Month_Model>);
+            claims_final.allowed_pmpm_phys = (results[16] as List<Allowed_PMPM_Model>);
+            claims_final.utilization000_phys = (results[17] as List<Utilization000_Model>);
+            claims_final.unit_cost1_phys = (results[18] as List<Unit_Cost1_Model>);
+            claims_final.unit_cost2_phys = (results[19] as List<Unit_Cost2_Model>);
 
 
             return claims_final;
@@ -601,8 +602,8 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             for (int i = 1; i < 5; i++)
             {
 
-                sbSQL.Append(",a.Y1Q" + i + "_" + columnName + (denominator == null ? "" : " * " + denominator)  + "/(SELECT Y1Q" + i + "_Mbr_Month FROM #MemberMonth) as Y1Q" + i + "_" + displayName + " ");
-                sbSQL.Append(",a.Y2Q" + i + "_" + columnName + (denominator == null ? "" : " * " + denominator) + "/(SELECT Y2Q" + i + "_Mbr_Month FROM #MemberMonth) as Y2Q" + i + "_" + displayName + " ");
+                sbSQL.Append(",a.Y1Q" + i + "_" + columnName + (denominator == null ? "" : " * " + denominator)  + "/(SELECT Y1Q" + i + "_Mbr_Month FROM #MemberMonth_"+ cat + ") as Y1Q" + i + "_" + displayName + " ");
+                sbSQL.Append(",a.Y2Q" + i + "_" + columnName + (denominator == null ? "" : " * " + denominator) + "/(SELECT Y2Q" + i + "_Mbr_Month FROM #MemberMonth_"+ cat + ") as Y2Q" + i + "_" + displayName + " ");
 
             }
 
