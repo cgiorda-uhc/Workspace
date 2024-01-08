@@ -154,7 +154,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
             setterStatus(sbStatus.ToString());
 
-            genertateGenericWorksheet<Utilization000_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.utilization000_op, "* Utilization/000 = Proc Count*12000/Member Month");
+            genertateGenericWorksheet<Utilization000_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.utilization000_op, "* Utilization/000 = Proc Count*3000/Member Month");
 
             ////Utilization/000 END
             ////Utilization/000 END
@@ -188,6 +188,152 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             ////Unit Cost 2 END
             ////Unit Cost 2 END
             ////Unit Cost 2 END
+            ///
+
+            colCnt = 1;
+            rowCnt = 1;
+
+
+
+            //CLM PHYS Unique Individual START
+            //CLM PHYS Unique Individual START
+            //CLM PHYS Unique Individual START
+            header = "PHYS Unique Individual";
+
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            genertateGenericWorksheet<Unique_Individual_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.unique_individual_phys);
+
+            //CLM OP Unique Individual END
+            //CLM OP Unique Individual END
+            //CLM OP Unique Individual END
+
+
+
+            //Events START
+            //Events START
+            //Events START
+            header = "PHYS Events";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            genertateGenericWorksheet<Events_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.events_phys);
+
+
+            ////Events END
+            ////Events END
+            ////Events END
+
+
+
+            //Claims START 
+            //Claims START
+            //Claims START
+            header = "PHYS Claims";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+            //ADD CUSTOM!!!!!!
+            genertateGenericWorksheet<Claims_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.claims_phys);
+
+            ////Claims END
+            ////Claims END
+            ////Claims END
+
+
+            //Allowed Amount START 
+            //Allowed Amount START
+            //Allowed Amount START
+            header = "PHYS Allowed Amount";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            genertateGenericWorksheet<Allowed_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.allowed_phys, display: "Dollars");
+
+            ////Allowed Amount END
+            ////Allowed Amount END
+            ////Allowed Amount END
+            ///
+
+
+            //Member Month START
+            //Member Month START
+            //Member Month START
+            header = "PHYS Member Month";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+            //ADD CUSTOM!!!!!!
+            genertateMemberMonthWorksheet<Member_Month_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.member_month_phys);
+            //Member Month END
+            //Member Month END
+            //Member Month END
+
+
+            //Allowed Amount PMPM START 
+            //Allowed Amount PMPM START
+            //Allowed Amount PMPM START
+            header = "PHYS Allowed Amount PMPM";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            genertateGenericWorksheet<Allowed_PMPM_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.allowed_pmpm_phys, display: "Dollars");
+
+            ////Allowed Amount PMPM END
+            ////Allowed Amount PMPM END
+            ////Allowed Amount PMPM END
+            ///
+
+            //Utilization/000  START 
+            //Utilization/000 START
+            //Utilization/000 START
+            header = "PHYS Utilization/000";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            genertateGenericWorksheet<Utilization000_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.utilization000_phys, "* Utilization/000 = Proc Count*3000/Member Month");
+
+            ////Utilization/000 END
+            ////Utilization/000 END
+            ////Utilization/000 END
+
+            //Unit Cost 1  START 
+            //Unit Cost 1 START
+            //Unit Cost 1 START
+            header = "PHYS Event Cost";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            genertateGenericWorksheet<Unit_Cost1_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.unit_cost1_phys, display: "Dollars");
+
+            ////Unit Cost 1 END
+            ////Unit Cost 1 END
+            ////Unit Cost 1 END
+            ///
+
+            //Unit Cost 2  START 
+            //Unit Cost 2 START
+            //Unit Cost 2 START
+            header = "PHYS Adj Unit Cost";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            genertateGenericWorksheet<Unit_Cost2_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.unit_cost2_phys, display: "Dollars");
+
+            ////Unit Cost 2 END
+            ////Unit Cost 2 END
+            ////Unit Cost 2 END
+
+
+
 
             if (token.IsCancellationRequested)
             {

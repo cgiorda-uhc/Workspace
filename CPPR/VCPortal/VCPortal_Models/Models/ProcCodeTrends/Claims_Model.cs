@@ -13,13 +13,18 @@ public class Claims_Model
     public int? Y1Q1_claims { get; set; }
 
 
-
     public int? Y1Q2_claims { get; set; }
 
     public int? Y1Q3_claims { get; set; }
 
 
     public int? Y2Q1_claims { get; set; }
+
+
+
+
+
+
 
     public int? Y1Q4_claims { get; set; }
 
