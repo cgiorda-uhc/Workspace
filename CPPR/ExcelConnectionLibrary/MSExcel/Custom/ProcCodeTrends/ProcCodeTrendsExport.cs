@@ -120,7 +120,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             //Member Month START
             //Member Month START
             //Member Month START
-            header = "OP Member Month";
+            header = "Member Month";
 
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
             setterStatus(sbStatus.ToString());
@@ -154,7 +154,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
             setterStatus(sbStatus.ToString());
 
-            genertateGenericWorksheet<Utilization000_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.utilization000_op, "* Utilization/000 = Proc Count*3000/Member Month");
+            genertateGenericWorksheet<Utilization000_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.utilization000_op);
 
             ////Utilization/000 END
             ////Utilization/000 END
@@ -257,21 +257,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             ////Allowed Amount END
             ////Allowed Amount END
             ////Allowed Amount END
-            ///
-
-
-            //Member Month START
-            //Member Month START
-            //Member Month START
-            header = "PHYS Member Month";
-
-            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
-            setterStatus(sbStatus.ToString());
-            //ADD CUSTOM!!!!!!
-            genertateMemberMonthWorksheet<Member_Month_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.member_month_phys);
-            //Member Month END
-            //Member Month END
-            //Member Month END
+    
 
 
             //Allowed Amount PMPM START 
@@ -297,7 +283,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
             setterStatus(sbStatus.ToString());
 
-            genertateGenericWorksheet<Utilization000_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.utilization000_phys, "* Utilization/000 = Proc Count*3000/Member Month");
+            genertateGenericWorksheet<Utilization000_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.utilization000_phys);
 
             ////Utilization/000 END
             ////Utilization/000 END
