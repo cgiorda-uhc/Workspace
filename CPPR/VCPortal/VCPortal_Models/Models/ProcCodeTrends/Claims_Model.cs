@@ -30,13 +30,13 @@ public class Claims_Model
     public int? Y2Q4_claims { get; set; }
 
 
-    public string Y1Q1_Y2Q1_trend_claims { get; set; }
+    public double? Y1Q1_Y2Q1_trend_claims { get; set; }
 
-    public string Y1Q2_Y2Q2_trend_claims { get; set; }
+    public double? Y1Q2_Y2Q2_trend_claims { get; set; }
 
-    public string Y1Q3_Y2Q3_trend_claims { get; set; }
+    public double? Y1Q3_Y2Q3_trend_claims { get; set; }
 
-    public string Y1Q4_Y2Q4_trend_claims { get; set; }
+    public double? Y1Q4_Y2Q4_trend_claims { get; set; }
 
 
 
@@ -66,13 +66,13 @@ public class Claims_Model
     public int? Y2Q4_fac_claims { get; set; }
 
 
-    public string Y1Q1_Y2Q1_trend_fac_claims { get; set; }
+    public double? Y1Q1_Y2Q1_trend_fac_claims { get; set; }
 
-    public string Y1Q2_Y2Q2_trend_fac_claims { get; set; }
+    public double? Y1Q2_Y2Q2_trend_fac_claims { get; set; }
 
-    public string Y1Q3_Y2Q3_trend_fac_claims { get; set; }
+    public double? Y1Q3_Y2Q3_trend_fac_claims { get; set; }
 
-    public string Y1Q4_Y2Q4_trend_fac_claims { get; set; }
+    public double? Y1Q4_Y2Q4_trend_fac_claims { get; set; }
 
 
 
@@ -101,13 +101,13 @@ public class Claims_Model
     public int? Y2Q4_phy_claims { get; set; }
 
 
-    public string Y1Q1_Y2Q1_trend_phy_claims { get; set; }
+    public double? Y1Q1_Y2Q1_trend_phy_claims { get; set; }
 
-    public string Y1Q2_Y2Q2_trend_phy_claims { get; set; }
+    public double? Y1Q2_Y2Q2_trend_phy_claims { get; set; }
 
-    public string Y1Q3_Y2Q3_trend_phy_claims { get; set; }
+    public double? Y1Q3_Y2Q3_trend_phy_claims { get; set; }
 
-    public string Y1Q4_Y2Q4_trend_phy_claims { get; set; }
+    public double? Y1Q4_Y2Q4_trend_phy_claims { get; set; }
 
 
 
@@ -132,13 +132,13 @@ public class Claims_Model
     public int? Y2Q4_oth_claims { get; set; }
 
 
-    public string Y1Q1_Y2Q1_trend_oth_claims { get; set; }
+    public double? Y1Q1_Y2Q1_trend_oth_claims { get; set; }
 
-    public string Y1Q2_Y2Q2_trend_oth_claims { get; set; }
+    public double? Y1Q2_Y2Q2_trend_oth_claims { get; set; }
 
-    public string Y1Q3_Y2Q3_trend_oth_claims { get; set; }
+    public double? Y1Q3_Y2Q3_trend_oth_claims { get; set; }
 
-    public string Y1Q4_Y2Q4_trend_oth_claims { get; set; }
+    public double? Y1Q4_Y2Q4_trend_oth_claims { get; set; }
 
 
 }

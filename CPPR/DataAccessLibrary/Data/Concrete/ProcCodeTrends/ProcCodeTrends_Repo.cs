@@ -140,7 +140,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                 for (int i = 1; i < 5; i++)
                 {
 
-                    sbSQL.Append(", CASE WHEN t.Y1Q" + i + "_Mbr_Month = 0 THEN 'N/A' ELSE  CAST(FORMAT(((t.Y2Q" + i + "_Mbr_Month - t.Y1Q" + i + "_Mbr_Month)/t.Y1Q" + i + "_Mbr_Month),'P0') as varchar)  END as Y1Q" + i + "_Y2Q" + i + "_trend ");
+                    sbSQL.Append(", CASE WHEN t.Y1Q" + i + "_Mbr_Month = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_Mbr_Month - t.Y1Q" + i + "_Mbr_Month)/t.Y1Q" + i + "_Mbr_Month)   END as Y1Q" + i + "_Y2Q" + i + "_trend ");
 
                 }
                 sbSQL.Append("INTO #MemberMonth_"+ cat + " FROM ( select distinct 'Member Month' as Metric ");
@@ -233,10 +233,10 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                 for (int i = 1; i < 5; i++)
                 {
 
-                    sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_claims = 0 THEN 'N/A' ELSE  CAST(FORMAT(((t.Y2Q" + i + "_claims-t.Y1Q" + i + "_claims)/t.Y1Q" + i + "_claims),'P0') as varchar) END as Y1Q" + i + "_Y2Q" + i + "_trend_claims ");
-                    sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_fac_claims = 0 THEN 'N/A' ELSE  CAST(FORMAT(((t.Y2Q" + i + "_fac_claims-t.Y1Q" + i + "_fac_claims)/t.Y1Q" + i + "_fac_claims),'P0') as varchar)  END as Y1Q" + i + "_Y2Q" + i + "_trend_fac_claims ");
-                    sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_phy_claims = 0 THEN 'N/A' ELSE  CAST(FORMAT(((t.Y2Q" + i + "_fac_claims-t.Y1Q" + i + "_phy_claims)/t.Y1Q" + i + "_phy_claims),'P0') as varchar) END Y1Q" + i + "_Y2Q" + i + "_trend_phy_claims ");
-                    sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_oth_claims = 0 THEN 'N/A' ELSE  CAST(FORMAT(((t.Y2Q" + i + "_oth_claims-t.Y1Q" + i + "_oth_claims)/t.Y1Q" + i + "_oth_claims),'P0') as varchar)  END Y1Q" + i + "_Y2Q" + i + "_trend_oth_claims ");
+                    sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_claims-t.Y1Q" + i + "_claims)/t.Y1Q" + i + "_claims)  END as Y1Q" + i + "_Y2Q" + i + "_trend_claims ");
+                    sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_fac_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_fac_claims-t.Y1Q" + i + "_fac_claims)/t.Y1Q" + i + "_fac_claims)   END as Y1Q" + i + "_Y2Q" + i + "_trend_fac_claims ");
+                    sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_phy_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_fac_claims-t.Y1Q" + i + "_phy_claims)/t.Y1Q" + i + "_phy_claims) END Y1Q" + i + "_Y2Q" + i + "_trend_phy_claims ");
+                    sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_oth_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_oth_claims-t.Y1Q" + i + "_oth_claims)/t.Y1Q" + i + "_oth_claims)   END Y1Q" + i + "_Y2Q" + i + "_trend_oth_claims ");
 
                 }
 
@@ -342,7 +342,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                 for (int i = 1; i < 5; i++)
                 {
 
-                    sbSQL.Append(", CASE WHEN t1.Y1Q" + i + "_Unit_Cost1 = 0 THEN 'N/A' ELSE  CAST(FORMAT(((t1.Y2Q" + i + "_Unit_Cost1 - t1.Y1Q" + i + "_Unit_Cost1)/t1.Y1Q" + i + "_Unit_Cost1),'P0') as varchar)  END as Y1Q" + i + "_Y2Q" + i + "_trend ");
+                    sbSQL.Append(", CASE WHEN t1.Y1Q" + i + "_Unit_Cost1 = 0 THEN NULL ELSE  ((t1.Y2Q" + i + "_Unit_Cost1 - t1.Y1Q" + i + "_Unit_Cost1)/t1.Y1Q" + i + "_Unit_Cost1)   END as Y1Q" + i + "_Y2Q" + i + "_trend ");
 
                 }
 
@@ -417,7 +417,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                 for (int i = 1; i < 5; i++)
                 {
 
-                    sbSQL.Append(", CASE WHEN t1.Y1Q" + i + "_Unit_Cost2 = 0 THEN 'N/A' ELSE  CAST(FORMAT(((t1.Y2Q" + i + "_Unit_Cost2 - t1.Y1Q" + i + "_Unit_Cost2)/t1.Y1Q" + i + "_Unit_Cost2),'P0') as varchar)  END as Y1Q" + i + "_Y2Q" + i + "_trend ");
+                    sbSQL.Append(", CASE WHEN t1.Y1Q" + i + "_Unit_Cost2 = 0 THEN NULL ELSE  ((t1.Y2Q" + i + "_Unit_Cost2 - t1.Y1Q" + i + "_Unit_Cost2)/t1.Y1Q" + i + "_Unit_Cost2)   END as Y1Q" + i + "_Y2Q" + i + "_trend ");
 
                 }
 
@@ -531,7 +531,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             for (int i = 1; i < 5; i++)
             {
 
-                sbSQL.Append(", CASE WHEN t.Y1Q" + i + "_" + displayName + " = 0 THEN 'N/A' ELSE  CAST(FORMAT(((t.Y2Q" + i + "_" +  displayName +" - t.Y1Q" + i + "_" + displayName + ")/t.Y1Q" + i + "_" + displayName + "),'P0') as varchar) END as Y1Q" + i + "_Y2Q" + i + "_trend ");
+                sbSQL.Append(", CASE WHEN t.Y1Q" + i + "_" + displayName + " = 0 THEN NULL ELSE ((t.Y2Q" + i + "_" +  displayName +" - t.Y1Q" + i + "_" + displayName + ")/t.Y1Q" + i + "_" + displayName + ")  END as Y1Q" + i + "_Y2Q" + i + "_trend ");
 
             }
 
@@ -594,7 +594,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             for (int i = 1; i < 5; i++)
             {
 
-                sbSQL.Append(", CASE WHEN x.Y1Q" + i + "_" + displayName + " = 0 THEN 'N/A' ELSE  CAST(FORMAT(((x.Y2Q" + i + "_" + displayName + " - x.Y1Q" + i + "_" + displayName + ")/x.Y1Q" + i + "_" + displayName + "),'P0') as varchar) END as Y1Q" + i + "_Y2Q" + i + "_trend ");
+                sbSQL.Append(", CASE WHEN x.Y1Q" + i + "_" + displayName + " = 0 THEN NULL ELSE  ((x.Y2Q" + i + "_" + displayName + " - x.Y1Q" + i + "_" + displayName + ")/x.Y1Q" + i + "_" + displayName + ")  END as Y1Q" + i + "_Y2Q" + i + "_trend ");
             }
 
             sbSQL.Append(",y.Y1Q1_Y2Q1_diff  as rank FROM ( select distinct a.px ,a.px_desc ");

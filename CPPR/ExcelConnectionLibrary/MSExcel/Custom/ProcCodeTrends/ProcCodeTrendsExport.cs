@@ -522,8 +522,12 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                             }
 
                         }
+                        else
+                        {
+                            cell.Value = ".";
+                        }
                     }
-                    else if (propertyInfo.PropertyType == typeof(double) || propertyInfo.PropertyType == typeof(double?)|| propertyInfo.PropertyType == typeof(float) || propertyInfo.PropertyType == typeof(float?))
+                    else if (propertyInfo.PropertyType == typeof(float) || propertyInfo.PropertyType == typeof(float?))
                     {
                         if (val != null)
                         {
@@ -537,6 +541,24 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
 
 
                         }
+                        else
+                        {
+                            cell.Value = ".";
+                        }
+                    }
+                    else if (propertyInfo.PropertyType == typeof(double) || propertyInfo.PropertyType == typeof(double?))
+                    {
+                        if (val != null)
+                        {
+                            cell.Value = double.Parse(val.ToString());
+                            cell.Style.NumberFormat.Format = "_(0%_)";
+
+                        }
+                        else
+                        {
+                            cell.Value = ".";
+                        }
+
                     }
                     else
                     {
@@ -570,6 +592,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
 
 
             string columnLetter;
+            string columnLetterFirst;
             string columnLetterLast;
             IXLRange range;
             IXLCell cell;
@@ -590,20 +613,29 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             claims.Add("Physician");
             claims.Add("Other");
 
-            foreach(var claim in claims)
+
+            colCnt = 0;
+            foreach (var claim in claims)
             {
 
                 //MAIN HEADER 'Events' ROW
                 rowCnt = 1;
 
-                colCnt = 0;
-                columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
-                cell = wsSource.Cell(columnLetter + rowCnt);
-                cell.Value = header.Replace("OP ", "").Replace("PHYS ", "") + (note != null ? " *" : "");
-                //cell.Style.Font.SetBold(true);
+                if (claim == "Total")
+                {
+                    columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+                    cell = wsSource.Cell(columnLetter + rowCnt);
+                    cell.Value = header.Replace("OP ", "").Replace("PHYS ", "") + (note != null ? " *" : "");
+                    //cell.Style.Font.SetBold(true);
+                    colCnt += 2;
+                }
+                else
+                {
+                    colCnt += 1;
+                }
 
-                colCnt = 2;
                 columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+                columnLetterFirst = columnLetter;
                 cell = wsSource.Cell(columnLetter + rowCnt);
                 cell.Value = header.Replace("OP", claim).Replace("PHYS", claim);
                 cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
@@ -616,7 +648,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                     rowCnt = 2;
 
                     colCnt = 0;
-                    columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+                    columnLetter = SharedExcelFunctions.GetColumnName(0);
                     cell = wsSource.Cell(columnLetter + rowCnt);
                     cell.Value = "Proc" + Environment.NewLine + "Code";
                     cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
@@ -626,18 +658,26 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
 
 
                     colCnt = 1;
-                    columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+                    columnLetter = SharedExcelFunctions.GetColumnName(1);
                     cell = wsSource.Cell(columnLetter + rowCnt);
                     cell.Value = "Proc Desc";
                     cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
                     cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                     cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
                     SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+
                 }
 
-                
 
-                colCnt = 2;
+                if (claim == "Total")
+                {
+                    colCnt += 1;
+                }
+                else
+                {
+                    rowCnt = 2;
+                }
+              
                 //LOOP YQ COLUMN HEADERS
                 foreach (var yq in year_quarter)
                 {
@@ -656,7 +696,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                 //MERGE YQ "Unique Individual"
                 columnLetter = SharedExcelFunctions.GetColumnName(colCnt - 1);
                 columnLetterLast = SharedExcelFunctions.GetColumnName(colCnt);
-                range = wsSource.Range("C1:" + columnLetter + "1");
+                range = wsSource.Range(columnLetterFirst + "1:" + columnLetter + "1");
                 range.Merge();
                 range.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                 range.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
@@ -763,8 +803,12 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                             }
 
                         }
+                        else
+                        {
+                            cell.Value = ".";
+                        }
                     }
-                    else if (propertyInfo.PropertyType == typeof(double) || propertyInfo.PropertyType == typeof(double?) || propertyInfo.PropertyType == typeof(float) || propertyInfo.PropertyType == typeof(float?))
+                    else if (propertyInfo.PropertyType == typeof(float) || propertyInfo.PropertyType == typeof(float?))
                     {
                         if (val != null)
                         {
@@ -777,6 +821,23 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                             }
 
 
+                        }
+                        else
+                        {
+                            cell.Value = ".";
+                        }
+                    }
+                    else if (propertyInfo.PropertyType == typeof(double) || propertyInfo.PropertyType == typeof(double?) )
+                    {
+                        if (val != null)
+                        {
+                            cell.Value = double.Parse(val.ToString());
+                             cell.Style.NumberFormat.Format = "_(0%_)";
+             
+                        }
+                        else
+                        {
+                            cell.Value = ".";
                         }
                     }
                     else
@@ -916,12 +977,33 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                             cell.Value = int.Parse(val.ToString());
                             cell.Style.NumberFormat.Format = "_( #,##0_)";
                         }
+                        else
+                        {
+                            cell.Value = ".";
+                        }
                     }
-                    else if (propertyInfo.PropertyType == typeof(double) || propertyInfo.PropertyType == typeof(double?) || propertyInfo.PropertyType == typeof(float) || propertyInfo.PropertyType == typeof(float?))
+                    else if (propertyInfo.PropertyType == typeof(float) || propertyInfo.PropertyType == typeof(float?))
                     {
                         if (val != null)
                         {
                             cell.Value = double.Parse(val.ToString());
+                        }
+                        else
+                        {
+                            cell.Value = ".";
+                        }
+                    }
+                    else if (propertyInfo.PropertyType == typeof(double) || propertyInfo.PropertyType == typeof(double?))
+                    {
+                        if (val != null)
+                        {
+                            cell.Value = double.Parse(val.ToString());
+                            cell.Style.NumberFormat.Format = "_(0%_)";
+
+                        }
+                        else
+                        {
+                            cell.Value = ".";
                         }
                     }
                     else
