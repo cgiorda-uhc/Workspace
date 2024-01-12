@@ -235,7 +235,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 
                     sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_claims-t.Y1Q" + i + "_claims)/t.Y1Q" + i + "_claims)  END as Y1Q" + i + "_Y2Q" + i + "_trend_claims ");
                     sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_fac_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_fac_claims-t.Y1Q" + i + "_fac_claims)/t.Y1Q" + i + "_fac_claims)   END as Y1Q" + i + "_Y2Q" + i + "_trend_fac_claims ");
-                    sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_phy_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_fac_claims-t.Y1Q" + i + "_phy_claims)/t.Y1Q" + i + "_phy_claims) END Y1Q" + i + "_Y2Q" + i + "_trend_phy_claims ");
+                    sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_phy_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_phy_claims-t.Y1Q" + i + "_phy_claims)/t.Y1Q" + i + "_phy_claims) END Y1Q" + i + "_Y2Q" + i + "_trend_phy_claims ");
                     sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_oth_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_oth_claims-t.Y1Q" + i + "_oth_claims)/t.Y1Q" + i + "_oth_claims)   END Y1Q" + i + "_Y2Q" + i + "_trend_oth_claims ");
 
                 }

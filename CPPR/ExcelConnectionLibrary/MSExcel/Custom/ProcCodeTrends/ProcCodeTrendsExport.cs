@@ -539,7 +539,6 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                                 cell.Style.NumberFormat.Format = "_($#,##0.00_)";
                             }
 
-
                         }
                         else
                         {
