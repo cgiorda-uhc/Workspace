@@ -46,12 +46,6 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
 
 
 
-
-            Int16 colCnt = 1;
-            Int16 rowCnt = 1;
-
-
-
             //CLM OP Unique Individual START
             //CLM OP Unique Individual START
             //CLM OP Unique Individual START
@@ -66,132 +60,6 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             //CLM OP Unique Individual END
             //CLM OP Unique Individual END
             //CLM OP Unique Individual END
-
-
-
-            //Events START
-            //Events START
-            //Events START
-            header = "OP Events";
-
-            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
-            setterStatus(sbStatus.ToString());
-
-            generateGenericWorksheet<Events_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.events_op);
-
-
-            ////Events END
-            ////Events END
-            ////Events END
-        
-
-
-            //Claims START 
-            //Claims START
-            //Claims START
-            header = "OP Claims";
-
-            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
-            setterStatus(sbStatus.ToString());
-            //ADD CUSTOM!!!!!!
-            generateClaimsWorksheet<Claims_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.claims_op);
-
-            ////Claims END
-            ////Claims END
-            ////Claims END
-
-
-            //Allowed Amount START 
-            //Allowed Amount START
-            //Allowed Amount START
-            header = "OP Allowed Amount";
-
-            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
-            setterStatus(sbStatus.ToString());
-
-            generateGenericWorksheet<Allowed_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.allowed_op, display: "Dollars");
-
-            ////Allowed Amount END
-            ////Allowed Amount END
-            ////Allowed Amount END
-            ///
-
-
-            //Member Month START
-            //Member Month START
-            //Member Month START
-            header = "Member Month";
-
-            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
-            setterStatus(sbStatus.ToString());
-            //ADD CUSTOM!!!!!!
-            genertateMemberMonthWorksheet<Member_Month_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.member_month_op);
-            //Member Month END
-            //Member Month END
-            //Member Month END
-
-
-            //Allowed Amount PMPM START 
-            //Allowed Amount PMPM START
-            //Allowed Amount PMPM START
-            header = "OP Allowed Amount PMPM";
-
-            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
-            setterStatus(sbStatus.ToString());
-
-            generateGenericWorksheet<Allowed_PMPM_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.allowed_pmpm_op, display: "Dollars");
-
-            ////Allowed Amount PMPM END
-            ////Allowed Amount PMPM END
-            ////Allowed Amount PMPM END
-            ///
-
-            //Utilization/000  START 
-            //Utilization/000 START
-            //Utilization/000 START
-            header = "OP Utilization/000";
-
-            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
-            setterStatus(sbStatus.ToString());
-
-            generateGenericWorksheet<Utilization000_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.utilization000_op);
-
-            ////Utilization/000 END
-            ////Utilization/000 END
-            ////Utilization/000 END
-
-            //Unit Cost 1  START 
-            //Unit Cost 1 START
-            //Unit Cost 1 START
-            header = "OP Event Cost";
-
-            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
-            setterStatus(sbStatus.ToString());
-
-            generateGenericWorksheet<Unit_Cost1_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.unit_cost1_op, display: "Dollars");
-
-            ////Unit Cost 1 END
-            ////Unit Cost 1 END
-            ////Unit Cost 1 END
-            ///
-
-            //Unit Cost 2  START 
-            //Unit Cost 2 START
-            //Unit Cost 2 START
-            header = "OP Adj Unit Cost";
-
-            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
-            setterStatus(sbStatus.ToString());
-
-            generateGenericWorksheet<Unit_Cost2_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.unit_cost2_op, display: "Dollars");
-
-            ////Unit Cost 2 END
-            ////Unit Cost 2 END
-            ////Unit Cost 2 END
-            ///
-
-            colCnt = 1;
-            rowCnt = 1;
 
 
 
@@ -215,6 +83,23 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             //Events START
             //Events START
             //Events START
+            header = "OP Events";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            generateGenericWorksheet<Events_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.events_op);
+
+
+            ////Events END
+            ////Events END
+            ////Events END
+
+
+
+            //Events START
+            //Events START
+            //Events START
             header = "PHYS Events";
 
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
@@ -227,6 +112,22 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             ////Events END
             ////Events END
 
+
+
+
+            //Claims START 
+            //Claims START
+            //Claims START
+            header = "OP Claims";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+            //ADD CUSTOM!!!!!!
+            generateClaimsWorksheet<Claims_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.claims_op);
+
+            ////Claims END
+            ////Claims END
+            ////Claims END
 
 
             //Claims START 
@@ -247,6 +148,21 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             //Allowed Amount START 
             //Allowed Amount START
             //Allowed Amount START
+            header = "OP Allowed Amount";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            generateGenericWorksheet<Allowed_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.allowed_op, display: "Dollars");
+
+            ////Allowed Amount END
+            ////Allowed Amount END
+            ////Allowed Amount END
+ 
+
+             //Allowed Amount START 
+            //Allowed Amount START
+            //Allowed Amount START
             header = "PHYS Allowed Amount";
 
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
@@ -257,7 +173,21 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             ////Allowed Amount END
             ////Allowed Amount END
             ////Allowed Amount END
-    
+
+
+            //Allowed Amount PMPM START 
+            //Allowed Amount PMPM START
+            //Allowed Amount PMPM START
+            header = "OP Allowed Amount PMPM";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            generateGenericWorksheet<Allowed_PMPM_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.allowed_pmpm_op, display: "Dollars");
+
+            ////Allowed Amount PMPM END
+            ////Allowed Amount PMPM END
+            ////Allowed Amount PMPM END
 
 
             //Allowed Amount PMPM START 
@@ -273,7 +203,25 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             ////Allowed Amount PMPM END
             ////Allowed Amount PMPM END
             ////Allowed Amount PMPM END
+
+
+
+            //Utilization/000  START 
+            //Utilization/000 START
+            //Utilization/000 START
+            header = "OP Utilization/000";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            generateGenericWorksheet<Utilization000_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.utilization000_op);
+
+            ////Utilization/000 END
+            ////Utilization/000 END
+            ////Utilization/000 END
             ///
+
+
 
             //Utilization/000  START 
             //Utilization/000 START
@@ -292,6 +240,21 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             //Unit Cost 1  START 
             //Unit Cost 1 START
             //Unit Cost 1 START
+            header = "OP Event Cost";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            generateGenericWorksheet<Unit_Cost1_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.unit_cost1_op, display: "Dollars");
+
+            ////Unit Cost 1 END
+            ////Unit Cost 1 END
+            ////Unit Cost 1 END
+
+
+            //Unit Cost 1  START 
+            //Unit Cost 1 START
+            //Unit Cost 1 START
             header = "PHYS Event Cost";
 
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
@@ -302,8 +265,22 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             ////Unit Cost 1 END
             ////Unit Cost 1 END
             ////Unit Cost 1 END
-            ///
 
+
+            //Unit Cost 2  START 
+            //Unit Cost 2 START
+            //Unit Cost 2 START
+            header = "OP Adj Unit Cost";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            generateGenericWorksheet<Unit_Cost2_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.unit_cost2_op, display: "Dollars");
+
+            ////Unit Cost 2 END
+            ////Unit Cost 2 END
+            ////Unit Cost 2 END
+ 
             //Unit Cost 2  START 
             //Unit Cost 2 START
             //Unit Cost 2 START
@@ -317,6 +294,22 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             ////Unit Cost 2 END
             ////Unit Cost 2 END
             ////Unit Cost 2 END
+
+
+
+
+            //Member Month START
+            //Member Month START
+            //Member Month START
+            header = "Member Month";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+            //ADD CUSTOM!!!!!!
+            genertateMemberMonthWorksheet<Member_Month_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.member_month_op);
+            //Member Month END
+            //Member Month END
+            //Member Month END
 
 
 

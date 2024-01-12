@@ -110,16 +110,16 @@ await adHoc.getETGSymmSourceDataAsync(16);
 List<string> files_loaded = new List<string>();
 
 
-files_loaded.Add("United PCP- Rad & Card_October_2023.xlsx");
-files_loaded.Add("Oxford October - Radiology Cardiology Universe 2023.xlsx");
-files_loaded.Add("Oxford October -Gastro Universe 2023.xlsx");
-files_loaded.Add("Americhoice October -Radiology Cardiology Universe 2023.xlsx");
-files_loaded.Add("United PCP- Gastro_October_2023.xlsx");
+files_loaded.Add("United PCP- Rad & Card_November_2023.xlsx");
+files_loaded.Add("Americhoice November -Radiology Cardiology Universe 2023.xlsx");
+files_loaded.Add("United PCP-Gastro_November_2023.xlsx");
+files_loaded.Add("Oxford November- Gastro Universe 2023.xlsx");
+files_loaded.Add("Oxford November - Radiology Cardiology Universe 2023.xlsx");
 
 
-//await adHoc.cleanupMemberDataAsync(files_loaded);
+await adHoc.cleanupMemberDataAsync(files_loaded);
 
-await adHoc.transferMHPDataAsync(files_loaded);
+//await adHoc.transferMHPDataAsync(files_loaded);
 
 
 
