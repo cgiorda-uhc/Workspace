@@ -207,15 +207,25 @@ public class EvicoreScorecard : IEvicoreScorecard
                         {
 
                             //closed_xml.Mappings = getColumnLOSMappings();
+                            //var cnt = -1;
+                            var es = eslos.Where(x => !string.IsNullOrEmpty(x.EINotif));
+                           //var test2 = eslos.Where(x => !string.IsNullOrEmpty(x.EINotif)).ToList();
 
-
-                            foreach (var e in eslos.Where(x => !string.IsNullOrEmpty(x.EINotif)))
+                            foreach (var e in es)
                             {
-                                if (e.Header.Trim().EqualsAnyOf(ignore))
+ 
+
+                                if (e.Header == null)
                                 {
                                     continue;
                                 }
 
+
+                                if (e.Header.Trim().EqualsAnyOf(ignore))
+                                {
+                                    continue;
+                                }
+             
 
                                 //ex Map '% Fax' = 'Per_Fax'
                                 var mapping = headerMappings.SingleOrDefault(m => m.Key.ToLower().Trim() == e.Header.ToLower().Trim());
