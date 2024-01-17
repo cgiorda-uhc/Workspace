@@ -112,7 +112,9 @@ public class SiteOfCareGastro : ISiteOfCare
                 var filename = Path.GetFileName(file);
 
                 Log.Information($"Processing " + filename + " sheet:" + sheet);
-                var soc = closed_xml.ImportExcel<SiteOfCareModel>(file, sheet, config_sheet.ColumnRange, config_sheet.StartingDataRow);
+                var soc = closed_xml.ImportExcel<SiteOfCareModel>(file, sheet, config_sheet.ColumnRange, config_sheet.StartingDataRow, config_sheet.ColumnToValidate);
+
+
                 foreach (var s in soc)
                 {
 
@@ -293,9 +295,10 @@ public class SiteOfCareGastro : ISiteOfCare
             {
                 //IF DATE THEN ADD
                 var fileName = Path.GetFileName(f).Replace(".xlsx", "").Replace(".xls", "");
-                var fileParsed = fileName.Split('_');
-                month = int.TryParse(fileParsed[2], out month) ? month : 0;
-                year = int.TryParse(fileParsed[1], out year) ? year : 0;
+                var tmp= fileName.Split(' '); 
+                var fileParsed = tmp[tmp.Length - 1].Split('_');
+                month = int.TryParse(fileParsed[1], out month) ? month : 0;
+                year = int.TryParse(fileParsed[0], out year) ? year : 0;
 
                 if ((fdate.file_month < month && fdate.file_year == year) || fdate.file_year < year)
                 {

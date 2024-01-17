@@ -240,6 +240,14 @@ namespace FileParsingLibrary.MSExcel
                         //CHECK FOR END OF ENDLESS FILES
                         if (nullCheck != null)
                         {
+                            //if (colName == nullCheck && rowIndex > 30000)
+                            //{
+                            //    return list;
+                            //}
+
+
+
+
                             if (colName == nullCheck && string.IsNullOrEmpty(value.ToString()))
                             {
                                 return list;
