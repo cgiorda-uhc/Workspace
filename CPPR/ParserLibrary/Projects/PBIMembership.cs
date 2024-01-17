@@ -3,7 +3,7 @@
 using AutoMapper;
 using ProjectManagerLibrary.Configuration.HeaderInterfaces.Abstract;
 using ProjectManagerLibrary.Configuration.HeaderInterfaces.Concrete;
-using static Org.BouncyCastle.Math.EC.ECCurve;
+
 
 namespace ProjectManagerLibrary.Projects
 {

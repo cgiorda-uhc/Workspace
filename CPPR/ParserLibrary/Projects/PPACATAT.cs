@@ -15,7 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VCPortal_Models.Models.ChemoPx;
 using VCPortal_Models.Parameters.MHP;
-using static Org.BouncyCastle.Math.EC.ECCurve;
+
 
 namespace ProjectManagerLibrary.Projects
 {

@@ -339,7 +339,7 @@ public class OpenXMLWordFunctions : IDisposable
     {
         if (_wordprocessingDocument != null)
         {
-            _wordprocessingDocument.Close();
+            //_wordprocessingDocument.Close();
             _wordprocessingDocument.Dispose();
             _wordprocessingDocument = null;
         }

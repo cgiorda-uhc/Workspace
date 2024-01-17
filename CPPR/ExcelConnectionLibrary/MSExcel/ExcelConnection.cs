@@ -235,7 +235,7 @@ namespace FileParsingLibrary.MSExcel
             {
                 switch (cell.DataType.Value)
                 {
-                    case CellValues.SharedString:
+                    case var val when val == CellValues.SharedString:
                         var stringTable = wbPart.GetPartsOfType<SharedStringTablePart>().FirstOrDefault();
                         if (stringTable != null)
                         {
@@ -243,7 +243,7 @@ namespace FileParsingLibrary.MSExcel
                         }
                         break;
 
-                    case CellValues.Boolean:
+                    case var val when val == CellValues.Boolean:
                         switch (value)
                         {
                             case "0":

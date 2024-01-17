@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Moq;
 using ProjectManagerLibrary.Projects;
-using static Org.BouncyCastle.Math.EC.ECCurve;
+
 
 namespace XUnitParserTesting.Logic
 {
