@@ -224,8 +224,16 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                     }
 
                     sbSQL.Append(",t.Y" + year + "Q" + quarter + "_claims ");
-                    sbSQL.Append(",t.Y" + year + "Q" + quarter + "_fac_claims ");
-                    sbSQL.Append(",t.Y" + year + "Q" + quarter + "_phy_claims ");
+
+                    if (cat == "PHYS")
+                    {
+                        sbSQL.Append(",t.Y" + year + "Q" + quarter + "_phy_claims ");
+                    }
+                    else
+                    {
+                        sbSQL.Append(",t.Y" + year + "Q" + quarter + "_fac_claims ");
+                    } 
+                    
                     sbSQL.Append(",t.Y" + year + "Q" + quarter + "_oth_claims ");
                 }
 
@@ -234,8 +242,16 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                 {
 
                     sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_claims-t.Y1Q" + i + "_claims)/t.Y1Q" + i + "_claims)  END as Y1Q" + i + "_Y2Q" + i + "_trend_claims ");
-                    sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_fac_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_fac_claims-t.Y1Q" + i + "_fac_claims)/t.Y1Q" + i + "_fac_claims)   END as Y1Q" + i + "_Y2Q" + i + "_trend_fac_claims ");
-                    sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_phy_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_phy_claims-t.Y1Q" + i + "_phy_claims)/t.Y1Q" + i + "_phy_claims) END Y1Q" + i + "_Y2Q" + i + "_trend_phy_claims ");
+
+                    if (cat == "PHYS")
+                    {
+                        sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_phy_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_phy_claims-t.Y1Q" + i + "_phy_claims)/t.Y1Q" + i + "_phy_claims) END Y1Q" + i + "_Y2Q" + i + "_trend_phy_claims ");
+                    }
+                    else
+                    {
+                        sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_fac_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_fac_claims-t.Y1Q" + i + "_fac_claims)/t.Y1Q" + i + "_fac_claims)   END as Y1Q" + i + "_Y2Q" + i + "_trend_fac_claims ");
+                    }
+
                     sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_oth_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_oth_claims-t.Y1Q" + i + "_oth_claims)/t.Y1Q" + i + "_oth_claims)   END Y1Q" + i + "_Y2Q" + i + "_trend_oth_claims ");
 
                 }
@@ -261,8 +277,16 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                     var quarter_actual = pct_param.DateSpanList[i].quarter;
 
                     sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then claims end) as Y" + year + "Q" + quarter + "_claims ");
-                    sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then fac_clms end) as Y" + year + "Q" + quarter + "_fac_claims ");
-                    sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then phy_clms end) as Y" + year + "Q" + quarter + "_phy_claims ");
+
+                    if(cat == "PHYS")
+                    {
+                        sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then phy_clms end) as Y" + year + "Q" + quarter + "_phy_claims ");
+                    }
+                    else
+                    {
+                        sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then fac_clms end) as Y" + year + "Q" + quarter + "_fac_claims ");
+                    }
+
                     sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then oth_clms end) as Y" + year + "Q" + quarter + "_oth_claims ");
 
                 }
@@ -471,13 +495,13 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 
 
 
-            var results = _db.LoadDataMultiple(sql: sbSQL.ToString(), token, gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read<Member_Month_Model>(), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read <Member_Month_Model> (), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), "VCT_DB");
+            var results = _db.LoadDataMultiple(sql: sbSQL.ToString(), token, gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Op_Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read<Member_Month_Model>(), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Phys_Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read <Member_Month_Model> (), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), "VCT_DB");
 
             CLM_OP_Report_Model claims_final = new CLM_OP_Report_Model();
             claims_final.year_quarter_op = (results[0] as List<YearQuarter_Model>);
             claims_final.unique_individual_op = (results[1] as List<Unique_Individual_Model>);
             claims_final.events_op = (results[2] as List<Events_Model>);
-            claims_final.claims_op = (results[3] as List<Claims_Model>);
+            claims_final.claims_op = (results[3] as List<Op_Claims_Model>);
             claims_final.allowed_op = (results[4] as List<Allowed_Model>);
             claims_final.member_month_op = (results[5] as List<Member_Month_Model>);
             claims_final.allowed_pmpm_op = (results[6] as List<Allowed_PMPM_Model>);
@@ -487,7 +511,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             claims_final.year_quarter_phys = (results[10] as List<YearQuarter_Model>);
             claims_final.unique_individual_phys = (results[11] as List<Unique_Individual_Model>);
             claims_final.events_phys = (results[12] as List<Events_Model>);
-            claims_final.claims_phys = (results[13] as List<Claims_Model>);
+            claims_final.claims_phys = (results[13] as List<Phys_Claims_Model>);
             claims_final.allowed_phys = (results[14] as List<Allowed_Model>);
             claims_final.member_month_phys = (results[15] as List<Member_Month_Model>);
             claims_final.allowed_pmpm_phys = (results[16] as List<Allowed_PMPM_Model>);

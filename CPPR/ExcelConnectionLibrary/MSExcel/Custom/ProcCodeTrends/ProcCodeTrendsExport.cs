@@ -123,7 +123,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
             setterStatus(sbStatus.ToString());
             //ADD CUSTOM!!!!!!
-            generateClaimsWorksheet<Claims_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.claims_op);
+            generateClaimsWorksheet<Op_Claims_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.claims_op, false);
 
             ////Claims END
             ////Claims END
@@ -138,7 +138,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
             setterStatus(sbStatus.ToString());
             //ADD CUSTOM!!!!!!
-            generateClaimsWorksheet<Claims_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.claims_phys);
+            generateClaimsWorksheet<Phys_Claims_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.claims_phys, true);
 
             ////Claims END
             ////Claims END
@@ -417,6 +417,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             range.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
             range.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
             range.Style.Font.SetBold(true);
+            wsSource.Cell("C1").CreateComment().AddText("Add Comments Here!!!");
 
             //ADD MAIN HEADER 'Trend' ROW
             rowCnt = 1;
@@ -579,7 +580,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
 
         }
 
-        private static void generateClaimsWorksheet<T>(ref XLWorkbook wb, string header, string bgcolor, List<YearQuarter_Model> year_quarter, List<T> data_list, string note = null, string display = null)
+        private static void generateClaimsWorksheet<T>(ref XLWorkbook wb, string header, string bgcolor, List<YearQuarter_Model> year_quarter, List<T> data_list, bool is_phy, string note = null, string display = null)
         {
 
 
@@ -601,9 +602,12 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
 
             List<string> claims = new List<string>();
             claims.Add("Total");
-            claims.Add("Facility");
-            claims.Add("Physician");
+
             claims.Add("Other");
+
+            claims.Add(is_phy ? "Physician" : "Facility");
+  
+
 
 
             colCnt = 0;

@@ -1,0 +1,24 @@
+MHP
+Premium Designation
+EDC 
+Proc Codes
+
+
+------------------------------
+
+Remove Phy Claims/OP Claims blanks
+
+OP Utilization decimal missing 
+EI
+Minnesota 
+17311
+17312
+17313
+17314
+17315
+
+Add footnotes
+
+
+
+

@@ -10,10 +10,14 @@ public class CLM_OP_Report_Model
 
     public List<YearQuarter_Model> year_quarter_op { get; set; }
 
+
+
     public List<Events_Model> events_op { get; set; }
+
+
     public List<Unique_Individual_Model> unique_individual_op { get; set; }
 
-    public List<Claims_Model> claims_op { get; set; }
+    public List<Op_Claims_Model> claims_op { get; set; }
 
     public List<Allowed_Model> allowed_op { get; set; }
 
@@ -34,7 +38,7 @@ public class CLM_OP_Report_Model
     public List<Events_Model> events_phys { get; set; }
     public List<Unique_Individual_Model> unique_individual_phys { get; set; }
 
-    public List<Claims_Model> claims_phys { get; set; }
+    public List<Phys_Claims_Model> claims_phys { get; set; }
 
     public List<Allowed_Model> allowed_phys { get; set; }
 
@@ -48,6 +52,47 @@ public class CLM_OP_Report_Model
     public List<Unit_Cost1_Model> unit_cost1_phys { get; set; }
 
     public List<Unit_Cost2_Model> unit_cost2_phys { get; set; }
+
+
+
+
+
+    public string member_month_comment { get; set; }
+
+    public string events_op_comment { get; set; }
+
+
+    public string unique_individual_op_comment { get; set; }
+
+    public string claims_op_comment { get; set; }
+
+    public string allowed_op_comment { get; set; }
+
+    public string allowed_pmpm_op_comment { get; set; }
+
+
+    public string utilization000_op_comment { get; set; }
+
+    public string unit_cost1_op_comment { get; set; }
+
+    public string unit_cost2_op_comment { get; set; }
+
+    public string year_quarter_phys_comment { get; set; }
+
+    public string events_phys_comment { get; set; }
+    public string unique_individual_phys_comment { get; set; }
+
+    public string claims_phys_comment { get; set; }
+
+    public string allowed_phys_comment { get; set; }
+
+    public string allowed_pmpm_phys_comment { get; set; }
+
+    public string utilization000_phys_comment { get; set; }
+
+    public string unit_cost1_phys_comment { get; set; }
+
+    public string unit_cost2_phys_comment { get; set; }
 
 
 }
