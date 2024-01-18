@@ -433,6 +433,18 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
                 report_results.events_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Events").Comment;
                 report_results.claims_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Claims").Comment;
                 report_results.claims_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Claims").Comment;
+                report_results.allowed_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Allowed Amount").Comment;
+                report_results.allowed_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Allowed Amount").Comment;
+                report_results.allowed_pmpm_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Allowed Amount PMPM").Comment;
+                report_results.allowed_pmpm_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Allowed Amount PMPM").Comment;
+                report_results.utilization000_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Utilization/000").Comment;
+                report_results.utilization000_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Utilization/000").Comment;
+                report_results.events_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Event Cost").Comment;
+                report_results.events_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Event Cost").Comment;
+                report_results.unit_cost_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Adj Unit Cost").Comment;
+                report_results.unit_cost_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Adj Unit Cost").Comment;
+
+
             }
 
 

@@ -73,9 +73,8 @@ public class CLM_OP_Report_Model
 
     public string utilization000_op_comment { get; set; }
 
-    public string unit_cost1_op_comment { get; set; }
+    public string unit_cost_op_comment { get; set; }
 
-    public string unit_cost2_op_comment { get; set; }
 
     public string year_quarter_phys_comment { get; set; }
 
@@ -90,9 +89,9 @@ public class CLM_OP_Report_Model
 
     public string utilization000_phys_comment { get; set; }
 
-    public string unit_cost1_phys_comment { get; set; }
+    public string unit_cost_phys_comment { get; set; }
 
-    public string unit_cost2_phys_comment { get; set; }
+
 
 
 }
