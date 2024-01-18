@@ -27,7 +27,7 @@ namespace VCPortal_WPF_ViewModel.Projects.ProcCodeTrends;
 public partial class ProcCodeTrendsViewModel : ObservableObject
 {
     private readonly IExcelFunctions _excelFunctions;
-    private readonly IMHPUniverseConfig ? _config;
+    private readonly IProcCodeTrendConfig? _config;
     private readonly Serilog.ILogger _logger;
     private StringBuilder _sbStatus;
     private List<MM_FINAL_Model> _mM_Final_Filters { get; set; }
@@ -425,6 +425,14 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
                 report_results = result;
 
+
+
+                report_results.unique_individual_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Unique Individual").Comment;
+                report_results.unique_individual_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Unique Individual").Comment;
+                report_results.events_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Events").Comment;
+                report_results.events_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Events").Comment;
+                report_results.claims_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Claims").Comment;
+                report_results.claims_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Claims").Comment;
             }
 
 
@@ -607,30 +615,37 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
 
 
-    private IMHPUniverseConfig prepareConfig(IConfiguration config)
+    private IProcCodeTrendConfig prepareConfig(IConfiguration config)
     {
 
         var project = "PCT";
         var section = "Projects";
 
         ///EXTRACT IConfiguration INTO ETGFactSymmetryConfig 
-        var cfg = config.GetSection(section).Get<List<MHPUniverseConfig>>();
-        IMHPUniverseConfig mhp = new MHPUniverseConfig();
+        var cfg = config.GetSection(section).Get<List<ProcCodeTrendConfig>>();
+        IProcCodeTrendConfig pct = new ProcCodeTrendConfig();
         if (cfg == null)
         {
             return null;
             //throw new OperationCanceledException();
         }
-        mhp = cfg.Find(p => p.Name == project);
-        if (mhp != null)
+        pct = cfg.Find(p => p.Name == project);
+        if (pct != null)
         {
             //Microsoft.Extensions.Configuration.Binder
             var e = config.GetSection(section + ":" + project + ":APIS").Get<APIConfig[]>();
             if (e != null)
             {
-                mhp.APIS = e.ToList();
+                pct.APIS = e.ToList();
+            }
+
+
+            var c = config.GetSection(section + ":" + project + ":Comments").Get<CommentsConfig[]>();
+            if (c != null)
+            {
+                pct.Comments = c.ToList();
             }
         }
-        return mhp;
+        return pct;
     }
 }
