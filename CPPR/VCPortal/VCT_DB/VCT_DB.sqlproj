@@ -84,6 +84,7 @@
     <Folder Include="pct" />
     <Folder Include="edcadhoc" />
     <Folder Include="pct\Tables" />
+    <Folder Include="edcadhoc\Tables" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\Views\vw_GetChemoTracking.sql" />
@@ -184,6 +185,7 @@
     <Build Include="etgsymm\Views\VW_ETG_Symmetry_CNFG_ETG_NRX_COMPARE.sql" />
     <Build Include="pct\Tables\PROC_CD.sql" />
     <Build Include="etgsymm\Views\VW_ETG_Latest_Model.sql" />
+    <Build Include="edcadhoc\Tables\Tin_Mpin_Prov_Filters.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Cd_GetAll.sql" />

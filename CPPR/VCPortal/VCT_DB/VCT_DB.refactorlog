@@ -91,4 +91,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="ETG_BAS_CLSS_NBR" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="e4434aad-eb1b-4021-a301-c5e68fac7cbf" ChangeDateTime="01/19/2024 20:00:31">
+    <Property Name="ElementName" Value="[edcadhoc].[Tin_Mpin_Prov_Filters].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[edcadhoc].[Tin_Mpin_Prov_Filters]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="TIN" />
+  </Operation>
 </Operations>

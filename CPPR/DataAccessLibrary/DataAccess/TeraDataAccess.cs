@@ -45,7 +45,7 @@ public class TeraDataAccess : IRelationalDataAccess
         using (IDbConnection connection = new TdConnection(connectionString))
         {
 
-            var cmd = new CommandDefinition(sql, commandTimeout: 20000);
+            var cmd = new CommandDefinition(sql, commandTimeout: 2000000);
             var result = await connection.QueryAsync<T>(cmd);
             return result;
 

@@ -27,6 +27,7 @@ using VCPortal_Models.Models.ETGFactSymmetry.Configs;
 using VCPortal_Models.Models.ETGFactSymmetry.Dataloads;
 using VCPortal_Models.Models.PEG;
 using VCPortal_Models.Models.Shared;
+using VCPortal_Models.Parameters.EDCAdhoc;
 using VCPortal_Models.Parameters.MHP;
 
 namespace ConsoleLibraryTesting
@@ -50,6 +51,9 @@ namespace ConsoleLibraryTesting
 
         public string ConnectionStringUHN { get; set; }
 
+
+        public string ConnectionStringNDAR { get; set; }
+        public string ConnectionStringGalaxy { get; set; }
 
         public string TableMHP { get; set; }
         public string ConnectionStringTD { get; set; }
@@ -1459,6 +1463,60 @@ namespace ConsoleLibraryTesting
 
 
 
+
+
+        //EBM SOURCE AUTOMATION
+        public async Task getEDCSourceDataAsync()
+        {
+    
+
+            IRelationalDataAccess db_sql = new SqlDataAccess();
+            IRelationalDataAccess db_td = new TeraDataAccess();
+
+
+            Console.WriteLine("Getting ProviderSys from GALAXY...");
+            //2 GET MPIN PROV_SYS_ID FROM GALAXY
+            string strSQL = "SELECT DISTINCT MPIN,PROV_SYS_ID FROM GALAXY.PROVIDER where MPIN <> 0 and Prov_sys_id > 999999999";
+            var mp = await db_td.LoadData<Provider_MPIN>(connectionString: ConnectionStringGalaxy, strSQL);
+
+
+
+            Console.WriteLine("Getting MPIN TIN from NDAR...");
+            //1 GET MPIN TIN FROM NDAR
+            strSQL = "select DISTINCT TaxID as TIN,CorpOwnerName as TIN_Name,mpin as MPIN,FullName as MPIN_Name from dbo.NationalDataAggregation where CorpOwnerID<>0 and ProvType in ('O') and MPIN is not null;";
+            var tmp = await db_sql.LoadData<Tin_Mpin_Prov>(connectionString: ConnectionStringNDAR, strSQL);
+
+
+            Console.WriteLine("MERGING Results...");
+            //3 MERGE RESULTS
+            var tmp_final = from n in tmp
+                         join p in mp on n.MPIN equals p.MPIN into n_p_join
+                         from np in n_p_join.DefaultIfEmpty()
+                         select new Tin_Mpin_Prov
+                         {
+                             TIN = n.TIN,
+                             MPIN = n.MPIN,
+                             PROV_SYS_ID = (np == null ? null :np.PROV_SYS_ID),
+                             TIN_Name = n.TIN_Name,
+                             MPIN_Name = n.MPIN_Name,
+           
+       
+                         };
+
+            Console.WriteLine("Loading to DB...");
+            //4 SAVE FINAL TO DB
+            string[] columns = typeof(Tin_Mpin_Prov).GetProperties().Select(p => p.Name).ToArray();
+            await db_sql.BulkSave<Tin_Mpin_Prov>(connectionString: ConnectionStringVC, "edcadhoc.Tin_Mpin_Prov_Filters", tmp_final, columns, truncate: true);
+
+
+
+        }
+
+
+
+
+
+
         public async Task parseCSV(string filepath,  string fileNamePrefix ="csvg_", string filetype = "csv",char chrDelimiter = '|', string schema = "stg", SearchOption so = SearchOption.TopDirectoryOnly)
         {
             List<string>? strLstColumnNames = null;
@@ -1549,6 +1607,9 @@ namespace ConsoleLibraryTesting
 
 
 
+
+
+
         //PPACA_TAT
         public async Task PPACA_TAT_Email()
         {
@@ -1620,6 +1681,13 @@ namespace ConsoleLibraryTesting
 
             await SharedFunctions.EmailAsync(recipients, from, subject, body, cc, manual,  System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
         }
+
+
+
+
+
+
+
 
 
 
