@@ -42,138 +42,6 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             string columnLetter;
             string columnLetterLast;
             string bgcolor = "#D9D9D9";
-     
-
-
-
-            //CLM OP Unique Individual START
-            //CLM OP Unique Individual START
-            //CLM OP Unique Individual START
-            header = "OP Unique Individual";
-
-
-            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
-            setterStatus(sbStatus.ToString());
-       
-            generateGenericWorksheet<Unique_Individual_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.unique_individual_op, clm_op_results.unique_individual_op_comment);
-
-            //CLM OP Unique Individual END
-            //CLM OP Unique Individual END
-            //CLM OP Unique Individual END
-
-
-
-            //CLM PHYS Unique Individual START
-            //CLM PHYS Unique Individual START
-            //CLM PHYS Unique Individual START
-            header = "PHYS Unique Individual";
-
-
-            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
-            setterStatus(sbStatus.ToString());
-
-            generateGenericWorksheet<Unique_Individual_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.unique_individual_phys, clm_op_results.unique_individual_phys_comment);
-
-            //CLM OP Unique Individual END
-            //CLM OP Unique Individual END
-            //CLM OP Unique Individual END
-
-
-
-            //Events START
-            //Events START
-            //Events START
-            header = "OP Events";
-
-            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
-            setterStatus(sbStatus.ToString());
-
-            generateGenericWorksheet<Events_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.events_op, clm_op_results.events_op_comment);
-
-
-            ////Events END
-            ////Events END
-            ////Events END
-
-
-
-            //Events START
-            //Events START
-            //Events START
-            header = "PHYS Events";
-
-            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
-            setterStatus(sbStatus.ToString());
-
-            generateGenericWorksheet<Events_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.events_phys, clm_op_results.events_phys_comment);
-
-
-            ////Events END
-            ////Events END
-            ////Events END
-
-
-
-
-            //Claims START 
-            //Claims START
-            //Claims START
-            header = "OP Claims";
-
-            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
-            setterStatus(sbStatus.ToString());
-            //ADD CUSTOM!!!!!!
-            generateClaimsWorksheet<Op_Claims_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.claims_op, clm_op_results.claims_op_comment, false);
-
-            ////Claims END
-            ////Claims END
-            ////Claims END
-
-
-            //Claims START 
-            //Claims START
-            //Claims START
-            header = "PHYS Claims";
-
-            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
-            setterStatus(sbStatus.ToString());
-            //ADD CUSTOM!!!!!!
-            generateClaimsWorksheet<Phys_Claims_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.claims_phys, clm_op_results.claims_phys_comment, true);
-
-            ////Claims END
-            ////Claims END
-            ////Claims END
-
-
-            //Allowed Amount START 
-            //Allowed Amount START
-            //Allowed Amount START
-            header = "OP Allowed Amount";
-
-            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
-            setterStatus(sbStatus.ToString());
-
-            generateGenericWorksheet<Allowed_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.allowed_op, clm_op_results.allowed_op_comment, display: "Dollars");
-
-            ////Allowed Amount END
-            ////Allowed Amount END
-            ////Allowed Amount END
- 
-
-             //Allowed Amount START 
-            //Allowed Amount START
-            //Allowed Amount START
-            header = "PHYS Allowed Amount";
-
-            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
-            setterStatus(sbStatus.ToString());
-
-            generateGenericWorksheet<Allowed_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.allowed_phys, clm_op_results.allowed_phys_comment, display: "Dollars");
-
-            ////Allowed Amount END
-            ////Allowed Amount END
-            ////Allowed Amount END
-
 
             //Allowed Amount PMPM START 
             //Allowed Amount PMPM START
@@ -270,7 +138,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             //Unit Cost 2  START 
             //Unit Cost 2 START
             //Unit Cost 2 START
-            header = "OP Adj Unit Cost";
+            header = "OP Unit Cost";
 
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
             setterStatus(sbStatus.ToString());
@@ -280,11 +148,11 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             ////Unit Cost 2 END
             ////Unit Cost 2 END
             ////Unit Cost 2 END
- 
+
             //Unit Cost 2  START 
             //Unit Cost 2 START
             //Unit Cost 2 START
-            header = "PHYS Adj Unit Cost";
+            header = "PHYS Unit Cost";
 
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
             setterStatus(sbStatus.ToString());
@@ -295,6 +163,135 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             ////Unit Cost 2 END
             ////Unit Cost 2 END
 
+
+
+            //CLM OP Unique Individual START
+            //CLM OP Unique Individual START
+            //CLM OP Unique Individual START
+            header = "OP Unique Individual";
+
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+       
+            generateGenericWorksheet<Unique_Individual_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.unique_individual_op, clm_op_results.unique_individual_op_comment, has_trend: false);
+
+            //CLM OP Unique Individual END
+            //CLM OP Unique Individual END
+            //CLM OP Unique Individual END
+
+
+
+            //CLM PHYS Unique Individual START
+            //CLM PHYS Unique Individual START
+            //CLM PHYS Unique Individual START
+            header = "PHYS Unique Individual";
+
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            generateGenericWorksheet<Unique_Individual_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.unique_individual_phys, clm_op_results.unique_individual_phys_comment, has_trend: false);
+
+            //CLM OP Unique Individual END
+            //CLM OP Unique Individual END
+            //CLM OP Unique Individual END
+
+
+
+            //Events START
+            //Events START
+            //Events START
+            header = "OP Events";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            generateGenericWorksheet<Events_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.events_op, clm_op_results.events_op_comment, has_trend: false);
+
+
+            ////Events END
+            ////Events END
+            ////Events END
+
+
+
+            //Events START
+            //Events START
+            //Events START
+            header = "PHYS Events";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            generateGenericWorksheet<Events_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.events_phys, clm_op_results.events_phys_comment, has_trend: false);
+
+
+            ////Events END
+            ////Events END
+            ////Events END
+
+
+
+
+            //Claims START 
+            //Claims START
+            //Claims START
+            header = "OP Claims";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+            //ADD CUSTOM!!!!!!
+            generateClaimsWorksheet<Op_Claims_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.claims_op, clm_op_results.claims_op_comment, false);
+
+            ////Claims END
+            ////Claims END
+            ////Claims END
+
+
+            //Claims START 
+            //Claims START
+            //Claims START
+            header = "PHYS Claims";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+            //ADD CUSTOM!!!!!!
+            generateClaimsWorksheet<Phys_Claims_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.claims_phys, clm_op_results.claims_phys_comment, true);
+
+            ////Claims END
+            ////Claims END
+            ////Claims END
+
+
+            //Allowed Amount START 
+            //Allowed Amount START
+            //Allowed Amount START
+            header = "OP Allowed Amount";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            generateGenericWorksheet<Allowed_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.allowed_op, clm_op_results.allowed_op_comment, display: "Dollars", has_trend: false);
+
+            ////Allowed Amount END
+            ////Allowed Amount END
+            ////Allowed Amount END
+ 
+
+             //Allowed Amount START 
+            //Allowed Amount START
+            //Allowed Amount START
+            header = "PHYS Allowed Amount";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            generateGenericWorksheet<Allowed_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.allowed_phys, clm_op_results.allowed_phys_comment, display: "Dollars", has_trend: false);
+
+            ////Allowed Amount END
+            ////Allowed Amount END
+            ////Allowed Amount END
 
 
 
@@ -336,7 +333,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
         }
 
 
-        private static void generateGenericWorksheet<T>(ref XLWorkbook wb, string header, string bgcolor, List<YearQuarter_Model> year_quarter, List<T> data_list, string comment, string note = null, string display = null)
+        private static void generateGenericWorksheet<T>(ref XLWorkbook wb, string header, string bgcolor, List<YearQuarter_Model> year_quarter, List<T> data_list, string comment, string note = null, string display = null, bool has_trend = true)
         {
 
 
@@ -424,70 +421,75 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             }
             
 
-            //ADD MAIN HEADER 'Trend' ROW
-            rowCnt = 1;
-            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
-            cell = wsSource.Cell(columnLetter + rowCnt);
-            cell.Value = "Trend";
-            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+            if(has_trend)
+            {
+                //ADD MAIN HEADER 'Trend' ROW
+                rowCnt = 1;
+                columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+                cell = wsSource.Cell(columnLetter + rowCnt);
+                cell.Value = "Trend";
+                cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
 
 
-            //COLUMN HEADER ROW
-            rowCnt = 2;
-            //LOOP TREND COLUMN HEADERS
+                //COLUMN HEADER ROW
+                rowCnt = 2;
+                //LOOP TREND COLUMN HEADERS
 
-            var t = year_quarter[0].year.ToString().Substring(2, 2) + "Q" + year_quarter[0].quarter + "/" + year_quarter[4].year.ToString().Substring(2, 2) + "Q" + year_quarter[4].quarter;
-            cell = wsSource.Cell(columnLetter + rowCnt);
-            cell.Value = t;
-            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
-            cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-            cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
-            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
-
-
-            t = year_quarter[1].year.ToString().Substring(2, 2) + "Q" + year_quarter[1].quarter + "/" + year_quarter[5].year.ToString().Substring(2, 2) + "Q" + year_quarter[5].quarter;
-            colCnt++;
-            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
-            cell = wsSource.Cell(columnLetter + rowCnt);
-            cell.Value = t;
-            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
-            cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-            cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
-            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+                var t = year_quarter[0].year.ToString().Substring(2, 2) + "Q" + year_quarter[0].quarter + "/" + year_quarter[4].year.ToString().Substring(2, 2) + "Q" + year_quarter[4].quarter;
+                cell = wsSource.Cell(columnLetter + rowCnt);
+                cell.Value = t;
+                cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+                cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+                SharedExcelFunctions.AddClosedXMLBorders(ref cell);
 
 
-
-            t = year_quarter[2].year.ToString().Substring(2, 2) + "Q" + year_quarter[2].quarter + "/" + year_quarter[6].year.ToString().Substring(2, 2) + "Q" + year_quarter[6].quarter;
-            colCnt++;
-            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
-            cell = wsSource.Cell(columnLetter + rowCnt);
-            cell.Value = t;
-            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
-            cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-            cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
-            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+                t = year_quarter[1].year.ToString().Substring(2, 2) + "Q" + year_quarter[1].quarter + "/" + year_quarter[5].year.ToString().Substring(2, 2) + "Q" + year_quarter[5].quarter;
+                colCnt++;
+                columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+                cell = wsSource.Cell(columnLetter + rowCnt);
+                cell.Value = t;
+                cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+                cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+                SharedExcelFunctions.AddClosedXMLBorders(ref cell);
 
 
 
-            t = year_quarter[3].year.ToString().Substring(2, 2) + "Q" + year_quarter[3].quarter + "/" + year_quarter[7].year.ToString().Substring(2, 2) + "Q" + year_quarter[7].quarter;
-            colCnt++;
-            columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
-            cell = wsSource.Cell(columnLetter + rowCnt);
-            cell.Value = t;
-            cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
-            cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-            cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
-            SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+                t = year_quarter[2].year.ToString().Substring(2, 2) + "Q" + year_quarter[2].quarter + "/" + year_quarter[6].year.ToString().Substring(2, 2) + "Q" + year_quarter[6].quarter;
+                colCnt++;
+                columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+                cell = wsSource.Cell(columnLetter + rowCnt);
+                cell.Value = t;
+                cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+                cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+                SharedExcelFunctions.AddClosedXMLBorders(ref cell);
 
 
-            //MERGE YQ "Trend"
-            range = wsSource.Range(columnLetterLast + "1:" + columnLetter + "1");
-            range.Merge();
-            range.Style.Border.RightBorderColor = XLColor.Black;
-            range.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-            range.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-            range.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
-            range.Style.Font.SetBold(true);
+
+                t = year_quarter[3].year.ToString().Substring(2, 2) + "Q" + year_quarter[3].quarter + "/" + year_quarter[7].year.ToString().Substring(2, 2) + "Q" + year_quarter[7].quarter;
+                colCnt++;
+                columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+                cell = wsSource.Cell(columnLetter + rowCnt);
+                cell.Value = t;
+                cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+                cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+                SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+
+
+                //MERGE YQ "Trend"
+                range = wsSource.Range(columnLetterLast + "1:" + columnLetter + "1");
+                range.Merge();
+                range.Style.Border.RightBorderColor = XLColor.Black;
+                range.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                range.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                range.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+                range.Style.Font.SetBold(true);
+            }
+
+            
 
             //DATA ROW
             rowCnt = 3;
@@ -632,7 +634,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                 }
                 else
                 {
-                    colCnt += 1;
+                    //colCnt += 1;
                 }
 
                 columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
@@ -707,70 +709,70 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                     wsSource.Cell(columnLetterFirst + "1").CreateComment().AddText(comment);
                 }
 
-                //ADD MAIN HEADER 'Trend' ROW
-                rowCnt = 1;
-                columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
-                cell = wsSource.Cell(columnLetter + rowCnt);
-                cell.Value = header.Replace("OP", claim).Replace("PHYS", claim) + " Trend";
-                cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+                ////ADD MAIN HEADER 'Trend' ROW
+                //rowCnt = 1;
+                //columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+                //cell = wsSource.Cell(columnLetter + rowCnt);
+                //cell.Value = header.Replace("OP", claim).Replace("PHYS", claim) + " Trend";
+                //cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
 
 
-                //COLUMN HEADER ROW
-                rowCnt = 2;
-                //LOOP TREND COLUMN HEADERS
+                ////COLUMN HEADER ROW
+                //rowCnt = 2;
+                ////LOOP TREND COLUMN HEADERS
 
-                var t = year_quarter[0].year.ToString().Substring(2, 2) + "Q" + year_quarter[0].quarter + "/" + year_quarter[4].year.ToString().Substring(2, 2) + "Q" + year_quarter[4].quarter;
-                cell = wsSource.Cell(columnLetter + rowCnt);
-                cell.Value = t;
-                cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
-                cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
-                SharedExcelFunctions.AddClosedXMLBorders(ref cell);
-
-
-                t = year_quarter[1].year.ToString().Substring(2, 2) + "Q" + year_quarter[1].quarter + "/" + year_quarter[5].year.ToString().Substring(2, 2) + "Q" + year_quarter[5].quarter;
-                colCnt++;
-                columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
-                cell = wsSource.Cell(columnLetter + rowCnt);
-                cell.Value = t;
-                cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
-                cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
-                SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+                //var t = year_quarter[0].year.ToString().Substring(2, 2) + "Q" + year_quarter[0].quarter + "/" + year_quarter[4].year.ToString().Substring(2, 2) + "Q" + year_quarter[4].quarter;
+                //cell = wsSource.Cell(columnLetter + rowCnt);
+                //cell.Value = t;
+                //cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+                //cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                //cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+                //SharedExcelFunctions.AddClosedXMLBorders(ref cell);
 
 
-
-                t = year_quarter[2].year.ToString().Substring(2, 2) + "Q" + year_quarter[2].quarter + "/" + year_quarter[6].year.ToString().Substring(2, 2) + "Q" + year_quarter[6].quarter;
-                colCnt++;
-                columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
-                cell = wsSource.Cell(columnLetter + rowCnt);
-                cell.Value = t;
-                cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
-                cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
-                SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+                //t = year_quarter[1].year.ToString().Substring(2, 2) + "Q" + year_quarter[1].quarter + "/" + year_quarter[5].year.ToString().Substring(2, 2) + "Q" + year_quarter[5].quarter;
+                //colCnt++;
+                //columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+                //cell = wsSource.Cell(columnLetter + rowCnt);
+                //cell.Value = t;
+                //cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+                //cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                //cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+                //SharedExcelFunctions.AddClosedXMLBorders(ref cell);
 
 
 
-                t = year_quarter[3].year.ToString().Substring(2, 2) + "Q" + year_quarter[3].quarter + "/" + year_quarter[7].year.ToString().Substring(2, 2) + "Q" + year_quarter[7].quarter;
-                colCnt++;
-                columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
-                cell = wsSource.Cell(columnLetter + rowCnt);
-                cell.Value = t;
-                cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
-                cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
-                SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+                //t = year_quarter[2].year.ToString().Substring(2, 2) + "Q" + year_quarter[2].quarter + "/" + year_quarter[6].year.ToString().Substring(2, 2) + "Q" + year_quarter[6].quarter;
+                //colCnt++;
+                //columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+                //cell = wsSource.Cell(columnLetter + rowCnt);
+                //cell.Value = t;
+                //cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+                //cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                //cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+                //SharedExcelFunctions.AddClosedXMLBorders(ref cell);
 
 
-                //MERGE YQ "Trend"
-                range = wsSource.Range(columnLetterLast + "1:" + columnLetter + "1");
-                range.Merge();
-                range.Style.Border.RightBorderColor = XLColor.Black;
-                range.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                range.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
-                range.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
-                range.Style.Font.SetBold(true);
+
+                //t = year_quarter[3].year.ToString().Substring(2, 2) + "Q" + year_quarter[3].quarter + "/" + year_quarter[7].year.ToString().Substring(2, 2) + "Q" + year_quarter[7].quarter;
+                //colCnt++;
+                //columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
+                //cell = wsSource.Cell(columnLetter + rowCnt);
+                //cell.Value = t;
+                //cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
+                //cell.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                //cell.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+                //SharedExcelFunctions.AddClosedXMLBorders(ref cell);
+
+
+                ////MERGE YQ "Trend"
+                //range = wsSource.Range(columnLetterLast + "1:" + columnLetter + "1");
+                //range.Merge();
+                //range.Style.Border.RightBorderColor = XLColor.Black;
+                //range.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                //range.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                //range.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+                //range.Style.Font.SetBold(true);
 
             }
 

@@ -28,12 +28,12 @@ public class Events_Model
 
     public int? Y2Q4_events { get; set; }
 
-    public double? Y1Q1_Y2Q1_trend { get; set; }
+    //public double? Y1Q1_Y2Q1_trend { get; set; }
 
-    public double? Y1Q2_Y2Q2_trend { get; set; }
+    //public double? Y1Q2_Y2Q2_trend { get; set; }
 
-    public double? Y1Q3_Y2Q3_trend { get; set; }
+    //public double? Y1Q3_Y2Q3_trend { get; set; }
 
-    public double? Y1Q4_Y2Q4_trend { get; set; }
+    //public double? Y1Q4_Y2Q4_trend { get; set; }
 
 }
