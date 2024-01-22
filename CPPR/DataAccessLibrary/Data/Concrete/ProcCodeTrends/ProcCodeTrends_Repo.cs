@@ -93,6 +93,8 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 
             string filters = getFilterString(pct_param);
             StringBuilder sbSQL = new StringBuilder();
+            StringBuilder sbFirstHalf  = new StringBuilder();
+            StringBuilder sbSecondHalf= new StringBuilder();
 
 
             string year = "";
@@ -108,7 +110,21 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                 //CREATE RANK TMP TABLE
                 //CREATE RANK TMP TABLE
                 //CREATE RANK TMP TABLE
-                sbSQL.Append("IF OBJECT_ID('tempdb..#Rank_"+ cat + "') IS NOT NULL DROP TABLE #Rank_"+ cat + " SELECT t.px, t.px_desc, t.Y1Q1_allw_amt, t.Y2Q1_allw_amt, (t.Y2Q1_allw_amt - t.Y1Q1_allw_amt) as Y1Q1_Y2Q1_diff INTO #Rank_"+ cat + " FROM ( select px ,px_desc ,sum(case when year = " + pct_param.DateSpanList[0].year + " and quarter = " + pct_param.DateSpanList[0].quarter + " then allw_amt end) as Y1Q1_allw_amt ,sum(case when year = " + pct_param.DateSpanList[4].year + " and quarter = " + pct_param.DateSpanList[4].quarter + " then allw_amt end) as Y2Q1_allw_amt from pct.CLM_"+cat+" a where 1 = 1 " + filters + " group by px, px_desc ) t; ");
+                //sbSQL.Append("IF OBJECT_ID('tempdb..#Rank_"+ cat + "') IS NOT NULL DROP TABLE #Rank_"+ cat + " SELECT t.px, t.px_desc, t.Y1Q1_allw_amt, t.Y2Q1_allw_amt, (t.Y2Q1_allw_amt - t.Y1Q1_allw_amt) as Y1Q1_Y2Q1_diff INTO #Rank_"+ cat + " FROM ( select px ,px_desc ,sum(case when year = " + pct_param.DateSpanList[0].year + " and quarter = " + pct_param.DateSpanList[0].quarter + " then allw_amt end) as Y1Q1_allw_amt ,sum(case when year = " + pct_param.DateSpanList[4].year + " and quarter = " + pct_param.DateSpanList[4].quarter + " then allw_amt end) as Y2Q1_allw_amt from pct.CLM_"+cat+" a where 1 = 1 " + filters + " group by px, px_desc ) t; ");
+
+                for(int i = 0; i < pct_param.DateSpanList.Count; i++)
+                {
+                    if (i < (pct_param.DateSpanList.Count + 1)/2)
+                    {
+                        sbFirstHalf.Append("(year = " + pct_param.DateSpanList[i].year + " and quarter = " + pct_param.DateSpanList[i].quarter + ") OR " );
+                    }
+                    else
+                    {
+                        sbSecondHalf.Append("(year = " + pct_param.DateSpanList[i].year + " and quarter = " + pct_param.DateSpanList[i].quarter + ") OR ");
+                    }
+                }
+                sbSQL.Append("IF OBJECT_ID('tempdb..#Rank_" + cat + "') IS NOT NULL DROP TABLE #Rank_" + cat + " SELECT t.px, t.px_desc, t.Y1Q1_allw_amt, t.Y2Q1_allw_amt, (t.Y2Q1_allw_amt - t.Y1Q1_allw_amt) as Y1Q1_Y2Q1_diff INTO #Rank_" + cat + " FROM ( select px ,px_desc ,sum(case when " + sbFirstHalf.ToString().TrimEnd('O','R',' ') + " then allw_amt end) as Y1Q1_allw_amt ,sum(case when " + sbSecondHalf.ToString().TrimEnd('O', 'R', ' ') + " then allw_amt end) as Y2Q1_allw_amt from pct.CLM_" + cat + " a where 1 = 1 " + filters + " group by px, px_desc ) t; ");
+
 
 
                 //CREATE MemberMonth TMP TABLE START

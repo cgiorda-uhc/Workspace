@@ -98,4 +98,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="TIN" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="2ee8b50e-9297-4aa8-af1c-51bd0b9bfaf0" ChangeDateTime="01/19/2024 23:06:57">
+    <Property Name="ElementName" Value="[edcadhoc].[Tin_Mpin_Prov_Filters].[Prov_Sys_Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[edcadhoc].[Tin_Mpin_Prov_Filters]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="PROV_SYS_ID" />
+  </Operation>
 </Operations>
