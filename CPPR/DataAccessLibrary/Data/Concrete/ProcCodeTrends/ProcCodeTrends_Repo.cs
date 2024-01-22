@@ -87,6 +87,9 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
         public async Task<CLM_OP_Report_Model> GetMainPCTReport_Async(ProcCodeTrends_Parameters pct_param,  CancellationToken token)
         {
 
+            bool has_proc_filter = (string.IsNullOrEmpty(pct_param.px) ? false : true);
+
+
             List<string> category = new List<string>();
             category.Add("OP");
             category.Add("PHYS");
@@ -202,7 +205,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                 //unique individual start
                 //unique individual start
                 //unique individual start
-                var sql = generateGenericSQL("indv", "indv", pct_param.RowCount, filters, pct_param.DateSpanList, cat);
+                var sql = generateGenericSQL("indv", "indv", pct_param.RowCount, filters, pct_param.DateSpanList, cat, has_proc_filter);
                 sbSQL.Append(sql);
                 //unique individual end
                 //unique individual end
@@ -213,7 +216,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                 //events start
                 //events start
                 //events start
-                sql = generateGenericSQL("evnts", "events", pct_param.RowCount, filters, pct_param.DateSpanList, cat);
+                sql = generateGenericSQL("evnts", "events", pct_param.RowCount, filters, pct_param.DateSpanList, cat, has_proc_filter);
                 sbSQL.Append(sql);
                 //events end
                 //events end
@@ -307,7 +310,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 
                 }
 
-                sbSQL.Append(",b.Y1Q1_Y2Q1_diff as rank from pct.CLM_"+cat+" a left join #Rank_"+ cat + " b on a.px = b.px and a.px_desc = b.px_desc where 1 = 1 " + filters + " group by b.Y1Q1_Y2Q1_diff,a.px, a.px_desc ) t order by t.rank DESC; ");
+                sbSQL.Append(",b.Y1Q1_Y2Q1_diff as rank from pct.CLM_"+cat+" a left join #Rank_"+ cat + " b on a.px = b.px and a.px_desc = b.px_desc where 1 = 1 " + filters + " group by b.Y1Q1_Y2Q1_diff,a.px, a.px_desc ) t order by "+ (has_proc_filter ? "t.px" : "t.rank DESC") +"; ");
                 //claims end
                 //claims end
                 //claims end
@@ -316,7 +319,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                 //allowed start
                 //allowed start
                 //allowed start
-                sql = generateGenericSQL("allw_amt", "allw_amt", pct_param.RowCount, filters, pct_param.DateSpanList, cat);
+                sql = generateGenericSQL("allw_amt", "allw_amt", pct_param.RowCount, filters, pct_param.DateSpanList, cat, has_proc_filter);
                 sbSQL.Append(sql);
                 //allowed end
                 //allowed end
@@ -336,7 +339,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                 //Allowed PMPM start
                 //Allowed PMPM start 
 
-                sql = generateGenericMemberMonthSQL("allw_amt", "allw_PMPM", pct_param.RowCount, filters, pct_param.DateSpanList, cat);
+                sql = generateGenericMemberMonthSQL("allw_amt", "allw_PMPM", pct_param.RowCount, filters, pct_param.DateSpanList, cat, has_proc_filter);
                 sbSQL.Append(sql);
 
                 //Allowed PMPM end
@@ -349,7 +352,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                 ////Utilization/000 start
                 ////Utilization/000 start 
 
-                sql = generateGenericMemberMonthSQL("adj_srv_uni", "util000", pct_param.RowCount, filters, pct_param.DateSpanList, cat, round: "1", denominator: "12000");
+                sql = generateGenericMemberMonthSQL("adj_srv_uni", "util000", pct_param.RowCount, filters, pct_param.DateSpanList, cat, has_proc_filter, round: "1", denominator: "12000");
                 sbSQL.Append(sql);
 
                 ////Utilization/000 end
@@ -423,7 +426,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 
                 sbSQL.Append("from pct.CLM_"+cat+" where 1 = 1 " + filters.Replace("a.", "") + " group by px, px_desc ) t   ");
                 sbSQL.Append("left join #Rank_"+ cat + " y   on t.px = y.px and t.px_desc = y.px_desc ) t1  ");
-                sbSQL.Append("order by t1.rank DESC; ");
+                sbSQL.Append("order by "+ (has_proc_filter ? "t1.px" : "t1.rank DESC") +"; ");
                 //Unit Cost 1 end
                 //Unit Cost 1 end
                 //Unit Cost 1 end
@@ -500,7 +503,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 
                 sbSQL.Append("from pct.CLM_"+cat+" where 1 = 1 " + filters.Replace("a.", "") + " group by px, px_desc ) t   ");
                 sbSQL.Append("left join #Rank_"+ cat + " y   on t.px = y.px and t.px_desc = y.px_desc ) t1  ");
-                sbSQL.Append("order by t1.rank DESC; ");
+                sbSQL.Append("order by "+ (has_proc_filter ? "t1.px" : "t1.rank DESC") +"; ");
                 //Unit Cost 2 end
                 //Unit Cost 2 end
                 //Unit Cost 2 end
@@ -541,9 +544,8 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
         }
 
 
-        private string generateGenericSQL(string columnName, string displayName, int RowCnt, string filters, List<DateSpan_Model> DateSpanList, string cat )
+        private string generateGenericSQL(string columnName, string displayName, int RowCnt, string filters, List<DateSpan_Model> DateSpanList, string cat, bool has_proc_filter)
         {
-
 
             string year = "";
             string quarter = "";
@@ -597,14 +599,14 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                 sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then "+ columnName + " end) as Y" + year + "Q" + quarter + "_" + displayName);
             }
 
-            sbSQL.Append(",b.Y1Q1_Y2Q1_diff as rank from pct.CLM_"+cat+" a left join #Rank_"+ cat + " b on a.px = b.px and a.px_desc = b.px_desc where 1 = 1 " + filters + " group by b.Y1Q1_Y2Q1_diff,a.px, a.px_desc ) t order by t.rank DESC; ");
+            sbSQL.Append(",b.Y1Q1_Y2Q1_diff as rank from pct.CLM_"+cat+" a left join #Rank_"+ cat + " b on a.px = b.px and a.px_desc = b.px_desc where 1 = 1 " + filters + " group by b.Y1Q1_Y2Q1_diff,a.px, a.px_desc ) t order by "+ (has_proc_filter ? "t.px" : "t.rank DESC") +"; ");
 
 
             return sbSQL.ToString();
         }
 
 
-        private string generateGenericMemberMonthSQL(string columnName, string displayName, int RowCnt, string filters, List<DateSpan_Model> DateSpanList, string cat, string round = "2", string denominator = null)
+        private string generateGenericMemberMonthSQL(string columnName, string displayName, int RowCnt, string filters, List<DateSpan_Model> DateSpanList, string cat, bool has_proc_filter, string round = "2", string denominator = null)
         {
 
 
@@ -671,7 +673,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 
             sbSQL.Append("from pct.CLM_"+cat+" where 1 = 1 " + filters.Replace("a.", "") + " group by px, px_desc ) a ) x  ");
             sbSQL.Append("left join #Rank_"+ cat + " y   on x.px = y.px and x.px_desc = y.px_desc  ");
-            sbSQL.Append("order by y.Y1Q1_Y2Q1_diff DESC; ");
+            sbSQL.Append("order by "+ (has_proc_filter ? "x.px" : "y.Y1Q1_Y2Q1_diff DESC") +"; ");
 
 
             return sbSQL.ToString();

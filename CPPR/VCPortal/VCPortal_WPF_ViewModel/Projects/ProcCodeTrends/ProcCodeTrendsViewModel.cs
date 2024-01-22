@@ -9,6 +9,7 @@ using SharedFunctionsLibrary;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
 
@@ -329,161 +330,213 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
         ProcCodeTrends_Parameters pc_param = new ProcCodeTrends_Parameters();
 
+        List<string> lob_list = new List<string>();
+        List<string> file_list = new List<string>();
         try
         {
-            
-            if (!string.IsNullOrEmpty(parameters[0] + ""))
+            if(!string.IsNullOrEmpty(parameters[0] + ""))
             {
-                pc_param.LOB = "'" + String.Join(",", parameters[0].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-            }
-
-            if (!string.IsNullOrEmpty(parameters[1] + ""))
-            {
-                pc_param.Region = "'" + String.Join(",", parameters[1].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-            }
-
-            if (!string.IsNullOrEmpty(parameters[2] + ""))
-            {
-                pc_param.mapping_state = "'" + String.Join(",", parameters[2].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-            }
-
-            if (!string.IsNullOrEmpty(parameters[3] + ""))
-            {
-                pc_param.PRDCT_LVL_1_NM = "'" + String.Join(",", parameters[3].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-            }
-
-            if (!string.IsNullOrEmpty(parameters[4] + ""))
-            {
-                pc_param.CS_TADM_PRDCT_MAP = "'" + String.Join(",", parameters[4].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-            }
-
-            if (!string.IsNullOrEmpty(parameters[5] + ""))
-            {
-                pc_param.HLTH_PLN_FUND_DESC = "'" + String.Join(",", parameters[5].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-            }
-
-            if (!string.IsNullOrEmpty(parameters[6] + ""))
-            {
-                pc_param.HCE_LEG_ENTY_ROLLUP_DESC = "'" + String.Join(",", parameters[6].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-            }
-
-            if (!string.IsNullOrEmpty(parameters[7] + ""))
-            {
-                pc_param.SRC_SYS_GRP_DESC = "'" + String.Join(",", parameters[7].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-            }
-
-            if (!string.IsNullOrEmpty(parameters[8] + ""))
-            {
-                pc_param.CS_DUAL_IND = "'" + String.Join(",", parameters[8].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-            }
-
-            if (!string.IsNullOrEmpty(parameters[9] + ""))
-            {
-                pc_param.MR_DUAL_IND = "'" + String.Join(",", parameters[9].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
-            }
-
-            System.Collections.IList items = (System.Collections.IList)parameters[10];
-            StringBuilder sb = new StringBuilder();
-            foreach (var i in items)
-            {
-                sb.Append("'" + i.ToString().Split('-')[0].Trim() + "',");
-            }
-            if (sb.Length > 0)
-            {
-                pc_param.px = sb.ToString().TrimEnd(',');
-            }
-
-            pc_param.RowCount = _topRows;
-
-
-            pc_param.DateSpanList = _date_span;
-
-
-
-            _sbStatus.Append("--Retreiving ProcCodeTrends claims phys data from Database" + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
-            CLM_OP_Report_Model report_results;
-            var api = _config.APIS.Where(x => x.Name == "PCT_MainReport").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
-            var response = await WebAPIConsume.PostCall<ProcCodeTrends_Parameters>(api.Url, pc_param);
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-
-                UserMessageViewModel.IsError = true;
-                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("ProcCodeTrends.GenerateReport threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-                return;
+                var lst = parameters[0].ToString().Replace("--All--,", "").Split(',');
+                foreach(var l in lst)
+                {
+                    lob_list.Add(l);
+                }
             }
             else
             {
-
-                var reponseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<CLM_OP_Report_Model>(reponseStream, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                report_results = result;
-
-
-
-                report_results.unique_individual_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Unique Individual").Comment;
-                report_results.unique_individual_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Unique Individual").Comment;
-                report_results.events_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Events").Comment;
-                report_results.events_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Events").Comment;
-                report_results.claims_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Claims").Comment;
-                report_results.claims_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Claims").Comment;
-                report_results.allowed_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Allowed Amount").Comment;
-                report_results.allowed_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Allowed Amount").Comment;
-                report_results.allowed_pmpm_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Allowed Amount PMPM").Comment;
-                report_results.allowed_pmpm_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Allowed Amount PMPM").Comment;
-                report_results.utilization000_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Utilization/000").Comment;
-                report_results.utilization000_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Utilization/000").Comment;
-                report_results.events_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Event Cost").Comment;
-                report_results.events_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Event Cost").Comment;
-                report_results.unit_cost_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Unit Cost").Comment;
-                report_results.unit_cost_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Unit Cost").Comment;
-
-
+                lob_list.Add("CS");
+                lob_list.Add("EI");
+                lob_list.Add("MR");
             }
 
-
-
-            CancellationTokenSource cancellationToken;
-            cancellationToken = new CancellationTokenSource();
-            var bytes = await ProcCodeTrendsExport.ExportProcDataToExcel(report_results,  () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
-
-            var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\PC_Trend_CLM_OP_PHYS_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
-
-
-            _sbStatus.Append("--Saving Excel here: " + file + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
-
-            if (File.Exists(file))
-                File.Delete(file);
-
-            await File.WriteAllBytesAsync(file, bytes);
-
-
-            _sbStatus.Append("--Opening Excel" + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
-
-            var p = new Process();
-            p.StartInfo = new ProcessStartInfo(file)
+            foreach (var lob  in lob_list)
             {
-                UseShellExecute = true
-            };
-            p.Start();
+                //if (!string.IsNullOrEmpty(parameters[0] + ""))
+                //{
+                //    pc_param.LOB = "'" + String.Join(",", parameters[0].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+                //}
+
+                 pc_param.LOB = "'" + lob + "'";
+               
 
 
-            _sbStatus.Append("--Process completed!" + Environment.NewLine + Environment.NewLine + Environment.NewLine);
-            _sbStatus.Append("--Ready" + Environment.NewLine);
+                if (!string.IsNullOrEmpty(parameters[1] + ""))
+                {
+                    pc_param.Region = "'" + String.Join(",", parameters[1].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+                }
+
+                if (!string.IsNullOrEmpty(parameters[2] + ""))
+                {
+                    pc_param.mapping_state = "'" + String.Join(",", parameters[2].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+                }
+
+                if (!string.IsNullOrEmpty(parameters[3] + ""))
+                {
+                    pc_param.PRDCT_LVL_1_NM = "'" + String.Join(",", parameters[3].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+                }
+
+                if (!string.IsNullOrEmpty(parameters[4] + ""))
+                {
+                    pc_param.CS_TADM_PRDCT_MAP = "'" + String.Join(",", parameters[4].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+                }
+
+                if (!string.IsNullOrEmpty(parameters[5] + ""))
+                {
+                    pc_param.HLTH_PLN_FUND_DESC = "'" + String.Join(",", parameters[5].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+                }
+
+                if (!string.IsNullOrEmpty(parameters[6] + ""))
+                {
+                    pc_param.HCE_LEG_ENTY_ROLLUP_DESC = "'" + String.Join(",", parameters[6].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+                }
+
+                if (!string.IsNullOrEmpty(parameters[7] + ""))
+                {
+                    pc_param.SRC_SYS_GRP_DESC = "'" + String.Join(",", parameters[7].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+                }
+
+                if (!string.IsNullOrEmpty(parameters[8] + ""))
+                {
+                    pc_param.CS_DUAL_IND = "'" + String.Join(",", parameters[8].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+                }
+
+                if (!string.IsNullOrEmpty(parameters[9] + ""))
+                {
+                    pc_param.MR_DUAL_IND = "'" + String.Join(",", parameters[9].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
+                }
+
+                System.Collections.IList items = (System.Collections.IList)parameters[10];
+                StringBuilder sb = new StringBuilder();
+                foreach (var i in items)
+                {
+                    sb.Append("'" + i.ToString().Split('-')[0].Trim() + "',");
+                }
+                if (sb.Length > 0)
+                {
+                    pc_param.px = sb.ToString().TrimEnd(',');
+                }
+
+                pc_param.RowCount = _topRows;
+
+
+                pc_param.DateSpanList = _date_span;
+
+
+
+                _sbStatus.Append("--Retreiving ProcCodeTrends "+lob+" claims op/phys data from Database" + Environment.NewLine);
+                ProgressMessageViewModel.Message = _sbStatus.ToString();
+                CLM_OP_Report_Model report_results;
+                var api = _config.APIS.Where(x => x.Name == "PCT_MainReport").FirstOrDefault();
+                WebAPIConsume.BaseURI = api.BaseUrl;
+                var response = await WebAPIConsume.PostCall<ProcCodeTrends_Parameters>(api.Url, pc_param);
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+
+                    UserMessageViewModel.IsError = true;
+                    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                    _logger.Error("ProcCodeTrends.GenerateReport threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+                    return;
+                }
+                else
+                {
+
+                    var reponseStream = await response.Content.ReadAsStreamAsync();
+                    var result = await JsonSerializer.DeserializeAsync<CLM_OP_Report_Model>(reponseStream, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+                    report_results = result;
+
+
+
+                    report_results.unique_individual_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Unique Individual").Comment;
+                    report_results.unique_individual_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Unique Individual").Comment;
+                    report_results.events_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Events").Comment;
+                    report_results.events_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Events").Comment;
+                    report_results.claims_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Claims").Comment;
+                    report_results.claims_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Claims").Comment;
+                    report_results.allowed_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Allowed Amount").Comment;
+                    report_results.allowed_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Allowed Amount").Comment;
+                    report_results.allowed_pmpm_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Allowed Amount PMPM").Comment;
+                    report_results.allowed_pmpm_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Allowed Amount PMPM").Comment;
+                    report_results.utilization000_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Utilization/000").Comment;
+                    report_results.utilization000_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Utilization/000").Comment;
+                    report_results.events_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Event Cost").Comment;
+                    report_results.events_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Event Cost").Comment;
+                    report_results.unit_cost_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Unit Cost").Comment;
+                    report_results.unit_cost_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Unit Cost").Comment;
+
+
+                }
+
+
+
+                CancellationTokenSource cancellationToken;
+                cancellationToken = new CancellationTokenSource();
+                var bytes = await ProcCodeTrendsExport.ExportProcDataToExcel(report_results, () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
+
+                var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\PC_Trend_"+lob+"_CLM_OP_PHYS_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
+
+                file_list.Add(file);
+
+                //_sbStatus.Append("--Saving Excel here: " + file + Environment.NewLine);
+                //ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+                //_sbStatus.Append("--Finalizing "+lob+ " file " + Environment.NewLine);
+                //ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+                if (File.Exists(file))
+                    File.Delete(file);
+
+                await File.WriteAllBytesAsync(file, bytes);
+
+
+                //_sbStatus.Append("--Opening "+lob+" Excel" + Environment.NewLine);
+                //ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+                //var p = new Process();
+                //p.StartInfo = new ProcessStartInfo(file)
+                //{
+                //    UseShellExecute = true
+                //};
+                //p.Start();
+
+                //_sbStatus.Append("--Process completed!" + Environment.NewLine + Environment.NewLine + Environment.NewLine);
+                _sbStatus.Append("--Proc Code Trend " + lob + " Report sucessfully generated" + Environment.NewLine);
+                ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+                //_sbStatus.Append("--Process completed!" + Environment.NewLine + Environment.NewLine + Environment.NewLine);
+                //_sbStatus.Append("--Ready" + Environment.NewLine);
+                //ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+                //serMessageViewModel.IsError = false;
+                //UserMessageViewModel.Message = "Proc Code Trend "+lob+ " Report sucessfully generated";
+                //_logger.Information("Proc Code Trend Report sucessfully generated for {CurrentUser}...", Authentication.UserName);
+                ProgressMessageViewModel.HasMessage = true;
+            }
+
+            _sbStatus.Append("--Generating final file" + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
+            var final_zip = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\PC_Trend_CLM_OP_PHYS_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".zip";
+            using (ZipArchive zip = ZipFile.Open(final_zip, ZipArchiveMode.Create))
+            {
+             
+                foreach(var f in file_list)
+                {
+                    zip.CreateEntryFromFile(f, Path.GetFileName(f));
+                }
+                
+            }
 
+            _sbStatus.Append("--Opening final file" + Environment.NewLine);
+            ProgressMessageViewModel.Message = _sbStatus.ToString();
+            System.Diagnostics.Process.Start("explorer.exe", final_zip);
+
+            ProgressMessageViewModel.HasMessage = false; ;
             UserMessageViewModel.IsError = false;
             UserMessageViewModel.Message = "Proc Code Trend Report sucessfully generated";
             _logger.Information("Proc Code Trend Report sucessfully generated for {CurrentUser}...", Authentication.UserName);
-
         }
         catch (Exception ex)
         {
