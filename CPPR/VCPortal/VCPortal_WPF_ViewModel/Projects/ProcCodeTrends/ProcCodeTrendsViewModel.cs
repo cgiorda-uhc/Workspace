@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
+using DataAccessLibrary.Data.Abstract;
+using DataAccessLibrary.DataAccess;
 using FileParsingLibrary.MSExcel;
 using FileParsingLibrary.MSExcel.Custom.ProcCodeTrends;
 using Microsoft.Extensions.Configuration;
@@ -30,6 +31,15 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
     private readonly IExcelFunctions _excelFunctions;
     private readonly IProcCodeTrendConfig? _config;
     private readonly Serilog.ILogger _logger;
+
+    private readonly IRelationalDataAccess _db_sql;
+    private readonly IChemotherapyPX_Repo _chemo_sql;
+    private readonly IMHPUniverse_Repo _mhp_sql;
+    private readonly IProcCodeTrends_Repo _pct_db;
+    private readonly IEDCAdhoc_Repo _edc_db;
+    private readonly IETGFactSymmetry_Repo _etg_db;
+
+
     private StringBuilder _sbStatus;
     private List<MM_FINAL_Model> _mM_Final_Filters { get; set; }
 
@@ -84,11 +94,20 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
     public int _topRows = 100;
 
 
-    public ProcCodeTrendsViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
+    public ProcCodeTrendsViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger, IRelationalDataAccess db_sql, IChemotherapyPX_Repo chemo_sql, IMHPUniverse_Repo mhp_sql, IProcCodeTrends_Repo pct_db, IEDCAdhoc_Repo edc_db, IETGFactSymmetry_Repo etg_db)
     {
         _logger = logger;
         _excelFunctions = excelFunctions;
         _config = prepareConfig(config);
+
+        _db_sql = db_sql;
+        _chemo_sql = chemo_sql;
+        _mhp_sql = mhp_sql;
+        _pct_db = pct_db;
+        _edc_db = edc_db;
+        _etg_db = etg_db;
+
+
 
         UserMessageViewModel = new MessageViewModel();
         ProgressMessageViewModel = new MessageViewModel();
@@ -151,7 +170,7 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
         ProgressMessageViewModel.HasMessage = true;
         await populateFilters();
         Mouse.OverrideCursor = null;
-        ProgressMessageViewModel.HasMessage = false;
+        
     }
 
 
@@ -330,6 +349,9 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
         ProcCodeTrends_Parameters pc_param = new ProcCodeTrends_Parameters();
 
+        CancellationTokenSource cancellationToken;
+        cancellationToken = new CancellationTokenSource();
+
         List<string> lob_list = new List<string>();
         List<string> file_list = new List<string>();
         try
@@ -422,58 +444,118 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
                 pc_param.DateSpanList = _date_span;
 
 
-
-                _sbStatus.Append("--Retreiving ProcCodeTrends "+lob+" claims op/phys data from Database" + Environment.NewLine);
-                ProgressMessageViewModel.Message = _sbStatus.ToString();
                 CLM_OP_Report_Model report_results;
-                var api = _config.APIS.Where(x => x.Name == "PCT_MainReport").FirstOrDefault();
-                WebAPIConsume.BaseURI = api.BaseUrl;
-                var response = await WebAPIConsume.PostCall<ProcCodeTrends_Parameters>(api.Url, pc_param);
-                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+
+                try
                 {
 
-                    UserMessageViewModel.IsError = true;
-                    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                    _logger.Error("ProcCodeTrends.GenerateReport threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-                    return;
-                }
-                else
-                {
+                    _sbStatus.Append("--Retreiving ProcCodeTrends " + lob + " claims op/phys data from Database" + Environment.NewLine);
+                    ProgressMessageViewModel.Message = _sbStatus.ToString();
 
-                    var reponseStream = await response.Content.ReadAsStreamAsync();
-                    var result = await JsonSerializer.DeserializeAsync<CLM_OP_Report_Model>(reponseStream, new JsonSerializerOptions
+
+                    ////RETURN HTTP 200
+                    var task = _pct_db.GetMainPCTReport_Async(pc_param, cancellationToken.Token);//200 SUCCESS
+
+                    task.Wait(); // Blocks current thread until GetFooAsync task completes
+                                 // For pedagogical use only: in general, don't do this!
+                    var results = task.Result;
+
+                    if (results != null)
                     {
-                        PropertyNameCaseInsensitive = true
-                    });
 
-                    report_results = result;
+                        report_results = results;
+
+                        report_results.unique_individual_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Unique Individual").Comment;
+                        report_results.unique_individual_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Unique Individual").Comment;
+                        report_results.events_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Events").Comment;
+                        report_results.events_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Events").Comment;
+                        report_results.claims_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Claims").Comment;
+                        report_results.claims_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Claims").Comment;
+                        report_results.allowed_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Allowed Amount").Comment;
+                        report_results.allowed_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Allowed Amount").Comment;
+                        report_results.allowed_pmpm_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Allowed Amount PMPM").Comment;
+                        report_results.allowed_pmpm_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Allowed Amount PMPM").Comment;
+                        report_results.utilization000_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Utilization/000").Comment;
+                        report_results.utilization000_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Utilization/000").Comment;
+                        report_results.events_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Event Cost").Comment;
+                        report_results.events_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Event Cost").Comment;
+                        report_results.unit_cost_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Unit Cost").Comment;
+                        report_results.unit_cost_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Unit Cost").Comment;
 
 
+                    }
+                    else
+                    {
+                        _logger.Warning("API GetMHP_EI_Async 404, not found");
+                        return;
+                    }
 
-                    report_results.unique_individual_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Unique Individual").Comment;
-                    report_results.unique_individual_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Unique Individual").Comment;
-                    report_results.events_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Events").Comment;
-                    report_results.events_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Events").Comment;
-                    report_results.claims_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Claims").Comment;
-                    report_results.claims_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Claims").Comment;
-                    report_results.allowed_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Allowed Amount").Comment;
-                    report_results.allowed_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Allowed Amount").Comment;
-                    report_results.allowed_pmpm_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Allowed Amount PMPM").Comment;
-                    report_results.allowed_pmpm_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Allowed Amount PMPM").Comment;
-                    report_results.utilization000_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Utilization/000").Comment;
-                    report_results.utilization000_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Utilization/000").Comment;
-                    report_results.events_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Event Cost").Comment;
-                    report_results.events_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Event Cost").Comment;
-                    report_results.unit_cost_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Unit Cost").Comment;
-                    report_results.unit_cost_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Unit Cost").Comment;
 
+                }
+                catch (Exception ex)
+                {
+
+                    _logger.Error(ex, "API GetMHP_EI_Async threw an error");
+                    //RETURN ERROR
+                    // return Results.Problem(ex.Message);
+                    return;
 
                 }
 
 
 
-                CancellationTokenSource cancellationToken;
-                cancellationToken = new CancellationTokenSource();
+
+
+
+
+
+
+                //var api = _config.APIS.Where(x => x.Name == "PCT_MainReport").FirstOrDefault();
+                //WebAPIConsume.BaseURI = api.BaseUrl;
+                //var response = await WebAPIConsume.PostCall<ProcCodeTrends_Parameters>(api.Url, pc_param);
+                //if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                //{
+
+                //    UserMessageViewModel.IsError = true;
+                //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                //    _logger.Error("ProcCodeTrends.GenerateReport threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+                //    return;
+                //}
+                //else
+                //{
+
+                //    var reponseStream = await response.Content.ReadAsStreamAsync();
+                //    var result = await JsonSerializer.DeserializeAsync<CLM_OP_Report_Model>(reponseStream, new JsonSerializerOptions
+                //    {
+                //        PropertyNameCaseInsensitive = true
+                //    });
+
+                //    report_results = result;
+
+
+
+                //    report_results.unique_individual_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Unique Individual").Comment;
+                //    report_results.unique_individual_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Unique Individual").Comment;
+                //    report_results.events_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Events").Comment;
+                //    report_results.events_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Events").Comment;
+                //    report_results.claims_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Claims").Comment;
+                //    report_results.claims_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Claims").Comment;
+                //    report_results.allowed_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Allowed Amount").Comment;
+                //    report_results.allowed_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Allowed Amount").Comment;
+                //    report_results.allowed_pmpm_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Allowed Amount PMPM").Comment;
+                //    report_results.allowed_pmpm_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Allowed Amount PMPM").Comment;
+                //    report_results.utilization000_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Utilization/000").Comment;
+                //    report_results.utilization000_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Utilization/000").Comment;
+                //    report_results.events_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Event Cost").Comment;
+                //    report_results.events_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Event Cost").Comment;
+                //    report_results.unit_cost_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Unit Cost").Comment;
+                //    report_results.unit_cost_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Unit Cost").Comment;
+
+
+                //}
+
+
+
                 var bytes = await ProcCodeTrendsExport.ExportProcDataToExcel(report_results, () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
 
                 var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\PC_Trend_"+lob+"_CLM_OP_PHYS_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
@@ -555,31 +637,66 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
     {
         try
         {
+            CancellationTokenSource cancellationToken;
+            cancellationToken = new CancellationTokenSource();
 
-            var api = _config.APIS.Where(x => x.Name == "PCT_MM_Final").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
-            _sbStatus.Append("--Getting Cached Filters..." + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
-            await Task.Delay(TimeSpan.FromSeconds(1));
-            var response = WebAPIConsume.GetCall(api.Url);
-            if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
+            //var api = _config.APIS.Where(x => x.Name == "PCT_MM_Final").FirstOrDefault();
+            //WebAPIConsume.BaseURI = api.BaseUrl;
+            //_sbStatus.Append("--Getting Cached Filters..." + Environment.NewLine);
+            //ProgressMessageViewModel.Message = _sbStatus.ToString();
+            //await Task.Delay(TimeSpan.FromSeconds(1));
+            //var response = WebAPIConsume.GetCall(api.Url);
+            //if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
+            //{
+            //    var reponseStream = await response.Result.Content.ReadAsStreamAsync();
+            //    var result = await JsonSerializer.DeserializeAsync<List<MM_FINAL_Model>>(reponseStream, new JsonSerializerOptions
+            //    {
+            //        PropertyNameCaseInsensitive = true
+            //    });
+
+            //    _mM_Final_Filters = result;
+            //}
+            //else
+            //{
+            //    UserMessageViewModel.IsError = true;
+            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            //    _logger.Error("populateFilters.MM_Final_Filters threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
+            //}
+
+            try
             {
-                var reponseStream = await response.Result.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<MM_FINAL_Model>>(reponseStream, new JsonSerializerOptions
+
+                _sbStatus.Append("--Getting Cached Filters..." + Environment.NewLine);
+                ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+
+                ////RETURN HTTP 200
+                var results = await _pct_db.GetMM_FINAL_Async(cancellationToken.Token);//200 SUCCESS
+
+
+                if (results != null)
                 {
-                    PropertyNameCaseInsensitive = true
-                });
 
-                _mM_Final_Filters = result;
+                    _mM_Final_Filters = results.ToList();
+
+                }
+                else
+                {
+                    _logger.Warning("API GetMHP_EI_Async 404, not found");
+                    return;
+                }
+
+
             }
-            else
+            catch (Exception ex)
             {
-                UserMessageViewModel.IsError = true;
-                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("populateFilters.MM_Final_Filters threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
+
+                _logger.Error(ex, "API GetMHP_EI_Async threw an error");
+                //RETURN ERROR
+                // return Results.Problem(ex.Message);
+                return;
+
             }
-
-
 
             LOB = new List<string>(_mM_Final_Filters.Select(x => x.LOB).Distinct().OrderBy(t => t).ToList() as List<string>);
             LOB.Insert(0, "--All--");
@@ -614,52 +731,128 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
 
 
-            api = _config.APIS.Where(x => x.Name == "PCT_DateSpan").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
-            _sbStatus.Append("--Getting Current Date Span..." + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
-            await Task.Delay(TimeSpan.FromSeconds(1));
-             response = WebAPIConsume.GetCall(api.Url);
-            if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
+            try
             {
-                var reponseStream = await response.Result.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<DateSpan_Model>>(reponseStream, new JsonSerializerOptions
+
+                _sbStatus.Append("--Getting Current Date Span..." + Environment.NewLine);
+                ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+
+                ////RETURN HTTP 200
+                var results = await _pct_db.GetDateSpan_Async(cancellationToken.Token);//200 SUCCESS
+
+       
+
+                if (results != null)
                 {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                _date_span = result;
-            }
-            else
-            {
-                UserMessageViewModel.IsError = true;
-                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("populateFilters.DateSpan threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
-            }
 
 
-            api = _config.APIS.Where(x => x.Name == "PCT_Proc_Cd").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
-            _sbStatus.Append("--Getting Proc Code Filters..." + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
-            await Task.Delay(TimeSpan.FromSeconds(1));
-            response = WebAPIConsume.GetCall(api.Url);
-            if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                var reponseStream = await response.Result.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<string>>(reponseStream, new JsonSerializerOptions
+                    _date_span = results.ToList();
+
+                }
+                else
                 {
-                    PropertyNameCaseInsensitive = true
-                });
+                    _logger.Warning("API GetMHP_EI_Async 404, not found");
+                    return;
+                }
 
-                Proc_Cd = result;
+
             }
-            else
+            catch (Exception ex)
             {
-                UserMessageViewModel.IsError = true;
-                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("populateFilters.ProcCode threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
+
+                _logger.Error(ex, "API GetMHP_EI_Async threw an error");
+                //RETURN ERROR
+                // return Results.Problem(ex.Message);
+                return;
+
             }
+
+
+            //api = _config.APIS.Where(x => x.Name == "PCT_DateSpan").FirstOrDefault();
+            //WebAPIConsume.BaseURI = api.BaseUrl;
+            //_sbStatus.Append("--Getting Current Date Span..." + Environment.NewLine);
+            //ProgressMessageViewModel.Message = _sbStatus.ToString();
+            //await Task.Delay(TimeSpan.FromSeconds(1));
+            // response = WebAPIConsume.GetCall(api.Url);
+            //if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
+            //{
+            //    var reponseStream = await response.Result.Content.ReadAsStreamAsync();
+            //    var result = await JsonSerializer.DeserializeAsync<List<DateSpan_Model>>(reponseStream, new JsonSerializerOptions
+            //    {
+            //        PropertyNameCaseInsensitive = true
+            //    });
+
+            //    _date_span = result;
+            //}
+            //else
+            //{
+            //    UserMessageViewModel.IsError = true;
+            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            //    _logger.Error("populateFilters.DateSpan threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
+            //}
+
+
+            //api = _config.APIS.Where(x => x.Name == "PCT_Proc_Cd").FirstOrDefault();
+            //WebAPIConsume.BaseURI = api.BaseUrl;
+            //_sbStatus.Append("--Getting Proc Code Filters..." + Environment.NewLine);
+            //ProgressMessageViewModel.Message = _sbStatus.ToString();
+            //await Task.Delay(TimeSpan.FromSeconds(1));
+            //response = WebAPIConsume.GetCall(api.Url);
+            //if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
+            //{
+            //    var reponseStream = await response.Result.Content.ReadAsStreamAsync();
+            //    var result = await JsonSerializer.DeserializeAsync<List<string>>(reponseStream, new JsonSerializerOptions
+            //    {
+            //        PropertyNameCaseInsensitive = true
+            //    });
+
+            //    Proc_Cd = result;
+            //}
+            //else
+            //{
+            //    UserMessageViewModel.IsError = true;
+            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            //    _logger.Error("populateFilters.ProcCode threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
+            //}
+
+
+            try
+            {
+
+                _sbStatus.Append("--Getting Proc Code Filters..." + Environment.NewLine);
+                ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+
+                ////RETURN HTTP 200
+                var results = await _pct_db.GetPROC_CD_Async(cancellationToken.Token);//200 SUCCESS
+
+
+                if (results != null)
+                {
+
+
+                    Proc_Cd = results.ToList();
+
+                }
+                else
+                {
+                    _logger.Warning("API GetMHP_EI_Async 404, not found");
+                    return;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.Error(ex, "API GetMHP_EI_Async threw an error");
+                //RETURN ERROR
+                // return Results.Problem(ex.Message);
+                return;
+
+            }
+
 
             _selected_lobs = new List<string>();
             _selected_regions = new List<string>();
@@ -675,6 +868,10 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
             UserMessageViewModel.IsError = true;
             UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
             _logger.Fatal(ex, "populateFilters.WebAPIConsume.GetCall threw an error for {CurrentUser}", Authentication.UserName);
+        }
+        finally
+        {
+            ProgressMessageViewModel.HasMessage = false;
         }
     }
 
