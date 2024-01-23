@@ -1,4 +1,11 @@
-﻿using FileParsingLibrary.MSExcel;
+﻿using DataAccessLibrary.Data.Abstract;
+using DataAccessLibrary.Data.Concrete.ChemoPx;
+using DataAccessLibrary.Data.Concrete.EDCAdhoc;
+using DataAccessLibrary.Data.Concrete.ETGFactSymmetry;
+using DataAccessLibrary.Data.Concrete.MHP;
+using DataAccessLibrary.Data.Concrete.ProcCodeTrends;
+using DataAccessLibrary.DataAccess;
+using FileParsingLibrary.MSExcel;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -31,8 +38,8 @@ public partial class App : Application
     Serilog.ILogger logger;
     public App()
     {
-        var appsettings = "appsettings.Development.json";
-        //var appsettings = "appsettings.json";
+        //var appsettings = "appsettings.Development.json";
+        var appsettings = "appsettings.json";
 
         var configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile(appsettings).AddEnvironmentVariables().Build();
         //var configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: true, reloadOnChange: true).AddEnvironmentVariables().Build();
@@ -64,6 +71,13 @@ public partial class App : Application
                 {
                     services.AddSingleton<MainWindow>();
                     services.AddTransient<IExcelFunctions, ClosedXMLFunctions>();
+                    services.AddTransient<IRelationalDataAccess, SqlDataAccess>();
+                    services.AddTransient<IChemotherapyPX_Repo, ChemotherapyPX_Repo>();
+                    services.AddTransient<IMHPUniverse_Repo, MHPUniverse_Repo>();
+                    services.AddTransient<IProcCodeTrends_Repo, ProcCodeTrends_Repo>();
+                    services.AddTransient<IEDCAdhoc_Repo, EDCAdhoc_Repo>();
+                    services.AddTransient<IETGFactSymmetry_Repo, ETGFactSymmetry_Repo>();
+
                     services.AddSingleton(logger);
 
 
@@ -79,11 +93,17 @@ public partial class App : Application
             await AppHost!.StartAsync();
             var config = AppHost.Services.GetService<IConfiguration>();
             var excel = AppHost.Services.GetService<IExcelFunctions>();
+            var db_sql = AppHost.Services.GetService<IRelationalDataAccess>();
+            var chemo_sql = AppHost.Services.GetService<IChemotherapyPX_Repo >();
+            var mhp_sql = AppHost.Services.GetService<IMHPUniverse_Repo>();
+            var pct_db = AppHost.Services.GetService<IProcCodeTrends_Repo>();
+            var edc_db = AppHost.Services.GetService<IEDCAdhoc_Repo>();
+            var etg_db = AppHost.Services.GetService<IETGFactSymmetry_Repo>();
 
-            //AppDomain.CurrentDomain.FirstChanceException += new EventHandler<System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs>(CurrentDomain_FirstChanceException);
+        //AppDomain.CurrentDomain.FirstChanceException += new EventHandler<System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs>(CurrentDomain_FirstChanceException);
 
-            var startupForm = AppHost.Services.GetRequiredService<MainWindow>();
-            startupForm.DataContext = new MainWindowViewModel("", config, excel, logger);
+        var startupForm = AppHost.Services.GetRequiredService<MainWindow>();
+            startupForm.DataContext = new MainWindowViewModel("", config, excel, logger, db_sql, chemo_sql, mhp_sql, pct_db, edc_db, etg_db);
         //startupForm.DataContext = new MainWindowViewModel("", config, excel, Log.Logger);
         startupForm.Show();
 
@@ -118,7 +138,7 @@ public partial class App : Application
         Authentication.Log = logger;
         //Authentication.Log = Log.Logger;
         Authentication.UserName = WindowsIdentity.GetCurrent().Name.Split('\\')[1];
-        await Authentication.SetCurrentUserAsync(ecs.API.BaseUrl, ecs.API.Url + "/" + Authentication.UserName);
+        await Authentication.SetCurrentUserAsync(ecs.API.BaseUrl, ecs.API.Url + "/" + Authentication.UserName, config);
 
 
     }

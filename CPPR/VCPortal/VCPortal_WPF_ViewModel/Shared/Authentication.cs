@@ -1,6 +1,11 @@
-﻿using SharedFunctionsLibrary;
+﻿using ActiveDirectoryLibrary;
+using IdentityModel.OidcClient;
+using SharedFunctionsLibrary;
 using System.Text.Json;
 using VCPortal_Models.Models.ActiveDirectory;
+using static Org.BouncyCastle.Math.EC.ECCurve;
+using VCPortal_Models.Shared;
+using Microsoft.Extensions.Configuration;
 
 
 namespace VCPortal_WPF_ViewModel.Shared;
@@ -12,10 +17,13 @@ public class Authentication
     public static UserAccessModel CurrentUser { get; set; }
 
 
-    public static async Task SetCurrentUserAsync(string baseURL, string endpointURL)
+    public static async Task SetCurrentUserAsync(string baseURL, string endpointURL, IConfiguration config)
     {
         try
         {
+
+            GetUser(UserName, config);
+
 
             Log.Information("Running Authentication.SetCurrentUserAsync() for {CurrentUser}...", UserName);
             WebAPIConsume.BaseURI = baseURL;
@@ -43,7 +51,44 @@ public class Authentication
         
 
 
-  
-
     }
+
+
+    private static async Task<ADUserModel> GetUser(string username, IConfiguration config)
+    {
+        try
+        {
+            Log.Information("Requesting API GetUser()...");
+
+            var section = "ADConnection";
+            ///EXTRACT IConfiguration INTO PBIMembershipConfig 
+            IADConfig adc = config.GetSection(section).Get<ADConfig>();
+
+            //WINDOWS IDENTITY IMPERSONATE BLAZOR
+            ActiveDirectory ad = new ActiveDirectory(adc.LDAPPath, adc.LDAPDomain, adc.LDAPUser, adc.LDAPPW);
+            //string username = System.Security.Principal.WindowsIdentity.GetCurrent().Name.ToLower().TrimStart('m', 's', '\\');
+            //string username = Environment.UserName.ToLower().TrimStart('m', 's', '\\');
+            var results = ad.GetUserByUserName(username);
+
+            //if (results != null)
+            //{
+            //    var mapped = VCAutoMapper.AutoMapUserAccess<ADUserModel, UserAccessModel>(results);
+            //    return Results.Ok(mapped);//200 SUCCESS
+
+            //}
+            return results; //404
+
+
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "API GetUser threw an error");
+            //RETURN ERROR
+            return null;
+
+        }
+
+        
+    }
+
 }

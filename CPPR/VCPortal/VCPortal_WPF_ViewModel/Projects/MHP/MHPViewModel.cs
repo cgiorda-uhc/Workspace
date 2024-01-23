@@ -1,10 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DataAccessLibrary.Data.Abstract;
+using DataAccessLibrary.DataAccess;
 using FileParsingLibrary.MSExcel;
 using FileParsingLibrary.MSExcel.Custom.MHP;
+using IdentityModel.OidcClient;
+using Irony.Parsing;
 using MathNet.Numerics;
 using MathNet.Numerics.Providers.SparseSolver;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
+using NPOI.SS.Formula.Functions;
 using SharedFunctionsLibrary;
 using System;
 using System.Collections.Generic;
@@ -36,6 +42,17 @@ public partial class MHPViewModel : ObservableObject
     private readonly IExcelFunctions _excelFunctions;
     private readonly IMHPUniverseConfig ? _config;
     private readonly Serilog.ILogger _logger;
+
+
+    private readonly IRelationalDataAccess _db_sql;
+    private readonly IChemotherapyPX_Repo _chemo_sql;
+    private readonly IMHPUniverse_Repo _mhp_sql;
+    private readonly IProcCodeTrends_Repo _pct_db;
+    private readonly IEDCAdhoc_Repo _edc_db;
+    private readonly IETGFactSymmetry_Repo _etg_db;
+
+
+
     private StringBuilder _sbStatus;
     private List<MHP_Reporting_Filters> _mhpReportingFilters { get; set; }
 
@@ -83,11 +100,21 @@ public partial class MHPViewModel : ObservableObject
     public List<string> _productCode;
 
 
-    public MHPViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
+    public MHPViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger, IRelationalDataAccess db_sql, IChemotherapyPX_Repo chemo_sql, IMHPUniverse_Repo mhp_sql, IProcCodeTrends_Repo pct_db, IEDCAdhoc_Repo edc_db, IETGFactSymmetry_Repo etg_db)
     {
         _logger = logger;
         _excelFunctions = excelFunctions;
         _config = prepareConfig(config);
+
+        _db_sql = db_sql;
+        _chemo_sql = chemo_sql;
+        _mhp_sql = mhp_sql;
+        _pct_db = pct_db;
+        _edc_db= edc_db;
+        _etg_db = etg_db;
+
+
+
 
         UserMessageViewModel = new MessageViewModel();
         ProgressMessageViewModel = new MessageViewModel();
@@ -225,6 +252,8 @@ public partial class MHPViewModel : ObservableObject
 
         UserMessageViewModel.Message = "";
         Mouse.OverrideCursor = Cursors.Wait;
+        ProgressMessageViewModel.Message = "";
+        ProgressMessageViewModel.HasMessage = true;
         await Task.Run(() => worker.RunWorkerAsync("GenerateEIReport"));
         Mouse.OverrideCursor = null;
 
@@ -237,6 +266,8 @@ public partial class MHPViewModel : ObservableObject
 
         UserMessageViewModel.Message = "";
         Mouse.OverrideCursor = Cursors.Wait;
+        ProgressMessageViewModel.Message = "";
+        ProgressMessageViewModel.HasMessage = true;
         await Task.Run(() => worker.RunWorkerAsync("GenerateIFPReport"));
         Mouse.OverrideCursor = null;
 
@@ -249,6 +280,8 @@ public partial class MHPViewModel : ObservableObject
 
         UserMessageViewModel.Message = "";
         Mouse.OverrideCursor = Cursors.Wait;
+        ProgressMessageViewModel.Message = "";
+        ProgressMessageViewModel.HasMessage = true;
         await Task.Run(() => worker.RunWorkerAsync("GenerateCSReport"));
         Mouse.OverrideCursor = null;
 
@@ -271,6 +304,12 @@ public partial class MHPViewModel : ObservableObject
         List<MHP_EI_Model> mhp_final_all;
         List<MHPEIDetails_Model> mhp_details_final;
         List<MHPEIDetails_Model> mhp_details_final_all;
+
+
+        CancellationTokenSource cancellationToken;
+        cancellationToken = new CancellationTokenSource();
+
+
         try
         {
 
@@ -329,95 +368,192 @@ public partial class MHPViewModel : ObservableObject
 
 
 
-            _sbStatus.Append("--Retreiving EI summary data from Database" + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
- 
-            var api = _config.APIS.Where(x => x.Name == "MHP_EI").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
-            var response = await WebAPIConsume.PostCall<MHP_EI_Parameters>(api.Url, ei_param);
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            {
 
-                UserMessageViewModel.IsError = true;
-                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("MHP EI Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-                return;
-            }
-            else
-            {
+            //var api = _config.APIS.Where(x => x.Name == "MHP_EI").FirstOrDefault();
+            //WebAPIConsume.BaseURI = api.BaseUrl;
+            //var response = await WebAPIConsume.PostCall<MHP_EI_Parameters>(api.Url, ei_param);
+            //if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            //{
 
-                var reponseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<MHP_EI_Model>>(reponseStream, new JsonSerializerOptions
+            //    UserMessageViewModel.IsError = true;
+            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            //    _logger.Error("MHP EI Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+            //    return;
+            //}
+            //else
+            //{
+
+            //    var reponseStream = await response.Content.ReadAsStreamAsync();
+            //    var result = await JsonSerializer.DeserializeAsync<List<MHP_EI_Model>>(reponseStream, new JsonSerializerOptions
+            //    {
+            //        PropertyNameCaseInsensitive = true
+            //    });
+
+            //    mhp_final = result;
+
+            //}
+
+
+            try
+            {
+                _sbStatus.Append("--Retreiving EI summary data from Database" + Environment.NewLine);
+                ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+
+                ////RETURN HTTP 200
+                var task =  _mhp_sql.GetMHP_EI_Async(ei_param.State, ei_param.StartDate, ei_param.EndDate, ei_param.Finc_Arng_Desc, ei_param.Mkt_Seg_Rllp_Desc, ei_param.LegalEntities, ei_param.Mkt_Typ_Desc, ei_param.Cust_Seg, cancellationToken.Token);//200 SUCCESS
+
+                task.Wait(); // Blocks current thread until GetFooAsync task completes
+                 // For pedagogical use only: in general, don't do this!
+                var results = task.Result;
+
+                if (results != null)
                 {
-                    PropertyNameCaseInsensitive = true
-                });
 
-                mhp_final = result;
+
+                    mhp_final = results.ToList();
+
+                }
+                else
+                {
+                    _logger.Warning("API GetMHP_EI_Async 404, not found");
+                    return;
+                }
+               
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.Error(ex, "API GetMHP_EI_Async threw an error");
+                //RETURN ERROR
+                // return Results.Problem(ex.Message);
+                return;
 
             }
 
 
-            //EI ALL SUMMARY
+            ////EI ALL SUMMARY
             _sbStatus.Append("--Retreiving EI summary all data from Database" + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
 
-            api = _config.APIS.Where(x => x.Name == "MHP_EI_All").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
-            response = await WebAPIConsume.PostCall<MHP_EI_Parameters_All>(api.Url, ei_param_all);
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            //api = _config.APIS.Where(x => x.Name == "MHP_EI_All").FirstOrDefault();
+            //WebAPIConsume.BaseURI = api.BaseUrl;
+            //response = await WebAPIConsume.PostCall<MHP_EI_Parameters_All>(api.Url, ei_param_all);
+            //if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            //{
+
+            //    UserMessageViewModel.IsError = true;
+            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            //    _logger.Error("MHP EI All Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+            //    return;
+            //}
+            //else
+            //{
+
+            //    var reponseStream = await response.Content.ReadAsStreamAsync();
+            //    var result = await JsonSerializer.DeserializeAsync<List<MHP_EI_Model>>(reponseStream, new JsonSerializerOptions
+            //    {
+            //        PropertyNameCaseInsensitive = true
+            //    });
+
+            //    mhp_final_all = result;
+
+
+            //}
+
+            try
+            {
+                ////RETURN HTTP 200
+                var task =  _mhp_sql.GetMHP_EI_ALL_Async(ei_param_all.State, ei_param_all.StartDate, ei_param_all.EndDate, ei_param_all.Finc_Arng_Desc, ei_param_all.Mkt_Seg_Rllp_Desc, ei_param_all.LegalEntities, ei_param_all.Mkt_Typ_Desc, ei_param_all.Cust_Seg, cancellationToken.Token);//200 SUCCESS
+
+                task.Wait(); // Blocks current thread until GetFooAsync task completes
+                             // For pedagogical use only: in general, don't do this!
+                var results = task.Result;
+
+
+                if (results != null)
+                {
+                    mhp_final_all = results.ToList();
+
+                }
+                else
+                {
+                    _logger.Warning("API GetMHP_EI_Async 404, not found");
+                    return;
+                }
+
+
+            }
+            catch (Exception ex)
             {
 
-                UserMessageViewModel.IsError = true;
-                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("MHP EI All Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+                _logger.Error(ex, "API GetMHP_EI_Async threw an error");
+                //RETURN ERROR
+                // return Results.Problem(ex.Message);
                 return;
             }
-            else
-            {
-
-                var reponseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<MHP_EI_Model>>(reponseStream, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                mhp_final_all = result;
-
-
-            }
-
-
-
 
 
             _sbStatus.Append("--Retreiving EI details data from Database" + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
 
-            api = _config.APIS.Where(x => x.Name == "MHP_EI_Details").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
-            response = await WebAPIConsume.PostCall<MHP_EI_Parameters>(api.Url, ei_param);
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            //api = _config.APIS.Where(x => x.Name == "MHP_EI_Details").FirstOrDefault();
+            //WebAPIConsume.BaseURI = api.BaseUrl;
+            //response = await WebAPIConsume.PostCall<MHP_EI_Parameters>(api.Url, ei_param);
+            //if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            //{
+
+            //    UserMessageViewModel.IsError = true;
+            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            //    _logger.Error("MHP EI Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+            //    return;
+            //}
+            //else
+            //{
+
+            //    var reponseStream = await response.Content.ReadAsStreamAsync();
+            //    var result = await JsonSerializer.DeserializeAsync<List<MHPEIDetails_Model>>(reponseStream, new JsonSerializerOptions
+            //    {
+            //        PropertyNameCaseInsensitive = true
+            //    });
+
+            //    mhp_details_final = result;
+
+
+            //}
+            try
+            {
+                ////RETURN HTTP 200
+                var task =  _mhp_sql.GetMHPEIDetailsAsync(ei_param.State, ei_param.StartDate, ei_param.EndDate, ei_param.Finc_Arng_Desc, ei_param.Mkt_Seg_Rllp_Desc, ei_param.LegalEntities, ei_param.Mkt_Typ_Desc, ei_param.Cust_Seg, cancellationToken.Token);//200 SUCCESS
+
+                task.Wait(); // Blocks current thread until GetFooAsync task completes
+                             // For pedagogical use only: in general, don't do this!
+                var results = task.Result;
+
+
+                if (results != null)
+                {
+                    mhp_details_final = results.ToList();
+
+                }
+                else
+                {
+                    
+                    _logger.Warning("API GetMHP_EI_Async 404, not found");
+                    return;
+                }
+
+
+            }
+            catch (Exception ex)
             {
 
-                UserMessageViewModel.IsError = true;
-                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("MHP EI Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+                _logger.Error(ex, "API GetMHP_EI_Async threw an error");
+                //RETURN ERROR
+                // return Results.Problem(ex.Message);
                 return;
             }
-            else
-            {
-
-                var reponseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<MHPEIDetails_Model>>(reponseStream, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                mhp_details_final = result;
-
-
-            }
-
 
 
             //NOT NEEDED!!!
@@ -455,8 +591,6 @@ public partial class MHPViewModel : ObservableObject
 
 
 
-            CancellationTokenSource cancellationToken;
-            cancellationToken = new CancellationTokenSource();
             var bytes = await MHPExcelExport.ExportEIToExcel(mhp_final, mhp_final_all, mhp_details_final, () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
 
             var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\MHP_Report_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
@@ -497,13 +631,19 @@ public partial class MHPViewModel : ObservableObject
             UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
             _logger.Fatal(ex, "MHP EI Report threw an error for {CurrentUser}", Authentication.UserName);
         }
-        
+        finally
+        {
+            ProgressMessageViewModel.HasMessage = false;
+        }
 
 
     }
 
     private async Task GenerateCSReport()
     {
+
+
+
         _logger.Information("Running MHP.GenerateCSReport for {CurrentUser}...", Authentication.UserName);
 
         _sbStatus.Append("--Processing selected filters for CS" + Environment.NewLine);
@@ -516,6 +656,11 @@ public partial class MHPViewModel : ObservableObject
 
         List<MHP_CS_Model> mhp_final;
         List<MHPCSDetails_Model> mhp_details_final;
+
+        CancellationTokenSource cancellationToken;
+        cancellationToken = new CancellationTokenSource();
+
+
         try
         {
             cs_param.State = "'" + String.Join(",", parameters[0].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
@@ -530,64 +675,139 @@ public partial class MHPViewModel : ObservableObject
 
 
 
-            _sbStatus.Append("--Retreiving CS summary data from Database" + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
 
-            var api = _config.APIS.Where(x => x.Name == "MHP_CS").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
-            var response = await WebAPIConsume.PostCall<MHP_CS_Parameters>(api.Url, cs_param);
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+
+            //var api = _config.APIS.Where(x => x.Name == "MHP_CS").FirstOrDefault();
+            //WebAPIConsume.BaseURI = api.BaseUrl;
+            //var response = await WebAPIConsume.PostCall<MHP_CS_Parameters>(api.Url, cs_param);
+            //if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            //{
+
+            //    UserMessageViewModel.IsError = true;
+            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            //    _logger.Error("MHP CS Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+            //    return;
+            //}
+            //else
+            //{
+
+            //    var reponseStream = await response.Content.ReadAsStreamAsync();
+            //    var result = await JsonSerializer.DeserializeAsync<List<MHP_CS_Model>>(reponseStream, new JsonSerializerOptions
+            //    {
+            //        PropertyNameCaseInsensitive = true
+            //    });
+
+            //    mhp_final = result;
+
+            //}
+
+            try
             {
+                _sbStatus.Append("--Retreiving CS summary data from Database" + Environment.NewLine);
+                ProgressMessageViewModel.Message = _sbStatus.ToString();
 
-                UserMessageViewModel.IsError = true;
-                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("MHP CS Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-                return;
-            }
-            else
-            {
 
-                var reponseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<MHP_CS_Model>>(reponseStream, new JsonSerializerOptions
+                ////RETURN HTTP 200
+                var task = _mhp_sql.GetMHP_CS_Async(cs_param.State, cs_param.StartDate, cs_param.EndDate, cs_param.CS_Tadm_Prdct_Map, cs_param.GroupNumbers, cancellationToken.Token) ;//200 SUCCESS
+
+                task.Wait(); // Blocks current thread until GetFooAsync task completes
+                             // For pedagogical use only: in general, don't do this!
+                var results = task.Result;
+
+                if (results != null)
                 {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                mhp_final = result;
-
-            }
 
 
-            _sbStatus.Append("--Retreiving CS details data from Database" + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
+                    mhp_final = results.ToList();
 
-            api = _config.APIS.Where(x => x.Name == "MHP_CS_Details").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
-            response = await WebAPIConsume.PostCall<MHP_CS_Parameters>(api.Url, cs_param);
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-
-                UserMessageViewModel.IsError = true;
-                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("MHP CS Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-                return;
-            }
-            else
-            {
-
-                var reponseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<MHPCSDetails_Model>>(reponseStream, new JsonSerializerOptions
+                }
+                else
                 {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                mhp_details_final = result;
+                    _logger.Warning("API GetMHP_EI_Async 404, not found");
+                    return;
+                }
 
 
             }
+            catch (Exception ex)
+            {
 
-            CancellationTokenSource cancellationToken;
-            cancellationToken = new CancellationTokenSource();
+                _logger.Error(ex, "API GetMHP_EI_Async threw an error");
+                //RETURN ERROR
+                // return Results.Problem(ex.Message);
+                return;
+
+            }
+
+
+
+
+            //api = _config.APIS.Where(x => x.Name == "MHP_CS_Details").FirstOrDefault();
+            //WebAPIConsume.BaseURI = api.BaseUrl;
+            //response = await WebAPIConsume.PostCall<MHP_CS_Parameters>(api.Url, cs_param);
+            //if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            //{
+
+            //    UserMessageViewModel.IsError = true;
+            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            //    _logger.Error("MHP CS Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+            //    return;
+            //}
+            //else
+            //{
+
+            //    var reponseStream = await response.Content.ReadAsStreamAsync();
+            //    var result = await JsonSerializer.DeserializeAsync<List<MHPCSDetails_Model>>(reponseStream, new JsonSerializerOptions
+            //    {
+            //        PropertyNameCaseInsensitive = true
+            //    });
+
+            //    mhp_details_final = result;
+
+
+            //}
+
+            try
+            {
+
+                _sbStatus.Append("--Retreiving CS details data from Database" + Environment.NewLine);
+                ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+
+                ////RETURN HTTP 200
+                var task = _mhp_sql.GetMHPCSDetailsAsync(cs_param.State, cs_param.StartDate, cs_param.EndDate, cs_param.CS_Tadm_Prdct_Map, cs_param.GroupNumbers, cancellationToken.Token);//200 SUCCESS
+
+                task.Wait(); // Blocks current thread until GetFooAsync task completes
+                             // For pedagogical use only: in general, don't do this!
+                var results = task.Result;
+
+                if (results != null)
+                {
+
+
+                    mhp_details_final = results.ToList();
+
+                }
+                else
+                {
+                    _logger.Warning("API GetMHP_EI_Async 404, not found");
+                    return;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.Error(ex, "API GetMHP_EI_Async threw an error");
+                //RETURN ERROR
+                // return Results.Problem(ex.Message);
+                return;
+
+            }
+
+
+
             var bytes = await MHPExcelExport.ExportCSToExcel(mhp_final, mhp_details_final, cs_param.CS_Tadm_Prdct_Map, () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
 
             var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\MHP_CS_Report_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
@@ -645,6 +865,11 @@ public partial class MHPViewModel : ObservableObject
 
         List<MHP_IFP_Model> mhp_final;
         List<MHPIFPDetails_Model> mhp_details_final;
+
+        CancellationTokenSource cancellationToken;
+        cancellationToken = new CancellationTokenSource();
+
+
         try
         {
 
@@ -659,64 +884,134 @@ public partial class MHPViewModel : ObservableObject
 
 
 
-            _sbStatus.Append("--Retreiving IFP summary data from Database" + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
 
-            var api = _config.APIS.Where(x => x.Name == "MHP_IFP").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
-            var response = await WebAPIConsume.PostCall<MHP_IFP_Parameters>(api.Url, ifp_param);
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+
+            //var api = _config.APIS.Where(x => x.Name == "MHP_IFP").FirstOrDefault();
+            //WebAPIConsume.BaseURI = api.BaseUrl;
+            //var response = await WebAPIConsume.PostCall<MHP_IFP_Parameters>(api.Url, ifp_param);
+            //if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            //{
+
+            //    UserMessageViewModel.IsError = true;
+            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            //    _logger.Error("MHP IFP Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+            //    return;
+            //}
+            //else
+            //{
+
+            //    var reponseStream = await response.Content.ReadAsStreamAsync();
+            //    var result = await JsonSerializer.DeserializeAsync<List<MHP_IFP_Model>>(reponseStream, new JsonSerializerOptions
+            //    {
+            //        PropertyNameCaseInsensitive = true
+            //    });
+
+            //    mhp_final = result;
+
+            //}
+            try
             {
 
-                UserMessageViewModel.IsError = true;
-                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("MHP IFP Report threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-                return;
-            }
-            else
-            {
+                _sbStatus.Append("--Retreiving IFP summary data from Database" + Environment.NewLine);
+                ProgressMessageViewModel.Message = _sbStatus.ToString();
 
-                var reponseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<MHP_IFP_Model>>(reponseStream, new JsonSerializerOptions
+
+                ////RETURN HTTP 200
+                var task = _mhp_sql.GetMHP_IFP_Async(ifp_param.State, ifp_param.StartDate, ifp_param.EndDate, ifp_param.ProductCodes, cancellationToken.Token);//200 SUCCESS
+
+                task.Wait(); // Blocks current thread until GetFooAsync task completes
+                             // For pedagogical use only: in general, don't do this!
+                var results = task.Result;
+
+                if (results != null)
                 {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                mhp_final = result;
-
-            }
 
 
-            _sbStatus.Append("--Retreiving IFP details data from Database" + Environment.NewLine);
-            ProgressMessageViewModel.Message = _sbStatus.ToString();
+                    mhp_final = results.ToList();
 
-            api = _config.APIS.Where(x => x.Name == "MHP_IFP_Details").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
-            response = await WebAPIConsume.PostCall<MHP_IFP_Parameters>(api.Url, ifp_param);
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-
-                UserMessageViewModel.IsError = true;
-                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("MHP IFP Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
-                return;
-            }
-            else
-            {
-
-                var reponseStream = await response.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<MHPIFPDetails_Model>>(reponseStream, new JsonSerializerOptions
+                }
+                else
                 {
-                    PropertyNameCaseInsensitive = true
-                });
-
-                mhp_details_final = result;
+                    _logger.Warning("API GetMHP_EI_Async 404, not found");
+                    return;
+                }
 
 
             }
+            catch (Exception ex)
+            {
 
-            CancellationTokenSource cancellationToken;
-            cancellationToken = new CancellationTokenSource();
+                _logger.Error(ex, "API GetMHP_EI_Async threw an error");
+                //RETURN ERROR
+                // return Results.Problem(ex.Message);
+                return;
+
+            }
+
+
+
+            //api = _config.APIS.Where(x => x.Name == "MHP_IFP_Details").FirstOrDefault();
+            //WebAPIConsume.BaseURI = api.BaseUrl;
+            //response = await WebAPIConsume.PostCall<MHP_IFP_Parameters>(api.Url, ifp_param);
+            //if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            //{
+
+            //    UserMessageViewModel.IsError = true;
+            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            //    _logger.Error("MHP IFP Report details threw an error for {CurrentUser}" + response.StatusCode.ToString(), Authentication.UserName);
+            //    return;
+            //}
+            //else
+            //{
+
+            //    var reponseStream = await response.Content.ReadAsStreamAsync();
+            //    var result = await JsonSerializer.DeserializeAsync<List<MHPIFPDetails_Model>>(reponseStream, new JsonSerializerOptions
+            //    {
+            //        PropertyNameCaseInsensitive = true
+            //    });
+
+            //    mhp_details_final = result;
+
+
+            //}
+            try
+            {
+
+                _sbStatus.Append("--Retreiving IFP details data from Database" + Environment.NewLine);
+                ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+
+                ////RETURN HTTP 200
+                var task = _mhp_sql.GetMHPIFPDetailsAsync(ifp_param.State, ifp_param.StartDate, ifp_param.EndDate, ifp_param.ProductCodes, cancellationToken.Token);//200 SUCCESS
+
+                task.Wait(); // Blocks current thread until GetFooAsync task completes
+                             // For pedagogical use only: in general, don't do this!
+                var results = task.Result;
+
+                if (results != null)
+                {
+
+
+                    mhp_details_final = results.ToList();
+
+                }
+                else
+                {
+                    _logger.Warning("API GetMHP_EI_Async 404, not found");
+                    return;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.Error(ex, "API GetMHP_EI_Async threw an error");
+                //RETURN ERROR
+                // return Results.Problem(ex.Message);
+                return;
+
+            }
             var bytes = await MHPExcelExport.ExportIFPToExcel(mhp_final, mhp_details_final, () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
 
             var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\MHP_IFP_Report_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
@@ -794,53 +1089,113 @@ public partial class MHPViewModel : ObservableObject
     {
         try
         {
-            var api = _config.APIS.Where(x => x.Name == "MHP_Filters").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
+            //var api = _config.APIS.Where(x => x.Name == "MHP_Filters").FirstOrDefault();
+            //WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("--Getting Cached Filters..." + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
-            await Task.Delay(TimeSpan.FromSeconds(1));
-            var response = WebAPIConsume.GetCall(api.Url);
-            if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
+            //await Task.Delay(TimeSpan.FromSeconds(1));
+            //var response = WebAPIConsume.GetCall(api.Url);
+            //if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
+            //{
+            //    var reponseStream = await response.Result.Content.ReadAsStreamAsync();
+            //    var result = await JsonSerializer.DeserializeAsync<List<MHP_Reporting_Filters>>(reponseStream, new JsonSerializerOptions
+            //    {
+            //        PropertyNameCaseInsensitive = true
+            //    });
+
+            //    _mhpReportingFilters = result;
+            //}
+            //else
+            //{
+            //    UserMessageViewModel.IsError = true;
+            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            //    _logger.Error("populateFilters.MHP_Filters threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
+            //}
+
+
+
+            try
             {
-                var reponseStream = await response.Result.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<MHP_Reporting_Filters>>(reponseStream, new JsonSerializerOptions
+                ////RETURN HTTP 200
+                var results = await _mhp_sql.GetMHP_Filters_Async( CancellationToken.None);//200 SUCCESS
+
+                if (results != null)
                 {
-                    PropertyNameCaseInsensitive = true
-                });
+                    _mhpReportingFilters = results.ToList();
 
-                _mhpReportingFilters = result;
+                }
+                else
+                {
+                    _logger.Warning("API GetMHP_Filters_Async 404, not found");
+                }
+              
+
+
             }
-            else
+            catch (Exception ex)
             {
-                UserMessageViewModel.IsError = true;
-                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("populateFilters.MHP_Filters threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
+
+                _logger.Error(ex, "API GetMHP_Filters_Async threw an error");
+
+
             }
 
 
 
-            api = _config.APIS.Where(x => x.Name == "MHP_GroupState").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
+
+
+
+            //api = _config.APIS.Where(x => x.Name == "MHP_GroupState").FirstOrDefault();
+            //WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("--Getting Group/State Mapping..." + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
-            await Task.Delay(TimeSpan.FromSeconds(1));
-            response = WebAPIConsume.GetCall(api.Url);
-            if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                var reponseStream = await response.Result.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<MHP_Group_State_Model>>(reponseStream, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
+            //await Task.Delay(TimeSpan.FromSeconds(1));
+            //response = WebAPIConsume.GetCall(api.Url);
+            //if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
+            //{
+            //    var reponseStream = await response.Result.Content.ReadAsStreamAsync();
+            //    var result = await JsonSerializer.DeserializeAsync<List<MHP_Group_State_Model>>(reponseStream, new JsonSerializerOptions
+            //    {
+            //        PropertyNameCaseInsensitive = true
+            //    });
 
-                _mhpGroupState = result;
-            }
-            else
+            //    _mhpGroupState = result;
+            //}
+            //else
+            //{
+            //    UserMessageViewModel.IsError = true;
+            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            //    _logger.Error("populateFilters.MHP_GroupState threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
+            //}
+
+
+
+            try
             {
-                UserMessageViewModel.IsError = true;
-                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("populateFilters.MHP_GroupState threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
+                ////RETURN HTTP 200
+                var results = await _mhp_sql.GetMHP_Group_State_Async(CancellationToken.None);//200 SUCCESS
+
+                if (results != null)
+                {
+                    _mhpGroupState = results.ToList();
+
+                }
+                else
+                {
+                    _logger.Warning("API GetMHP_Filters_Async 404, not found");
+                }
+               
+
+
             }
+            catch (Exception ex)
+            {
+
+                _logger.Error(ex, "API GetMHP_Filters_Async threw an error");
+
+
+            }
+
 
 
             States = new List<string>(_mhpReportingFilters.Where(x=> x.Filter_Type == "State_of_Issue").GroupBy(s => s.Filter_Value).Select(g => g.First()).OrderBy(s => s.Filter_Value).Select(g => g.Filter_Value).ToList() as List<string>);

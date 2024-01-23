@@ -1,4 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.Input;
+using DataAccessLibrary.Data.Abstract;
+using DataAccessLibrary.DataAccess;
 using DocumentFormat.OpenXml.Spreadsheet;
 using FileParsingLibrary.MSExcel;
 using Microsoft.Extensions.Configuration;
@@ -29,14 +31,29 @@ public class MainWindowViewModel : INotifyPropertyChanged
     private readonly IExcelFunctions _excelFunctions;
     private readonly IConfiguration? _config;
     private readonly Serilog.ILogger _logger;
+    private readonly IRelationalDataAccess _db_sql;
+    private readonly IChemotherapyPX_Repo _chemo_sql;
+    private readonly IMHPUniverse_Repo _mhp_sql;
+    private readonly IProcCodeTrends_Repo _pct_db;
+    private readonly IEDCAdhoc_Repo _edc_db;
+    private readonly IETGFactSymmetry_Repo _etg_db;
 
-    public MainWindowViewModel(string header, IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
+
+
+
+    public MainWindowViewModel(string header, IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger, IRelationalDataAccess db_sql, IChemotherapyPX_Repo chemo_sql, IMHPUniverse_Repo mhp_sql, IProcCodeTrends_Repo pct_db, IEDCAdhoc_Repo edc_db, IETGFactSymmetry_Repo etg_db)
     {
         _logger = logger;
         _excelFunctions = excelFunctions;
         _config = config;
+        _db_sql = db_sql;
+        _chemo_sql = chemo_sql;
+        _mhp_sql = mhp_sql;
+        _pct_db = pct_db;
+        _edc_db = edc_db;
+        _etg_db = etg_db;
 
-        CurrentViewModel = Activator.CreateInstance(typeof(HomeViewModel), _config, _excelFunctions, _logger);
+        CurrentViewModel = Activator.CreateInstance(typeof(HomeViewModel), _config, _excelFunctions, _logger, db_sql, chemo_sql, mhp_sql, pct_db, edc_db, etg_db);
 
         populateNavigation();
 
@@ -137,6 +154,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
     {
         get
         {
+
             return navigateCommand
             ?? (navigateCommand = new RelayCommand<Type>(
             vmType =>
@@ -144,7 +162,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
                 if (vmType != null)
                 {        
                     CurrentViewModel = null;
-                    CurrentViewModel = Activator.CreateInstance(vmType, _config, _excelFunctions, _logger);
+                    CurrentViewModel = Activator.CreateInstance(vmType, _config, _excelFunctions, _logger, _db_sql, _chemo_sql, _mhp_sql, _pct_db, _edc_db, _etg_db);
                 }
             }));
         }

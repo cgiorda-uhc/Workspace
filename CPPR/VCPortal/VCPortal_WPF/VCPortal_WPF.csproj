@@ -42,6 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\DataAccessLibrary\DataAccessLibrary.csproj" />
     <ProjectReference Include="..\VCPortal_WPF_ViewModel\VCPortal_WPF_ViewModel.csproj" />
   </ItemGroup>
 

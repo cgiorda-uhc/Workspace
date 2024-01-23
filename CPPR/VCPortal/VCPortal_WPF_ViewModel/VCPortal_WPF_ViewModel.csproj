@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\DataAccessLibrary\DataAccessLibrary.csproj" />
     <ProjectReference Include="..\..\ExcelConnectionLibrary\FileParsingLibrary.csproj" />
     <ProjectReference Include="..\..\SharedFunctionsLibrary\SharedFunctionsLibrary.csproj" />
     <ProjectReference Include="..\VCPortal_Models\VCPortal_Models.csproj" />
