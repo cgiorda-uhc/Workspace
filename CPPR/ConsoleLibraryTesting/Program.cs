@@ -112,7 +112,6 @@ var sql = "SELECT * FROM stg.IR_PCCM WHERE MBR_ID in (116573054) ORDER BY MBR_ID
 List<PCCM_Model> pccm_final = new List<PCCM_Model>();
 var pccm = await db_sqsl.LoadData<PCCM_Model>(connectionString: adHoc.ConnectionStringMSSQL, sql);
 
-Int64? member_id = null;
 DateTime? create_dt = null;
 DateTime? end_dt = null;
 DateTime current_dt;
@@ -121,18 +120,10 @@ int total_days = 0;
 
 foreach (var p in  pccm)
 {
-    
-    if(member_id != p.MBR_ID)
-    {
-        member_id = p.MBR_ID;
-    }
-
 
     create_dt = p.CREAT_DT;
     end_dt = (p.END_DT == null ? DateTime.Now : p.END_DT);
-
     current_dt = (DateTime)create_dt;
-
 
     month_cnt = (((end_dt.Value.Year - create_dt.Value.Year) * 12) + end_dt.Value.Month - create_dt.Value.Month) + 1;
 
@@ -169,9 +160,6 @@ foreach (var p in  pccm)
         pcm.RPT_MTH_YR_DISPLAY = current_dt.ToString("MMM") + " " + current_dt.ToString("yy");
         pcm.RPT_MTH = current_dt.ToString("MM");
         pcm.RPT_YR = current_dt.ToString("yyyy");
-
-
-
 
         if (current_dt.Year == create_dt.Value.Year && current_dt.Month == create_dt.Value.Month)
         {
