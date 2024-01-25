@@ -61,6 +61,8 @@ using VCPortal_Models.Models.PEG;
 using VCPortal_Models.Models.EBM;
 using DocumentFormat.OpenXml.Drawing;
 using NPOI.Util;
+using VCPortal_Models.Models.PCCM;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 
 
 var adHoc = new AdHoc();
@@ -70,8 +72,8 @@ var adHoc = new AdHoc();
 adHoc.ConnectionStringMSSQL = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
 adHoc.TableMHP = "stg.MHP_Yearly_Universes";
 adHoc.ConnectionStringTD = "Data Source=UDWPROD;User ID=cgiorda;Password=BooWooDooFoo2023!!;Authentication Mechanism=LDAP;Session Mode=TERADATA;Session Character Set=ASCII;Persist Security Info=true;Connection Timeout=99999;";
-//adHoc.ConnectionStringVC = "Data Source=wn000103397;Initial Catalog=VCT_DB;Persist Security Info=True;User ID=vct_app_user;Password=BooWooDooFoo2023!!;connect timeout=300000;";
-adHoc.ConnectionStringVC = "data source=VCT_DB;server=localhost;Persist Security Info=True;database=VCT_DB;Integrated Security=SSPI;connect timeout=300000;";
+adHoc.ConnectionStringVC = "Data Source=wn000103397;Initial Catalog=VCT_DB;Persist Security Info=True;User ID=vct_app_user;Password=BooWooDooFoo2023!!;connect timeout=300000;";
+//adHoc.ConnectionStringVC = "data source=VCT_DB;server=localhost;Persist Security Info=True;database=VCT_DB;Integrated Security=SSPI;connect timeout=300000;";
 
 adHoc.ConnectionStringUHPD = "data source=UHPD_Reporting;server=WP000052579;Persist Security Info=True;database=PD_Reporting;Integrated Security=SSPI;connect timeout=300000;";
 
@@ -81,6 +83,8 @@ adHoc.ConnectionStringPD = "data source=UHPD_Analytics;server=DBSWP200136;Persis
 //adHoc.ConnectionStringUHN = "data source=UHN_Reporting;server=WP000074441CLS;Persist Security Info=True;database=UHN_Reporting;Integrated Security=SSPI;connect timeout=300000;";
 adHoc.ConnectionStringUHN = "data source=UHN_Reporting;server=WP000074680;Persist Security Info=True;database=SourceData;Integrated Security=SSPI;connect timeout=300000;";
 
+adHoc.ConnectionStringSnowflake = @"DRIVER=SnowflakeDSIIDriver;SERVER=uhgdwaas.east-us-2.azure.snowflakecomputing.com;ROLE=AR_PRD_CHRIS_GIORDANO_UHC_ROLE;AUTHENTICATOR=SNOWFLAKE_JWT;UID=chris_giordano@uhc.com;PRIV_KEY_FILE=C:\Users\cgiorda\Documents\credentials\rsa_key.p8;PRIV_KEY_FILE_PWD=Sigmund2010!!; WAREHOUSE=OHBI_PRD_CONSUME_FREQ_WH;";
+//adHoc.ConnectionStringSnowflake = @"DRIVER=SnowflakeDSIIDriver;SERVER=uhgdwaas.east-us-2.azure.snowflakecomputing.com;ROLE=AR_PRD_CHRIS_GIORDANO_UHC_ROLE;AUTHENTICATOR=SNOWFLAKE_JWT;UID=chris_giordano@uhc.com;PRIV_KEY_FILE=C:\Users\cgiorda\Documents\credentials\rsa_key.p8;PRIV_KEY_FILE_PWD=Sigmund2010!!; WAREHOUSE=OHBI_PRD_CONSUME_FREQ_WH;";
 
 
 adHoc.ConnectionStringNDAR = "data source=UHN_Reporting;server=WP000074680;Persist Security Info=True;database=ndar;Integrated Security=SSPI;connect timeout=300000;";
@@ -91,17 +95,132 @@ adHoc.ConnectionStringGalaxy = "Data Source=UDWPROD;User ID=cgiorda;Password=Boo
 adHoc.TableUGAP = "stg.MHP_Yearly_Universes_UGAP";
 adHoc.Limit = 3000;
 
+IRelationalDataAccess db_odbc = new ODBCDataAccess();
+IRelationalDataAccess db_sqsl = new SqlDataAccess();
+
+//var sql = "Select MBR_ID, INDV_ID, MBR_PGM_ID, PGM_CATGY_TYP_DESC, PGM_TYP_DESC, CALC_PGM_TYP, NOM_DEPT_TYP_DESC, NOM_RSN_TYP_DESC, MBR_PGM_STS_TYP_DESC, MBR_PGM_STS_RSN_TYP_DESC, CREAT_DT, PRE_ENRL_DT, OPS_ENROLLED_DT, OPS_ENGAGED_DT, END_DT,OPS_IDENTIFIED,OPS_QUALIFIED, OPS_ATTEMPTED,OPS_CONTACTED,OPS_MBR_CONTACTED,OPS_ENROLLED,OPS_ENGAGED,PSU_IND, PSU_NEW as PSU_NEW_ORIG from OHBI_PRD_CONSUME_DB.RPT_UHC.UHC_POPFUNNEL_RPT where PSU_IND=1";
+
+
+//var t = await db_odbc.LoadData<PCCM_Model>(connectionString: adHoc.ConnectionStringSnowflake, sql);
+
+
+//var columnss = typeof(PCCM_Model).GetProperties().Select(p => p.Name).ToArray();
+//await db_sqsl.BulkSave<PCCM_Model>(connectionString: adHoc.ConnectionStringMSSQL, "stg.IR_PCCM", t, columnss, truncate: true);
+
+
+var sql = "SELECT * FROM stg.IR_PCCM WHERE MBR_ID in (116573054) ORDER BY MBR_ID,MBR_PGM_ID,  CREAT_DT, END_DT;";
+List<PCCM_Model> pccm_final = new List<PCCM_Model>();
+var pccm = await db_sqsl.LoadData<PCCM_Model>(connectionString: adHoc.ConnectionStringMSSQL, sql);
+
+Int64? member_id = null;
+DateTime? create_dt = null;
+DateTime? end_dt = null;
+DateTime current_dt;
+int month_cnt = 1;
+int total_days = 0;
+
+foreach (var p in  pccm)
+{
+    
+    if(member_id != p.MBR_ID)
+    {
+        member_id = p.MBR_ID;
+    }
+
+
+    create_dt = p.CREAT_DT;
+    end_dt = (p.END_DT == null ? DateTime.Now : p.END_DT);
+
+    current_dt = (DateTime)create_dt;
+
+
+    month_cnt = (((end_dt.Value.Year - create_dt.Value.Year) * 12) + end_dt.Value.Month - create_dt.Value.Month) + 1;
+
+    for (int i = 1; i <= month_cnt; i++)
+    {
+
+        var pcm = new PCCM_Model();
+        pcm.MBR_ID = p.MBR_ID;
+        pcm.INDV_ID =  p.INDV_ID ;
+        pcm.MBR_PGM_ID= p.MBR_PGM_ID ;
+        pcm.PGM_CATGY_TYP_DESC= p.PGM_CATGY_TYP_DESC;
+        pcm.PGM_TYP_DESC= p.PGM_TYP_DESC;
+        pcm.CALC_PGM_TYP= p.CALC_PGM_TYP;
+        pcm.NOM_DEPT_TYP_DESC= p.NOM_DEPT_TYP_DESC;
+        pcm.NOM_RSN_TYP_DESC= p.NOM_RSN_TYP_DESC;
+        pcm.MBR_PGM_STS_TYP_DESC= p.MBR_PGM_STS_TYP_DESC;
+        pcm.MBR_PGM_STS_RSN_TYP_DESC= p.MBR_PGM_STS_RSN_TYP_DESC;
+        pcm.CREAT_DT= p.CREAT_DT;
+        pcm.PRE_ENRL_DT= p.PRE_ENRL_DT;
+        pcm.OPS_ENROLLED_DT= p.OPS_ENROLLED_DT;
+        pcm.OPS_ENGAGED_DT= p.OPS_ENGAGED_DT;
+        pcm.END_DT= p.END_DT;
+        pcm.OPS_IDENTIFIED= p.OPS_IDENTIFIED;
+        pcm.OPS_QUALIFIED= p.OPS_QUALIFIED;
+        pcm.OPS_ATTEMPTED= p.OPS_ATTEMPTED;
+        pcm.OPS_CONTACTED= p.OPS_CONTACTED;
+        pcm.OPS_MBR_CONTACTED= p.OPS_MBR_CONTACTED;
+        pcm.OPS_ENROLLED= p.OPS_ENROLLED;
+        pcm.OPS_ENGAGED= p.OPS_ENGAGED;
+        pcm.PSU_IND= p.PSU_IND;
+        pcm.PSU_NEW_ORIG = p.PSU_NEW_ORIG;
+
+
+        pcm.RPT_MTH_YR_DISPLAY = current_dt.ToString("MMM") + " " + current_dt.ToString("yy");
+        pcm.RPT_MTH = current_dt.ToString("MM");
+        pcm.RPT_YR = current_dt.ToString("yyyy");
+
+
+
+
+        if (current_dt.Year == create_dt.Value.Year && current_dt.Month == create_dt.Value.Month)
+        {
+            total_days = DateTime.DaysInMonth(current_dt.Year, current_dt.Month) - current_dt.Day;
+        }
+        else if (current_dt.Year == end_dt.Value.Year && current_dt.Month == end_dt.Value.Month)
+        {
+            total_days = DateTime.DaysInMonth(end_dt.Value.Year, end_dt.Value.Month) - end_dt.Value.Day;
+        }
+        else
+        {
+            total_days = DateTime.DaysInMonth(current_dt.Year, current_dt.Month) - 1;
+        }
+
+        pcm.RPT_DAYS = total_days;
+
+        current_dt = current_dt.AddMonths(1);
+
+        pccm_final.Add(pcm);
+    }
+
+
+}
+
+
+
+var columnss = typeof(PCCM_Model).GetProperties().Select(p => p.Name).ToArray();
+await db_sqsl.BulkSave<PCCM_Model>(connectionString: adHoc.ConnectionStringMSSQL, "stg.IR_PCCM_Final", pccm_final, columnss, truncate: true);
+
+//string filepath = "C:\\Users\\cgiorda\\Desktop\\Projects\\PCCM";
+
+//await adHoc.parseCSV(filepath, fileNamePrefix: "ir_", chrDelimiter : ',');
+
+
+return;
+
+
 //await adHoc.getEBMSourceDataAsync();
 //await adHoc.getEDCSourceDataAsync();
 
 //return;
 
-//adHoc.PEGReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\PEG Template\\341 PEG DQ&C Results - Template.xlsx";
+adHoc.PEGReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\PEG Template\\341 PEG DQ&C Results - Template.xlsx";
 
-adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\EBM Template\\342 EBM DQ&C Results - Template.xlsx";
+//adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\EBM Template\\342 EBM DQ&C Results - Template.xlsx";
 
-
-await adHoc.generateEBMReportsAsync();
+//await adHoc.getPEGSourceDataAsync();
+//await adHoc.generatePEGReportsAsync();
+//await adHoc.generateEBMReportsAsync();
 
 
 //await adHoc.getETGSymmSourceDataAsync(16);

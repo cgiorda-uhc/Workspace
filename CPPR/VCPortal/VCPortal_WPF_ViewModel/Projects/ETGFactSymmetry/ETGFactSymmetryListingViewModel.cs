@@ -1,9 +1,15 @@
 ﻿
+using Azure;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DataAccessLibrary.Data.Abstract;
+using DataAccessLibrary.DataAccess;
 using FileParsingLibrary.Models;
 using FileParsingLibrary.MSExcel;
+using IdentityModel.OidcClient;
+using Irony.Parsing;
 using Microsoft.Extensions.Configuration;
+using NPOI.SS.Formula.Functions;
 using NPOI.SS.Formula.PTG;
 using SharedFunctionsLibrary;
 using System.Collections.ObjectModel;
@@ -12,6 +18,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using VCPortal_Models.Configuration.HeaderInterfaces.Abstract;
@@ -30,6 +37,14 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
     private readonly IExcelFunctions _excelFunctions;
     private readonly IETGFactSymmetryConfig? _config;
     private readonly Serilog.ILogger _logger;
+
+    private readonly IRelationalDataAccess _db_sql;
+    private readonly IChemotherapyPX_Repo _chemo_sql;
+    private readonly IMHPUniverse_Repo _mhp_sql;
+    private readonly IProcCodeTrends_Repo _pct_db;
+    private readonly IEDCAdhoc_Repo _edc_db;
+    private readonly IETGFactSymmetry_Repo _etg_db;
+
 
     public MessageViewModel UserMessageViewModel { get; }
     public MessageViewModel ProgressMessageViewModel { get; }
@@ -88,11 +103,20 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
 
 
     private StringBuilder _sbStatus;
-    public ETGFactSymmetryListingViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger)
+    public ETGFactSymmetryListingViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger, IRelationalDataAccess db_sql, IChemotherapyPX_Repo chemo_sql, IMHPUniverse_Repo mhp_sql, IProcCodeTrends_Repo pct_db, IEDCAdhoc_Repo edc_db, IETGFactSymmetry_Repo etg_db)
     {
         _logger = logger;
         _excelFunctions = excelFunctions;
         _config = prepareConfig(config);
+
+        _db_sql = db_sql;
+        _chemo_sql = chemo_sql;
+        _mhp_sql = mhp_sql;
+        _pct_db = pct_db;
+        _edc_db = edc_db;
+        _etg_db = etg_db;
+
+
 
         UserMessageViewModel = new MessageViewModel();
         ProgressMessageViewModel = new MessageViewModel();
@@ -260,22 +284,57 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
                 t.username = Authentication.UserName;
             }
 
-            var api = _config.APIS.Where(x => x.Name == "ETGInsert").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
-            var response = WebAPIConsume.PostCall<ObservableCollection<ETGFactSymmetry_Tracking_UpdateDto>>(api.Url, tracked);
-            if (response.Result.StatusCode != System.Net.HttpStatusCode.OK)
-            {
-                UserMessageViewModel.IsError = true;
-                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("ETGFactSymmetryData.Save threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
-            }
-            else
+            //var api = _config.APIS.Where(x => x.Name == "ETGInsert").FirstOrDefault();
+            //WebAPIConsume.BaseURI = api.BaseUrl;
+            //var response = WebAPIConsume.PostCall<ObservableCollection<ETGFactSymmetry_Tracking_UpdateDto>>(api.Url, tracked);
+            //if (response.Result.StatusCode != System.Net.HttpStatusCode.OK)
+            //{
+            //    UserMessageViewModel.IsError = true;
+            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            //    _logger.Error("ETGFactSymmetryData.Save threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
+            //}
+            //else
+            //{
+
+            //    UserMessageViewModel.IsError = false;
+            //    UserMessageViewModel.Message = "ETGFactSymmetryData.Save sucessfully completed";
+            //    _logger.Information("ETGFactSymmetryData.Save sucessfully completed for {CurrentUser}...", Authentication.UserName);
+            //}
+
+            try
             {
 
-                UserMessageViewModel.IsError = false;
-                UserMessageViewModel.Message = "ETGFactSymmetryData.Save sucessfully completed";
-                _logger.Information("ETGFactSymmetryData.Save sucessfully completed for {CurrentUser}...", Authentication.UserName);
+                //_sbStatus.Append("--Saving to database..." + Environment.NewLine);
+                //ProgressMessageViewModel.Message = _sbStatus.ToString();
+                _logger.Information("Requesting API InsertETGFactSymmetry()...");
+
+                ////RETURN HTTP 200
+                var task = _etg_db.InsertETGFactSymmetryTracking(tracked.ToList(), "VCT_DB");
+                task.Wait(); // Blocks current thread until GetFooAsync task completes
+                             // For pedagogical use only: in general, don't do this!
+                var results = task;
+
+                if (results == null)
+                {
+
+                   UserMessageViewModel.IsError = true;
+                    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                    _logger.Error("ETGFactSymmetryData.Save threw an error for {CurrentUser}", Authentication.UserName);
+                    return;
+                }
+
+
             }
+            catch (Exception ex)
+            {
+
+                _logger.Error("ETGFactSymmetryData.Save threw an error for {CurrentUser}" + ex.ToString(), Authentication.UserName);
+                //RETURN ERROR
+                // return Results.Problem(ex.Message);
+                return;
+
+            }
+
 
             SharedETGSymmObjects.ETGFactSymmetry_Tracking_List.Clear();
 
@@ -300,57 +359,127 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
     {
         try
         {
+
+            CancellationTokenSource cancellationToken;
+            cancellationToken = new CancellationTokenSource();
+
             OC_ETGFactSymmetryViewModel.Clear();
 
             _logger.Information("Running getETGFactSymmetryData() for {CurrentUser}...", Authentication.UserName);
             _sbStatus.Append("--Requesting data for ETGFactSymmetry, please wait..." + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
             await Task.Delay(TimeSpan.FromSeconds(1));
-            var api = _config.APIS.Where(x => x.Name == "MainDataPTC").FirstOrDefault();
-            WebAPIConsume.BaseURI = api.BaseUrl;
-            var response = WebAPIConsume.GetCall(api.Url);
-            if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
+
+            //var api = _config.APIS.Where(x => x.Name == "MainDataPTC").FirstOrDefault();
+            //WebAPIConsume.BaseURI = api.BaseUrl;
+            //var response = WebAPIConsume.GetCall(api.Url);
+            //if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
+            //{
+            //    var reponseStream = await response.Result.Content.ReadAsStreamAsync();
+            //    var result = await JsonSerializer.DeserializeAsync<List<ETGFactSymmetry_ReadDto>>(reponseStream, new JsonSerializerOptions
+            //    {
+            //        PropertyNameCaseInsensitive = true
+            //    });
+            //    int cnt = 1;
+            //    int total = result.Count();
+            //    _sbStatus.Append("--Rendering row {$cnt} out of " + total.ToString("N0") + Environment.NewLine);
+
+
+            //    foreach (var r in result)
+            //    {
+            //        ProgressMessageViewModel.Message = _sbStatus.ToString().Replace("{$cnt}", cnt.ToString("N0"));
+            //        OC_ETGFactSymmetryViewModel.Add(new ETGFactSymmetryViewModel(r));
+            //        //await Task.Delay(TimeSpan.FromSeconds(.001));
+            //        if(cnt % 100 == 0)
+            //        {
+            //            await Task.Delay(TimeSpan.FromSeconds(.001));
+            //        }
+            //        cnt++;
+            //    }    
+
+
+            //result.ForEach(x =>
+            //{
+            //    ProgressMessageViewModel.Message = _sbStatus.ToString().Replace("{$cnt}", cnt.ToString("N0"));
+            //    OC_ETGFactSymmetryViewModel.Add(new ETGFactSymmetryViewModel(x));
+            //    //Task.Delay(TimeSpan.FromSeconds(1.0));
+            //    cnt++;
+            //});
+
+            //    _logger.Information("ETGFactSymmetryData.getETGFactSymmetryData sucessfully completed for {CurrentUser}...", Authentication.UserName);
+            //    ProgressMessageViewModel.Message = _sbStatus.ToString();
+            //}
+            //else
+            //{
+            //    UserMessageViewModel.IsError = true;
+            //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+            //    _logger.Error("getETGFactSymmetryData threw an error for {CurrentUser}..." + response.Result.StatusCode.ToString(), Authentication.UserName);
+            //}
+
+
+
+            try
             {
-                var reponseStream = await response.Result.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<List<ETGFactSymmetry_ReadDto>>(reponseStream, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-                int cnt = 1;
-                int total = result.Count();
-                _sbStatus.Append("--Rendering row {$cnt} out of " + total.ToString("N0") + Environment.NewLine);
 
-       
-                foreach (var r in result)
-                {
-                    ProgressMessageViewModel.Message = _sbStatus.ToString().Replace("{$cnt}", cnt.ToString("N0"));
-                    OC_ETGFactSymmetryViewModel.Add(new ETGFactSymmetryViewModel(r));
-                    //await Task.Delay(TimeSpan.FromSeconds(.001));
-                    if(cnt % 100 == 0)
-                    {
-                        await Task.Delay(TimeSpan.FromSeconds(.001));
-                    }
-                    cnt++;
-                }    
-
-
-                //result.ForEach(x =>
-                //{
-                //    ProgressMessageViewModel.Message = _sbStatus.ToString().Replace("{$cnt}", cnt.ToString("N0"));
-                //    OC_ETGFactSymmetryViewModel.Add(new ETGFactSymmetryViewModel(x));
-                //    //Task.Delay(TimeSpan.FromSeconds(1.0));
-                //    cnt++;
-                //});
-
-                _logger.Information("ETGFactSymmetryData.getETGFactSymmetryData sucessfully completed for {CurrentUser}...", Authentication.UserName);
+                _sbStatus.Append("--Getting Cached Filters..." + Environment.NewLine);
                 ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+
+                ////RETURN HTTP 200
+                var result = await _etg_db.GetETGFactSymmetryPTCDisplayAsync(cancellationToken.Token);//200 SUCCESS
+
+
+                if (result != null)
+                {
+                    int cnt = 1;
+                    int total = result.Count();
+                    _sbStatus.Append("--Rendering row {$cnt} out of " + total.ToString("N0") + Environment.NewLine);
+
+
+                    foreach (var r in result)
+                    {
+                        ProgressMessageViewModel.Message = _sbStatus.ToString().Replace("{$cnt}", cnt.ToString("N0"));
+                        OC_ETGFactSymmetryViewModel.Add(new ETGFactSymmetryViewModel(r));
+                        //await Task.Delay(TimeSpan.FromSeconds(.001));
+                        if (cnt % 100 == 0)
+                        {
+                            await Task.Delay(TimeSpan.FromSeconds(.001));
+                        }
+                        cnt++;
+                    }
+
+                    result.ToList().ForEach(x =>
+                    {
+                        ProgressMessageViewModel.Message = _sbStatus.ToString().Replace("{$cnt}", cnt.ToString("N0"));
+                        OC_ETGFactSymmetryViewModel.Add(new ETGFactSymmetryViewModel(x));
+                        //Task.Delay(TimeSpan.FromSeconds(1.0));
+                        cnt++;
+                    });
+
+
+                     _logger.Information("ETGFactSymmetryData.getETGFactSymmetryData sucessfully completed for {CurrentUser}...", Authentication.UserName);
+                    ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+                }
+                else
+                {
+                    UserMessageViewModel.IsError = true;
+                    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                    _logger.Error("getETGFactSymmetryData threw an error for {CurrentUser}...", Authentication.UserName);
+                }
+
+
             }
-            else
+            catch (Exception ex)
             {
+
                 UserMessageViewModel.IsError = true;
                 UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-                _logger.Error("getETGFactSymmetryData threw an error for {CurrentUser}..." + response.Result.StatusCode.ToString(), Authentication.UserName);
+                _logger.Error("getETGFactSymmetryData threw an error for {CurrentUser}..." + ex.ToString(), Authentication.UserName);
+                return;
+
             }
+
 
             //FIND WAY TO IGNORE LOADING THESE WHENEVER REFRESHED
             //DONT NEED TO TRACK LOADING OF DATA!!!!!
@@ -374,14 +503,17 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
 
     private async Task exportConfigs()
     {
+        CancellationTokenSource cancellationToken;
+        cancellationToken = new CancellationTokenSource();
 
         try
         {
 
+
             _logger.Information("Running ETGFactSymmetryData.exportConfigs for {CurrentUser}...", Authentication.UserName);
 
 
-            APIConfig api;
+            //APIConfig api;
             string suffix;
 
             if(CurrentVersion != null)
@@ -410,9 +542,11 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
 
 
 
-                api = _config.APIS.Where(x => x.Name == "MainDataPTC").FirstOrDefault();
-                var etgsum = await VM_Functions.APIGetResultAsync<ETGPTCSummaryConfig>(api.BaseUrl, api.Url);
-                if (etgsum.Count > 0)
+                //api = _config.APIS.Where(x => x.Name == "MainDataPTC").FirstOrDefault();
+                //var etgsum = await VM_Functions.APIGetResultAsync<ETGPTCSummaryConfig>(api.BaseUrl, api.Url);
+
+               var etgsum = await _etg_db.GetETGFactSymmetryPTCDisplayAsync(cancellationToken.Token);
+                if (etgsum.ToList().Count > 0)
                 {
                     export.Add(new ExcelExport() { ExportList = etgsum.ToList<object>(), SheetName = suffix + sheet.SheetName });
                 }
@@ -421,42 +555,76 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
 
 
                 sheet = excel.Sheets.Where(x => x.Name == "ETGPTCModelConfig").FirstOrDefault();
-                api = _config.APIS.Where(x => x.Name == "ETGPTCModelConfig").FirstOrDefault();
-                var etgptc = await VM_Functions.APIGetResultAsync<ETG_PTC_Modeling_Model>(api.BaseUrl, api.Url);
-                if (etgptc.Count > 0)
+                //api = _config.APIS.Where(x => x.Name == "ETGPTCModelConfig").FirstOrDefault();
+                //var etgptc = await VM_Functions.APIGetResultAsync<ETG_PTC_Modeling_Model>(api.BaseUrl, api.Url);
+                //if (etgptc.Count > 0)
+                //{
+                //    export.Add(new ExcelExport() { ExportList = etgptc.ToList<object>(), SheetName = sheet.SheetName });
+                //}
+
+
+                var etgptc = await _etg_db.GetETG_PTC_Modeling_Model(cancellationToken.Token);
+                if (etgptc.ToList().Count > 0)
                 {
                     export.Add(new ExcelExport() { ExportList = etgptc.ToList<object>(), SheetName = sheet.SheetName });
                 }
 
+
+
                 sheet = excel.Sheets.Where(x => x.Name == "ETGSummaryFinal").FirstOrDefault();
-                api = _config.APIS.Where(x => x.Name == "ETGSummaryFinalPTC").FirstOrDefault();
-                var etgfinal = await VM_Functions.APIGetResultAsync<ETGSummaryFinal_PTC_Config>(api.BaseUrl, api.Url);
-                if (etgfinal.Count > 0)
+                //api = _config.APIS.Where(x => x.Name == "ETGSummaryFinalPTC").FirstOrDefault();
+                //var etgfinal = await VM_Functions.APIGetResultAsync<ETGSummaryFinal_PTC_Config>(api.BaseUrl, api.Url);
+                //if (etgfinal.Count > 0)
+                //{
+                //    export.Add(new ExcelExport() { ExportList = etgfinal.ToList<object>(), SheetName = suffix  + sheet.SheetName });
+                //}
+                var etgfinal = await _etg_db.GetETGSummaryPTCFinalAsync(cancellationToken.Token);
+                if (etgfinal.ToList().Count > 0)
                 {
-                    export.Add(new ExcelExport() { ExportList = etgfinal.ToList<object>(), SheetName = suffix  + sheet.SheetName });
+                    export.Add(new ExcelExport() { ExportList = etgfinal.ToList<object>(), SheetName = sheet.SheetName });
                 }
+
+
+
 
                 sheet = excel.Sheets.Where(x => x.Name == "ETGPTUGAPConfig").FirstOrDefault();
-                api = _config.APIS.Where(x => x.Name == "ETGPTUGAPConfig").FirstOrDefault();
-                var etgugap = await VM_Functions.APIGetResultAsync<ETG_UGAP_CFG_Model>(api.BaseUrl, api.Url);
-                if (etgugap.Count > 0)
+                //api = _config.APIS.Where(x => x.Name == "ETGPTUGAPConfig").FirstOrDefault();
+                //var etgugap = await VM_Functions.APIGetResultAsync<ETG_UGAP_CFG_Model>(api.BaseUrl, api.Url);
+                //if (etgugap.Count > 0)
+                //{
+                //    export.Add(new ExcelExport() { ExportList = etgugap.ToList<object>(), SheetName =  sheet.SheetName });
+                //}
+                var etgugap = await _etg_db.GetETG_UGAP_CFG_Model(cancellationToken.Token);
+                if (etgugap.ToList().Count > 0)
                 {
-                    export.Add(new ExcelExport() { ExportList = etgugap.ToList<object>(), SheetName =  sheet.SheetName });
+                    export.Add(new ExcelExport() { ExportList = etgugap.ToList<object>(), SheetName = sheet.SheetName });
                 }
 
-            
+
                 sheet = excel.Sheets.Where(x => x.Name == "ETGPCNrxConfig").FirstOrDefault();
-                api = _config.APIS.Where(x => x.Name == "ETGPCNrxConfig").FirstOrDefault();
-                var etgpcnrx = await VM_Functions.APIGetResultAsync<ETG_CNFG_PC_ETG_NRX>(api.BaseUrl, api.Url);
-                if (etgpcnrx.Count > 0)
+                //api = _config.APIS.Where(x => x.Name == "ETGPCNrxConfig").FirstOrDefault();
+                //var etgpcnrx = await VM_Functions.APIGetResultAsync<ETG_CNFG_PC_ETG_NRX>(api.BaseUrl, api.Url);
+                //if (etgpcnrx.Count > 0)
+                //{
+                //    export.Add(new ExcelExport() { ExportList = etgpcnrx.ToList<object>(), SheetName = sheet.SheetName });
+                //}
+                var etgpcnrx = await _etg_db.GetETG_CNFG_PC_ETG_NRX(cancellationToken.Token);
+                if (etgpcnrx.ToList().Count > 0)
                 {
                     export.Add(new ExcelExport() { ExportList = etgpcnrx.ToList<object>(), SheetName = sheet.SheetName });
                 }
 
+
+
                 sheet = excel.Sheets.Where(x => x.Name == "ETGNrxCompareConfig").FirstOrDefault();
-                api = _config.APIS.Where(x => x.Name == "ETGNrxCompareConfig").FirstOrDefault();
-                var etgnxc = await VM_Functions.APIGetResultAsync<ETG_CNFG_ETG_NRX_COMPARE>(api.BaseUrl, api.Url);
-                if (etgnxc.Count > 0)
+                //api = _config.APIS.Where(x => x.Name == "ETGNrxCompareConfig").FirstOrDefault();
+                //var etgnxc = await VM_Functions.APIGetResultAsync<ETG_CNFG_ETG_NRX_COMPARE>(api.BaseUrl, api.Url);
+                //if (etgnxc.Count > 0)
+                //{
+                //    export.Add(new ExcelExport() { ExportList = etgnxc.ToList<object>(), SheetName = sheet.SheetName });
+                //}
+                var etgnxc = await _etg_db.GetETG_CNFG_ETG_NRX_COMPARE(cancellationToken.Token);
+                if (etgnxc.ToList().Count > 0)
                 {
                     export.Add(new ExcelExport() { ExportList = etgnxc.ToList<object>(), SheetName = sheet.SheetName });
                 }
@@ -469,39 +637,57 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
 
                 //var etgsum = ETGFactSymmetryConfigMapper.getETG_PEC_SummaryConfig(OC_ETGFactSymmetryViewModel);
                 //export.Add(new ExcelExport() { ExportList = etgsum.ToList<object>(), SheetName = suffix + sheet.SheetName });
-                api = _config.APIS.Where(x => x.Name == "MainData").FirstOrDefault();
-                var etgsum = await VM_Functions.APIGetResultAsync<ETGPECSummaryConfig>(api.BaseUrl, api.Url);
-                if (etgsum.Count > 0)
+                //api = _config.APIS.Where(x => x.Name == "MainData").FirstOrDefault();
+                //var etgsum = await VM_Functions.APIGetResultAsync<ETGPECSummaryConfig>(api.BaseUrl, api.Url);
+                //if (etgsum.Count > 0)
+                //{
+                //    export.Add(new ExcelExport() { ExportList = etgsum.ToList<object>(), SheetName = suffix + sheet.SheetName });
+                //}
+                var etgsum = await _etg_db.GetETGFactSymmetryDisplayAsync(cancellationToken.Token);
+                if (etgsum.ToList().Count > 0)
                 {
-                    export.Add(new ExcelExport() { ExportList = etgsum.ToList<object>(), SheetName = suffix + sheet.SheetName });
+                    export.Add(new ExcelExport() { ExportList = etgsum.ToList<object>(), SheetName = sheet.SheetName });
                 }
-
 
 
 
                 sheet = excel.Sheets.Where(x => x.Name == "ETGSummaryFinal").FirstOrDefault();
-                api = _config.APIS.Where(x => x.Name == "ETGSummaryFinal").FirstOrDefault();
-                var etgfinal = await VM_Functions.APIGetResultAsync<ETGSummaryFinal_PEC_Config>(api.BaseUrl, api.Url);
-                if (etgfinal.Count > 0)
+                //api = _config.APIS.Where(x => x.Name == "ETGSummaryFinal").FirstOrDefault();
+                //var etgfinal = await VM_Functions.APIGetResultAsync<ETGSummaryFinal_PEC_Config>(api.BaseUrl, api.Url);
+                //if (etgfinal.Count > 0)
+                //{
+                //    export.Add(new ExcelExport() { ExportList = etgfinal.ToList<object>(), SheetName = suffix + sheet.SheetName });
+                //}
+                var etgfinal = await _etg_db.GetETGSummaryFinalAsync(cancellationToken.Token);
+                if (etgfinal.ToList().Count > 0)
                 {
-                    export.Add(new ExcelExport() { ExportList = etgfinal.ToList<object>(), SheetName = suffix + sheet.SheetName });
+                    export.Add(new ExcelExport() { ExportList = etgfinal.ToList<object>(), SheetName = sheet.SheetName });
                 }
 
 
-
                 sheet = excel.Sheets.Where(x => x.Name == "ETGNrxExclConfig").FirstOrDefault();
-                api = _config.APIS.Where(x => x.Name == "ETGNrxExclConfig").FirstOrDefault();
-                var etgnxe = await VM_Functions.APIGetResultAsync<ETG_CNFG_ETG_NRX_EXCLD>(api.BaseUrl, api.Url);
-                if (etgnxe.Count > 0)
+                //api = _config.APIS.Where(x => x.Name == "ETGNrxExclConfig").FirstOrDefault();
+                //var etgnxe = await VM_Functions.APIGetResultAsync<ETG_CNFG_ETG_NRX_EXCLD>(api.BaseUrl, api.Url);
+                //if (etgnxe.Count > 0)
+                //{
+                //    export.Add(new ExcelExport() { ExportList = etgnxe.ToList<object>(), SheetName = sheet.SheetName });
+                //}
+                var etgnxe = await _etg_db.GetETG_CNFG_ETG_NRX_EXCLD(cancellationToken.Token);
+                if (etgnxe.ToList().Count > 0)
                 {
                     export.Add(new ExcelExport() { ExportList = etgnxe.ToList<object>(), SheetName = sheet.SheetName });
                 }
 
 
                 sheet = excel.Sheets.Where(x => x.Name == "ETGSpclConfig").FirstOrDefault();
-                api = _config.APIS.Where(x => x.Name == "ETGSpclConfig").FirstOrDefault();
-                var etgspc = await VM_Functions.APIGetResultAsync<ETG_CNFG_ETG_SPCL>(api.BaseUrl, api.Url);
-                if (etgspc.Count > 0)
+                //api = _config.APIS.Where(x => x.Name == "ETGSpclConfig").FirstOrDefault();
+                //var etgspc = await VM_Functions.APIGetResultAsync<ETG_CNFG_ETG_SPCL>(api.BaseUrl, api.Url);
+                //if (etgspc.Count > 0)
+                //{
+                //    export.Add(new ExcelExport() { ExportList = etgspc.ToList<object>(), SheetName = sheet.SheetName });
+                //}
+                var etgspc = await _etg_db.GetETG_CNFG_ETG_SPCL(cancellationToken.Token);
+                if (etgspc.ToList().Count > 0)
                 {
                     export.Add(new ExcelExport() { ExportList = etgspc.ToList<object>(), SheetName = sheet.SheetName });
                 }
@@ -510,28 +696,41 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
 
 
 
-            api = _config.APIS.Where(x => x.Name == "Tracking").FirstOrDefault();
-            var tracking = await VM_Functions.APIGetResultAsync<ETGFactSymmetry_Tracking_ReadDto>(api.BaseUrl, api.Url);
-            if (tracking.Count > 0)
-            {
-                export.Add(new ExcelExport() { ExportList = tracking.ToList<object>(), SheetName = "Tracking" });
+            //api = _config.APIS.Where(x => x.Name == "Tracking").FirstOrDefault();
+            //var tracking = await VM_Functions.APIGetResultAsync<ETGFactSymmetry_Tracking_ReadDto>(api.BaseUrl, api.Url);
+            //if (tracking.Count > 0)
+            //{
+            //    export.Add(new ExcelExport() { ExportList = tracking.ToList<object>(), SheetName = "Tracking" });
 
+            //}
+            var tracking = await _etg_db.GetETGTrackingAsync(cancellationToken.Token);
+            if (tracking.ToList().Count > 0)
+            {
+                export.Add(new ExcelExport() { ExportList = tracking.ToList<object>(), SheetName = sheet.SheetName });
             }
 
 
+            //api = _config.APIS.Where(x => x.Name == "ETGLatest").FirstOrDefault();
+            //var latest = await VM_Functions.APIGetResultAsync<ETG_Lastest_Model>(api.BaseUrl, api.Url);
+            //export.Add(new ExcelExport() { ExportList = latest.ToList<object>(), SheetName = "ETGLatest" });
+            var latest = await _etg_db.GetETGLatestAsync(cancellationToken.Token);
+            if (latest.ToList().Count > 0)
+            {
+                export.Add(new ExcelExport() { ExportList = latest.ToList<object>(), SheetName = sheet.SheetName });
+            }
 
-            api = _config.APIS.Where(x => x.Name == "ETGLatest").FirstOrDefault();
-            var latest = await VM_Functions.APIGetResultAsync<ETG_Lastest_Model>(api.BaseUrl, api.Url);
-            export.Add(new ExcelExport() { ExportList = latest.ToList<object>(), SheetName = "ETGLatest" });
-            
-        
 
-            if(CurrentVersion.IsNumeric())
+            if (CurrentVersion.IsNumeric())
             {
                 sheet = excel.Sheets.Where(x => x.Name == "ETGAdhoc").FirstOrDefault();
-                api = _config.APIS.Where(x => x.Name == "ETGAdhoc").FirstOrDefault();
-                var etgad = await VM_Functions.APIGetResultAsync<ETGSummaryAdhocConfig> (api.BaseUrl, api.Url + "/" + CurrentVersion);
-                if (etgad.Count > 0)
+                //api = _config.APIS.Where(x => x.Name == "ETGAdhoc").FirstOrDefault();
+                //var etgad = await VM_Functions.APIGetResultAsync<ETGSummaryAdhocConfig> (api.BaseUrl, api.Url + "/" + CurrentVersion);
+                //if (etgad.Count > 0)
+                //{
+                //    export.Add(new ExcelExport() { ExportList = etgad.ToList<object>(), SheetName = sheet.SheetName });
+                //}
+                var etgad = await _etg_db.GetETGFactSymmetryAdhocAsync(int.Parse(CurrentVersion));
+                if (etgad.ToList().Count > 0)
                 {
                     export.Add(new ExcelExport() { ExportList = etgad.ToList<object>(), SheetName = sheet.SheetName });
                 }
@@ -598,39 +797,89 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
     private async Task loadGridLists()
     {
 
-        var api = _config.APIS.Where(x => x.Name == "ETGPDVersion").FirstOrDefault();
-        WebAPIConsume.BaseURI = api.BaseUrl;
+        CancellationTokenSource cancellationToken;
+        cancellationToken = new CancellationTokenSource();
+
+        //var api = _config.APIS.Where(x => x.Name == "ETGPDVersion").FirstOrDefault();
+        //WebAPIConsume.BaseURI = api.BaseUrl;
         _sbStatus.Append("--Getting PDVersions list..." + Environment.NewLine);
         ProgressMessageViewModel.Message = _sbStatus.ToString();
         CurrentVersion = "No History";
         await Task.Delay(TimeSpan.FromSeconds(.5));
-        var response = WebAPIConsume.GetCall(api.Url);
+        //var response = WebAPIConsume.GetCall(api.Url);
 
         PdVersions = new ObservableCollection<string>();
 
 
-        if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
-        {
-            var reponseStream = await response.Result.Content.ReadAsStreamAsync();
-            var result = await JsonSerializer.DeserializeAsync<List<ETGVersion_Model>>(reponseStream, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
+        //if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
+        //{
+        //    var reponseStream = await response.Result.Content.ReadAsStreamAsync();
+        //    var result = await JsonSerializer.DeserializeAsync<List<ETGVersion_Model>>(reponseStream, new JsonSerializerOptions
+        //    {
+        //        PropertyNameCaseInsensitive = true
+        //    });
 
-            var lst = result.Select(x => x.PD_Version.ToString()).ToList();
-            PdVersions.Add(CurrentVersion);
-            foreach (var l in lst)
+        //    var lst = result.Select(x => x.PD_Version.ToString()).ToList();
+        //    PdVersions.Add(CurrentVersion);
+        //    foreach (var l in lst)
+        //    {
+        //        PdVersions.Add(l);
+        //    }
+
+        //}
+        //else
+        //{
+        //    UserMessageViewModel.IsError = true;
+        //    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+        //    _logger.Error("loadGridLists.PDVersions threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
+        //}
+
+
+        try
+        {
+
+            //_sbStatus.Append("--Saving to database..." + Environment.NewLine);
+            //ProgressMessageViewModel.Message = _sbStatus.ToString();
+            _logger.Information("Requesting API InsertETGFactSymmetry()...");
+
+            ////RETURN HTTP 200
+            var task = _etg_db.GetPDVersionsAsync(cancellationToken.Token);
+            task.Wait(); // Blocks current thread until GetFooAsync task completes
+                         // For pedagogical use only: in general, don't do this!
+            var results = task.Result;
+
+            if (results != null)
             {
-                PdVersions.Add(l);
+
+                var lst = results.Select(x => x.PD_Version.ToString()).ToList();
+                PdVersions.Add(CurrentVersion);
+                foreach (var l in lst)
+                {
+                    PdVersions.Add(l);
+                }
+
+
+
+            }
+            else
+            {
+                UserMessageViewModel.IsError = true;
+                UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                _logger.Error("loadGridLists.PDVersions threw an error for {CurrentUser}", Authentication.UserName);
             }
 
+
         }
-        else
+        catch (Exception ex)
         {
             UserMessageViewModel.IsError = true;
             UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
-            _logger.Error("loadGridLists.PDVersions threw an error for {CurrentUser}" + response.Result.StatusCode.ToString(), Authentication.UserName);
+            _logger.Error("loadGridLists.PDVersions threw an error for {CurrentUser}" + ex.ToString(), Authentication.UserName);
+            return;
+
         }
+
+
 
         _sbStatus.Append("--Getting RxNrxOption list..." + Environment.NewLine);
         ProgressMessageViewModel.Message = _sbStatus.ToString();

@@ -138,15 +138,15 @@ namespace CAD_Worker_Service
             }
 
 
-            var cfg = options.Find(p => p.Name == "SiteOfCareGastro");
+            var cfg = options.Find(p => p.Name == "NICEUHCWestEligibility");
             if (cfg != null && _tasksManager != null)
             {
                 schedule = cfg.Schedule;
 
                 //CREATE NEW TIMER TASK
-                timer = new CronosTimer("32 11 * * *");
+                timer = new CronosTimer("12 16 * * *");
                 //USING TOKEN FROM EVENT
-                timer.Elapsed += HandleTimerElapsed(_tasksManager.SiteOfCareGastroDataRefreshAsync);
+                timer.Elapsed += HandleTimerElapsed(_tasksManager.NICEUHCWestEligibilityAppendAsync);
                 // USING STOPPINGTOKEN
                 //timer.Elapsed += HandleTimerElapsed(_ => _tasksManager.CheckDataSourcesAsync(cancellationToken));
                 //ADD TO LIST FOR EASY DISPOSE ON STOP

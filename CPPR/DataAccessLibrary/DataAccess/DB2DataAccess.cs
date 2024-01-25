@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using IBM.Data.Db2;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -53,11 +52,13 @@ namespace DataAccessLibrary.DataAccess
 
         public async Task<IEnumerable<T>> LoadData<T>(string connectionString, string sql)
         {
-            using IDbConnection connection = new DB2Connection(connectionString);
+            //using IDbConnection connection = new DB2Connection(connectionString);
 
-            var cmd = new CommandDefinition(sql, commandTimeout: 12000);
-            var result = await connection.QueryAsync<T>(cmd);
-            return result;
+            //var cmd = new CommandDefinition(sql, commandTimeout: 12000);
+            //var result = await connection.QueryAsync<T>(cmd);
+            //return result;
+
+            throw new NotImplementedException();
         }
 
         public Task<IEnumerable<T>> LoadData<T>(string sql, string connectionStringId = "VCT_DB", bool has_connectionstring = false)

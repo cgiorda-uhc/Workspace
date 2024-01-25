@@ -27,6 +27,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VCPortal_WPF_ViewModel", "V
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "VCT_DB", "VCT_DB\VCT_DB.sqlproj", "{124F375C-AE65-436C-8F35-F38311B057DC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExcelConnectionLibrary", "..\ExcelConnectionLibrary\ExcelConnectionLibrary.csproj", "{5488F987-F739-43ED-ACCA-D5395ED24205}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{124F375C-AE65-436C-8F35-F38311B057DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{124F375C-AE65-436C-8F35-F38311B057DC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{124F375C-AE65-436C-8F35-F38311B057DC}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{5488F987-F739-43ED-ACCA-D5395ED24205}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5488F987-F739-43ED-ACCA-D5395ED24205}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5488F987-F739-43ED-ACCA-D5395ED24205}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5488F987-F739-43ED-ACCA-D5395ED24205}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

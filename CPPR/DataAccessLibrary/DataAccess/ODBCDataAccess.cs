@@ -28,7 +28,11 @@ public class ODBCDataAccess : IRelationalDataAccess
 
     public async Task<IEnumerable<T>> LoadData<T>(string connectionString, string sql)
     {
-        throw new NotImplementedException();
+        using IDbConnection connection = new OdbcConnection(connectionString);
+
+        var cmd = new CommandDefinition(sql, commandTimeout: 12000);
+        var result = await connection.QueryAsync<T>(cmd);
+        return result;
     }
 
     public async Task<IDataReader> LoadData(string connectionString, string sql)

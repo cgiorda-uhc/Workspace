@@ -49,6 +49,9 @@ namespace ConsoleLibraryTesting
         public string ConnectionStringPD { get; set; }
 
 
+        public string ConnectionStringSnowflake { get; set; }
+
+
         public string ConnectionStringUHN { get; set; }
 
 
@@ -1537,8 +1540,8 @@ namespace ConsoleLibraryTesting
 
                 var table = CommonFunctions.getCleanTableName(filename);
                 var tmp_table = table.Substring(0, Math.Min(28, table.Length)) + "_TMP";
-
-
+                
+                
                 csvreader = new StreamReader(strFile);
                 while ((strInputLine = csvreader.ReadLine()) != null)
                 {
@@ -1557,11 +1560,29 @@ namespace ConsoleLibraryTesting
 
                         //SQL FOR TMP TABLE TO STORE ALL VALUES A VARCHAR(MAX)
                         strSQL = CommonFunctions.getCreateTmpTableScript(schema, tmp_table, strLstColumnNames);
-                        await db_dest.Execute(connectionString: ConnectionStringMSSQL, strSQL);
+                        await db_dest.Execute(connectionString: ConnectionStringMSSQL, strSQL); 
+                        //var task = db_dest.Execute(connectionString: ConnectionStringMSSQL, strSQL);
+                        //task.Wait(); // Blocks current thread until GetFooAsync task completes
+                        //                // For pedagogical use only: in general, don't do this!
+                        //var results = task.Result;
+
+                        //if (results == null)
+                        //{
+                        //    var s = "";
+
+                        //}
+     
+                        
 
                         strSQL = "SELECT * FROM ["+ schema + "].[" + tmp_table + "]; ";
+
+
+
                         //CREATE TMP TABLE AND COLLECT NEW DB TABLE FOR BULK TRANSFERS
                         dtTransfer = await db_dest.LoadDataTable(ConnectionStringMSSQL, strSQL);
+
+
+
                         dtTransfer.TableName =  schema + "." + tmp_table;
 
                         //GOT COLUMNS, CREATED TMP TABLE FOR FIRST PASS
@@ -1590,7 +1611,7 @@ namespace ConsoleLibraryTesting
                 if (dtTransfer.Rows.Count > 0)
                     await db_dest.BulkSave(connectionString: ConnectionStringMSSQL, dtTransfer);
 
-
+                
 
                 strSQL = CommonFunctions.getTableAnalysisScript(schema, tmp_table, strLstColumnNames);
                 var dataTypes = (await db_dest.LoadData<DataTypeModel>(connectionString: ConnectionStringMSSQL, strSQL));

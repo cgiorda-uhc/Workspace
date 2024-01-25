@@ -52,7 +52,9 @@ public class CommonFunctions
         foreach (var d in dataTypes)
         {
             colType = d.ColumnType.Split('-')[1];
-            colLength = d.ColumnLength;
+            colLength = (d.ColumnLength == 0 ? 1 : d.ColumnLength);
+            
+
 
             if (colType == "CHAR" || colType == "VARCHAR")
             {
@@ -122,6 +124,7 @@ public class CommonFunctions
             sb.Append("MAX(LEN([" + col + "]))  AS ColumnLength ");
             sb.Append("From [" + schema + "].[" + table + "] ");
             sb.Append("WHERE [" + col + "]  IS NOT NULL GROUP BY [" + col + "] ");
+            //sb.Append("GROUP BY [" + col + "] ");
             sb.Append(") tmp GROUP BY ColumnName ");
             sb.Append("UNION ALL ");
 

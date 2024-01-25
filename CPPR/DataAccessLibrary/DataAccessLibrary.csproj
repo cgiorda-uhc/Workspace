@@ -25,7 +25,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
     <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
-    <PackageReference Include="Net.IBM.Data.Db2" Version="8.0.0.100" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
     <PackageReference Include="Teradata.Client.Provider" Version="20.0.2" />
   </ItemGroup>
