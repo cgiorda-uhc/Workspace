@@ -251,9 +251,10 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                     else
                     {
                         sbSQL.Append(",t.Y" + year + "Q" + quarter + "_fac_claims ");
-                    } 
-                    
-                    sbSQL.Append(",t.Y" + year + "Q" + quarter + "_oth_claims ");
+                        sbSQL.Append(",t.Y" + year + "Q" + quarter + "_oth_claims ");
+                    }
+
+                        
                 }
 
                 //LOOP DSM!!
@@ -269,9 +270,11 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                     else
                     {
                         sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_fac_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_fac_claims-t.Y1Q" + i + "_fac_claims)/t.Y1Q" + i + "_fac_claims)   END as Y1Q" + i + "_Y2Q" + i + "_trend_fac_claims ");
+
+                        sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_oth_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_oth_claims-t.Y1Q" + i + "_oth_claims)/t.Y1Q" + i + "_oth_claims)   END Y1Q" + i + "_Y2Q" + i + "_trend_oth_claims ");
                     }
 
-                    sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_oth_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_oth_claims-t.Y1Q" + i + "_oth_claims)/t.Y1Q" + i + "_oth_claims)   END Y1Q" + i + "_Y2Q" + i + "_trend_oth_claims ");
+
 
                 }
 
@@ -304,9 +307,11 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                     else
                     {
                         sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then fac_clms end) as Y" + year + "Q" + quarter + "_fac_claims ");
-                    }
 
-                    sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then oth_clms end) as Y" + year + "Q" + quarter + "_oth_claims ");
+
+                        sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then oth_clms end) as Y" + year + "Q" + quarter + "_oth_claims ");
+
+                    }
 
                 }
 

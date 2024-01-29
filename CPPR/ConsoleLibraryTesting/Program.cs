@@ -107,8 +107,8 @@ IRelationalDataAccess db_sqsl = new SqlDataAccess();
 //var columnss = typeof(PCCM_Model).GetProperties().Select(p => p.Name).ToArray();
 //await db_sqsl.BulkSave<PCCM_Model>(connectionString: adHoc.ConnectionStringMSSQL, "stg.IR_PCCM", t, columnss, truncate: true);
 
-
-var sql = "SELECT * FROM stg.IR_PCCM WHERE MBR_ID in (116573054) ORDER BY MBR_ID,MBR_PGM_ID,  CREAT_DT, END_DT;";
+//var sql = "SELECT * FROM stg.IR_PCCM WHERE MBR_ID in (116573054) ORDER BY MBR_ID,MBR_PGM_ID,  CREAT_DT, END_DT;";
+var sql = "SELECT * FROM stg.IR_PCCM ORDER BY MBR_ID,MBR_PGM_ID, CREAT_DT, END_DT;";
 List<PCCM_Model> pccm_final = new List<PCCM_Model>();
 var pccm = await db_sqsl.LoadData<PCCM_Model>(connectionString: adHoc.ConnectionStringMSSQL, sql);
 
@@ -145,7 +145,7 @@ foreach (var p in  pccm)
         pcm.PRE_ENRL_DT= p.PRE_ENRL_DT;
         pcm.OPS_ENROLLED_DT= p.OPS_ENROLLED_DT;
         pcm.OPS_ENGAGED_DT= p.OPS_ENGAGED_DT;
-        pcm.END_DT= p.END_DT;
+        pcm.END_DT= end_dt;
         pcm.OPS_IDENTIFIED= p.OPS_IDENTIFIED;
         pcm.OPS_QUALIFIED= p.OPS_QUALIFIED;
         pcm.OPS_ATTEMPTED= p.OPS_ATTEMPTED;
@@ -160,18 +160,34 @@ foreach (var p in  pccm)
         pcm.RPT_MTH_YR_DISPLAY = current_dt.ToString("MMM") + " " + current_dt.ToString("yy");
         pcm.RPT_MTH = current_dt.ToString("MM");
         pcm.RPT_YR = current_dt.ToString("yyyy");
+       
 
-        if (current_dt.Year == create_dt.Value.Year && current_dt.Month == create_dt.Value.Month)
+
+        //ADD 1 to all day
+        if(p.CREAT_DT == p.END_DT)
         {
-            total_days = DateTime.DaysInMonth(current_dt.Year, current_dt.Month) - current_dt.Day;
+            total_days = 1;
+        }
+        else if (current_dt.Year == create_dt.Value.Year && current_dt.Month == create_dt.Value.Month)
+        {
+            if(current_dt.Year == end_dt.Value.Year && current_dt.Month == end_dt.Value.Month && current_dt.Day != end_dt.Value.Day)
+            {
+                total_days = (end_dt.Value.Day - current_dt.Day) + 1 ;
+            }
+            else
+            {
+                total_days = (DateTime.DaysInMonth(current_dt.Year, current_dt.Month) - current_dt.Day) + 1;
+            }
+   
         }
         else if (current_dt.Year == end_dt.Value.Year && current_dt.Month == end_dt.Value.Month)
         {
-            total_days = DateTime.DaysInMonth(end_dt.Value.Year, end_dt.Value.Month) - end_dt.Value.Day;
+            total_days = end_dt.Value.Day;
+
         }
         else
         {
-            total_days = DateTime.DaysInMonth(current_dt.Year, current_dt.Month) - 1;
+            total_days = DateTime.DaysInMonth(current_dt.Year, current_dt.Month);
         }
 
         pcm.RPT_DAYS = total_days;
@@ -186,7 +202,7 @@ foreach (var p in  pccm)
 
 
 
-var columnss = typeof(PCCM_Model).GetProperties().Select(p => p.Name).ToArray();
+ var columnss = typeof(PCCM_Model).GetProperties().Select(p => p.Name).ToArray();
 await db_sqsl.BulkSave<PCCM_Model>(connectionString: adHoc.ConnectionStringMSSQL, "stg.IR_PCCM_Final", pccm_final, columnss, truncate: true);
 
 //string filepath = "C:\\Users\\cgiorda\\Desktop\\Projects\\PCCM";

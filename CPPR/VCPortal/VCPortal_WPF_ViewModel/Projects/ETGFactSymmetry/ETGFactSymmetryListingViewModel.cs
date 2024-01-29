@@ -228,7 +228,9 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
         if (callingFunction == "ExportConfigs")
         {
             ProgressMessageViewModel.HasMessage = true;
-            exportConfigs();
+            var task = exportConfigs();
+            task.Wait();
+
         }
         //else if (callingFunction == "LoadData")
         //{
@@ -239,7 +241,8 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
         else if (callingFunction == "InitialLoadData")
         {
             ProgressMessageViewModel.HasMessage = true;
-            loadGridLists();
+            var task = loadGridLists();
+            task.Wait();
             //getETGFactSymmetryData();
 
         }
@@ -706,7 +709,7 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
             var tracking = await _etg_db.GetETGTrackingAsync(cancellationToken.Token);
             if (tracking.ToList().Count > 0)
             {
-                export.Add(new ExcelExport() { ExportList = tracking.ToList<object>(), SheetName = sheet.SheetName });
+                export.Add(new ExcelExport() { ExportList = tracking.ToList<object>(), SheetName = "Tracking" });
             }
 
 
@@ -716,7 +719,7 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
             var latest = await _etg_db.GetETGLatestAsync(cancellationToken.Token);
             if (latest.ToList().Count > 0)
             {
-                export.Add(new ExcelExport() { ExportList = latest.ToList<object>(), SheetName = sheet.SheetName });
+                export.Add(new ExcelExport() { ExportList = latest.ToList<object>(), SheetName = "ETGLatest" });
             }
 
 
@@ -843,10 +846,10 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
             _logger.Information("Requesting API InsertETGFactSymmetry()...");
 
             ////RETURN HTTP 200
-            var task = _etg_db.GetPDVersionsAsync(cancellationToken.Token);
-            task.Wait(); // Blocks current thread until GetFooAsync task completes
-                         // For pedagogical use only: in general, don't do this!
-            var results = task.Result;
+            var results = await _etg_db.GetPDVersionsAsync(cancellationToken.Token);
+            //task.Wait(); // Blocks current thread until GetFooAsync task completes
+            //             // For pedagogical use only: in general, don't do this!
+            //var results = task.Result;
 
             if (results != null)
             {

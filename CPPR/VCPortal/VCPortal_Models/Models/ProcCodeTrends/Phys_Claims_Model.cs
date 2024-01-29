@@ -40,21 +40,21 @@ public class Phys_Claims_Model
 
 
 
-    public int? Y1Q1_oth_claims { get; set; }
+    //public int? Y1Q1_oth_claims { get; set; }
 
-    public int? Y1Q2_oth_claims { get; set; }
+    //public int? Y1Q2_oth_claims { get; set; }
 
-    public int? Y1Q3_oth_claims { get; set; }
+    //public int? Y1Q3_oth_claims { get; set; }
 
-    public int? Y1Q4_oth_claims { get; set; }
+    //public int? Y1Q4_oth_claims { get; set; }
 
-    public int? Y2Q1_oth_claims { get; set; }
+    //public int? Y2Q1_oth_claims { get; set; }
 
-    public int? Y2Q2_oth_claims { get; set; }
+    //public int? Y2Q2_oth_claims { get; set; }
 
-    public int? Y2Q3_oth_claims { get; set; }
+    //public int? Y2Q3_oth_claims { get; set; }
 
-    public int? Y2Q4_oth_claims { get; set; }
+    //public int? Y2Q4_oth_claims { get; set; }
 
 
     //public double? Y1Q1_Y2Q1_trend_oth_claims { get; set; }

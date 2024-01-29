@@ -610,7 +610,16 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             List<string> claims = new List<string>();
             claims.Add("Total");
 
-            claims.Add("Other");
+            if(!is_phy)
+            {
+                claims.Add("Other");
+            }
+            else
+            {
+                var s = "";
+
+            }
+                
 
             claims.Add(is_phy ? "Physician" : "Facility");
   
