@@ -608,10 +608,11 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
 
 
             List<string> claims = new List<string>();
-            claims.Add("Total");
+
 
             if(!is_phy)
             {
+                claims.Add("Total");
                 claims.Add("Other");
             }
             else
@@ -633,7 +634,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                 //MAIN HEADER 'Events' ROW
                 rowCnt = 1;
 
-                if (claim == "Total")
+                if (claim == "Total" || claim == "Physician")
                 {
                     columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
                     cell = wsSource.Cell(columnLetter + rowCnt);
@@ -654,7 +655,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                 SharedExcelFunctions.AddClosedXMLBorders(ref cell);
 
                 //IF FIRST PASS
-                if(claim == "Total")
+                if(claim == "Total" || claim == "Physician")
                 {
                     //COLUMN HEADER ROW
                     rowCnt = 2;
@@ -681,7 +682,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                 }
 
 
-                if (claim == "Total")
+                if (claim == "Total" || claim == "Physician")
                 {
                     colCnt += 1;
                 }

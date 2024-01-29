@@ -98,6 +98,15 @@ adHoc.Limit = 3000;
 IRelationalDataAccess db_odbc = new ODBCDataAccess();
 IRelationalDataAccess db_sqsl = new SqlDataAccess();
 
+
+//STEP 3 CREATE NEW TABLES AND COLUMNS VIA INNA SQL
+var sql = "";
+
+await db_sqsl.Execute(connectionString: adHoc.ConnectionStringMSSQL, sql);
+
+
+
+//STEP 1 GET SNOWFLAKE DATA
 //var sql = "Select MBR_ID, INDV_ID, MBR_PGM_ID, PGM_CATGY_TYP_DESC, PGM_TYP_DESC, CALC_PGM_TYP, NOM_DEPT_TYP_DESC, NOM_RSN_TYP_DESC, MBR_PGM_STS_TYP_DESC, MBR_PGM_STS_RSN_TYP_DESC, CREAT_DT, PRE_ENRL_DT, OPS_ENROLLED_DT, OPS_ENGAGED_DT, END_DT,OPS_IDENTIFIED,OPS_QUALIFIED, OPS_ATTEMPTED,OPS_CONTACTED,OPS_MBR_CONTACTED,OPS_ENROLLED,OPS_ENGAGED,PSU_IND, PSU_NEW as PSU_NEW_ORIG from OHBI_PRD_CONSUME_DB.RPT_UHC.UHC_POPFUNNEL_RPT where PSU_IND=1";
 
 
@@ -107,8 +116,8 @@ IRelationalDataAccess db_sqsl = new SqlDataAccess();
 //var columnss = typeof(PCCM_Model).GetProperties().Select(p => p.Name).ToArray();
 //await db_sqsl.BulkSave<PCCM_Model>(connectionString: adHoc.ConnectionStringMSSQL, "stg.IR_PCCM", t, columnss, truncate: true);
 
-//var sql = "SELECT * FROM stg.IR_PCCM WHERE MBR_ID in (116573054) ORDER BY MBR_ID,MBR_PGM_ID,  CREAT_DT, END_DT;";
-var sql = "SELECT * FROM stg.IR_PCCM ORDER BY MBR_ID,MBR_PGM_ID, CREAT_DT, END_DT;";
+//STEP 2 USE SNOWFLAKE ABOVE TO EXPAND TO FINAL
+sql = "SELECT * FROM stg.IR_PCCM ORDER BY MBR_ID,MBR_PGM_ID, CREAT_DT, END_DT;";
 List<PCCM_Model> pccm_final = new List<PCCM_Model>();
 var pccm = await db_sqsl.LoadData<PCCM_Model>(connectionString: adHoc.ConnectionStringMSSQL, sql);
 
