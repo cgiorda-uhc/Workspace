@@ -1078,7 +1078,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             ws.Cell(20, 3).Value = (pc_param.MR_DUAL_IND != null ? pc_param.MR_DUAL_IND.Replace("'", "") : none_label);
             ws.Cell(21, 3).Value = (pc_param.px != null ? pc_param.px.Replace("'", "") : none_label);
 
-
+            ws.Columns("C", "C").AdjustToContents();
 
             if (token.IsCancellationRequested)
             {
