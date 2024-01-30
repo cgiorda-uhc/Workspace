@@ -8,6 +8,7 @@ using Microsoft.Office.Interop.Word;
 using NPOI.SS.Formula.Functions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Intrinsics.X86;
@@ -15,6 +16,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VCPortal_Models.Models.MHP;
 using VCPortal_Models.Models.ProcCodeTrends;
+using VCPortal_Models.Parameters.ProcCodeTrends;
 using Task = System.Threading.Tasks.Task;
 
 namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
@@ -682,7 +684,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                 }
 
 
-                if (claim == "Total" || claim == "Physician")
+                if (claim == "Total"|| claim == "Physician")
                 {
                     colCnt += 1;
                 }
@@ -1042,6 +1044,64 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
 
 
         }
+
+
+
+        public static async Task<byte[]> ExportReadmeToExcel(ProcCodeTrends_Parameters pc_param,string template, string selected_lob, Func<string> getterStatus, Action<string> setterStatus, CancellationToken token)
+        {
+
+            //throw new Exception("Oh nooooooo!!!");
+            byte[] final = new byte[0];
+
+
+            StringBuilder sbStatus = new StringBuilder();
+            sbStatus.Append(getterStatus());
+
+
+            sbStatus.Append("--Adding 'Read Me' File" + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            var fileStream = new FileStream(template, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            XLWorkbook wb = new XLWorkbook(fileStream);
+            IXLWorksheet ws = wb.Worksheet("Read Me");
+
+            var none_label = "None Selected";
+            ws.Cell(11, 3).Value = selected_lob;
+            ws.Cell(12, 3).Value = (pc_param.Region != null ? pc_param.Region.Replace("'","") : none_label);
+            ws.Cell(13, 3).Value = (pc_param.mapping_state != null ? pc_param.mapping_state.Replace("'", "") : none_label);
+            ws.Cell(14, 3).Value = (pc_param.PRDCT_LVL_1_NM != null ? pc_param.PRDCT_LVL_1_NM.Replace("'", "") : none_label);
+            ws.Cell(15, 3).Value = (pc_param.CS_TADM_PRDCT_MAP != null ? pc_param.CS_TADM_PRDCT_MAP.Replace("'", "") : none_label);
+            ws.Cell(16, 3).Value = (pc_param.HLTH_PLN_FUND_DESC != null ? pc_param.HLTH_PLN_FUND_DESC.Replace("'", "") : none_label);
+            ws.Cell(17, 3).Value = (pc_param.HCE_LEG_ENTY_ROLLUP_DESC != null ? pc_param.HCE_LEG_ENTY_ROLLUP_DESC.Replace("'", "") : none_label);
+            ws.Cell(18, 3).Value = (pc_param.SRC_SYS_GRP_DESC != null ? pc_param.SRC_SYS_GRP_DESC.Replace("'", "") : none_label);
+            ws.Cell(19, 3).Value = (pc_param.CS_DUAL_IND != null ? pc_param.CS_DUAL_IND.Replace("'", "") : none_label);
+            ws.Cell(20, 3).Value = (pc_param.MR_DUAL_IND != null ? pc_param.MR_DUAL_IND.Replace("'", "") : none_label);
+            ws.Cell(21, 3).Value = (pc_param.px != null ? pc_param.px.Replace("'", "") : none_label);
+
+
+
+            if (token.IsCancellationRequested)
+            {
+                setterStatus("~~~Report Generation Cancelled~~~");
+                token.ThrowIfCancellationRequested();
+            }
+
+
+            //sbStatus.Append("--Preparing Read Me file for saving" + Environment.NewLine);
+            //setterStatus(sbStatus.ToString());
+
+            using (var ms = new MemoryStream())
+            {
+                wb.SaveAs(ms);
+
+                final = ms.ToArray();
+            }
+
+            await Task.CompletedTask;
+            return final;
+        }
+
+
 
     }
 }

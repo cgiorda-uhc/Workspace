@@ -24,4 +24,5 @@ public class ProcCodeTrends_Parameters
     public int RowCount { get; set; }
 
     public List<DateSpan_Model> DateSpanList { get; set; }
+
 }

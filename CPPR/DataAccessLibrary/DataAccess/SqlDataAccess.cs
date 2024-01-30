@@ -207,7 +207,7 @@ public class SqlDataAccess : IRelationalDataAccess
         var returnResults = new List<object>();
         using (IDbConnection db = new SqlConnection(_config.GetConnectionString(connectionId)))
         {
-            var gridReader = db.QueryMultiple(sql);
+            var gridReader = db.QueryMultiple(sql, commandTimeout : 10000000);
 
             foreach (var readerFunc in readerFuncs)
             {

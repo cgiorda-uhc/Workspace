@@ -32,6 +32,8 @@ public class PCCM_Model
     public bool? PSU_IND { get; set; }
     public string PSU_NEW_ORIG { get; set; }
 
+    public string PSU_NEW { get; set; }
+
     public string RPT_MTH_YR_DISPLAY { get; set; }
 
     public string RPT_MTH { get; set; }
@@ -39,4 +41,9 @@ public class PCCM_Model
     public string RPT_YR { get; set; }
 
     public int RPT_DAYS { get; set; }
+
+
+    public DateTime? RPT_DATE { get; set; }
+
+    public string QUAL_CATEG { get; set; }
 }

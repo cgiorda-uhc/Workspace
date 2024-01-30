@@ -4,6 +4,7 @@ using DataAccessLibrary.Data.Abstract;
 using DataAccessLibrary.DataAccess;
 using FileParsingLibrary.MSExcel;
 using FileParsingLibrary.MSExcel.Custom.ProcCodeTrends;
+using MathNet.Numerics.Providers.SparseSolver;
 using Microsoft.Extensions.Configuration;
 using SharedFunctionsLibrary;
 
@@ -150,8 +151,9 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
         ProgressMessageViewModel.Message = "";
         ProgressMessageViewModel.HasMessage = true;
 
-         GenerateReport();
-       
+         var task = GenerateReport();
+        task.Wait();
+
 
     }
     private void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -354,22 +356,38 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
         List<string> lob_list = new List<string>();
         List<string> file_list = new List<string>();
+
+
+        bool blFirstPass = true;
         try
         {
+            var sb_lob = new StringBuilder();
+
             if(!string.IsNullOrEmpty(parameters[0] + ""))
             {
+ 
+
                 var lst = parameters[0].ToString().Replace("--All--,", "").Split(',');
                 foreach(var l in lst)
                 {
                     lob_list.Add(l);
+
+
+                    sb_lob.Append(l.Replace("EI","E&I").Replace("MR", "M&R").Replace("CS", "C&S") + ", ");
                 }
+
+                
             }
             else
             {
                 lob_list.Add("CS");
                 lob_list.Add("EI");
                 lob_list.Add("MR");
+
+                sb_lob.Append("E&I, M&R, C&S");
             }
+
+
 
             foreach (var lob  in lob_list)
             {
@@ -378,8 +396,8 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
                 //    pc_param.LOB = "'" + String.Join(",", parameters[0].ToString().Replace("--All--,", "")).Replace(",", "', '") + "'";
                 //}
 
-                 pc_param.LOB = "'" + lob + "'";
-               
+                pc_param.LOB = "'" + lob + "'";
+                
 
 
                 if (!string.IsNullOrEmpty(parameters[1] + ""))
@@ -444,6 +462,33 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
                 pc_param.DateSpanList = _date_span;
 
 
+
+
+                if(blFirstPass)
+                {
+                    var template = @"\\WP000003507\csg_share\VC_Portal\templates\PC_Trends\Read_Me.xlsx";
+
+                    var b = await ProcCodeTrendsExport.ExportReadmeToExcel(pc_param, template, sb_lob.ToString().Trim().TrimEnd(','), () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
+
+                    _sbStatus.Remove(0, _sbStatus.Length);
+                    _sbStatus.Append(ProgressMessageViewModel.Message);
+                    ProgressMessageViewModel.Message = _sbStatus.ToString();
+
+
+                    var f = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\Read_Me_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
+
+                    file_list.Add(f);
+
+                    await File.WriteAllBytesAsync(f, b);
+
+                    blFirstPass = false;
+
+                    ProgressMessageViewModel.HasMessage = true;
+                }
+
+
+
+
                 CLM_OP_Report_Model report_results;
 
                 try
@@ -498,6 +543,12 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
                     _logger.Error(ex, "API GetMHP_EI_Async threw an error");
                     //RETURN ERROR
                     // return Results.Problem(ex.Message);
+
+                    UserMessageViewModel.IsError = true;
+                    UserMessageViewModel.Message = "An error was thrown. Please contact the system admin.";
+                    _logger.Fatal(ex, "ProcCodeTrends Report threw an error for {CurrentUser}", Authentication.UserName);
+
+
                     return;
 
                 }
@@ -558,6 +609,10 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
                 var bytes = await ProcCodeTrendsExport.ExportProcDataToExcel(report_results, () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
 
+                _sbStatus.Remove(0, _sbStatus.Length);
+                _sbStatus.Append(ProgressMessageViewModel.Message);
+                ProgressMessageViewModel.Message = _sbStatus.ToString();
+
                 var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\PC_Trend_"+lob+"_CLM_OP_PHYS_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
 
                 file_list.Add(file);
@@ -598,6 +653,7 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
                 ProgressMessageViewModel.HasMessage = true;
             }
 
+
             _sbStatus.Append("--Generating final file" + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
             var final_zip = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\PC_Trend_CLM_OP_PHYS_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".zip";
@@ -610,6 +666,21 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
                 }
                 
             }
+
+            _sbStatus.Append("--Cleaning up files" + Environment.NewLine);
+            ProgressMessageViewModel.Message = _sbStatus.ToString();
+            foreach (var f in file_list)
+            {
+                try
+                {
+                    File.Delete(f);
+                }
+                catch(IOException)
+                {
+                }
+  
+            }
+
 
             _sbStatus.Append("--Opening final file" + Environment.NewLine);
             ProgressMessageViewModel.Message = _sbStatus.ToString();
