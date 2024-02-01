@@ -61,6 +61,7 @@ public class CLM_OP_Report_Model
 
     public string events_op_comment { get; set; }
 
+    public string events_op_cost_comment { get; set; }
 
     public string unique_individual_op_comment { get; set; }
 
@@ -79,6 +80,9 @@ public class CLM_OP_Report_Model
     public string year_quarter_phys_comment { get; set; }
 
     public string events_phys_comment { get; set; }
+
+    public string events_phys_cost_comment { get; set; }
+
     public string unique_individual_phys_comment { get; set; }
 
     public string claims_phys_comment { get; set; }

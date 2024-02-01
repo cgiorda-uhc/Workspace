@@ -419,7 +419,10 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
 
             if(!string.IsNullOrEmpty(comment))
             {
-                wsSource.Cell("C1").CreateComment().AddText(comment);
+                wsSource.Cell("B1").CreateComment().AddText(comment);
+                wsSource.Cell("B1").GetComment().Style
+                        .Size.SetHeight(100)
+                        .Size.SetWidth(55);
             }
             
 
@@ -595,6 +598,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
 
             string columnLetter;
             string columnLetterFirst;
+            string columnLetterBeforeFirst;
             string columnLetterLast;
             IXLRange range;
             IXLCell cell;
@@ -649,6 +653,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                     //colCnt += 1;
                 }
 
+                columnLetterBeforeFirst = SharedExcelFunctions.GetColumnName(colCnt);
                 columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
                 columnLetterFirst = columnLetter;
                 cell = wsSource.Cell(columnLetter + rowCnt);
@@ -716,9 +721,23 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                 range.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                 range.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
                 range.Style.Font.SetBold(true);
-                if (!string.IsNullOrEmpty(comment))
+                if (!string.IsNullOrEmpty(comment) && claim == "Other")
                 {
-                    wsSource.Cell(columnLetterFirst + "1").CreateComment().AddText(comment);
+                    wsSource.Cell("C1").CreateComment().AddText(comment);
+                    wsSource.Cell("C1").GetComment().Style
+                        .Size.SetHeight(100)
+                        .Size.SetWidth(55);
+
+                    //wsSource.Cell(columnLetterFirst + "1").CreateComment().AddText(comment);
+
+  
+
+                    //wsSource.Cell(columnLetterFirst + "1").GetComment().Position
+                    //    .SetColumn(3)
+                    //    .SetColumnOffset(5)
+                    //    .SetRow(50)
+                    //    .SetRowOffset(7.5);
+
                 }
 
                 ////ADD MAIN HEADER 'Trend' ROW
