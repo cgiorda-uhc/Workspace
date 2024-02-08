@@ -105,6 +105,16 @@ IRelationalDataAccess db_sqsl = new SqlDataAccess();
 //await db_sqsl.Execute(connectionString: adHoc.ConnectionStringMSSQL, sql);
 
 
+adHoc.PEGReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\PEG Template\\341 PEG DQ&C Results - Template.xlsx";
+
+adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\EBM Template\\342 EBM DQ&C Results - Template.xlsx";
+
+//await adHoc.getPEGSourceDataAsync();
+//await adHoc.generatePEGReportsAsync();
+await adHoc.generateEBMReportsAsync();
+
+return;
+
 var sql = "TRUNCATE TABLE [stg].[IR_PCCM_Final_Unq];INSERT INTO [stg].[IR_PCCM_Final_Unq] ([MBR_ID] ,[INDV_ID] ,[MBR_PGM_ID] ,[PGM_CATGY_TYP_DESC] ,[PGM_TYP_DESC] ,[CALC_PGM_TYP] ,[NOM_DEPT_TYP_DESC] ,[NOM_RSN_TYP_DESC] ,[MBR_PGM_STS_TYP_DESC] ,[MBR_PGM_STS_RSN_TYP_DESC] ,[CREAT_DT] ,[PRE_ENRL_DT] ,[OPS_ENROLLED_DT] ,[OPS_ENGAGED_DT] ,[END_DT] ,[OPS_IDENTIFIED] ,[OPS_QUALIFIED] ,[OPS_ATTEMPTED] ,[OPS_CONTACTED] ,[OPS_MBR_CONTACTED] ,[OPS_ENROLLED] ,[OPS_ENGAGED] ,[PSU_IND] ,[PSU_NEW_ORIG] ,[RPT_MTH_YR_DISPLAY] ,[RPT_MTH] ,[RPT_YR] ,[RPT_DAYS] ,[PSU_NEW] ,[RPT_DATE]) select t. [MBR_ID] ,[INDV_ID] ,[MBR_PGM_ID] ,[PGM_CATGY_TYP_DESC] ,[PGM_TYP_DESC] ,[CALC_PGM_TYP] ,[NOM_DEPT_TYP_DESC] ,[NOM_RSN_TYP_DESC] ,[MBR_PGM_STS_TYP_DESC] ,[MBR_PGM_STS_RSN_TYP_DESC] ,[CREAT_DT] ,[PRE_ENRL_DT] ,[OPS_ENROLLED_DT] ,[OPS_ENGAGED_DT] ,[END_DT] ,[OPS_IDENTIFIED] ,[OPS_QUALIFIED] ,[OPS_ATTEMPTED] ,[OPS_CONTACTED] ,[OPS_MBR_CONTACTED] ,[OPS_ENROLLED] ,[OPS_ENGAGED] ,[PSU_IND] ,[PSU_NEW_ORIG] ,[RPT_MTH_YR_DISPLAY] ,[RPT_MTH] ,[RPT_YR] ,[RPT_DAYS] ,[PSU_NEW], cast(cast(t.RPT_YR*10000 + t.RPT_MTH*100 + 1 as varchar(255)) as date) as RPT_DATE from (select a.*, ROW_NUMBER() OVER(Partition by MBR_ID,RPT_MTH_YR_DISPLAY ORDER BY RPT_DAYS desc,END_DT desc) row_num from stg.IR_PCCM_Final as a) as t where row_num=1 order by MBR_ID,CREAT_DT,RPT_MTH;update a set QUAL_categ='Newly Qualified (Not Qualified in Any of the Previous 12 Months)' from stg.IR_PCCM_Final_unq as a where a.PSU_NEW='New' and OPS_QUALIFIED=1;";
 
 await db_sqsl.Execute(connectionString: adHoc.ConnectionStringMSSQL, sql);

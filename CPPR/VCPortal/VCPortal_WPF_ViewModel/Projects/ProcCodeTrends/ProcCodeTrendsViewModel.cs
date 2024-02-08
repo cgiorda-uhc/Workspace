@@ -126,11 +126,9 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
         if (_config != null)
         {
-            //Task.Run(async () => await loadGridLists());
-            //worker.RunWorkerAsync("InitialLoadData");
+
             InitialLoadData();
 
-            //Task.Run(async () => await getChemotherapyPXData());
         }
         else
         {
