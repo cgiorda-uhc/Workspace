@@ -692,7 +692,7 @@ namespace FileParsingLibrary.MSExcel
                         }
 
                         //DELETE LEFTOVER TEMPLATE GARBAGE
-                        ws.Range("A" + rowcnt  + ":Z" + (rowcnt + 200)).Delete(XLShiftDeletedCells.ShiftCellsUp);
+                        ws.Range("A" + rowcnt  + ":Z" + (rowcnt + 10000)).Delete(XLShiftDeletedCells.ShiftCellsUp);
 
 
                         var rows = ws.RangeUsed().RowsUsed().Skip(1); // Skip header row
