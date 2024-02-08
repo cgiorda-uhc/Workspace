@@ -109,66 +109,92 @@ adHoc.PEGReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Repor
 
 adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\EBM Template\\342 EBM DQ&C Results - Template.xlsx";
 
+
+
+
+
+List<string> files_loaded = new List<string>();
+
+
+files_loaded.Add("Oxford December-Gastro Universe 2023.xlsx");
+files_loaded.Add("United PCP-Gastro_December_2023.xlsx");
+files_loaded.Add("United PCP- Rad & Card_December_2023.xlsx");
+files_loaded.Add("Oxford December -Radiology Cardiology Universe 2023.xlsx");
+files_loaded.Add("Americhoice December -Radiology Cardiology Universe 2023.xlsx");
+
+
+//await adHoc.cleanupMemberDataAsync(files_loaded);
+
+await adHoc.transferMHPDataAsync(files_loaded);
+
+
+
+return;
+
+
+
+
+
 //await adHoc.getPEGSourceDataAsync();
 //await adHoc.generatePEGReportsAsync();
-await adHoc.generateEBMReportsAsync();
+//await adHoc.generateEBMReportsAsync();
 
-return;
+//return;
 
-var sql = "TRUNCATE TABLE [stg].[IR_PCCM_Final_Unq];INSERT INTO [stg].[IR_PCCM_Final_Unq] ([MBR_ID] ,[INDV_ID] ,[MBR_PGM_ID] ,[PGM_CATGY_TYP_DESC] ,[PGM_TYP_DESC] ,[CALC_PGM_TYP] ,[NOM_DEPT_TYP_DESC] ,[NOM_RSN_TYP_DESC] ,[MBR_PGM_STS_TYP_DESC] ,[MBR_PGM_STS_RSN_TYP_DESC] ,[CREAT_DT] ,[PRE_ENRL_DT] ,[OPS_ENROLLED_DT] ,[OPS_ENGAGED_DT] ,[END_DT] ,[OPS_IDENTIFIED] ,[OPS_QUALIFIED] ,[OPS_ATTEMPTED] ,[OPS_CONTACTED] ,[OPS_MBR_CONTACTED] ,[OPS_ENROLLED] ,[OPS_ENGAGED] ,[PSU_IND] ,[PSU_NEW_ORIG] ,[RPT_MTH_YR_DISPLAY] ,[RPT_MTH] ,[RPT_YR] ,[RPT_DAYS] ,[PSU_NEW] ,[RPT_DATE]) select t. [MBR_ID] ,[INDV_ID] ,[MBR_PGM_ID] ,[PGM_CATGY_TYP_DESC] ,[PGM_TYP_DESC] ,[CALC_PGM_TYP] ,[NOM_DEPT_TYP_DESC] ,[NOM_RSN_TYP_DESC] ,[MBR_PGM_STS_TYP_DESC] ,[MBR_PGM_STS_RSN_TYP_DESC] ,[CREAT_DT] ,[PRE_ENRL_DT] ,[OPS_ENROLLED_DT] ,[OPS_ENGAGED_DT] ,[END_DT] ,[OPS_IDENTIFIED] ,[OPS_QUALIFIED] ,[OPS_ATTEMPTED] ,[OPS_CONTACTED] ,[OPS_MBR_CONTACTED] ,[OPS_ENROLLED] ,[OPS_ENGAGED] ,[PSU_IND] ,[PSU_NEW_ORIG] ,[RPT_MTH_YR_DISPLAY] ,[RPT_MTH] ,[RPT_YR] ,[RPT_DAYS] ,[PSU_NEW], cast(cast(t.RPT_YR*10000 + t.RPT_MTH*100 + 1 as varchar(255)) as date) as RPT_DATE from (select a.*, ROW_NUMBER() OVER(Partition by MBR_ID,RPT_MTH_YR_DISPLAY ORDER BY RPT_DAYS desc,END_DT desc) row_num from stg.IR_PCCM_Final as a) as t where row_num=1 order by MBR_ID,CREAT_DT,RPT_MTH;update a set QUAL_categ='Newly Qualified (Not Qualified in Any of the Previous 12 Months)' from stg.IR_PCCM_Final_unq as a where a.PSU_NEW='New' and OPS_QUALIFIED=1;";
+//var sql = "TRUNCATE TABLE [stg].[IR_PCCM_Final_Unq];INSERT INTO [stg].[IR_PCCM_Final_Unq] ([MBR_ID] ,[INDV_ID] ,[MBR_PGM_ID] ,[PGM_CATGY_TYP_DESC] ,[PGM_TYP_DESC] ,[CALC_PGM_TYP] ,[NOM_DEPT_TYP_DESC] ,[NOM_RSN_TYP_DESC] ,[MBR_PGM_STS_TYP_DESC] ,[MBR_PGM_STS_RSN_TYP_DESC] ,[CREAT_DT] ,[PRE_ENRL_DT] ,[OPS_ENROLLED_DT] ,[OPS_ENGAGED_DT] ,[END_DT] ,[OPS_IDENTIFIED] ,[OPS_QUALIFIED] ,[OPS_ATTEMPTED] ,[OPS_CONTACTED] ,[OPS_MBR_CONTACTED] ,[OPS_ENROLLED] ,[OPS_ENGAGED] ,[PSU_IND] ,[PSU_NEW_ORIG] ,[RPT_MTH_YR_DISPLAY] ,[RPT_MTH] ,[RPT_YR] ,[RPT_DAYS] ,[PSU_NEW] ,[RPT_DATE]) select t. [MBR_ID] ,[INDV_ID] ,[MBR_PGM_ID] ,[PGM_CATGY_TYP_DESC] ,[PGM_TYP_DESC] ,[CALC_PGM_TYP] ,[NOM_DEPT_TYP_DESC] ,[NOM_RSN_TYP_DESC] ,[MBR_PGM_STS_TYP_DESC] ,[MBR_PGM_STS_RSN_TYP_DESC] ,[CREAT_DT] ,[PRE_ENRL_DT] ,[OPS_ENROLLED_DT] ,[OPS_ENGAGED_DT] ,[END_DT] ,[OPS_IDENTIFIED] ,[OPS_QUALIFIED] ,[OPS_ATTEMPTED] ,[OPS_CONTACTED] ,[OPS_MBR_CONTACTED] ,[OPS_ENROLLED] ,[OPS_ENGAGED] ,[PSU_IND] ,[PSU_NEW_ORIG] ,[RPT_MTH_YR_DISPLAY] ,[RPT_MTH] ,[RPT_YR] ,[RPT_DAYS] ,[PSU_NEW], cast(cast(t.RPT_YR*10000 + t.RPT_MTH*100 + 1 as varchar(255)) as date) as RPT_DATE from (select a.*, ROW_NUMBER() OVER(Partition by MBR_ID,RPT_MTH_YR_DISPLAY ORDER BY RPT_DAYS desc,END_DT desc) row_num from stg.IR_PCCM_Final as a) as t where row_num=1 order by MBR_ID,CREAT_DT,RPT_MTH;update a set QUAL_categ='Newly Qualified (Not Qualified in Any of the Previous 12 Months)' from stg.IR_PCCM_Final_unq as a where a.PSU_NEW='New' and OPS_QUALIFIED=1;";
 
-await db_sqsl.Execute(connectionString: adHoc.ConnectionStringMSSQL, sql);
-
-
-sql = "SELECT [MBR_ID] ,[INDV_ID] ,[MBR_PGM_ID] ,[PGM_CATGY_TYP_DESC] ,[PGM_TYP_DESC] ,[CALC_PGM_TYP] ,[NOM_DEPT_TYP_DESC] ,[NOM_RSN_TYP_DESC] ,[MBR_PGM_STS_TYP_DESC] ,[MBR_PGM_STS_RSN_TYP_DESC] ,[CREAT_DT] ,[PRE_ENRL_DT] ,[OPS_ENROLLED_DT] ,[OPS_ENGAGED_DT] ,[END_DT] ,[OPS_IDENTIFIED] ,[OPS_QUALIFIED] ,[OPS_ATTEMPTED] ,[OPS_CONTACTED] ,[OPS_MBR_CONTACTED] ,[OPS_ENROLLED] ,[OPS_ENGAGED] ,[PSU_IND] ,[PSU_NEW_ORIG] ,[RPT_MTH_YR_DISPLAY] ,[RPT_MTH] ,[RPT_YR] ,[RPT_DAYS] ,[PSU_NEW] ,[RPT_DATE], QUAL_CATEG FROM stg.IR_PCCM_Final_unq ORDER BY MBR_ID ASC,[RPT_DATE] ASC";
-var uniq = await db_sqsl.LoadData<PCCM_Model>(connectionString: adHoc.ConnectionStringMSSQL, sql);
-
-Int64? mem_id = null;
-bool? Last_OPS_QUALIFIED = null;
-
-foreach (var un in uniq)
-{
-    if(mem_id != un.MBR_ID)
-    {
-        mem_id = un.MBR_ID;
-        Last_OPS_QUALIFIED = null;
-    }
-
-    if(un.QUAL_CATEG != null)
-    {
-        continue;
-    }
+//await db_sqsl.Execute(connectionString: adHoc.ConnectionStringMSSQL, sql);
 
 
-    if(un.OPS_QUALIFIED == true )
-    {
-        if(un.PSU_NEW == "Retained")
-        {
-            if (Last_OPS_QUALIFIED == true)
-            {
-                un.QUAL_CATEG = "Qualified Prior Month";
-            }
-            else
-            {
-                un.QUAL_CATEG = "Newly Qualified (Qualified at Least Once in the Previous 12 Months)";
-            }
-        }
-    }
-    else if (un.OPS_QUALIFIED == false)
-    {
-        if (Last_OPS_QUALIFIED == true)
-        {
-            un.QUAL_CATEG = "Qualified Prior Month but Not Current Month";
-        }
-    }
+//sql = "SELECT [MBR_ID] ,[INDV_ID] ,[MBR_PGM_ID] ,[PGM_CATGY_TYP_DESC] ,[PGM_TYP_DESC] ,[CALC_PGM_TYP] ,[NOM_DEPT_TYP_DESC] ,[NOM_RSN_TYP_DESC] ,[MBR_PGM_STS_TYP_DESC] ,[MBR_PGM_STS_RSN_TYP_DESC] ,[CREAT_DT] ,[PRE_ENRL_DT] ,[OPS_ENROLLED_DT] ,[OPS_ENGAGED_DT] ,[END_DT] ,[OPS_IDENTIFIED] ,[OPS_QUALIFIED] ,[OPS_ATTEMPTED] ,[OPS_CONTACTED] ,[OPS_MBR_CONTACTED] ,[OPS_ENROLLED] ,[OPS_ENGAGED] ,[PSU_IND] ,[PSU_NEW_ORIG] ,[RPT_MTH_YR_DISPLAY] ,[RPT_MTH] ,[RPT_YR] ,[RPT_DAYS] ,[PSU_NEW] ,[RPT_DATE], QUAL_CATEG FROM stg.IR_PCCM_Final_unq ORDER BY MBR_ID ASC,[RPT_DATE] ASC";
+//var uniq = await db_sqsl.LoadData<PCCM_Model>(connectionString: adHoc.ConnectionStringMSSQL, sql);
 
-    Last_OPS_QUALIFIED = un.OPS_QUALIFIED;
+//Int64? mem_id = null;
+//bool? Last_OPS_QUALIFIED = null;
 
-}
-var columnss = typeof(PCCM_Model).GetProperties().Select(p => p.Name).ToArray();
-await db_sqsl.BulkSave<PCCM_Model>(connectionString: adHoc.ConnectionStringMSSQL, "stg.IR_PCCM_Final_unq", uniq, columnss, truncate: true);
+//foreach (var un in uniq)
+//{
+//    if(mem_id != un.MBR_ID)
+//    {
+//        mem_id = un.MBR_ID;
+//        Last_OPS_QUALIFIED = null;
+//    }
 
-return;
+//    if(un.QUAL_CATEG != null)
+//    {
+//        continue;
+//    }
+
+
+//    if(un.OPS_QUALIFIED == true )
+//    {
+//        if(un.PSU_NEW == "Retained")
+//        {
+//            if (Last_OPS_QUALIFIED == true)
+//            {
+//                un.QUAL_CATEG = "Qualified Prior Month";
+//            }
+//            else
+//            {
+//                un.QUAL_CATEG = "Newly Qualified (Qualified at Least Once in the Previous 12 Months)";
+//            }
+//        }
+//    }
+//    else if (un.OPS_QUALIFIED == false)
+//    {
+//        if (Last_OPS_QUALIFIED == true)
+//        {
+//            un.QUAL_CATEG = "Qualified Prior Month but Not Current Month";
+//        }
+//    }
+
+//    Last_OPS_QUALIFIED = un.OPS_QUALIFIED;
+
+//}
+//var columnss = typeof(PCCM_Model).GetProperties().Select(p => p.Name).ToArray();
+//await db_sqsl.BulkSave<PCCM_Model>(connectionString: adHoc.ConnectionStringMSSQL, "stg.IR_PCCM_Final_unq", uniq, columnss, truncate: true);
+
+//return;
 
 
 //STEP 1 GET SNOWFLAKE DATA
@@ -182,109 +208,109 @@ return;
 //await db_sqsl.BulkSave<PCCM_Model>(connectionString: adHoc.ConnectionStringMSSQL, "stg.IR_PCCM", t, columnss, truncate: true);
 
 //STEP 2 USE SNOWFLAKE ABOVE TO EXPAND TO FINAL
-sql = "SELECT * FROM stg.IR_PCCM ORDER BY MBR_ID,MBR_PGM_ID, CREAT_DT, END_DT;";
-List<PCCM_Model> pccm_final = new List<PCCM_Model>();
-var pccm = await db_sqsl.LoadData<PCCM_Model>(connectionString: adHoc.ConnectionStringMSSQL, sql);
+//sql = "SELECT * FROM stg.IR_PCCM ORDER BY MBR_ID,MBR_PGM_ID, CREAT_DT, END_DT;";
+//List<PCCM_Model> pccm_final = new List<PCCM_Model>();
+//var pccm = await db_sqsl.LoadData<PCCM_Model>(connectionString: adHoc.ConnectionStringMSSQL, sql);
 
-DateTime? create_dt = null;
-DateTime? end_dt = null;
-DateTime current_dt;
-int month_cnt = 1;
-int total_days = 0;
+//DateTime? create_dt = null;
+//DateTime? end_dt = null;
+//DateTime current_dt;
+//int month_cnt = 1;
+//int total_days = 0;
 
-foreach (var p in  pccm)
-{
+//foreach (var p in  pccm)
+//{
 
-    create_dt = p.CREAT_DT;
-    end_dt = (p.END_DT == null ? DateTime.Now : p.END_DT);
-    current_dt = (DateTime)create_dt;
+//    create_dt = p.CREAT_DT;
+//    end_dt = (p.END_DT == null ? DateTime.Now : p.END_DT);
+//    current_dt = (DateTime)create_dt;
 
-    month_cnt = (((end_dt.Value.Year - create_dt.Value.Year) * 12) + end_dt.Value.Month - create_dt.Value.Month) + 1;
+//    month_cnt = (((end_dt.Value.Year - create_dt.Value.Year) * 12) + end_dt.Value.Month - create_dt.Value.Month) + 1;
 
-    for (int i = 1; i <= month_cnt; i++)
-    {
+//    for (int i = 1; i <= month_cnt; i++)
+//    {
 
-        var pcm = new PCCM_Model();
-        pcm.MBR_ID = p.MBR_ID;
-        pcm.INDV_ID =  p.INDV_ID ;
-        pcm.MBR_PGM_ID= p.MBR_PGM_ID ;
-        pcm.PGM_CATGY_TYP_DESC= p.PGM_CATGY_TYP_DESC;
-        pcm.PGM_TYP_DESC= p.PGM_TYP_DESC;
-        pcm.CALC_PGM_TYP= p.CALC_PGM_TYP;
-        pcm.NOM_DEPT_TYP_DESC= p.NOM_DEPT_TYP_DESC;
-        pcm.NOM_RSN_TYP_DESC= p.NOM_RSN_TYP_DESC;
-        pcm.MBR_PGM_STS_TYP_DESC= p.MBR_PGM_STS_TYP_DESC;
-        pcm.MBR_PGM_STS_RSN_TYP_DESC= p.MBR_PGM_STS_RSN_TYP_DESC;
-        pcm.CREAT_DT= p.CREAT_DT;
-        pcm.PRE_ENRL_DT= p.PRE_ENRL_DT;
-        pcm.OPS_ENROLLED_DT= p.OPS_ENROLLED_DT;
-        pcm.OPS_ENGAGED_DT= p.OPS_ENGAGED_DT;
-        pcm.END_DT= end_dt;
-        pcm.OPS_IDENTIFIED= p.OPS_IDENTIFIED;
-        pcm.OPS_QUALIFIED= p.OPS_QUALIFIED;
-        pcm.OPS_ATTEMPTED= p.OPS_ATTEMPTED;
-        pcm.OPS_CONTACTED= p.OPS_CONTACTED;
-        pcm.OPS_MBR_CONTACTED= p.OPS_MBR_CONTACTED;
-        pcm.OPS_ENROLLED= p.OPS_ENROLLED;
-        pcm.OPS_ENGAGED= p.OPS_ENGAGED;
-        pcm.PSU_IND= p.PSU_IND;
-        pcm.PSU_NEW_ORIG = p.PSU_NEW_ORIG;
-
-
-        pcm.RPT_MTH_YR_DISPLAY = current_dt.ToString("MMM") + " " + current_dt.ToString("yy");
-        pcm.RPT_MTH = current_dt.ToString("MM");
-        pcm.RPT_YR = current_dt.ToString("yyyy");
-       
+//        var pcm = new PCCM_Model();
+//        pcm.MBR_ID = p.MBR_ID;
+//        pcm.INDV_ID =  p.INDV_ID ;
+//        pcm.MBR_PGM_ID= p.MBR_PGM_ID ;
+//        pcm.PGM_CATGY_TYP_DESC= p.PGM_CATGY_TYP_DESC;
+//        pcm.PGM_TYP_DESC= p.PGM_TYP_DESC;
+//        pcm.CALC_PGM_TYP= p.CALC_PGM_TYP;
+//        pcm.NOM_DEPT_TYP_DESC= p.NOM_DEPT_TYP_DESC;
+//        pcm.NOM_RSN_TYP_DESC= p.NOM_RSN_TYP_DESC;
+//        pcm.MBR_PGM_STS_TYP_DESC= p.MBR_PGM_STS_TYP_DESC;
+//        pcm.MBR_PGM_STS_RSN_TYP_DESC= p.MBR_PGM_STS_RSN_TYP_DESC;
+//        pcm.CREAT_DT= p.CREAT_DT;
+//        pcm.PRE_ENRL_DT= p.PRE_ENRL_DT;
+//        pcm.OPS_ENROLLED_DT= p.OPS_ENROLLED_DT;
+//        pcm.OPS_ENGAGED_DT= p.OPS_ENGAGED_DT;
+//        pcm.END_DT= end_dt;
+//        pcm.OPS_IDENTIFIED= p.OPS_IDENTIFIED;
+//        pcm.OPS_QUALIFIED= p.OPS_QUALIFIED;
+//        pcm.OPS_ATTEMPTED= p.OPS_ATTEMPTED;
+//        pcm.OPS_CONTACTED= p.OPS_CONTACTED;
+//        pcm.OPS_MBR_CONTACTED= p.OPS_MBR_CONTACTED;
+//        pcm.OPS_ENROLLED= p.OPS_ENROLLED;
+//        pcm.OPS_ENGAGED= p.OPS_ENGAGED;
+//        pcm.PSU_IND= p.PSU_IND;
+//        pcm.PSU_NEW_ORIG = p.PSU_NEW_ORIG;
 
 
-        //ADD 1 to all day
-        if(p.CREAT_DT == p.END_DT)
-        {
-            total_days = 1;
-        }
-        else if (current_dt.Year == create_dt.Value.Year && current_dt.Month == create_dt.Value.Month)
-        {
-            if(current_dt.Year == end_dt.Value.Year && current_dt.Month == end_dt.Value.Month && current_dt.Day != end_dt.Value.Day)
-            {
-                total_days = (end_dt.Value.Day - current_dt.Day) + 1 ;
-            }
-            else
-            {
-                total_days = (DateTime.DaysInMonth(current_dt.Year, current_dt.Month) - current_dt.Day) + 1;
-            }
-   
-        }
-        else if (current_dt.Year == end_dt.Value.Year && current_dt.Month == end_dt.Value.Month)
-        {
-            total_days = end_dt.Value.Day;
-
-        }
-        else
-        {
-            total_days = DateTime.DaysInMonth(current_dt.Year, current_dt.Month);
-        }
-
-        pcm.RPT_DAYS = total_days;
-
-        current_dt = current_dt.AddMonths(1);
-
-        pccm_final.Add(pcm);
-    }
-
-
-}
+//        pcm.RPT_MTH_YR_DISPLAY = current_dt.ToString("MMM") + " " + current_dt.ToString("yy");
+//        pcm.RPT_MTH = current_dt.ToString("MM");
+//        pcm.RPT_YR = current_dt.ToString("yyyy");
 
 
 
-columnss = typeof(PCCM_Model).GetProperties().Select(p => p.Name).ToArray();
-await db_sqsl.BulkSave<PCCM_Model>(connectionString: adHoc.ConnectionStringMSSQL, "stg.IR_PCCM_Final", pccm_final, columnss, truncate: true);
+//        //ADD 1 to all day
+//        if(p.CREAT_DT == p.END_DT)
+//        {
+//            total_days = 1;
+//        }
+//        else if (current_dt.Year == create_dt.Value.Year && current_dt.Month == create_dt.Value.Month)
+//        {
+//            if(current_dt.Year == end_dt.Value.Year && current_dt.Month == end_dt.Value.Month && current_dt.Day != end_dt.Value.Day)
+//            {
+//                total_days = (end_dt.Value.Day - current_dt.Day) + 1 ;
+//            }
+//            else
+//            {
+//                total_days = (DateTime.DaysInMonth(current_dt.Year, current_dt.Month) - current_dt.Day) + 1;
+//            }
 
-//string filepath = "C:\\Users\\cgiorda\\Desktop\\Projects\\PCCM";
+//        }
+//        else if (current_dt.Year == end_dt.Value.Year && current_dt.Month == end_dt.Value.Month)
+//        {
+//            total_days = end_dt.Value.Day;
 
-//await adHoc.parseCSV(filepath, fileNamePrefix: "ir_", chrDelimiter : ',');
+//        }
+//        else
+//        {
+//            total_days = DateTime.DaysInMonth(current_dt.Year, current_dt.Month);
+//        }
+
+//        pcm.RPT_DAYS = total_days;
+
+//        current_dt = current_dt.AddMonths(1);
+
+//        pccm_final.Add(pcm);
+//    }
 
 
-return;
+//}
+
+
+
+//columnss = typeof(PCCM_Model).GetProperties().Select(p => p.Name).ToArray();
+//await db_sqsl.BulkSave<PCCM_Model>(connectionString: adHoc.ConnectionStringMSSQL, "stg.IR_PCCM_Final", pccm_final, columnss, truncate: true);
+
+////string filepath = "C:\\Users\\cgiorda\\Desktop\\Projects\\PCCM";
+
+////await adHoc.parseCSV(filepath, fileNamePrefix: "ir_", chrDelimiter : ',');
+
+
+//return;
 
 
 //await adHoc.getEBMSourceDataAsync();
@@ -310,24 +336,6 @@ adHoc.PEGReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Repor
 
 //return;
 
-
-List<string> files_loaded = new List<string>();
-
-
-files_loaded.Add("Oxford December-Gastro Universe 2023.xlsx");
-files_loaded.Add("United PCP-Gastro_December_2023.xlsx");
-files_loaded.Add("United PCP- Rad & Card_December_2023.xlsx");
-files_loaded.Add("Oxford December -Radiology Cardiology Universe 2023.xlsx");
-files_loaded.Add("Americhoice December -Radiology Cardiology Universe 2023.xlsx");
-
-
-//await adHoc.cleanupMemberDataAsync(files_loaded);
-
-await adHoc.transferMHPDataAsync(files_loaded);
-
-
-
-return;
 
 
 
