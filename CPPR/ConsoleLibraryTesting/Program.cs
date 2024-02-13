@@ -105,33 +105,144 @@ IRelationalDataAccess db_sqsl = new SqlDataAccess();
 //await db_sqsl.Execute(connectionString: adHoc.ConnectionStringMSSQL, sql);
 
 
-adHoc.PEGReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\PEG Template\\341 PEG DQ&C Results - Template.xlsx";
-
-adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\EBM Template\\342 EBM DQ&C Results - Template.xlsx";
 
 
+var sql = "TRUNCATE TABLE [stg].[IR_PCCM_Final_unq_v3];INSERT INTO [stg].[IR_PCCM_Final_unq_v3] ([MBR_ID] ,[INDV_ID] ,[MBR_PGM_ID] ,[PGM_CATGY_TYP_DESC] ,[PGM_TYP_DESC] ,[CALC_PGM_TYP] ,[NOM_DEPT_TYP_DESC] ,[NOM_RSN_TYP_DESC] ,[MBR_PGM_STS_TYP_DESC] ,[MBR_PGM_STS_RSN_TYP_DESC] ,[CREAT_DT] ,[PRE_ENRL_DT] ,[OPS_ENROLLED_DT] ,[OPS_ENGAGED_DT] ,[END_DT] ,[OPS_IDENTIFIED] ,[OPS_QUALIFIED] ,[OPS_ATTEMPTED] ,[OPS_CONTACTED] ,[OPS_MBR_CONTACTED] ,[OPS_ENROLLED] ,[OPS_ENGAGED] ,[PSU_IND] ,[PSU_NEW_ORIG] ,[RPT_MTH_YR_DISPLAY] ,[RPT_MTH] ,[RPT_YR] ,[RPT_DAYS] ,[PSU_NEW] ,[RPT_DATE]) select t. [MBR_ID] ,[INDV_ID] ,[MBR_PGM_ID] ,[PGM_CATGY_TYP_DESC] ,[PGM_TYP_DESC] ,[CALC_PGM_TYP] ,[NOM_DEPT_TYP_DESC] ,[NOM_RSN_TYP_DESC] ,[MBR_PGM_STS_TYP_DESC] ,[MBR_PGM_STS_RSN_TYP_DESC] ,[CREAT_DT] ,[PRE_ENRL_DT] ,[OPS_ENROLLED_DT] ,[OPS_ENGAGED_DT] ,[END_DT] ,[OPS_IDENTIFIED] ,[OPS_QUALIFIED] ,[OPS_ATTEMPTED] ,[OPS_CONTACTED] ,[OPS_MBR_CONTACTED] ,[OPS_ENROLLED] ,[OPS_ENGAGED] ,[PSU_IND] ,[PSU_NEW_ORIG] ,[RPT_MTH_YR_DISPLAY] ,[RPT_MTH] ,[RPT_YR] ,[RPT_DAYS] ,[PSU_NEW], cast(cast(t.RPT_YR*10000 + t.RPT_MTH*100 + 1 as varchar(255)) as date) as RPT_DATE from (select a.*, ROW_NUMBER() OVER(Partition by MBR_ID,RPT_MTH_YR_DISPLAY ORDER BY RPT_DAYS desc,END_DT desc) row_num from stg.IR_PCCM_Final as a) as t where row_num=1 order by MBR_ID,CREAT_DT,RPT_MTH;update a set QUAL_categ='Newly Qualified (Not Qualified in Any of the Previous 12 Months)' from stg.IR_PCCM_Final_unq_v3 as a where a.PSU_NEW='New' and OPS_QUALIFIED=1;update a set ENRL_CATEG='Newly Enrolled' from stg.IR_PCCM_Final_unq_v3 as a inner join (select MBR_ID,min(RPT_DATE) as min_RPT_DATE from stg.IR_PCCM_Final_unq_v3 where OPS_ENROLLED=1 group by MBR_ID) as m on a.MBR_ID=m.MBR_ID and a.RPT_DATE=min_RPT_DATE where OPS_ENROLLED=1;";
 
+await db_sqsl.Execute(connectionString: adHoc.ConnectionStringMSSQL, sql);
+
+
+
+
+sql = "SELECT [MBR_ID] ,[INDV_ID] ,[MBR_PGM_ID] ,[PGM_CATGY_TYP_DESC] ,[PGM_TYP_DESC] ,[CALC_PGM_TYP] ,[NOM_DEPT_TYP_DESC] ,[NOM_RSN_TYP_DESC] ,[MBR_PGM_STS_TYP_DESC] ,[MBR_PGM_STS_RSN_TYP_DESC] ,[CREAT_DT] ,[PRE_ENRL_DT] ,[OPS_ENROLLED_DT] ,[OPS_ENGAGED_DT] ,[END_DT] ,[OPS_IDENTIFIED] ,[OPS_QUALIFIED] ,[OPS_ATTEMPTED] ,[OPS_CONTACTED] ,[OPS_MBR_CONTACTED] ,[OPS_ENROLLED] ,[OPS_ENGAGED] ,[PSU_IND] ,[PSU_NEW_ORIG] ,[RPT_MTH_YR_DISPLAY] ,[RPT_MTH] ,[RPT_YR] ,[RPT_DAYS] ,[PSU_NEW] ,[RPT_DATE], QUAL_CATEG, ENRL_CATEG FROM stg.IR_PCCM_Final_unq_v3 ORDER BY MBR_ID ASC,[RPT_DATE] ASC";
+var uniq = await db_sqsl.LoadData<PCCM_Model>(connectionString: adHoc.ConnectionStringMSSQL, sql);
+
+Int64? mem_id = null;
+bool? Last_OPS = null;
+
+
+foreach (var un in uniq)
+{
+    if (mem_id != un.MBR_ID)
+    {
+        mem_id = un.MBR_ID;
+        Last_OPS = null;
+    }
+
+    if (un.QUAL_CATEG != null)
+    {
+        continue;
+    }
+
+
+    if (un.OPS_QUALIFIED == true)
+    {
+        if (un.PSU_NEW == "Retained")
+        {
+            if (Last_OPS == true)
+            {
+                un.QUAL_CATEG = "Qualified Prior Month";
+            }
+            else
+            {
+                un.QUAL_CATEG = "Newly Qualified (Qualified at Least Once in the Previous 12 Months)";
+            }
+        }
+    }
+    else if (un.OPS_QUALIFIED == false)
+    {
+        if (Last_OPS == true)
+        {
+            un.QUAL_CATEG = "Qualified Prior Month but Not Current Month";
+        }
+    }
+
+    Last_OPS = un.OPS_QUALIFIED;
+
+}
+
+mem_id = null;
+Last_OPS = null;
+
+foreach (var un in uniq)
+{
+    if (mem_id != un.MBR_ID)
+    {
+        mem_id = un.MBR_ID;
+        Last_OPS = null;
+    }
+
+    if (un.ENRL_CATEG != null)
+    {
+        continue;
+    }
+
+
+    if (un.OPS_ENROLLED == true)
+    {
+        if (Last_OPS == true)
+        {
+            un.ENRL_CATEG = "Retained Since Prior Month";
+        }
+        else if (Last_OPS == false)
+        {
+            un.ENRL_CATEG = "Another category, will be clarified";
+        }
+        else 
+        {
+            un.ENRL_CATEG = null;
+        }
+
+    }
+    else if (un.OPS_ENROLLED == false)
+    {
+        if (Last_OPS == true)
+        {
+            un.ENRL_CATEG = "Enrolled Prior Month but not Current Month";
+        }
+        else if (Last_OPS == false)
+        {
+            un.ENRL_CATEG = "OPS_ENROLLED=0 for current month and OPS_ENROLLED=0 for Prior month  ";
+        }
+        else
+        {
+            un.ENRL_CATEG = null; 
+        }
+
+    }
+
+    Last_OPS = un.OPS_ENROLLED;
+
+}
+
+
+var columnss = typeof(PCCM_Model).GetProperties().Select(p => p.Name).ToArray();
+await db_sqsl.BulkSave<PCCM_Model>(connectionString: adHoc.ConnectionStringMSSQL, "stg.IR_PCCM_Final_unq_v3", uniq, columnss, truncate: true);
+
+return;
 
 
 List<string> files_loaded = new List<string>();
 
 
-files_loaded.Add("Oxford December-Gastro Universe 2023.xlsx");
-files_loaded.Add("United PCP-Gastro_December_2023.xlsx");
-files_loaded.Add("United PCP- Rad & Card_December_2023.xlsx");
-files_loaded.Add("Oxford December -Radiology Cardiology Universe 2023.xlsx");
-files_loaded.Add("Americhoice December -Radiology Cardiology Universe 2023.xlsx");
+//files_loaded.Add("Oxford December-Gastro Universe 2023.xlsx");
+//files_loaded.Add("United PCP-Gastro_December_2023.xlsx");
+//files_loaded.Add("United PCP- Rad & Card_December_2023.xlsx");
+//files_loaded.Add("Oxford December -Radiology Cardiology Universe 2023.xlsx");
+//files_loaded.Add("Americhoice December -Radiology Cardiology Universe 2023.xlsx");
 
 
-//await adHoc.cleanupMemberDataAsync(files_loaded);
+////await adHoc.cleanupMemberDataAsync(files_loaded);
 
-await adHoc.transferMHPDataAsync(files_loaded);
-
-
-
-return;
+//await adHoc.transferMHPDataAsync(files_loaded);
 
 
+
+//return;
+
+adHoc.PEGReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\PEG Template\\341 PEG DQ&C Results - Template.xlsx";
+
+adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\EBM Template\\342 EBM DQ&C Results - Template.xlsx";
 
 
 

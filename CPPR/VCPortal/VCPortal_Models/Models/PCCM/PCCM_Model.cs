@@ -46,4 +46,6 @@ public class PCCM_Model
     public DateTime? RPT_DATE { get; set; }
 
     public string QUAL_CATEG { get; set; }
+
+    public string ENRL_CATEG { get; set; }
 }
