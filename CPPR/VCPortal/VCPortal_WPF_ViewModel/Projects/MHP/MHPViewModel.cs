@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
@@ -98,6 +99,12 @@ public partial class MHPViewModel : ObservableObject
     public ObservableCollection<string> _groupNumbers;
     [ObservableProperty]
     public List<string> _productCode;
+
+
+    [ObservableProperty]
+    public string _startDate;
+    [ObservableProperty]
+    public string _endDate;
 
 
     public MHPViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger, IRelationalDataAccess db_sql, IChemotherapyPX_Repo chemo_sql, IMHPUniverse_Repo mhp_sql, IProcCodeTrends_Repo pct_db, IEDCAdhoc_Repo edc_db, IETGFactSymmetry_Repo etg_db)
@@ -1089,6 +1096,10 @@ public partial class MHPViewModel : ObservableObject
     {
         try
         {
+            _startDate = "01/01/" + (DateTime.Now.Year - 1) ;
+            _endDate = "12/31/" + (DateTime.Now.Year - 1);
+
+
             //var api = _config.APIS.Where(x => x.Name == "MHP_Filters").FirstOrDefault();
             //WebAPIConsume.BaseURI = api.BaseUrl;
             _sbStatus.Append("--Getting Cached Filters..." + Environment.NewLine);

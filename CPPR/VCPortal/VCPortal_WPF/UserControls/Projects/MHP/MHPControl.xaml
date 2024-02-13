@@ -221,11 +221,11 @@
 
             <Border Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
             <telerik:Label  Grid.Row="1"    Grid.Column="2" Content="* Start Date:" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"   />
-            <telerik:RadDatePicker x:Name="dtStartDate"  Grid.Row="2"   Grid.Column="2"   Margin="10 10 10 10"  VerticalAlignment="Top" HorizontalAlignment="Left" SelectedValue="01/01/2022"/>
+            <telerik:RadDatePicker x:Name="dtStartDate"  Grid.Row="2"   Grid.Column="2"   Margin="10 10 10 10"  VerticalAlignment="Top" HorizontalAlignment="Left" SelectedValue="{Binding StartDate}"/>
 
             <Border Grid.Column="3" Grid.Row="1" Grid.RowSpan="3" Style="{StaticResource DefaultBorder}" />
             <telerik:Label  Grid.Row="1"    Grid.Column="3" Content="* End Date:" Style="{StaticResource ValidLabel}" Margin="4"  HorizontalAlignment="Left"  />
-            <telerik:RadDatePicker x:Name="dtEndDate"  Grid.Row="2"   Grid.Column="3"   Margin="10 10 10 10"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="115" SelectedValue="12/31/2022"/>
+            <telerik:RadDatePicker x:Name="dtEndDate"  Grid.Row="2"   Grid.Column="3"   Margin="10 10 10 10"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="115" SelectedValue="{Binding EndDate}"/>
 
 
 
