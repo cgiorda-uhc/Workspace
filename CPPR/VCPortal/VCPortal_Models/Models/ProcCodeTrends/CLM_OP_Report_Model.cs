@@ -54,6 +54,7 @@ public class CLM_OP_Report_Model
     public List<Unit_Cost2_Model> unit_cost2_phys { get; set; }
 
 
+    public List<YearQuarter_Model> year_quarter_total { get; set; }
     public List<Events_Model> events_total { get; set; }
     public List<Unique_Individual_Model> unique_individual_total { get; set; }
 
