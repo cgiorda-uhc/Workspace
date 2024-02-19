@@ -1,0 +1,27 @@
+﻿CREATE TABLE [pct].[CLM_TOTAL](
+	[px] [varchar](7) NULL,
+	[px_desc] [varchar](70) NULL,
+	[year] [float] NULL,
+	[quarter] [float] NULL,
+	[lob] [varchar](3) NULL,
+	[HLTH_PLN_FUND_DESC] [varchar](10) NULL,
+	[mapping_state] [varchar](20) NULL,
+	[region] [varchar](7) NULL,
+	[PRDCT_LVL_1_NM] [varchar](30) NULL,
+	[CS_TADM_PRDCT_MAP] [varchar](30) NULL,
+	[HCE_LEG_ENTY_ROLLUP_DESC] [varchar](20) NULL,
+	[SRC_SYS_GRP_DESC] [varchar](10) NULL,
+	[CS_DUAL_IND] [varchar](8) NULL,
+	[MR_DUAL_IND] [varchar](8) NULL,
+	[indv] [float] NULL,
+	[evnts] [float] NULL,
+	[claims] [float] NULL,
+	[fac_clms] [float] NULL,
+	[phy_clms] [float] NULL,
+	[oth_clms] [float] NULL,
+	[px_cnt] [float] NULL,
+	[adj_srv_uni] [float] NULL,
+	[allw_amt] [float] NULL,
+	[paid_amt] [float] NULL
+) ON [PRIMARY]
+GO

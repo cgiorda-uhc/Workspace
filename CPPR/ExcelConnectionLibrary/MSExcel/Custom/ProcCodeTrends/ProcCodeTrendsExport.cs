@@ -738,6 +738,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             Int16 colCnt = 1;
             Int16 rowCnt = 1;
 
+            Int16 clm_cnt = 1;
 
             var sheet_name = header.Replace("/", "");
 
@@ -748,25 +749,22 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
 
             if(total)
             {
-                claims.Add("Total");
-                claims.Add("Other");
                 claims.Add("Facility");
                 claims.Add("Physician");
+                claims.Add("Other");
+                claims.Add("Total");
             }
             else if(!is_phy)
             {
-                claims.Add("Total");
+                claims.Add("Facility");
                 claims.Add("Other");
+                claims.Add("Total");
+
             }
             else
             {
-                var s = "";
-
+                claims.Add("Physician");
             }
-                
-            if(!total)
-                claims.Add(is_phy ? "Physician" : "Facility");
-  
 
 
 
@@ -777,11 +775,11 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                 //MAIN HEADER 'Events' ROW
                 rowCnt = 1;
 
-                if (claim == "Total" || claim == "Physician")
+                if (clm_cnt == 1)
                 {
                     columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
                     cell = wsSource.Cell(columnLetter + rowCnt);
-                    cell.Value = header.Replace("OP ", "").Replace("PHYS ", "") + (note != null ? " *" : "");
+                    cell.Value = header.Replace("OP ", "").Replace("PHYS ", "").Replace("TOTAL ", "") + (note != null ? " *" : "");
                     //cell.Style.Font.SetBold(true);
                     colCnt += 2;
                 }
@@ -794,12 +792,12 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                 columnLetter = SharedExcelFunctions.GetColumnName(colCnt);
                 columnLetterFirst = columnLetter;
                 cell = wsSource.Cell(columnLetter + rowCnt);
-                cell.Value = header.Replace("OP", claim).Replace("PHYS", claim);
+                cell.Value = header.Replace("OP", claim).Replace("PHYS", claim).Replace("TOTAL", claim);
                 cell.Style.Fill.SetBackgroundColor(XLColor.FromHtml(bgcolor)); //217 217 217
                 SharedExcelFunctions.AddClosedXMLBorders(ref cell);
 
                 //IF FIRST PASS
-                if(claim == "Total" || claim == "Physician")
+                if(clm_cnt == 1)
                 {
                     //COLUMN HEADER ROW
                     rowCnt = 2;
@@ -826,7 +824,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                 }
 
 
-                if (claim == "Total"|| claim == "Physician")
+                if (clm_cnt == 1)
                 {
                     colCnt += 1;
                 }
@@ -941,7 +939,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                 //range.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
                 //range.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
                 //range.Style.Font.SetBold(true);
-
+                clm_cnt++;
             }
 
 

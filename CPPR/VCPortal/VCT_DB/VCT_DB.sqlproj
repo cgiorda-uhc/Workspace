@@ -186,6 +186,7 @@
     <Build Include="pct\Tables\PROC_CD.sql" />
     <Build Include="etgsymm\Views\VW_ETG_Latest_Model.sql" />
     <Build Include="edcadhoc\Tables\Tin_Mpin_Prov_Filters.sql" />
+    <Build Include="pct\Tables\CLM_TOTAL.sql" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\StoredProcedure\sp_CEP_Enroll_Cd_GetAll.sql" />

@@ -511,20 +511,28 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
                         report_results.unique_individual_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Unique Individual").Comment;
                         report_results.unique_individual_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Unique Individual").Comment;
+                        report_results.unique_individual_total_comment = _config.Comments.FirstOrDefault(x => x.Header == "TOTAL Unique Individual").Comment;
                         report_results.events_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Events").Comment;
                         report_results.events_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Events").Comment;
+                        report_results.events_total_comment = _config.Comments.FirstOrDefault(x => x.Header == "TOTAL Events").Comment;
                         report_results.claims_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Claims").Comment;
                         report_results.claims_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Claims").Comment;
+                        report_results.claims_total_comment = _config.Comments.FirstOrDefault(x => x.Header == "TOTAL Claims").Comment;
                         report_results.allowed_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Allowed Amount").Comment;
                         report_results.allowed_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Allowed Amount").Comment;
+                        report_results.allowed_total_comment = _config.Comments.FirstOrDefault(x => x.Header == "TOTAL Allowed Amount").Comment;
                         report_results.allowed_pmpm_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Allowed Amount PMPM").Comment;
                         report_results.allowed_pmpm_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Allowed Amount PMPM").Comment;
+                        report_results.allowed_pmpm_total_comment = _config.Comments.FirstOrDefault(x => x.Header == "TOTAL Allowed Amount PMPM").Comment;
                         report_results.utilization000_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Utilization/000").Comment;
                         report_results.utilization000_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Utilization/000").Comment;
+                        report_results.utilization000_total_comment = _config.Comments.FirstOrDefault(x => x.Header == "TOTAL Utilization/000").Comment;
                         report_results.events_op_cost_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Event Cost").Comment;
                         report_results.events_phys_cost_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Event Cost").Comment;
+                        report_results.events_total_cost_comment = _config.Comments.FirstOrDefault(x => x.Header == "TOTAL Event Cost").Comment;
                         report_results.unit_cost_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Unit Cost").Comment;
                         report_results.unit_cost_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Unit Cost").Comment;
+                        report_results.unit_cost_total_comment = _config.Comments.FirstOrDefault(x => x.Header == "TOTAL Unit Cost").Comment;
 
 
                     }
