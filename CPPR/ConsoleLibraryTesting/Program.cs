@@ -180,18 +180,20 @@ foreach (var un in uniq)
 
     if (un.OPS_ENROLLED == true)
     {
-        if (Last_OPS == true)
-        {
-            un.ENRL_CATEG = "Retained Since Prior Month";
-        }
-        else if (Last_OPS == false)
-        {
-            un.ENRL_CATEG = "Another category, will be clarified";
-        }
-        else 
-        {
-            un.ENRL_CATEG = null;
-        }
+        un.ENRL_CATEG = "Retained";
+
+        //if (Last_OPS == true)
+        //{
+        //    un.ENRL_CATEG = "Retained Since Prior Month";
+        //}
+        //else if (Last_OPS == false)
+        //{
+        //    un.ENRL_CATEG = "Another category, will be clarified";
+        //}
+        //else 
+        //{
+        //    un.ENRL_CATEG = null;
+        //}
 
     }
     else if (un.OPS_ENROLLED == false)
@@ -200,14 +202,19 @@ foreach (var un in uniq)
         {
             un.ENRL_CATEG = "Enrolled Prior Month but not Current Month";
         }
-        else if (Last_OPS == false)
-        {
-            un.ENRL_CATEG = "OPS_ENROLLED=0 for current month and OPS_ENROLLED=0 for Prior month  ";
-        }
         else
         {
-            un.ENRL_CATEG = null; 
+            un.ENRL_CATEG = "Not Enrolled";
         }
+
+        //else if (Last_OPS == false)
+        //{
+        //    un.ENRL_CATEG = "OPS_ENROLLED=0 for current month and OPS_ENROLLED=0 for Prior month  ";
+        //}
+        //else
+        //{
+        //    un.ENRL_CATEG = null; 
+        //}
 
     }
 

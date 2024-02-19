@@ -93,6 +93,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             List<string> category = new List<string>();
             category.Add("OP");
             category.Add("PHYS");
+            category.Add("TOTAL");
 
             string filters = getFilterString(pct_param);
             StringBuilder sbSQL = new StringBuilder();
@@ -242,9 +243,17 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                         quarter = ((i + 1) - 4).ToString();
                     }
 
-         
 
-                    if (cat == "PHYS")
+
+
+                    if (cat == "TOTAL")
+                    {
+                        sbSQL.Append(",t.Y" + year + "Q" + quarter + "_phy_claims ");
+                        sbSQL.Append(",t.Y" + year + "Q" + quarter + "_claims ");
+                        sbSQL.Append(",t.Y" + year + "Q" + quarter + "_fac_claims ");
+                        sbSQL.Append(",t.Y" + year + "Q" + quarter + "_oth_claims ");
+                    }
+                    else if (cat == "PHYS")
                     {
                         sbSQL.Append(",t.Y" + year + "Q" + quarter + "_phy_claims ");
                     }
@@ -263,7 +272,17 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                 {
 
 
-                    if (cat == "PHYS")
+                    if (cat == "TOTAL")
+                    {
+                        sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_phy_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_phy_claims-t.Y1Q" + i + "_phy_claims)/t.Y1Q" + i + "_phy_claims) END Y1Q" + i + "_Y2Q" + i + "_trend_phy_claims ");
+
+                        sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_claims-t.Y1Q" + i + "_claims)/t.Y1Q" + i + "_claims)  END as Y1Q" + i + "_Y2Q" + i + "_trend_claims ");
+
+                        sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_fac_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_fac_claims-t.Y1Q" + i + "_fac_claims)/t.Y1Q" + i + "_fac_claims)   END as Y1Q" + i + "_Y2Q" + i + "_trend_fac_claims ");
+
+                        sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_oth_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_oth_claims-t.Y1Q" + i + "_oth_claims)/t.Y1Q" + i + "_oth_claims)   END Y1Q" + i + "_Y2Q" + i + "_trend_oth_claims ");
+                    }
+                    else if(cat == "PHYS")
                     {
                         sbSQL.Append(",CASE WHEN t.Y1Q" + i + "_phy_claims = 0 THEN NULL ELSE  ((t.Y2Q" + i + "_phy_claims-t.Y1Q" + i + "_phy_claims)/t.Y1Q" + i + "_phy_claims) END Y1Q" + i + "_Y2Q" + i + "_trend_phy_claims ");
                     }
@@ -301,9 +320,20 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                     var year_full = pct_param.DateSpanList[i].year;
                     var quarter_actual = pct_param.DateSpanList[i].quarter;
 
-                    
 
-                    if(cat == "PHYS")
+
+                    if (cat == "TOTAL")
+                    {
+                        sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then phy_clms end) as Y" + year + "Q" + quarter + "_phy_claims ");
+
+                        sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then claims end) as Y" + year + "Q" + quarter + "_claims ");
+
+                        sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then fac_clms end) as Y" + year + "Q" + quarter + "_fac_claims ");
+
+
+                        sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then oth_clms end) as Y" + year + "Q" + quarter + "_oth_claims ");
+                    }
+                    else if (cat == "PHYS")
                     {
                         sbSQL.Append(",sum(case when a.year = " + year_full + " and a.quarter = " + quarter_actual + " then phy_clms end) as Y" + year + "Q" + quarter + "_phy_claims ");
                     }
