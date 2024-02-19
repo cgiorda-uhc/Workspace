@@ -95,6 +95,15 @@ adHoc.ConnectionStringGalaxy = "Data Source=UDWPROD;User ID=cgiorda;Password=Boo
 adHoc.TableUGAP = "stg.MHP_Yearly_Universes_UGAP";
 adHoc.Limit = 3000;
 
+
+
+await adHoc.runSLAAutomation();
+
+return;
+
+
+
+
 IRelationalDataAccess db_odbc = new ODBCDataAccess();
 IRelationalDataAccess db_sqsl = new SqlDataAccess();
 

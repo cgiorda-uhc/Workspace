@@ -17,12 +17,12 @@ namespace PPACA_TAT
             string strConnectionString = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
             StringBuilder sbEmail = new StringBuilder();
 
-            string recipients = "LAlfonso@uhc.com;allyson_k_clark@uhc.com;sanford_p_cohen@uhc.com;laura_fischer@uhc.com;mayrene_hernandez@uhc.com;steve_lumpinski@optum.com;renee_l_struck@uhc.com;jessica_l_tarnowski@uhc.com;heather_vanis@uhc.com;mark_j_newman@uhc.com;Judy.Fujimoto@optum.com;carol_s_winter@uhc.com;inez.bulatao@uhc.com;nancy.morden@uhc.com;christopher_pauwels@uhc.com;roma_adipat@uhc.com;dana.savoie@optum.com;laurie.gianturco@uhc.com;rosamond_e_eschert@uhc.com;loaiello@uhc.com;candace_smith@uhc.com;stacy_v_washington@uhc.com; Carella-lisa.carellaashla@uhc.com;jon_maguire@uhc.com;inna_rudi@uhc.com";
+            string recipients = "allyson_k_clark@uhc.com;laura_fischer@uhc.com;audrey_horton@uhc.com;renee_l_struck@uhc.com;mark_j_newman@uhc.com;patricia_c_huntsman@uhc.com";
 
-            recipients = "mary_ann_dimartino@uhc.com;hong_gao@uhc.com;chris_giordano@uhc.com";
-            recipients = "mary_ann_dimartino@uhc.com";
+            //recipients = "mary_ann_dimartino@uhc.com;hong_gao@uhc.com;chris_giordano@uhc.com";
+           // recipients = "mary_ann_dimartino@uhc.com";
             string from = "chris_giordano@uhc.com";
-            string cc = "chris_giordano@uhc.com;inna_rudi@uhc.com";
+            string cc = "jason_t_riley@uhc.com;mary_ann_dimartino@uhc.com;chris_giordano@uhc.com;inna_rudi@uhc.com";
             //cc = "chris_giordano@uhc.com";
             //recipients = "chris_giordano@uhc.com";
 
