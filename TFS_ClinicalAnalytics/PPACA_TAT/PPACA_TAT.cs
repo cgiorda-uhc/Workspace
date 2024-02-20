@@ -20,8 +20,8 @@ namespace PPACA_TAT
             string recipients = "allyson_k_clark@uhc.com;laura_fischer@uhc.com;audrey_horton@uhc.com;renee_l_struck@uhc.com;mark_j_newman@uhc.com;patricia_c_huntsman@uhc.com";
 
             //recipients = "mary_ann_dimartino@uhc.com;hong_gao@uhc.com;chris_giordano@uhc.com";
-           // recipients = "mary_ann_dimartino@uhc.com";
-            string from = "chris_giordano@uhc.com";
+            //recipients = "mary_ann_dimartino@uhc.com;chris_giordano@uhc.com";
+            string from = "mary_ann_dimartino@uhc.com";
             string cc = "jason_t_riley@uhc.com;mary_ann_dimartino@uhc.com;chris_giordano@uhc.com;inna_rudi@uhc.com";
             //cc = "chris_giordano@uhc.com";
             //recipients = "chris_giordano@uhc.com";

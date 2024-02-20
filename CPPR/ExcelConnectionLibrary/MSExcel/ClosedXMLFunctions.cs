@@ -693,7 +693,7 @@ namespace FileParsingLibrary.MSExcel
 
                         //DELETE LEFTOVER TEMPLATE GARBAGE
                         ws.Range("A" + rowcnt  + ":Z" + (rowcnt + 10000)).Delete(XLShiftDeletedCells.ShiftCellsUp);
-
+                        
 
                         var rows = ws.RangeUsed().RowsUsed().Skip(1); // Skip header row
                         foreach (var row in rows)
@@ -714,9 +714,9 @@ namespace FileParsingLibrary.MSExcel
                             }    
                         }
 
+                        ws.Cell("A1").SetActive();
 
-
-                       // ws.RangeUsed().Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                        // ws.RangeUsed().Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
                         //for (int i = 0; i < 200; i++)
                         //{
                         //    ws.Range("A" + (rowcnt + i) + ":Z" + (rowcnt + i) ).Delete(XLShiftDeletedCells.ShiftCellsUp);

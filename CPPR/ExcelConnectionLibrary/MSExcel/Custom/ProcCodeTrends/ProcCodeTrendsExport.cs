@@ -858,8 +858,10 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
                 range.Style.Font.SetBold(true);
                 if (!string.IsNullOrEmpty(comment) && claim == "Other")
                 {
-                    wsSource.Cell("C1").CreateComment().AddText(comment);
-                    wsSource.Cell("C1").GetComment().Style
+
+                    var letter = (total ? "K" : "C");
+                    wsSource.Cell(letter + "1").CreateComment().AddText(comment);
+                    wsSource.Cell(letter + "1").GetComment().Style
                         .Size.SetHeight(100)
                         .Size.SetWidth(55);
 
