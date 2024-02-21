@@ -23,4 +23,6 @@ public class EviCoreYTDMetricsModel
     public string sheet_name { get; set; }
     public string file_name { get; set; }
     public string file_path { get; set; }
+
+    public DateTime delivery_date { get; set; }
 }

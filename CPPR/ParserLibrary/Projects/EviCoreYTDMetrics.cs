@@ -44,6 +44,7 @@ public class EviCoreYTDMetrics : IEviCoreYTDMetrics
         IEmailConfig? email = null;
         bool blUpdated = false;
         var results = "";
+        var delivery_date = DateTime.Now;
         try
         {
             Log.Information($"Retrieving latest data from EviCoreYTDMetrics...");
@@ -83,6 +84,9 @@ public class EviCoreYTDMetrics : IEviCoreYTDMetrics
                 {
                     Log.Information($"Extracting zipped contents to " + workingPath + "...");
                     CommonFunctions.ExtractFromZipFile(fileName, workingPath, _config.FileLists);
+
+                    FileInfo fi = new FileInfo(current);
+                    delivery_date = fi.CreationTime;
                 }
 
             }
@@ -202,10 +206,27 @@ public class EviCoreYTDMetrics : IEviCoreYTDMetrics
             }
 
 
+            foreach (var p in data_models)
+            {
+                p.delivery_date = delivery_date;
+
+            }
+
+
             //BULK LOAD CURRENT List<EvicoreScorecardModel> INTO DB
             string[] columns = typeof(EviCoreYTDMetricsModel).GetProperties().Select(p => p.Name).ToArray();
             Log.Information($"Saving contents of EviCoreYTDMetrics to database");
             await _db.BulkSave<EviCoreYTDMetricsModel>(sql.ConnectionString, _destination, data_models, columns);
+
+
+
+
+            sql = _config.SQLLists.Where(x => x.Name == "Update").FirstOrDefault();
+            Log.Information($"Updating EviCoreYTDMetrics");
+            await _db.Execute(connectionString: sql.ConnectionString, sql.SQL.FirstOrDefault());
+
+
+
             blUpdated = true;
 
 

@@ -105,6 +105,41 @@ adHoc.PEGReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Repor
 
 adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\EBM Template\\342 EBM DQ&C Results - Template.xlsx";
 
+
+var f = @"\\NASGWFTP03\Care_Core_FTP_Files\Radiology";
+var s = "Over*All*.zip";
+var list = Directory.GetFiles(f, s, SearchOption.TopDirectoryOnly);
+int month, year;
+string fileCreateDate;
+StringBuilder sbUpdate = new StringBuilder();
+foreach (var l in list)
+{
+    string fileName = System.IO.Path.GetFileName(l).Replace("Sept_", "Sep_").Replace("_ ", "_").Replace(" ", "_").Replace(".zip", "").Trim();
+    var fileParsed = fileName.Split('_');
+
+    if(fileParsed.Length != 4)
+    {
+        continue;
+    }
+
+    var format = (fileParsed[2].Length == 3 ? "MMM" : "MMMM"); //Jan vs January
+    month = DateTime.ParseExact(fileParsed[2].Trim(), format, CultureInfo.CurrentCulture).Month;
+    year = int.TryParse(fileParsed[3], out year) ? year : 0;
+
+    FileInfo fi = new FileInfo(l);
+    DateTime dtCreateDate = fi.CreationTime;
+
+    fileCreateDate = dtCreateDate.ToShortDateString();
+
+
+    sbUpdate.Append("UPDATE stg.EviCore_TAT SET delivery_date = '" + fileCreateDate + "' WHERE file_month = " + month + " AND file_year = " + year + ";");
+    sbUpdate.Append("UPDATE stg.EviCore_YTDMetrics SET delivery_date = '" + fileCreateDate + "' WHERE file_month = " + month + " AND file_year = " + year + ";");
+}
+
+return;
+
+
+
 //await adHoc.getEBMSourceDataAsync();
 
 //await adHoc.getPEGSourceDataAsync();

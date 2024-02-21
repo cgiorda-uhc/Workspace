@@ -53,6 +53,7 @@ namespace ProjectManagerLibrary.Projects
             IEmailConfig? email = null;
             bool blUpdated = false;
             var results = "";
+            var delivery_date = DateTime.Now;
             try
             {
                 Log.Information($"Retrieving latest data from PPACATAT...");
@@ -100,6 +101,12 @@ namespace ProjectManagerLibrary.Projects
                     {
                         Log.Information($"Extracting zipped contents to " + workingPath + "...");
                         CommonFunctions.ExtractFromZipFile(fileName, workingPath, _config.FileLists);
+
+
+                        FileInfo fi = new FileInfo(current);
+                        delivery_date = fi.CreationTime;
+
+
                     }
 
                 }
@@ -156,6 +163,7 @@ namespace ProjectManagerLibrary.Projects
                             p.sheet_name = sheet;
                             p.file_name = filename;
                             p.file_path = directory;
+                            p.delivery_date = delivery_date;
 
                         }
                         //TAT HAS BLANK/SUM COLUMNS THIS WILL REMOVE THOSE ROWS
@@ -165,6 +173,15 @@ namespace ProjectManagerLibrary.Projects
                         string[] columns = typeof(PPACATATModel).GetProperties().Select(p => p.Name).ToArray();
                         Log.Information($"Saving contents of " + filename + " sheet:" + sheet + " to database");
                         await _db.BulkSave<PPACATATModel>(sql.ConnectionString, _destination, ppaca, columns);
+
+
+
+                        sql = _config.SQLLists.Where(x => x.Name == "Update").FirstOrDefault();
+                        Log.Information($"Updating PPACATAT");
+                        await _db.Execute(connectionString: sql.ConnectionString, sql.SQL.FirstOrDefault());
+
+
+
                         blUpdated = true;
 
 
