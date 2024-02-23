@@ -6,6 +6,8 @@ using DataAccessLibrary.Shared;
 using DocumentFormat.OpenXml.Spreadsheet;
 using FileParsingLibrary.Models;
 using FileParsingLibrary.MSExcel;
+using FileParsingLibrary.MSExcel.Custom.ProcCodeTrends;
+using FileParsingLibrary.MSExcel.Custom.TAT;
 using FileParsingLibrary.MSWord;
 using MathNet.Numerics.Providers.SparseSolver;
 using Org.BouncyCastle.Utilities;
@@ -20,6 +22,7 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using VCPortal_Models.Models.DQC_Reporting;
 using VCPortal_Models.Models.EBM;
@@ -893,7 +896,7 @@ namespace ConsoleLibraryTesting
 
             List<ExcelExport> export = new List<ExcelExport>();
 
-            var closed_xml = new ClosedXMLFunctions();
+            var closed_xml = new TATExport();
 
 
             IRelationalDataAccess db_sql = new SqlDataAccess();
@@ -910,7 +913,8 @@ namespace ConsoleLibraryTesting
             export.Add(new ExcelExport() { ExportList = rtat.ToList<object>(), SheetName = strSheetName });
 
 
-            var bytes = await closed_xml.ExportToExcelTemplateAsync(PEGReportTemplatePath, export);
+            var bytes = await closed_xml.ExportToTATExcelTemplateAsync(TATReportTemplatePath, export);
+
 
 
             var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\TAT_Reporting_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
