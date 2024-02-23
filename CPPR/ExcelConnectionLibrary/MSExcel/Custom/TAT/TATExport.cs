@@ -14,7 +14,7 @@ namespace FileParsingLibrary.MSExcel.Custom.TAT
     {
 
 
-        public async Task<byte[]> ExportToTATExcelTemplateAsync(string templateNamePath, List<ExcelExport> excelExports)
+        public async Task<byte[]> ExportToTATExcelTemplateAsync(string templateNamePath, List<ExcelExport> excelExports, string current, string previous)
         {
             //StringBuilder sbStatus = new StringBuilder();
             //sbStatus.Append("--Exporting to Excel..." + Environment.NewLine);

@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using AutoMapper;
+using Dapper;
 using DataAccessLibrary.DataAccess;
 using DataAccessLibrary.Models;
 using DataAccessLibrary.Scripts;
@@ -10,6 +11,7 @@ using FileParsingLibrary.MSExcel.Custom.ProcCodeTrends;
 using FileParsingLibrary.MSExcel.Custom.TAT;
 using FileParsingLibrary.MSWord;
 using MathNet.Numerics.Providers.SparseSolver;
+using NPOI.SS.Formula.PTG;
 using Org.BouncyCastle.Utilities;
 using ProjectManagerLibrary.Models;
 using ProjectManagerLibrary.Shared;
@@ -900,8 +902,21 @@ namespace ConsoleLibraryTesting
 
 
             IRelationalDataAccess db_sql = new SqlDataAccess();
+
+
+
+
+            string strSQL = "select max(file_date) from stg.EviCore_YTDMetrics;";
+            var obj = await db_sql.ExecuteScalar(connectionString: ConnectionStringMSSQL, strSQL);
+            var dt = DateTime.Parse(obj.ToString());
+            string current = dt.Month + "-" + dt.Year;
+            strSQL = "select dateadd(mm, -1, max(file_date)) from stg.EviCore_YTDMetrics;";
+            obj = await db_sql.ExecuteScalar(connectionString: ConnectionStringMSSQL, strSQL);
+            dt = DateTime.Parse(obj.ToString());
+            string previous = dt.Month + "-" + dt.Year;
+
             string strSheetName = "Urgent TAT";
-            string strSQL = "SELECT * FROM ( Select t.lob, t.rpt_Modality, case when denom is null then 1 else cast(num/denom as decimal(6,4)) end as pct, s.SLA, CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Current' as section from (select distinct report_type,rpt_modality,lob FROM stg.EviCore_TAT where report_type = 'Urgent TAT' and NOT (lob='EXCHANGE' or lob is null)) as t LEFT JOIN (Select report_type,LOB,rpt_modality, cast(sum(Less_State_TAT_Requirements) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where file_date in(select max(file_date) from stg.EviCore_TAT) and report_type = 'Urgent TAT' group by report_type,lob, rpt_Modality ) as e on t.rpt_modality=e.rpt_modality and t.lob=e.lob and t.report_type=e.report_type LEFT JOIN stg.SLA_Lookup as s ON t.LOB = s.LOB AND t.rpt_Modality = s.Modality AND t.report_type = s.Metric UNION ALL Select t.lob, t.rpt_Modality, cast(num/denom as decimal(6,4)) as pct, s.SLA, CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA , 'Previous' as section from (select distinct report_type,rpt_modality,lob FROM stg.EviCore_TAT where report_type = 'Urgent TAT' and NOT (lob='EXCHANGE' or lob is null)) as t LEFT JOIN (Select report_type,LOB,rpt_modality, cast(sum(Less_State_TAT_Requirements) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_TAT) and report_type = 'Urgent TAT' group by report_type,lob, rpt_Modality ) as e on t.rpt_modality=e.rpt_modality and t.lob=e.lob and t.report_type=e.report_type LEFT JOIN stg.SLA_Lookup as s ON t.LOB = s.LOB AND t.rpt_Modality = s.Modality AND t.report_type = s.Metric ) t order by t.section, t.lob, t.rpt_Modality";
+            strSQL = "SELECT * FROM ( Select t.lob, t.rpt_Modality, case when denom is null then 1 else cast(num/denom as decimal(6,4)) end as pct, s.SLA, CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Current' as section from (select distinct report_type,rpt_modality,lob FROM stg.EviCore_TAT where report_type = 'Urgent TAT' and NOT (lob='EXCHANGE' or lob is null)) as t LEFT JOIN (Select report_type,LOB,rpt_modality, cast(sum(Less_State_TAT_Requirements) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where file_date in(select max(file_date) from stg.EviCore_TAT) and report_type = 'Urgent TAT' group by report_type,lob, rpt_Modality ) as e on t.rpt_modality=e.rpt_modality and t.lob=e.lob and t.report_type=e.report_type LEFT JOIN stg.SLA_Lookup as s ON t.LOB = s.LOB AND t.rpt_Modality = s.Modality AND t.report_type = s.Metric UNION ALL Select t.lob, t.rpt_Modality, cast(num/denom as decimal(6,4)) as pct, s.SLA, CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA , 'Previous' as section from (select distinct report_type,rpt_modality,lob FROM stg.EviCore_TAT where report_type = 'Urgent TAT' and NOT (lob='EXCHANGE' or lob is null)) as t LEFT JOIN (Select report_type,LOB,rpt_modality, cast(sum(Less_State_TAT_Requirements) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_TAT) and report_type = 'Urgent TAT' group by report_type,lob, rpt_Modality ) as e on t.rpt_modality=e.rpt_modality and t.lob=e.lob and t.report_type=e.report_type LEFT JOIN stg.SLA_Lookup as s ON t.LOB = s.LOB AND t.rpt_Modality = s.Modality AND t.report_type = s.Metric ) t order by t.section, t.lob, t.rpt_Modality";
             var utat = await db_sql.LoadData<TAT_Model>(connectionString: ConnectionStringMSSQL, strSQL);
             export.Add(new ExcelExport() { ExportList = utat.ToList<object>(), SheetName = strSheetName });
 
@@ -909,11 +924,26 @@ namespace ConsoleLibraryTesting
 
             strSheetName = "Routine TAT";
             strSQL = "SELECT * FROM ( Select t.lob, t.rpt_Modality, cast(num/denom as decimal(6,4)) as pct, s.SLA, CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Current' as section from (select distinct report_type,rpt_modality,lob FROM stg.EviCore_TAT where report_type = 'Routine TAT' and NOT (lob='EXCHANGE' or lob is null)) as t LEFT JOIN (Select report_type,LOB,rpt_modality, cast(sum(LessEqual_2_BUS_Days) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where file_date in(select max(file_date) from stg.EviCore_TAT) and report_type = 'Routine TAT' group by report_type,lob, rpt_Modality ) as e on t.rpt_modality=e.rpt_modality and t.lob=e.lob and t.report_type=e.report_type LEFT JOIN stg.SLA_Lookup as s ON t.LOB = s.LOB AND t.rpt_Modality = s.Modality AND t.report_type = s.Metric UNION ALL Select t.lob, t.rpt_Modality, cast(num/denom as decimal(6,4)) as pct, s.SLA, CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Previous' as section from (select distinct report_type,rpt_modality,lob FROM stg.EviCore_TAT where report_type = 'Routine TAT' and NOT (lob='EXCHANGE' or lob is null)) as t LEFT JOIN (Select report_type,LOB,rpt_modality, cast(sum(LessEqual_2_BUS_Days) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_TAT) and report_type = 'Routine TAT' group by report_type,lob, rpt_Modality ) as e on t.rpt_modality=e.rpt_modality and t.lob=e.lob and t.report_type=e.report_type LEFT JOIN stg.SLA_Lookup as s ON t.LOB = s.LOB AND t.rpt_Modality = s.Modality AND t.report_type = s.Metric ) t order by t.section, t.lob, t.rpt_Modality";
-            var rtat = await db_sql.LoadData<TAT_Model>(connectionString: ConnectionStringVC, strSQL);
+            var rtat = await db_sql.LoadData<TAT_Model>(connectionString: ConnectionStringMSSQL, strSQL);
             export.Add(new ExcelExport() { ExportList = rtat.ToList<object>(), SheetName = strSheetName });
 
 
-            var bytes = await closed_xml.ExportToTATExcelTemplateAsync(TATReportTemplatePath, export);
+
+            strSheetName = "Abandoned Rate";
+            strSQL = "SELECT * FROM ( Select DISTINCT ref.lob, ref.rpt_Modality, Abandoned_Pct as pct, s.SLA , CASE WHEN t.Abandoned_Pct > s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Current' as section FROM (select distinct lob,rpt_Modality from stg.EviCore_YTDMetrics where rpt_Modality<>'') as ref left join (Select lob,rpt_Modality, Avg_Speed_Answer, round(Abandoned_Percent,4) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select max(file_date) from stg.EviCore_YTDMetrics) and LOB<>'E&I' UNION ALL Select lob,rpt_Modality, CAST(ROUND(sum(Total_Calls * Avg_Speed_Answer)/sum(Total_Calls),2) as decimal(5,0)) as Avg_Speed_Answer, CAST(ROUND(sum(Abandoned_Calls)/sum(Total_Calls),5) as decimal(5,4)) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select max(file_date) from stg.EviCore_YTDMetrics) and lob='E&I' and rpt_Modality<>'' group by lob,rpt_Modality) as t on ref.lob=t.lob and ref.rpt_modality=t.rpt_modality left JOIN (select * from stg.SLA_Lookup WHERE Metric='Abandonment Rate') as s ON ref.lob = s.LOB AND ref.rpt_Modality = s.Modality UNION ALL Select DISTINCT ref.lob, ref.rpt_Modality, Abandoned_Pct as pct, s.SLA , CASE WHEN t.Abandoned_Pct > s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA , 'Previous' as section FROM (select distinct lob,rpt_Modality from stg.EviCore_YTDMetrics where rpt_Modality<>'') as ref left join (Select lob,rpt_Modality, Avg_Speed_Answer, round(Abandoned_Percent,3) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_YTDMetrics) and LOB<>'E&I' UNION ALL Select lob,rpt_Modality, CAST(ROUND(sum(Total_Calls * Avg_Speed_Answer)/sum(Total_Calls),2) as decimal(5,0)) as Avg_Speed_Answer, CAST(ROUND(sum(Abandoned_Calls)/sum(Total_Calls),5) as decimal(5,4)) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_YTDMetrics) and lob='E&I' and rpt_Modality<>'' group by lob,rpt_Modality) as t on ref.lob=t.lob and ref.rpt_modality=t.rpt_modality left JOIN (select * from stg.SLA_Lookup WHERE Metric='Abandonment Rate') as s ON ref.lob = s.LOB AND ref.rpt_Modality = s.Modality ) t order by t.section, t.lob, t.rpt_Modality";
+            var ar = await db_sql.LoadData<TAT_Model>(connectionString: ConnectionStringMSSQL, strSQL);
+            export.Add(new ExcelExport() { ExportList = ar.ToList<object>(), SheetName = strSheetName });
+
+
+
+            strSheetName = "ASA";
+            strSQL = "SELECT * FROM ( Select ref.LOB, ref.rpt_Modality, Avg_Speed_Answer as pct, s.SLA , CASE WHEN t.Avg_Speed_Answer > s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Current' as section FROM (select distinct lob,rpt_Modality from stg.EviCore_YTDMetrics where rpt_Modality<>'') as ref left join (Select lob,rpt_Modality, Avg_Speed_Answer, round(Abandoned_Percent,3) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select max(file_date) from stg.EviCore_YTDMetrics) and LOB<>'E&I' UNION ALL Select lob,rpt_Modality, CAST(ROUND(sum(Total_Calls * Avg_Speed_Answer)/sum(Total_Calls),2) as decimal(5,0)) as Avg_Speed_Answer, CAST(ROUND(sum(Abandoned_Calls)/sum(Total_Calls),3) as decimal(5,4)) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select max(file_date) from stg.EviCore_YTDMetrics) and lob='E&I' and rpt_Modality<>'' group by lob,rpt_Modality) as t on ref.lob=t.lob and ref.rpt_modality=t.rpt_modality left JOIN (select * from stg.SLA_Lookup WHERE Metric='Average Speed to Answer (ASA)') as s ON ref.lob = s.LOB AND ref.rpt_Modality = s.Modality UNION ALL Select ref.LOB, ref.rpt_Modality, Avg_Speed_Answer as pct, s.SLA , CASE WHEN t.Avg_Speed_Answer > s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Previous' as section FROM (select distinct lob,rpt_Modality from stg.EviCore_YTDMetrics where rpt_Modality<>'') as ref left join (Select lob,rpt_Modality, Avg_Speed_Answer, round(Abandoned_Percent,3) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_YTDMetrics) and LOB<>'E&I' UNION ALL Select lob,rpt_Modality, CAST(ROUND(sum(Total_Calls * Avg_Speed_Answer)/sum(Total_Calls),2) as decimal(5,0)) as Avg_Speed_Answer, CAST(ROUND(sum(Abandoned_Calls)/sum(Total_Calls),3) as decimal(5,4)) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_YTDMetrics) and lob='E&I' and rpt_Modality<>'' group by lob,rpt_Modality) as t on ref.lob=t.lob and ref.rpt_modality=t.rpt_modality left JOIN (select * from stg.SLA_Lookup WHERE Metric='Average Speed to Answer (ASA)') as s ON ref.lob = s.LOB AND ref.rpt_Modality = s.Modality ) t order by t.section, t.lob, t.rpt_Modality";
+            var asa = await db_sql.LoadData<TAT_Model>(connectionString: ConnectionStringMSSQL, strSQL);
+            export.Add(new ExcelExport() { ExportList = asa.ToList<object>(), SheetName = strSheetName });
+
+
+
+            var bytes = await closed_xml.ExportToTATExcelTemplateAsync(TATReportTemplatePath, export, current, previous);
 
 
 
