@@ -27,6 +27,7 @@ using VCPortal_Models.Models.ETGFactSymmetry.Configs;
 using VCPortal_Models.Models.ETGFactSymmetry.Dataloads;
 using VCPortal_Models.Models.PEG;
 using VCPortal_Models.Models.Shared;
+using VCPortal_Models.Models.TAT;
 using VCPortal_Models.Parameters.EDCAdhoc;
 using VCPortal_Models.Parameters.MHP;
 
@@ -38,6 +39,10 @@ namespace ConsoleLibraryTesting
 
         public string PEGReportTemplatePath { get; set; }
         public string EBMReportTemplatePath { get; set; }
+
+        public string TATReportTemplatePath { get; set; }
+
+
 
         public string ConnectionStringVC { get; set; }
 
@@ -880,6 +885,57 @@ namespace ConsoleLibraryTesting
 
             return;
         }
+
+
+
+        public async Task generateTATReportsAsync()
+        {
+
+            List<ExcelExport> export = new List<ExcelExport>();
+
+            var closed_xml = new ClosedXMLFunctions();
+
+
+            IRelationalDataAccess db_sql = new SqlDataAccess();
+            string strSheetName = "Urgent TAT";
+            string strSQL = "SELECT * FROM ( Select t.lob, t.rpt_Modality, case when denom is null then 1 else cast(num/denom as decimal(6,4)) end as pct, s.SLA, CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Current' as section from (select distinct report_type,rpt_modality,lob FROM stg.EviCore_TAT where report_type = 'Urgent TAT' and NOT (lob='EXCHANGE' or lob is null)) as t LEFT JOIN (Select report_type,LOB,rpt_modality, cast(sum(Less_State_TAT_Requirements) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where file_date in(select max(file_date) from stg.EviCore_TAT) and report_type = 'Urgent TAT' group by report_type,lob, rpt_Modality ) as e on t.rpt_modality=e.rpt_modality and t.lob=e.lob and t.report_type=e.report_type LEFT JOIN stg.SLA_Lookup as s ON t.LOB = s.LOB AND t.rpt_Modality = s.Modality AND t.report_type = s.Metric UNION ALL Select t.lob, t.rpt_Modality, cast(num/denom as decimal(6,4)) as pct, s.SLA, CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA , 'Previous' as section from (select distinct report_type,rpt_modality,lob FROM stg.EviCore_TAT where report_type = 'Urgent TAT' and NOT (lob='EXCHANGE' or lob is null)) as t LEFT JOIN (Select report_type,LOB,rpt_modality, cast(sum(Less_State_TAT_Requirements) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_TAT) and report_type = 'Urgent TAT' group by report_type,lob, rpt_Modality ) as e on t.rpt_modality=e.rpt_modality and t.lob=e.lob and t.report_type=e.report_type LEFT JOIN stg.SLA_Lookup as s ON t.LOB = s.LOB AND t.rpt_Modality = s.Modality AND t.report_type = s.Metric ) t order by t.section, t.lob, t.rpt_Modality";
+            var utat = await db_sql.LoadData<TAT_Model>(connectionString: ConnectionStringMSSQL, strSQL);
+            export.Add(new ExcelExport() { ExportList = utat.ToList<object>(), SheetName = strSheetName });
+
+
+
+            strSheetName = "Routine TAT";
+            strSQL = "SELECT * FROM ( Select t.lob, t.rpt_Modality, cast(num/denom as decimal(6,4)) as pct, s.SLA, CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Current' as section from (select distinct report_type,rpt_modality,lob FROM stg.EviCore_TAT where report_type = 'Routine TAT' and NOT (lob='EXCHANGE' or lob is null)) as t LEFT JOIN (Select report_type,LOB,rpt_modality, cast(sum(LessEqual_2_BUS_Days) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where file_date in(select max(file_date) from stg.EviCore_TAT) and report_type = 'Routine TAT' group by report_type,lob, rpt_Modality ) as e on t.rpt_modality=e.rpt_modality and t.lob=e.lob and t.report_type=e.report_type LEFT JOIN stg.SLA_Lookup as s ON t.LOB = s.LOB AND t.rpt_Modality = s.Modality AND t.report_type = s.Metric UNION ALL Select t.lob, t.rpt_Modality, cast(num/denom as decimal(6,4)) as pct, s.SLA, CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Previous' as section from (select distinct report_type,rpt_modality,lob FROM stg.EviCore_TAT where report_type = 'Routine TAT' and NOT (lob='EXCHANGE' or lob is null)) as t LEFT JOIN (Select report_type,LOB,rpt_modality, cast(sum(LessEqual_2_BUS_Days) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_TAT) and report_type = 'Routine TAT' group by report_type,lob, rpt_Modality ) as e on t.rpt_modality=e.rpt_modality and t.lob=e.lob and t.report_type=e.report_type LEFT JOIN stg.SLA_Lookup as s ON t.LOB = s.LOB AND t.rpt_Modality = s.Modality AND t.report_type = s.Metric ) t order by t.section, t.lob, t.rpt_Modality";
+            var rtat = await db_sql.LoadData<TAT_Model>(connectionString: ConnectionStringVC, strSQL);
+            export.Add(new ExcelExport() { ExportList = rtat.ToList<object>(), SheetName = strSheetName });
+
+
+            var bytes = await closed_xml.ExportToExcelTemplateAsync(PEGReportTemplatePath, export);
+
+
+            var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\TAT_Reporting_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
+
+
+            if (File.Exists(file))
+                File.Delete(file);
+
+            await File.WriteAllBytesAsync(file, bytes);
+
+
+
+            var p = new Process();
+            p.StartInfo = new ProcessStartInfo(file)
+            {
+                UseShellExecute = true
+            };
+            p.Start();
+
+
+        }
+
+
+
+
 
 
         public async Task generatePEGReportsAsync()

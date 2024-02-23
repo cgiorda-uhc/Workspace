@@ -99,11 +99,24 @@ adHoc.Limit = 3000;
 
 
 
-
+adHoc.TATReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\TAT_Reporting\\TAT_Template.xlsx";
 
 adHoc.PEGReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\PEG Template\\341 PEG DQ&C Results - Template.xlsx";
 
 adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\EBM Template\\342 EBM DQ&C Results - Template.xlsx";
+
+
+
+await adHoc.generateTATReportsAsync();
+
+return;
+
+
+
+
+
+
+
 
 
 var f = @"\\NASGWFTP03\Care_Core_FTP_Files\Radiology";
