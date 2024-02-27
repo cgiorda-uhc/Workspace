@@ -1,12 +1,14 @@
 ﻿using ClosedXML.Excel;
 using FileParsingLibrary.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using VCPortal_Models.Models.ProcCodeTrends;
+using VCPortal_Models.Models.TAT;
 
 namespace FileParsingLibrary.MSExcel.Custom.TAT
 {
@@ -14,7 +16,7 @@ namespace FileParsingLibrary.MSExcel.Custom.TAT
     {
 
 
-        public async Task<byte[]> ExportToTATExcelTemplateAsync(string templateNamePath, List<ExcelExport> excelExports, string current, string previous)
+        public async Task<byte[]> ExportToTATExcelTemplateAsync(string templateNamePath, List<ExcelExport> excelExports, string current, string previous, int current_col, int previous_col, int starting_row)
         {
             //StringBuilder sbStatus = new StringBuilder();
             //sbStatus.Append("--Exporting to Excel..." + Environment.NewLine);
@@ -23,112 +25,83 @@ namespace FileParsingLibrary.MSExcel.Custom.TAT
             Task t = Task.Run(async () =>
             {
                 using var wb = new XLWorkbook(templateNamePath); //create workbook
-                int rowcnt = 1;
+                int rowcnt = 0;
                 int currentCol = 1;
                 int totalcnt = 0;
+
+                List<string> current_previous = new List<string>();
+                current_previous.Add("Current");
+                current_previous.Add("Previous");
+                List<TAT_Model> lstTat = null;
+
+
                 foreach (var ex in excelExports)
                 {
-                    //if(ex.SheetName == "LOB")
-                    //{
-                    //    var s = "";
-                    //}
 
-
-
-                    //sbStatus.Append("--Generating Sheet: " + ex.SheetName + "..." + Environment.NewLine);
-                    //setterStatus(sbStatus.ToString());
                     var ws = wb.Worksheet(ex.SheetName); //add worksheet to workbook
                     var type = ex.ExportList!.FirstOrDefault()!.GetType();
-
                     PropertyInfo[] properties = type.GetProperties();
 
-                    var colNameIdList = new List<ExcelColumnNameId>();
-                    foreach (var prop in properties)
+
+                    foreach (var cp in current_previous)
                     {
-                        var colName = prop.Name.Replace("_", " ");
-                        var cell = ws.RangeUsed().AsTable().HeadersRow().CellsUsed(c => c.Value.ToString() == colName).FirstOrDefault().Address.ColumnNumber;
-                        colNameIdList.Add(new ExcelColumnNameId { ColumnId = cell, ColumnName = prop.Name });
-                    }
 
 
-                    totalcnt = ex.ExportList.Count();
-                    if (ex.ExportList != null && totalcnt > 0)
-                    {
-                        rowcnt = 2;
-                        foreach (var item in ex.ExportList)
+                        if(rowcnt == 0)
+                        {
+                            lstTat = ex.ExportList.Cast<TAT_Model>().Where(x => x.section == cp).ToList();
+                            rowcnt = starting_row;
+                            currentCol = (cp == "Current" ? current_col : previous_col);
+                            ws.Cell(1, currentCol).Value = (cp == "Current" ? "Current Month " + current : "Prior Month " + previous);
+
+                        }
+                        
+
+                        foreach (var item in lstTat)
                         {
                             //setterStatus(sbStatus.ToString() + "--Adding " + (rowcnt - 1).ToString("N0") + " out of " + totalcnt.ToString("N0") + " rows..." + Environment.NewLine);
                             // currentCol = 1;
                             foreach (var prop in properties)
                             {
-                                // prop.Name
+                                if(prop.Name == "section")
+                                {
+                                    continue;
+                                }
 
-                                currentCol = colNameIdList.Where(x => x.ColumnName == prop.Name).Select(x => x.ColumnId).FirstOrDefault();
+                                object val = prop.GetValue(item, null);
 
                                 if (prop.PropertyType == typeof(string))
                                 {
 
-
                                     ws.Cell(rowcnt, currentCol).Value = prop.GetValue(item, null) + "";
                                 }
-                                else
+                                else if (prop.PropertyType == typeof(int) || prop.PropertyType == typeof(int?))
                                 {
 
-                                    ws.Cell(rowcnt, currentCol).Value = int.Parse(prop.GetValue(item, null) + "");
+                                    if(val != null)
+                                        ws.Cell(rowcnt, currentCol).Value = int.Parse(val.ToString());
                                 }
-
+                                else if (prop.PropertyType == typeof(float) || prop.PropertyType == typeof(float?))
+                                {
+                                    if (val != null)
+                                        ws.Cell(rowcnt, currentCol).Value = double.Parse(val.ToString());
+                                }
 
                                 currentCol++;
                             }
                             rowcnt++;
+                            currentCol = (cp == "Current" ? current_col : previous_col);
+
+
                         }
-
-                        //DELETE LEFTOVER TEMPLATE GARBAGE
-                        ws.Range("A" + rowcnt + ":Z" + (rowcnt + 10000)).Delete(XLShiftDeletedCells.ShiftCellsUp);
-
-
-                        var rows = ws.RangeUsed().RowsUsed().Skip(1); // Skip header row
-                        foreach (var row in rows)
-                        {
-                            var rowNumber = row.RowNumber();
-                            // Process the row
-                            var cells = row.Cells();
-                            var cnt = 1;
-                            foreach (var cell in cells)
-                            {
-                                if (cnt == cells.Count() - 1)
-                                {
-                                    break;
-                                }
-
-                                cell.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                                cnt++;
-                            }
-                        }
-
+                        rowcnt = 0;
                         ws.Cell("A1").SetActive();
 
-                        // ws.RangeUsed().Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
-                        //for (int i = 0; i < 200; i++)
-                        //{
-                        //    ws.Range("A" + (rowcnt + i) + ":Z" + (rowcnt + i) ).Delete(XLShiftDeletedCells.ShiftCellsUp);
 
-                        //}
-
-
-
-
-                        //sbStatus.Clear();
-                        //sbStatus.Append(getterStatus());
-                        //sbStatus.Append("--" + ex.SheetName + " has beeen generated." + Environment.NewLine);
-                        //sbStatus.Append("-------------------------------------------" + Environment.NewLine);
-                        //setterStatus(sbStatus.ToString());
                     }
 
                     //ws.Columns().AdjustToContents(1, 20);
                 }
-                //sbStatus.Append("--Opening spreadsheet..." + Environment.NewLine + Environment.NewLine);
-                //setterStatus(sbStatus.ToString());
 
                 //save file to memory stream and return it as byte array
                 using (var ms = new MemoryStream())

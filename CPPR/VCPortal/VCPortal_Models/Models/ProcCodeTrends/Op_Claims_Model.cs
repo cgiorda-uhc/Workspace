@@ -10,25 +10,25 @@ public class Op_Claims_Model
     public string px { get; set; }
     public string px_desc { get; set; }
 
-    public int? Y1Q1_claims { get; set; }
 
-    public int? Y1Q2_claims { get; set; }
-
-    public int? Y1Q3_claims { get; set; }
-
-    public int? Y1Q4_claims { get; set; }
+    public int? Y1Q1_fac_claims { get; set; }
 
 
-    public int? Y2Q1_claims { get; set; }
+    public int? Y1Q2_fac_claims { get; set; }
+
+    public int? Y1Q3_fac_claims { get; set; }
+
+    public int? Y1Q4_fac_claims { get; set; }
 
 
-    public int? Y2Q2_claims { get; set; }
+    public int? Y2Q1_fac_claims { get; set; }
+    public int? Y2Q2_fac_claims { get; set; }
 
 
-    public int? Y2Q3_claims { get; set; }
+    public int? Y2Q3_fac_claims { get; set; }
 
-    public int? Y2Q4_claims { get; set; }
 
+    public int? Y2Q4_fac_claims { get; set; }
 
     //public double? Y1Q1_Y2Q1_trend_claims { get; set; }
 
@@ -67,27 +67,27 @@ public class Op_Claims_Model
 
 
 
+    public int? Y1Q1_claims { get; set; }
+
+    public int? Y1Q2_claims { get; set; }
+
+    public int? Y1Q3_claims { get; set; }
+
+    public int? Y1Q4_claims { get; set; }
 
 
-
-    public int? Y1Q1_fac_claims { get; set; }
-
-
-    public int? Y1Q2_fac_claims { get; set; }
-
-    public int? Y1Q3_fac_claims { get; set; }
-
-    public int? Y1Q4_fac_claims { get; set; }
+    public int? Y2Q1_claims { get; set; }
 
 
-    public int? Y2Q1_fac_claims { get; set; }
-    public int? Y2Q2_fac_claims { get; set; }
+    public int? Y2Q2_claims { get; set; }
 
 
-    public int? Y2Q3_fac_claims { get; set; }
+    public int? Y2Q3_claims { get; set; }
+
+    public int? Y2Q4_claims { get; set; }
 
 
-    public int? Y2Q4_fac_claims { get; set; }
+    
 
 
     //public double? Y1Q1_Y2Q1_trend_fac_claims { get; set; }
