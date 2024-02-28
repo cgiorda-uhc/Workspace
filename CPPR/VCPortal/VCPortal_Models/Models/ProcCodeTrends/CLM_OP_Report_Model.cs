@@ -98,6 +98,9 @@ public class CLM_OP_Report_Model
 
     public string utilization000_op_comment { get; set; }
 
+    public string events000_op_comment { get; set; }
+
+
     public string unit_cost_op_comment { get; set; }
 
 
@@ -116,6 +119,8 @@ public class CLM_OP_Report_Model
     public string allowed_pmpm_phys_comment { get; set; }
 
     public string utilization000_phys_comment { get; set; }
+
+    public string events000_phys_comment { get; set; }
 
     public string unit_cost_phys_comment { get; set; }
 
@@ -137,6 +142,8 @@ public class CLM_OP_Report_Model
     public string utilization000_total_comment { get; set; }
 
     public string unit_cost_total_comment { get; set; }
+
+    public string events000_total_comment { get; set; }
 
 
 

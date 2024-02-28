@@ -139,6 +139,92 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             //////Utilization/000 END
             //////Utilization/000 END
             //////Utilization/000 END
+            ///
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            //Events/000  START 
+            //Events/000 START
+            //Events/000 START
+            header = "OP Events/000";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            generateGenericWorksheet<Events000_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.events000_op, clm_op_results.events000_op_comment);
+
+            ////Events/000 END
+            ////Events/000 END
+            ////Events/000 END
+            ///
+
+
+
+            //Events/000  START 
+            //Events/000 START
+            //Events/000 START
+            header = "PHYS Events/000";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            generateGenericWorksheet<Events000_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.events000_phys, clm_op_results.events000_phys_comment);
+
+            ////Events/000 END
+            ////Events/000 END
+            ////Events/000 END
+
+
+
+
+            ////Events/000  START 
+            ////Events/000 START
+            ////Events/000 START
+            //header = "TOTAL Events/000";
+
+            sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
+            setterStatus(sbStatus.ToString());
+
+            generateGenericWorksheet<Events000_Model>(ref wb, header, bgcolor, clm_op_results.year_quarter_op, clm_op_results.events000_total, clm_op_results.events000_total_comment);
+
+            //////Events/000 END
+            //////Events/000 END
+            //////Events/000 END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

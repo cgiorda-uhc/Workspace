@@ -531,6 +531,10 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
                         report_results.unit_cost_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Unit Cost").Comment;
                         report_results.unit_cost_total_comment = _config.Comments.FirstOrDefault(x => x.Header == "TOTAL Unit Cost").Comment;
 
+                        report_results.events000_op_comment = _config.Comments.FirstOrDefault(x => x.Header == "OP Events/000").Comment;
+                        report_results.events000_phys_comment = _config.Comments.FirstOrDefault(x => x.Header == "PHYS Events/000").Comment;
+                        report_results.events000_total_comment = _config.Comments.FirstOrDefault(x => x.Header == "TOTAL Events/000").Comment;
+
 
                     }
                     else
