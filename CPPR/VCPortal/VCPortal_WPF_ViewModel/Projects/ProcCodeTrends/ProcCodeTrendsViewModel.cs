@@ -457,10 +457,7 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
                 pc_param.RowCount = _topRows;
 
-
                 pc_param.DateSpanList = _date_span;
-
-
 
 
                 if(blFirstPass)

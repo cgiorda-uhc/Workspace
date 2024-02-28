@@ -12,7 +12,7 @@ public class TAT_Summary_Model
     public string rpt_Modality { get; set; }
 
     public string metric { get; set; }
-    public float Penalty_SLA { get; set; }
+    public int YTD_Penalty { get; set; }
     public int Jan { get; set; }
     public int Feb { get; set; }
     public int Mar { get; set; }
