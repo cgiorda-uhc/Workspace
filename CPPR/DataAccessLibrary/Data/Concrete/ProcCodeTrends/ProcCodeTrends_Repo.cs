@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using VCPortal_Models.Models.ProcCodeTrends;
 using VCPortal_Models.Parameters.MHP;
 using VCPortal_Models.Parameters.ProcCodeTrends;
+using static IdentityModel.OidcConstants;
 
 namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 {
@@ -398,6 +399,23 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
                 ////Utilization/000 end
                 ////Utilization/000 end
                 ////Utilization/000 end
+                ///
+
+
+
+                ////Events/000 start
+                ////Events/000 start
+                ////Events/000 start 
+
+                sql = generateGenericMemberMonthSQL("evnts", "events000", pct_param.RowCount, filters, pct_param.DateSpanList, cat, has_proc_filter, round: "1", denominator: "12000");
+                sbSQL.Append(sql);
+
+                ////Events/000 end
+                ////Events/000 end
+                ////Events/000 end
+
+
+
 
 
 
@@ -554,7 +572,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 
             //var results = _db.LoadDataMultiple(sql: sbSQL.ToString(), token, gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Op_Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read<Member_Month_Model>(), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Phys_Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read<Member_Month_Model>(), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), "VCT_DB");
 
-            var results = _db.LoadDataMultiple(sql: sbSQL.ToString(), token, gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Op_Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read<Member_Month_Model>(), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Phys_Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read <Member_Month_Model> (), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Total_Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read<Member_Month_Model>(), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), "VCT_DB");
+            var results = _db.LoadDataMultiple(sql: sbSQL.ToString(), token, gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Op_Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read<Member_Month_Model>(), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<Events000_Model>(), gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Phys_Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read <Member_Month_Model> (), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<Events000_Model>(), gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Total_Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read<Member_Month_Model>(), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<Events000_Model>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), "VCT_DB");
 
             CLM_OP_Report_Model claims_final = new CLM_OP_Report_Model();
             claims_final.year_quarter_op = (results[0] as List<YearQuarter_Model>);
@@ -567,30 +585,32 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             claims_final.utilization000_op = (results[7] as List<Utilization000_Model>);
             claims_final.unit_cost1_op = (results[8] as List<Unit_Cost1_Model>);
             claims_final.unit_cost2_op = (results[9] as List<Unit_Cost2_Model>);
+            claims_final.events000_op = (results[10] as List<Events000_Model>);
 
-            claims_final.year_quarter_phys = (results[10] as List<YearQuarter_Model>);
-            claims_final.unique_individual_phys = (results[11] as List<Unique_Individual_Model>);
-            claims_final.events_phys = (results[12] as List<Events_Model>);
-            claims_final.claims_phys = (results[13] as List<Phys_Claims_Model>);
-            claims_final.allowed_phys = (results[14] as List<Allowed_Model>);
-            claims_final.member_month_phys = (results[15] as List<Member_Month_Model>);
-            claims_final.allowed_pmpm_phys = (results[16] as List<Allowed_PMPM_Model>);
-            claims_final.utilization000_phys = (results[17] as List<Utilization000_Model>);
-            claims_final.unit_cost1_phys = (results[18] as List<Unit_Cost1_Model>);
-            claims_final.unit_cost2_phys = (results[19] as List<Unit_Cost2_Model>);
+            claims_final.year_quarter_phys = (results[11] as List<YearQuarter_Model>);
+            claims_final.unique_individual_phys = (results[12] as List<Unique_Individual_Model>);
+            claims_final.events_phys = (results[13] as List<Events_Model>);
+            claims_final.claims_phys = (results[14] as List<Phys_Claims_Model>);
+            claims_final.allowed_phys = (results[15] as List<Allowed_Model>);
+            claims_final.member_month_phys = (results[16] as List<Member_Month_Model>);
+            claims_final.allowed_pmpm_phys = (results[17] as List<Allowed_PMPM_Model>);
+            claims_final.utilization000_phys = (results[18] as List<Utilization000_Model>);
+            claims_final.unit_cost1_phys = (results[19] as List<Unit_Cost1_Model>);
+            claims_final.unit_cost2_phys = (results[20] as List<Unit_Cost2_Model>);
+            claims_final.events000_phys = (results[21] as List<Events000_Model>);
 
 
-            claims_final.year_quarter_total = (results[20] as List<YearQuarter_Model>);
-            claims_final.unique_individual_total = (results[21] as List<Unique_Individual_Model>);
-            claims_final.events_total = (results[22] as List<Events_Model>);
-            claims_final.claims_total = (results[23] as List<Total_Claims_Model>);
-            claims_final.allowed_total = (results[24] as List<Allowed_Model>);
-            claims_final.member_month_total = (results[25] as List<Member_Month_Model>);
-            claims_final.allowed_pmpm_total = (results[26] as List<Allowed_PMPM_Model>);
-            claims_final.utilization000_total = (results[27] as List<Utilization000_Model>);
-            claims_final.unit_cost1_total = (results[28] as List<Unit_Cost1_Model>);
-            claims_final.unit_cost2_total = (results[29] as List<Unit_Cost2_Model>);
-
+            claims_final.year_quarter_total = (results[22] as List<YearQuarter_Model>);
+            claims_final.unique_individual_total = (results[23] as List<Unique_Individual_Model>);
+            claims_final.events_total = (results[24] as List<Events_Model>);
+            claims_final.claims_total = (results[25] as List<Total_Claims_Model>);
+            claims_final.allowed_total = (results[26] as List<Allowed_Model>);
+            claims_final.member_month_total = (results[27] as List<Member_Month_Model>);
+            claims_final.allowed_pmpm_total = (results[28] as List<Allowed_PMPM_Model>);
+            claims_final.utilization000_total = (results[29] as List<Utilization000_Model>);
+            claims_final.unit_cost1_total = (results[30] as List<Unit_Cost1_Model>);
+            claims_final.unit_cost2_total = (results[31] as List<Unit_Cost2_Model>);
+            claims_final.events000_total = (results[32] as List<Events000_Model>);
 
             return claims_final;
     

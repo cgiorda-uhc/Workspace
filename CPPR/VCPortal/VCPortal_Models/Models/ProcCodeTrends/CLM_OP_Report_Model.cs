@@ -32,6 +32,9 @@ public class CLM_OP_Report_Model
 
     public List<Unit_Cost2_Model> unit_cost2_op { get; set; }
 
+    public List<Events000_Model> events000_op { get; set; }
+
+
     public List<YearQuarter_Model> year_quarter_phys { get; set; }
 
 
@@ -53,6 +56,8 @@ public class CLM_OP_Report_Model
 
     public List<Unit_Cost2_Model> unit_cost2_phys { get; set; }
 
+    public List<Events000_Model> events000_phys { get; set; }
+
 
     public List<YearQuarter_Model> year_quarter_total { get; set; }
     public List<Events_Model> events_total { get; set; }
@@ -72,6 +77,8 @@ public class CLM_OP_Report_Model
     public List<Unit_Cost1_Model> unit_cost1_total { get; set; }
 
     public List<Unit_Cost2_Model> unit_cost2_total { get; set; }
+
+    public List<Events000_Model> events000_total { get; set; }
 
 
     public string member_month_comment { get; set; }
