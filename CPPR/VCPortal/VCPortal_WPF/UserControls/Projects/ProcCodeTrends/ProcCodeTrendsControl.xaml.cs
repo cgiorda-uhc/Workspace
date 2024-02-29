@@ -127,21 +127,21 @@ public partial class ProcCodeTrendsControl : UserControl
         var proc_codes = txtProc_CodeFilter.ItemsSource;
 
         var sb = new StringBuilder();
-        foreach ( var proc_code in proc_codes )
-        {
-            var value = proc_code.ToString().ToLower().Trim();
-            foreach (var item in pasted_items)
-            {
+        //foreach ( var proc_code in proc_codes )
+        //{
+        //    var value = proc_code.ToString().ToLower().Trim();
+        //    foreach (var item in pasted_items)
+        //    {
 
-                if( value.StartsWith(item.ToLower().Trim() + " - "))
-                {
+        //        if( value.StartsWith(item.ToLower().Trim() + " - "))
+        //        {
 
-                    lstSelectedProcCode.Items.Add(proc_code);
-                    break;
-                }
-            }
-        }
-        txtProcCodes.Text = "";
+        //            lstSelectedProcCode.Items.Add(proc_code);
+        //            break;
+        //        }
+        //    }
+        //}
+       
 
 
 
@@ -157,10 +157,14 @@ public partial class ProcCodeTrendsControl : UserControl
             {
                 sb.AppendLine(item);
             }
+            else
+            {
+                lstSelectedProcCode.Items.Add(r);
+            }
 
         }
 
-
+        txtProcCodes.Text = "";
 
         if (sb.Length > 0 )
         {
