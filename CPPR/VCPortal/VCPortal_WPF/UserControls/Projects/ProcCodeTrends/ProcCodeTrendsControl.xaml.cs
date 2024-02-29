@@ -120,13 +120,16 @@ public partial class ProcCodeTrendsControl : UserControl
 
     private void btnPasteProcCd_Click(object sender, RoutedEventArgs e)
     {
+        List<string> missing_px = new List<string>();
+        
+        
         var pasted_items = txtProcCodes.Text.Trim().Replace("\r\n", ",").Replace("|",",").Split(',');
         var proc_codes = txtProc_CodeFilter.ItemsSource;
 
+        var sb = new StringBuilder();
         foreach ( var proc_code in proc_codes )
         {
             var value = proc_code.ToString().ToLower().Trim();
-
             foreach (var item in pasted_items)
             {
 
@@ -136,10 +139,64 @@ public partial class ProcCodeTrendsControl : UserControl
                     lstSelectedProcCode.Items.Add(proc_code);
                     break;
                 }
-
             }
         }
-
         txtProcCodes.Text = "";
+
+
+
+        List<string> list = new List<string>();
+        foreach (object item in proc_codes)
+            list.Add(item.ToString());
+
+        foreach (var item in pasted_items)
+        {
+            var r = list.Where(r => r.StartsWith(item.ToUpper().Trim() + " - ")).FirstOrDefault();
+
+            if(r == null )
+            {
+                sb.AppendLine(item);
+            }
+
+        }
+
+
+
+        if (sb.Length > 0 )
+        {
+            MessageBox.Show("Proc Codes not found in DB:" + Environment.NewLine + sb.ToString());
+        }
+
+
+        ////var diff = pasted_items.Except(list);
+
+        ////var diff = list.Where(x => !pasted_items.Contains(x)).ToList();
+
+       
+        //foreach (var p in pasted_items)
+        //{
+
+        //    if(!list.Contains(p))
+        //    {
+        //        sb.AppendLine(p);
+        //    }
+
+        //}
+
+
+
+        //    if (diff != null)
+        //{
+            
+            
+        //    foreach(var s in diff)
+        //    {
+                
+        //    }
+        //    MessageBox.Show("Proc Codes not found in DB:" + Environment.NewLine + sb.ToString());
+
+        //}
+        
+
     }
 }
