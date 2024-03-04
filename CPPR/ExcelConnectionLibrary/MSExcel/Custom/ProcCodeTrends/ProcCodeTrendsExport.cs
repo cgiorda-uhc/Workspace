@@ -196,7 +196,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             ////Events/000  START 
             ////Events/000 START
             ////Events/000 START
-            //header = "TOTAL Events/000";
+            header = "TOTAL Events/000";
 
             sbStatus.Append("--Creating sheet for " + header + Environment.NewLine);
             setterStatus(sbStatus.ToString());

@@ -29,10 +29,7 @@ namespace FileParsingLibrary.MSExcel.Custom.TAT
                 int currentCol = 1;
                 int totalcnt = 0;
 
-                List<string> current_previous = new List<string>();
-                current_previous.Add("Current");
-                current_previous.Add("Previous");
-                List<TAT_Model> lstTat = null;
+                
 
 
                 foreach (var ex in excelExports)
@@ -42,64 +39,141 @@ namespace FileParsingLibrary.MSExcel.Custom.TAT
                     var type = ex.ExportList!.FirstOrDefault()!.GetType();
                     PropertyInfo[] properties = type.GetProperties();
 
-
-                    foreach (var cp in current_previous)
+                    if(ex.SheetName == "SLA summary, penalties")
                     {
-
-
-                        if(rowcnt == 0)
-                        {
-                            lstTat = ex.ExportList.Cast<TAT_Model>().Where(x => x.section == cp).ToList();
-                            rowcnt = starting_row;
-                            currentCol = (cp == "Current" ? current_col : previous_col);
-                            ws.Cell(1, currentCol).Value = (cp == "Current" ? "Current Month " + current : "Prior Month " + previous);
-
-                        }
+                        int section_cnt = 0;
                         
-
-                        foreach (var item in lstTat)
+                        List<string> summary_type = new List<string>();
+                        summary_type.Add("Radiology");
+                        summary_type.Add("Cardiology");
+                        summary_type.Add("Gastroenterology");
+                        foreach (var st in summary_type)
                         {
-                            //setterStatus(sbStatus.ToString() + "--Adding " + (rowcnt - 1).ToString("N0") + " out of " + totalcnt.ToString("N0") + " rows..." + Environment.NewLine);
-                            // currentCol = 1;
-                            foreach (var prop in properties)
+
+                            var lstSummary = ex.ExportList.Cast<TAT_Summary_Model>().Where(x => x.rpt_Modality == st).ToList();
+                            rowcnt = 8;
+                   
+    
+                            foreach(var l in lstSummary)
                             {
-                                if(prop.Name == "section")
-                                {
-                                    continue;
-                                }
 
-                                object val = prop.GetValue(item, null);
+                                currentCol = (st == "Radiology" ? 4 : (st == "Cardiology" ? 21 : 38));
 
-                                if (prop.PropertyType == typeof(string))
-                                {
-
-                                    ws.Cell(rowcnt, currentCol).Value = prop.GetValue(item, null) + "";
-                                }
-                                else if (prop.PropertyType == typeof(int) || prop.PropertyType == typeof(int?))
-                                {
-
-                                    if(val != null)
-                                        ws.Cell(rowcnt, currentCol).Value = int.Parse(val.ToString());
-                                }
-                                else if (prop.PropertyType == typeof(float) || prop.PropertyType == typeof(float?))
-                                {
-                                    if (val != null)
-                                        ws.Cell(rowcnt, currentCol).Value = double.Parse(val.ToString());
-                                }
+                                ws.Cell(rowcnt, currentCol).Value = l.YTD_Penalty;
 
                                 currentCol++;
-                            }
-                            rowcnt++;
-                            currentCol = (cp == "Current" ? current_col : previous_col);
+                                ws.Cell(rowcnt, currentCol).Value = l.Jan;
 
+                                currentCol++;
+                                ws.Cell(rowcnt, currentCol).Value = l.Feb;
+
+                                currentCol++;
+                                ws.Cell(rowcnt, currentCol).Value = l.Mar;
+
+                                currentCol++;
+                                ws.Cell(rowcnt, currentCol).Value = l.Apr;
+
+                                currentCol++;
+                                ws.Cell(rowcnt, currentCol).Value = l.May;
+
+                                currentCol++;
+                                ws.Cell(rowcnt, currentCol).Value = l.Jun;
+
+                                currentCol++;
+                                ws.Cell(rowcnt, currentCol).Value = l.Jul;
+
+                                currentCol++;
+                                ws.Cell(rowcnt, currentCol).Value = l.Aug;
+
+                                currentCol++;
+                                ws.Cell(rowcnt, currentCol).Value = l.Sep;
+
+                                currentCol++;
+                                ws.Cell(rowcnt, currentCol).Value = l.Oct;
+
+                                currentCol++;
+                                ws.Cell(rowcnt, currentCol).Value = l.Nov;
+
+                                currentCol++;
+                                ws.Cell(rowcnt, currentCol).Value = l.Dec;
+
+
+                                section_cnt++;
+                                if(section_cnt == 5)
+                                {
+                                    rowcnt = rowcnt + 3;
+                                    section_cnt = 0;
+                                }
+
+                                rowcnt++;
+                            }
 
                         }
-                        rowcnt = 0;
-                        ws.Cell("A1").SetActive();
-
-
                     }
+                    else
+                    {
+                        List<string> current_previous = new List<string>();
+                        current_previous.Add("Current");
+                        current_previous.Add("Previous");
+                        List<TAT_Model> lstTat = null;
 
+
+                        foreach (var cp in current_previous)
+                        {
+
+
+                            if (rowcnt == 0)
+                            {
+                                lstTat = ex.ExportList.Cast<TAT_Model>().Where(x => x.section == cp).ToList();
+                                rowcnt = starting_row;
+                                currentCol = (cp == "Current" ? current_col : previous_col);
+                                ws.Cell(1, currentCol).Value = (cp == "Current" ? "Current Month " + current : "Prior Month " + previous);
+
+                            }
+
+
+                            foreach (var item in lstTat)
+                            {
+                                //setterStatus(sbStatus.ToString() + "--Adding " + (rowcnt - 1).ToString("N0") + " out of " + totalcnt.ToString("N0") + " rows..." + Environment.NewLine);
+                                // currentCol = 1;
+                                foreach (var prop in properties)
+                                {
+                                    if (prop.Name == "section")
+                                    {
+                                        continue;
+                                    }
+
+                                    object val = prop.GetValue(item, null);
+
+                                    if (prop.PropertyType == typeof(string))
+                                    {
+
+                                        ws.Cell(rowcnt, currentCol).Value = prop.GetValue(item, null) + "";
+                                    }
+                                    else if (prop.PropertyType == typeof(int) || prop.PropertyType == typeof(int?))
+                                    {
+
+                                        if (val != null)
+                                            ws.Cell(rowcnt, currentCol).Value = int.Parse(val.ToString());
+                                    }
+                                    else if (prop.PropertyType == typeof(float) || prop.PropertyType == typeof(float?))
+                                    {
+                                        if (val != null)
+                                            ws.Cell(rowcnt, currentCol).Value = double.Parse(val.ToString());
+                                    }
+
+                                    currentCol++;
+                                }
+                                rowcnt++;
+                                currentCol = (cp == "Current" ? current_col : previous_col);
+
+
+                            }
+                            rowcnt = 0;
+                            ws.Cell("A1").SetActive();
+
+                        }
+                    }
                     //ws.Columns().AdjustToContents(1, 20);
                 }
 

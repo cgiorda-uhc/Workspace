@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -24,7 +25,7 @@ namespace VCPortal_WPF.UserControls.Projects.ProcCodeTrends;
 /// <summary>
 /// Interaction logic for ProcCodeTrendsControl1.xaml
 /// </summary>
-public partial class ProcCodeTrendsControl : UserControl
+public partial class ProcCodeTrendsControl : System.Windows.Controls.UserControl
 {
     public ProcCodeTrendsControl()
     {
@@ -120,8 +121,7 @@ public partial class ProcCodeTrendsControl : UserControl
 
     private void btnPasteProcCd_Click(object sender, RoutedEventArgs e)
     {
-        List<string> missing_px = new List<string>();
-        
+
         
         var pasted_items = txtProcCodes.Text.Trim().Replace("\r\n", ",").Replace("|",",").Split(',');
         var proc_codes = txtProc_CodeFilter.ItemsSource;
@@ -168,39 +168,8 @@ public partial class ProcCodeTrendsControl : UserControl
 
         if (sb.Length > 0 )
         {
-            MessageBox.Show("Proc Codes not found in DB:" + Environment.NewLine + sb.ToString());
+            System.Windows.MessageBox.Show("The following Proc Codes could not be found:" + Environment.NewLine + sb.ToString(), "Missing Proc Codes", MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
-
-
-        ////var diff = pasted_items.Except(list);
-
-        ////var diff = list.Where(x => !pasted_items.Contains(x)).ToList();
-
-       
-        //foreach (var p in pasted_items)
-        //{
-
-        //    if(!list.Contains(p))
-        //    {
-        //        sb.AppendLine(p);
-        //    }
-
-        //}
-
-
-
-        //    if (diff != null)
-        //{
-            
-            
-        //    foreach(var s in diff)
-        //    {
-                
-        //    }
-        //    MessageBox.Show("Proc Codes not found in DB:" + Environment.NewLine + sb.ToString());
-
-        //}
-        
 
     }
 }

@@ -572,7 +572,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
 
             //var results = _db.LoadDataMultiple(sql: sbSQL.ToString(), token, gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Op_Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read<Member_Month_Model>(), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Phys_Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read<Member_Month_Model>(), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), "VCT_DB");
 
-            var results = _db.LoadDataMultiple(sql: sbSQL.ToString(), token, gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Op_Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read<Member_Month_Model>(), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<Events000_Model>(), gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Phys_Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read <Member_Month_Model> (), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<Events000_Model>(), gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Total_Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read<Member_Month_Model>(), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(), gr => gr.Read<Events000_Model>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), "VCT_DB");
+            var results = _db.LoadDataMultiple(sql: sbSQL.ToString(), token, gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Op_Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read<Member_Month_Model>(), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Events000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(),  gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Phys_Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read <Member_Month_Model> (), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Events000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(),  gr => gr.Read<YearQuarter_Model>(), gr => gr.Read<Unique_Individual_Model>(), gr => gr.Read<Events_Model>(), gr => gr.Read<Total_Claims_Model>(), gr => gr.Read<Allowed_Model>(), gr => gr.Read<Member_Month_Model>(), gr => gr.Read<Allowed_PMPM_Model>(), gr => gr.Read<Utilization000_Model>(), gr => gr.Read<Events000_Model>(), gr => gr.Read<Unit_Cost1_Model>(), gr => gr.Read<Unit_Cost2_Model>(),  gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), gr => gr.Read<String>(), "VCT_DB");
 
             CLM_OP_Report_Model claims_final = new CLM_OP_Report_Model();
             claims_final.year_quarter_op = (results[0] as List<YearQuarter_Model>);
@@ -583,9 +583,10 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             claims_final.member_month_op = (results[5] as List<Member_Month_Model>);
             claims_final.allowed_pmpm_op = (results[6] as List<Allowed_PMPM_Model>);
             claims_final.utilization000_op = (results[7] as List<Utilization000_Model>);
-            claims_final.unit_cost1_op = (results[8] as List<Unit_Cost1_Model>);
-            claims_final.unit_cost2_op = (results[9] as List<Unit_Cost2_Model>);
-            claims_final.events000_op = (results[10] as List<Events000_Model>);
+            claims_final.events000_op = (results[8] as List<Events000_Model>);
+            claims_final.unit_cost1_op = (results[9] as List<Unit_Cost1_Model>);
+            claims_final.unit_cost2_op = (results[10] as List<Unit_Cost2_Model>);
+
 
             claims_final.year_quarter_phys = (results[11] as List<YearQuarter_Model>);
             claims_final.unique_individual_phys = (results[12] as List<Unique_Individual_Model>);
@@ -595,9 +596,10 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             claims_final.member_month_phys = (results[16] as List<Member_Month_Model>);
             claims_final.allowed_pmpm_phys = (results[17] as List<Allowed_PMPM_Model>);
             claims_final.utilization000_phys = (results[18] as List<Utilization000_Model>);
-            claims_final.unit_cost1_phys = (results[19] as List<Unit_Cost1_Model>);
-            claims_final.unit_cost2_phys = (results[20] as List<Unit_Cost2_Model>);
-            claims_final.events000_phys = (results[21] as List<Events000_Model>);
+            claims_final.events000_phys = (results[19] as List<Events000_Model>);
+            claims_final.unit_cost1_phys = (results[20] as List<Unit_Cost1_Model>);
+            claims_final.unit_cost2_phys = (results[21] as List<Unit_Cost2_Model>);
+
 
 
             claims_final.year_quarter_total = (results[22] as List<YearQuarter_Model>);
@@ -608,9 +610,10 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             claims_final.member_month_total = (results[27] as List<Member_Month_Model>);
             claims_final.allowed_pmpm_total = (results[28] as List<Allowed_PMPM_Model>);
             claims_final.utilization000_total = (results[29] as List<Utilization000_Model>);
-            claims_final.unit_cost1_total = (results[30] as List<Unit_Cost1_Model>);
-            claims_final.unit_cost2_total = (results[31] as List<Unit_Cost2_Model>);
-            claims_final.events000_total = (results[32] as List<Events000_Model>);
+            claims_final.events000_total = (results[30] as List<Events000_Model>);
+            claims_final.unit_cost1_total = (results[31] as List<Unit_Cost1_Model>);
+            claims_final.unit_cost2_total = (results[32] as List<Unit_Cost2_Model>);
+
 
             return claims_final;
     
