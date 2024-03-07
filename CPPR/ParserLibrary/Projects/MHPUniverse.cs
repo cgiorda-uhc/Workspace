@@ -356,7 +356,6 @@ public class MHPUniverse : IMHPUniverse
     }
 
 
-
     private List<KeyValuePair<string, string>> getColumnMappings()
     {
         var list = new List<KeyValuePair<string, string>>
