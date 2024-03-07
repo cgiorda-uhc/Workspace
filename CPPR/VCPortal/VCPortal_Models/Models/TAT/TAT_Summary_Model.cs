@@ -9,9 +9,11 @@ public class TAT_Summary_Model
 {
  
     public string lob { get; set; }
-    public string rpt_Modality { get; set; }
+    public string Modality { get; set; }
 
-    public string metric { get; set; }
+    public int metric_id { get; set; }
+
+    public string metric_desc { get; set; }
     public int YTD_Penalty { get; set; }
     public int Jan { get; set; }
     public int Feb { get; set; }

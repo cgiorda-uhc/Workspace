@@ -8,7 +8,7 @@ namespace VCPortal_Models.Models.TAT;
 public class TAT_Model
 {
     public string lob { get; set; }
-    public string rpt_Modality { get; set; }
+    public string Modality { get; set; }
 
     public float? pct { get; set; }
 

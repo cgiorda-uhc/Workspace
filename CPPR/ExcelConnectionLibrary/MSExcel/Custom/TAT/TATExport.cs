@@ -38,10 +38,12 @@ namespace FileParsingLibrary.MSExcel.Custom.TAT
 
                     if(ex.SheetName == "SLA summary, penalties")
                     {
-                        var value = "Updated ???";
-                        ws.Cell(4, 1).Value = value;
-                        ws.Cell(4, 18).Value = value;
-                        ws.Cell(4, 35).Value = value;
+                        ws.Cell(4, 1).Value = "Updated " + DateTime.Now.ToShortDateString() ;
+
+                        ws.Cell(3, 1).Value = "Metrics current through " + current;
+
+                        // ws.Cell(4, 18).Value = value;
+                        // ws.Cell(4, 35).Value = value;
 
 
                         int section_cnt = 0;
@@ -53,7 +55,7 @@ namespace FileParsingLibrary.MSExcel.Custom.TAT
                         foreach (var st in summary_type)
                         {
 
-                            var lstSummary = ex.ExportList.Cast<TAT_Summary_Model>().Where(x => x.rpt_Modality == st).ToList();
+                            var lstSummary = ex.ExportList.Cast<TAT_Summary_Model>().Where(x => x.Modality == st).ToList();
                             rowcnt = 8;
 
                             foreach(var l in lstSummary)
