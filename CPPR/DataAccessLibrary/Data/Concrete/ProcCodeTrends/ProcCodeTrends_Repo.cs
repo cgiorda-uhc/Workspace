@@ -595,7 +595,7 @@ namespace DataAccessLibrary.Data.Concrete.ProcCodeTrends
             claims_final.allowed_phys = (results[15] as List<Allowed_Model>);
             claims_final.member_month_phys = (results[16] as List<Member_Month_Model>);
             claims_final.allowed_pmpm_phys = (results[17] as List<Allowed_PMPM_Model>);
-            claims_final.utilization000_phys = (results[18] as List<Utilization000_Model>);
+            claims_final.utilization000_phys = (results[18] as List<Utilization000_Model>); 
             claims_final.events000_phys = (results[19] as List<Events000_Model>);
             claims_final.unit_cost1_phys = (results[20] as List<Unit_Cost1_Model>);
             claims_final.unit_cost2_phys = (results[21] as List<Unit_Cost2_Model>);

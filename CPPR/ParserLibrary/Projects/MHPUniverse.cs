@@ -376,6 +376,7 @@ public class MHPUniverse : IMHPUniverse
             new KeyValuePair<string, string>("Date of Decision","Decision_Date"),
             new KeyValuePair<string, string>("Time of Decision","Decision_Time"),
             new KeyValuePair<string, string>("Decision Reason","Decision_Reason"),
+            new KeyValuePair<string, string>("Denial Type","Decision_Reason"),
             new KeyValuePair<string, string>("Was Extension Taken","Extension_Taken"),
             new KeyValuePair<string, string>("Was Extension Taken?","Extension_Taken"),
             new KeyValuePair<string, string>("Date of member notification of extension","Member_Notif_Extension_Date"),

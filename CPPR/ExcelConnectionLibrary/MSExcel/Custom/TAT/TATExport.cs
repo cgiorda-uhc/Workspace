@@ -29,9 +29,6 @@ namespace FileParsingLibrary.MSExcel.Custom.TAT
                 int currentCol = 1;
                 int totalcnt = 0;
 
-                
-
-
                 foreach (var ex in excelExports)
                 {
 
@@ -58,8 +55,7 @@ namespace FileParsingLibrary.MSExcel.Custom.TAT
 
                             var lstSummary = ex.ExportList.Cast<TAT_Summary_Model>().Where(x => x.rpt_Modality == st).ToList();
                             rowcnt = 8;
-                   
-    
+
                             foreach(var l in lstSummary)
                             {
 
