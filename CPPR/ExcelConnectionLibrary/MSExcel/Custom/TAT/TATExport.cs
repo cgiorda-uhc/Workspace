@@ -16,7 +16,7 @@ namespace FileParsingLibrary.MSExcel.Custom.TAT
     {
 
 
-        public async Task<byte[]> ExportToTATExcelTemplateAsync(string templateNamePath, List<ExcelExport> excelExports, string current, string previous, int current_col, int previous_col, int starting_row)
+        public async Task<byte[]> ExportToTATExcelTemplateAsync(string templateNamePath, List<ExcelExport> excelExports, string current, string current_spelled, string previous, int current_col, int previous_col, int starting_row)
         {
             //StringBuilder sbStatus = new StringBuilder();
             //sbStatus.Append("--Exporting to Excel..." + Environment.NewLine);
@@ -38,9 +38,11 @@ namespace FileParsingLibrary.MSExcel.Custom.TAT
 
                     if(ex.SheetName == "SLA summary, penalties")
                     {
+
+                        ws.Cell(3, 1).Value = "Metrics current through " + current_spelled;
+
                         ws.Cell(4, 1).Value = "Updated " + DateTime.Now.ToShortDateString() ;
 
-                        ws.Cell(3, 1).Value = "Metrics current through " + current;
 
                         // ws.Cell(4, 18).Value = value;
                         // ws.Cell(4, 35).Value = value;

@@ -339,7 +339,7 @@ namespace ConsoleLibraryTesting
             await db_sql.BulkSave<MHP_Reporting_Filters>(connectionString: ConnectionStringVC, "mhp.MHP_Universes_Filter_Cache", fs, columns, truncate: true);
 
 
-            await SharedFunctions.EmailAsync("jon.piotrowski@uhc.com;renee_l_struck@uhc.com;hong_gao@uhc.com", "chris_giordano@uhc.com", "MHPUniverse December 2023 was refreshed", "MHPUniverse December 2023 was refreshed", "chris_giordano@uhc.com;laura_fischer@uhc.com;inna_rudi@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
+            await SharedFunctions.EmailAsync("jon.piotrowski@uhc.com;renee_l_struck@uhc.com;hong_gao@uhc.com", "chris_giordano@uhc.com", "MHPUniverse January 2024 was refreshed", "MHPUniverse January 2024 was refreshed", "chris_giordano@uhc.com;laura_fischer@uhc.com;inna_rudi@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
         }
 
 
@@ -910,10 +910,15 @@ namespace ConsoleLibraryTesting
             var obj = await db_sql.ExecuteScalar(connectionString: ConnectionStringMSSQL, strSQL);
             var dt = DateTime.Parse(obj.ToString());
             string current = dt.Month + "-" + dt.Year;
+            string current_spelled = dt.ToString("MMMM") + ", " + dt.Year;
             strSQL = "select dateadd(mm, -1, max(file_date)) from stg.EviCore_YTDMetrics;";
             obj = await db_sql.ExecuteScalar(connectionString: ConnectionStringMSSQL, strSQL);
             dt = DateTime.Parse(obj.ToString());
             string previous = dt.Month + "-" + dt.Year;
+
+
+
+
 
             string strSheetName = "Urgent TAT";
             strSQL = "SELECT t.* FROM ( Select s.lob, s.Modality, case when denom is null then 1 else cast(num/denom as decimal(6,4)) end as pct, s.SLA, CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Current' as section from (select * from stg.SLA_Lookup where Metric_id=4 and Is_Archived=0) as s LEFT JOIN (Select report_type,LOB,rpt_modality, cast(sum(Less_State_TAT_Requirements) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where file_date in(select max(file_date) from stg.EviCore_TAT) and report_type = 'Urgent TAT' group by report_type,lob, rpt_Modality ) as e on s.modality=e.rpt_modality and s.lob=e.lob and s.metric=e.report_type UNION ALL Select s.lob, s.Modality, case when denom is null then 1 else cast(num/denom as decimal(6,4)) end as pct, s.SLA, CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Previous' as section from (select * from stg.SLA_Lookup where Metric_id=4 and Is_Archived=0) as s LEFT JOIN (Select report_type,LOB,rpt_modality, cast(sum(Less_State_TAT_Requirements) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_TAT) and report_type = 'Urgent TAT' group by report_type,lob, rpt_Modality ) as e on s.modality=e.rpt_modality and s.lob=e.lob and s.metric=e.report_type ) t order by t.section, t.lob, t.Modality ";
@@ -945,8 +950,8 @@ namespace ConsoleLibraryTesting
             StringBuilder sbSQL = new StringBuilder();
 
             sbSQL.Append("DECLARE @CURRENT_DATE INT;");
-            //sbSQL.Append("SELECT @CURRENT_DATE= year(max(file_date)) FROM stg.EviCore_TAT;");
-            sbSQL.Append("SET @CURRENT_DATE= 2023;");
+            sbSQL.Append("SELECT @CURRENT_DATE= year(max(file_date)) FROM stg.EviCore_TAT;");
+            //sbSQL.Append("SET @CURRENT_DATE= 2023;");
 
             sbSQL.Append("select Metric_id,LOB, Modality,metric_desc ,isnull(sum(Penalty_SLA), 0) YTD_Penalty ,isnull(sum(case when month(tmp.file_date) = 1 then tmp.Penalty_SLA end), 0) Jan ,isnull(sum(case when month(tmp.file_date) = 2 then tmp.Penalty_SLA end), 0) Feb ,isnull(sum(case when month(tmp.file_date) = 3 then tmp.Penalty_SLA end), 0) Mar ,isnull(sum(case when month(tmp.file_date) = 4 then tmp.Penalty_SLA end), 0) Apr ,isnull(sum(case when month(tmp.file_date) = 5 then tmp.Penalty_SLA end), 0) May ,isnull(sum(case when month(tmp.file_date) = 6 then tmp.Penalty_SLA end), 0) Jun ,isnull(sum(case when month(tmp.file_date) = 7 then tmp.Penalty_SLA end), 0) Jul ,isnull(sum(case when month(tmp.file_date) = 8 then tmp.Penalty_SLA end), 0) Aug ,isnull(sum(case when month(tmp.file_date) = 9 then tmp.Penalty_SLA end), 0) Sep ,isnull(sum(case when month(tmp.file_date) = 10 then tmp.Penalty_SLA end), 0) Oct ,isnull(sum(case when month(tmp.file_date) = 11 then tmp.Penalty_SLA end), 0) Nov ,isnull(sum(case when month(tmp.file_date) = 12 then tmp.Penalty_SLA end), 0) Dec from (Select Metric_id,Metric_desc, s.file_date,s.LOB, s.Modality, Avg_Speed_Answer, s.SLA, CASE WHEN t.Avg_Speed_Answer > s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA from (select * FROM (select * from stg.SLA_Lookup WHERE Metric_id=1 and Is_Archived=0) as b cross join (select distinct file_date from stg.EviCore_TAT where year(file_date)=@CURRENT_DATE) as a ) as s left join (Select file_date,lob,rpt_Modality, Avg_Speed_Answer, round(Abandoned_Percent,3) as Abandoned_Pct from stg.EviCore_YTDMetrics where year(file_date)=@CURRENT_DATE and rpt_Modality<>'' and lob not in('Empire','E&I') UNION ALL Select file_date,lob,rpt_Modality, CAST(ROUND(sum(Total_Calls * Avg_Speed_Answer)/sum(Total_Calls),2) as decimal(5,0)) as Avg_Speed_Answer, CAST(ROUND(sum(Abandoned_Calls)/sum(Total_Calls),3) as decimal(5,4)) as Abandoned_Pct from stg.EviCore_YTDMetrics where year(file_date)=@CURRENT_DATE and lob='E&I' and rpt_Modality<>'' group by file_date,lob,rpt_Modality) as t on s.lob=t.lob and s.modality=t.rpt_modality and s.file_date=t.file_date ) as tmp group by Metric_id,Metric_desc, LOB, Modality ");
 
@@ -980,7 +985,7 @@ namespace ConsoleLibraryTesting
 
 
 
-            var bytes = await closed_xml.ExportToTATExcelTemplateAsync(TATReportTemplatePath, export, current, previous,1,8,4);
+            var bytes = await closed_xml.ExportToTATExcelTemplateAsync(TATReportTemplatePath, export, current, current_spelled, previous, 1,8,4);
 
 
 

@@ -107,6 +107,32 @@ adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Repor
 
 
 
+
+
+
+List<string> files_loaded = new List<string>();
+
+
+files_loaded.Add("Oxford January -Radiology Cardiology Universe 2024.xls");
+files_loaded.Add("United PCP- Rad & Card_January_2024.xlsx");
+files_loaded.Add("United PCP- Gastro_January_2024.xlsx");
+files_loaded.Add("Americhoice January -Radiology Cardiology Universe 2024.xlsx");
+files_loaded.Add("Oxford January-Gastro Universe 2024.xlsx");
+
+
+//await adHoc.cleanupMemberDataAsync(files_loaded);
+
+//await adHoc.transferMHPDataAsync(files_loaded);
+
+
+
+return;
+
+
+
+
+
+
 await adHoc.generateTATReportsAsync();
 
 return;
@@ -305,24 +331,6 @@ await db_sqsl.BulkSave<PCCM_Model>(connectionString: adHoc.ConnectionStringMSSQL
 
 return;
 
-
-List<string> files_loaded = new List<string>();
-
-
-//files_loaded.Add("Oxford December-Gastro Universe 2023.xlsx");
-//files_loaded.Add("United PCP-Gastro_December_2023.xlsx");
-//files_loaded.Add("United PCP- Rad & Card_December_2023.xlsx");
-//files_loaded.Add("Oxford December -Radiology Cardiology Universe 2023.xlsx");
-//files_loaded.Add("Americhoice December -Radiology Cardiology Universe 2023.xlsx");
-
-
-////await adHoc.cleanupMemberDataAsync(files_loaded);
-
-//await adHoc.transferMHPDataAsync(files_loaded);
-
-
-
-//return;
 
 
 //var sql = "TRUNCATE TABLE [stg].[IR_PCCM_Final_Unq];INSERT INTO [stg].[IR_PCCM_Final_Unq] ([MBR_ID] ,[INDV_ID] ,[MBR_PGM_ID] ,[PGM_CATGY_TYP_DESC] ,[PGM_TYP_DESC] ,[CALC_PGM_TYP] ,[NOM_DEPT_TYP_DESC] ,[NOM_RSN_TYP_DESC] ,[MBR_PGM_STS_TYP_DESC] ,[MBR_PGM_STS_RSN_TYP_DESC] ,[CREAT_DT] ,[PRE_ENRL_DT] ,[OPS_ENROLLED_DT] ,[OPS_ENGAGED_DT] ,[END_DT] ,[OPS_IDENTIFIED] ,[OPS_QUALIFIED] ,[OPS_ATTEMPTED] ,[OPS_CONTACTED] ,[OPS_MBR_CONTACTED] ,[OPS_ENROLLED] ,[OPS_ENGAGED] ,[PSU_IND] ,[PSU_NEW_ORIG] ,[RPT_MTH_YR_DISPLAY] ,[RPT_MTH] ,[RPT_YR] ,[RPT_DAYS] ,[PSU_NEW] ,[RPT_DATE]) select t. [MBR_ID] ,[INDV_ID] ,[MBR_PGM_ID] ,[PGM_CATGY_TYP_DESC] ,[PGM_TYP_DESC] ,[CALC_PGM_TYP] ,[NOM_DEPT_TYP_DESC] ,[NOM_RSN_TYP_DESC] ,[MBR_PGM_STS_TYP_DESC] ,[MBR_PGM_STS_RSN_TYP_DESC] ,[CREAT_DT] ,[PRE_ENRL_DT] ,[OPS_ENROLLED_DT] ,[OPS_ENGAGED_DT] ,[END_DT] ,[OPS_IDENTIFIED] ,[OPS_QUALIFIED] ,[OPS_ATTEMPTED] ,[OPS_CONTACTED] ,[OPS_MBR_CONTACTED] ,[OPS_ENROLLED] ,[OPS_ENGAGED] ,[PSU_IND] ,[PSU_NEW_ORIG] ,[RPT_MTH_YR_DISPLAY] ,[RPT_MTH] ,[RPT_YR] ,[RPT_DAYS] ,[PSU_NEW], cast(cast(t.RPT_YR*10000 + t.RPT_MTH*100 + 1 as varchar(255)) as date) as RPT_DATE from (select a.*, ROW_NUMBER() OVER(Partition by MBR_ID,RPT_MTH_YR_DISPLAY ORDER BY RPT_DAYS desc,END_DT desc) row_num from stg.IR_PCCM_Final as a) as t where row_num=1 order by MBR_ID,CREAT_DT,RPT_MTH;update a set QUAL_categ='Newly Qualified (Not Qualified in Any of the Previous 12 Months)' from stg.IR_PCCM_Final_unq as a where a.PSU_NEW='New' and OPS_QUALIFIED=1;";

@@ -6,6 +6,8 @@ using VCPortal_Models.Models.ActiveDirectory;
 using static Org.BouncyCastle.Math.EC.ECCurve;
 using VCPortal_Models.Shared;
 using Microsoft.Extensions.Configuration;
+using NPOI.Util;
+using Newtonsoft.Json;
 
 
 namespace VCPortal_WPF_ViewModel.Shared;
@@ -22,27 +24,48 @@ public class Authentication
         try
         {
 
-            GetUser(UserName, config);
+            var result = await  GetUser(UserName, config);
+
+            CurrentUser = new UserAccessModel();
+
+            CurrentUser.FirstName = result.FirstName; 
+            CurrentUser.LastName = result.LastName;
+            CurrentUser.MiddleName = result.MiddleName;
+
+
+
+            CurrentUser.FullName = result.FullName;
+
+            CurrentUser.LoginName = result.LoginName;
+
+
+            CurrentUser.EmailAddress = result.EmailAddress;
+
+            CurrentUser.Groups = result.Groups;
+
+
+
+    // = JsonConvert.DeserializeObject<UserAccessModel>(JsonConvert.SerializeObject(result));
 
 
             Log.Information("Running Authentication.SetCurrentUserAsync() for {CurrentUser}...", UserName);
-            WebAPIConsume.BaseURI = baseURL;
-            var response = WebAPIConsume.GetCall(endpointURL);
-            if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                var reponseStream = await response.Result.Content.ReadAsStreamAsync();
-                var result = await JsonSerializer.DeserializeAsync<UserAccessModel>(reponseStream, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
+            //WebAPIConsume.BaseURI = baseURL;
+            //var response = WebAPIConsume.GetCall(endpointURL);
+            //if (response.Result.StatusCode == System.Net.HttpStatusCode.OK)
+            //{
+            //    var reponseStream = await response.Result.Content.ReadAsStreamAsync();
+            //    var result = await JsonSerializer.DeserializeAsync<UserAccessModel>(reponseStream, new JsonSerializerOptions
+            //    {
+            //        PropertyNameCaseInsensitive = true
+            //    });
 
-                CurrentUser = result;
-                Log.Information("Authentication.SetCurrentUserAsync() succeeded for {CurrentUser}...", UserName);
-            }
-            else
-            {
-                Log.Error("Authentication.SetCurrentUserAsync threw an error {CurrentUser}: " + response.Result.StatusCode.ToString(), UserName);
-            }
+            //    CurrentUser = result;
+            //    Log.Information("Authentication.SetCurrentUserAsync() succeeded for {CurrentUser}...", UserName);
+            //}
+            //else
+            //{
+            //    Log.Error("Authentication.SetCurrentUserAsync threw an error {CurrentUser}: " + response.Result.StatusCode.ToString(), UserName);
+            //}
         }
         catch (Exception ex)
         {

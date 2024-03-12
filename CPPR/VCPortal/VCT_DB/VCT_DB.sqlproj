@@ -85,6 +85,7 @@
     <Folder Include="edcadhoc" />
     <Folder Include="pct\Tables" />
     <Folder Include="edcadhoc\Tables" />
+    <Folder Include="etgsymm\scripts" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="chemopx\Views\vw_GetChemoTracking.sql" />
@@ -224,6 +225,9 @@
     <Build Include="edcadhoc\edcadhoc.sql" />
     <Build Include="pct\pct_index.sql" />
     <None Include="pct\dynamic_sql_sample.sql" />
+    <None Include="etgsymm\scripts\ETGSymmetryInsert.sql" />
+    <None Include="etgsymm\scripts\ETGSymmetryUpdate.sql" />
+    <None Include="etgsymm\scripts\ETGBaseRefresh.sql" />
   </ItemGroup>
   <ItemGroup>
     <SqlCmdVariable Include="ChemoPXRefresh">
