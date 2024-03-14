@@ -39,12 +39,25 @@ public class ETGFactSymmetry_Repo : IETGFactSymmetry_Repo
         return results;
     }
 
+
+
     public Task<IEnumerable<ETGFactSymmetry_ReadDto>> GetETGFactSymmetryPTCDisplayAsync(CancellationToken token)
     {
 
         string strSQL = "SELECT * FROM [etgsymm].[VW_ETG_Symmetry_Main_Interface_PTC] ORDER BY Premium_Specialty, ETG_Description;";
 
         var results = _db.LoadData<ETGFactSymmetry_ReadDto>(sql: strSQL, token, connectionId: "VCT_DB");
+
+        return results;
+    }
+
+
+    public Task<IEnumerable<ETG_PTC_Summary_Final>> GetETGFactSymmetryPTCConfigAsync(CancellationToken token)
+    {
+
+        string strSQL = "SELECT * FROM [etgsymm].[VW_ETG_Symmetry_Main_Interface_PTC] ORDER BY Premium_Specialty, ETG_Description;";
+
+        var results = _db.LoadData<ETG_PTC_Summary_Final>(sql: strSQL, token, connectionId: "VCT_DB");
 
         return results;
     }

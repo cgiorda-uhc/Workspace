@@ -15,11 +15,17 @@ public class ETGFactSymmetry_ReadDto
     public short Premium_Specialty_Id { get; set; }
     public string Premium_Specialty { get; set; }
 
-    public string LOB { get; set; }
+
     public string LOBPrevious { get; set; }
 
-    public bool? Never_Mapped { get; set; }
+    public string LOB { get; set; }
+
+
+
     public bool? Never_Mapped_Previous { get; set; }
+
+    public bool? Never_Mapped { get; set; }
+
 
 
 
@@ -37,14 +43,24 @@ public class ETGFactSymmetry_ReadDto
     public bool? Has_RX_Previous { get; set; }
     public bool? Has_NRX_Previous { get; set; }
 
-    public string RX_NRX { get; set; }
+
     public string RX_NRXPrevious { get; set; }
 
+    public string RX_NRX { get; set; }
+
+
     public char Is_Config { get; set; }
-    public string PC_Treatment_Indicator { get; set; }
+
+
     public string PC_Treatment_Indicator_Previous { get; set; }
-    public string PC_Attribution { get; set; }
+
+    public string PC_Treatment_Indicator { get; set; }
+
+
     public string PC_Attribution_Previous { get; set; }
+    public string PC_Attribution { get; set; }
+
+
     public float PC_Episode_Count { get; set; }
     public float PC_Total_Cost { get; set; }
     public float PC_Average_Cost { get; set; }

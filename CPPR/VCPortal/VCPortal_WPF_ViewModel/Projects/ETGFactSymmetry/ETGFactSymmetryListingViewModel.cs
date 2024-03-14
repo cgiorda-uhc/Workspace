@@ -541,7 +541,7 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
                 //api = _config.APIS.Where(x => x.Name == "MainDataPTC").FirstOrDefault();
                 //var etgsum = await VM_Functions.APIGetResultAsync<ETGPTCSummaryConfig>(api.BaseUrl, api.Url);
 
-               var etgsum = await _etg_db.GetETGFactSymmetryPTCDisplayAsync(cancellationToken.Token);
+               var etgsum = await _etg_db.GetETGFactSymmetryPTCConfigAsync(cancellationToken.Token);
                 if (etgsum.ToList().Count > 0)
                 {
                     export.Add(new ExcelExport() { ExportList = etgsum.ToList<object>(), SheetName = suffix + sheet.SheetName });

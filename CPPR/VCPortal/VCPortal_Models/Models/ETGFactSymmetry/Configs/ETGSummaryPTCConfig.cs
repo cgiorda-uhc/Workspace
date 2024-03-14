@@ -12,16 +12,22 @@ public class ETGSummaryPTCConfig
     public string ETG_Description { get; set; }
     public string Premium_Specialty { get; set; }
 
-    public char Never_Map { get; set; }
+
 
     public char Never_Map_Previous { get; set; }
+    public char Never_Map { get; set; }
+
+
 
     public string Previous_Rx_NRx { get; set; }
     public string Current_Rx_NRx { get; set; }
+
     public string Previous_LOB { get; set; }
     public string Current_LOB { get; set; }
+
     public string PC_Previous_Treatment_Indicator { get; set; }
     public string PC_Current_Treatment_Indicator { get; set; }
+
 
     public double? PC_Spec_Episode_Cnt { get; set; }
     public double? PC_Spec_Episode_Distribution { get; set; }
