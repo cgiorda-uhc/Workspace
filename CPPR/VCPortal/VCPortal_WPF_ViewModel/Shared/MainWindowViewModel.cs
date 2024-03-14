@@ -103,7 +103,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
             NavigationViewModelTypesDM = new ObservableCollection<TypeAndDisplay>();
             if (groups.Contains("ms\\chemopx", StringComparer.OrdinalIgnoreCase))
             {
-                NavigationViewModelTypesDM.Add(new TypeAndDisplay { Name = "Chemotherapy PX", VMType = typeof(ChemotherapyPXListingViewModel), Question= "You have unsaved changes. Continue anyway?", CheckSaves=true });
+                //NavigationViewModelTypesDM.Add(new TypeAndDisplay { Name = "Chemotherapy PX", VMType = typeof(ChemotherapyPXListingViewModel), Question= "You have unsaved changes. Continue anyway?", CheckSaves=true });
             }
 
             if (groups.Contains("ms\\etgsymm", StringComparer.OrdinalIgnoreCase))
@@ -112,8 +112,8 @@ public class MainWindowViewModel : INotifyPropertyChanged
             }
 
 
-            NavigationViewModelTypesDM.Add(new TypeAndDisplay { Name = "EBM Mapping" });
-            NavigationViewModelTypesDM.Add(new TypeAndDisplay { Name = "PEG Mapping" });
+            //NavigationViewModelTypesDM.Add(new TypeAndDisplay { Name = "EBM Mapping" });
+            //NavigationViewModelTypesDM.Add(new TypeAndDisplay { Name = "PEG Mapping" });
 
 
             NavigationViewModelTypesReports = new ObservableCollection<TypeAndDisplay>();
@@ -127,7 +127,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
 
             if (groups.Contains("ms\\mhp_universe", StringComparer.OrdinalIgnoreCase))
             {
-                NavigationViewModelTypesReports.Add(new TypeAndDisplay { Name = "EDCAdhoc Reporting", VMType = typeof(EDCAdhocViewModel) });
+                //NavigationViewModelTypesReports.Add(new TypeAndDisplay { Name = "EDCAdhoc Reporting", VMType = typeof(EDCAdhocViewModel) });
             }
 
 
@@ -137,7 +137,7 @@ public class MainWindowViewModel : INotifyPropertyChanged
                 NavigationViewModelTypesReports.Add(new TypeAndDisplay { Name = "ProcCode Trending", VMType = typeof(ProcCodeTrendsViewModel) });
             }
 
-            NavigationViewModelTypesReports.Add(new TypeAndDisplay { Name = "Compliance Reporting" });
+            //NavigationViewModelTypesReports.Add(new TypeAndDisplay { Name = "Compliance Reporting" });
 
         }
 
