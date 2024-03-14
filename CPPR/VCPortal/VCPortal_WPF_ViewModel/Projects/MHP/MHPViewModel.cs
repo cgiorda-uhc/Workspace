@@ -45,12 +45,8 @@ public partial class MHPViewModel : ObservableObject
     private readonly Serilog.ILogger _logger;
 
 
-    private readonly IRelationalDataAccess _db_sql;
-    private readonly IChemotherapyPX_Repo _chemo_sql;
     private readonly IMHPUniverse_Repo _mhp_sql;
-    private readonly IProcCodeTrends_Repo _pct_db;
-    private readonly IEDCAdhoc_Repo _edc_db;
-    private readonly IETGFactSymmetry_Repo _etg_db;
+
 
 
 
@@ -107,18 +103,15 @@ public partial class MHPViewModel : ObservableObject
     public string _endDate;
 
 
-    public MHPViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger, IRelationalDataAccess db_sql, IChemotherapyPX_Repo chemo_sql, IMHPUniverse_Repo mhp_sql, IProcCodeTrends_Repo pct_db, IEDCAdhoc_Repo edc_db, IETGFactSymmetry_Repo etg_db)
+    public MHPViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger, DBRepoModel dBRepo)
     {
         _logger = logger;
         _excelFunctions = excelFunctions;
         _config = prepareConfig(config);
 
-        _db_sql = db_sql;
-        _chemo_sql = chemo_sql;
-        _mhp_sql = mhp_sql;
-        _pct_db = pct_db;
-        _edc_db= edc_db;
-        _etg_db = etg_db;
+
+        _mhp_sql = dBRepo.mhp_sql;
+
 
 
 

@@ -37,17 +37,17 @@ public partial class HomeViewModel : ObservableObject
     [ObservableProperty]
     private List<string> currentAccess;
 
-    public HomeViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger, IRelationalDataAccess db_sql, IChemotherapyPX_Repo chemo_sql, IMHPUniverse_Repo mhp_sql, IProcCodeTrends_Repo pct_db, IEDCAdhoc_Repo edc_db, IETGFactSymmetry_Repo etg_db)
+    public HomeViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger, DBRepoModel dBRepo)
     {
         _logger = logger;
         _excelFunctions = excelFunctions;
         _config = config;
-        _db_sql = db_sql;
-        _chemo_sql = chemo_sql;
-        _mhp_sql = mhp_sql;
-        _pct_db = pct_db;
-        _edc_db = edc_db;
-        _etg_db = etg_db;
+        //_db_sql = dBRepo.db_sql;
+        //_chemo_sql = dBRepo.chemo_sql;
+        //_mhp_sql = dBRepo.mhp_sql;
+        //_pct_db = dBRepo.pct_db;
+        //_edc_db = dBRepo.edc_db;
+        //_etg_db = dBRepo.etg_db;
 
         UserMessageViewModel = new MessageViewModel();
 

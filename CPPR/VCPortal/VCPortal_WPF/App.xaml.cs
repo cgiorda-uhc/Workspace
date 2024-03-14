@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NPOI.OpenXmlFormats.Shared;
 using Serilog;
 using Serilog.Core;
 using System;
@@ -93,17 +94,29 @@ public partial class App : Application
             await AppHost!.StartAsync();
             var config = AppHost.Services.GetService<IConfiguration>();
             var excel = AppHost.Services.GetService<IExcelFunctions>();
-            var db_sql = AppHost.Services.GetService<IRelationalDataAccess>();
-            var chemo_sql = AppHost.Services.GetService<IChemotherapyPX_Repo >();
-            var mhp_sql = AppHost.Services.GetService<IMHPUniverse_Repo>();
-            var pct_db = AppHost.Services.GetService<IProcCodeTrends_Repo>();
-            var edc_db = AppHost.Services.GetService<IEDCAdhoc_Repo>();
-            var etg_db = AppHost.Services.GetService<IETGFactSymmetry_Repo>();
+
+
+           DBRepoModel dBRepo = new DBRepoModel();
+
+            dBRepo.db_sql = AppHost.Services.GetService<IRelationalDataAccess>();
+            dBRepo.chemo_sql = AppHost.Services.GetService<IChemotherapyPX_Repo>();
+            dBRepo.mhp_sql = AppHost.Services.GetService<IMHPUniverse_Repo>();
+            dBRepo.pct_db = AppHost.Services.GetService<IProcCodeTrends_Repo>();
+            dBRepo.edc_db = AppHost.Services.GetService<IEDCAdhoc_Repo>();
+            dBRepo.etg_db = AppHost.Services.GetService<IETGFactSymmetry_Repo>();
+
+        //var db_sql = AppHost.Services.GetService<IRelationalDataAccess>();
+        //    var chemo_sql = AppHost.Services.GetService<IChemotherapyPX_Repo >();
+        //    var mhp_sql = AppHost.Services.GetService<IMHPUniverse_Repo>();
+        //    var pct_db = AppHost.Services.GetService<IProcCodeTrends_Repo>();
+        //    var edc_db = AppHost.Services.GetService<IEDCAdhoc_Repo>();
+        //    var etg_db = AppHost.Services.GetService<IETGFactSymmetry_Repo>();
 
         //AppDomain.CurrentDomain.FirstChanceException += new EventHandler<System.Runtime.ExceptionServices.FirstChanceExceptionEventArgs>(CurrentDomain_FirstChanceException);
 
         var startupForm = AppHost.Services.GetRequiredService<MainWindow>();
-            startupForm.DataContext = new MainWindowViewModel("", config, excel, logger, db_sql, chemo_sql, mhp_sql, pct_db, edc_db, etg_db);
+            //startupForm.DataContext = new MainWindowViewModel("", config, excel, logger, db_sql, chemo_sql, mhp_sql, pct_db, edc_db, etg_db);
+        startupForm.DataContext = new MainWindowViewModel("", config, excel, logger, dBRepo);
         //startupForm.DataContext = new MainWindowViewModel("", config, excel, Log.Logger);
         startupForm.Show();
 
