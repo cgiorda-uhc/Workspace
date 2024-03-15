@@ -114,6 +114,9 @@ string file_location;
 string file_name;
 string zip_file_name = "";
 
+
+
+
 var rtfm = await db_sqsl.LoadData<Report_Timeliness_Files_Model>(connectionString: adHoc.ConnectionStringMSSQL, "SELECT [ertf_id],[file_location_wild],[file_name_wild] FROM [IL_UCA].[stg].[Evicore_Report_Timeliness_Files]");
 
 
@@ -135,6 +138,9 @@ months.Add(10);
 months.Add(11);
 months.Add(12);
 
+DateTime dropped_date;
+string found_file_name = null;
+
 foreach(var y in years)
 {
     foreach(var m in months)
@@ -143,9 +149,12 @@ foreach(var y in years)
         foreach(var rf in rtfm)
         {
             bool is_zip = (rf.file_location_wild.Contains(".zip") ? true : false);
+
+
             
             if(is_zip)
             {
+
                 var arr = rf.file_location_wild.Split('\\');
                 var sbl = new StringBuilder();
                 sbl.Append(@"\\");
@@ -179,7 +188,31 @@ foreach(var y in years)
 
             var files = Directory.GetFiles(file_location, (is_zip ? zip_file_name : file_name), SearchOption.TopDirectoryOnly);
 
-            var ssss = "";
+            foreach(var fl in files)
+            {
+                FileInfo fi = new FileInfo(fl);
+                dropped_date = fi.CreationTime;
+
+                if(is_zip)
+                {
+                    using (ZipArchive archive = ZipFile.OpenRead(fl))
+                    {
+                        foreach (ZipArchiveEntry entry in archive.Entries)
+                        {
+                            found_file_name = entry.FullName;
+
+
+
+
+                        }
+                    }
+                }
+                else
+                {
+                    
+                }
+   
+            }
 
 
             //int month, year;
