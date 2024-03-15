@@ -63,6 +63,8 @@ using DocumentFormat.OpenXml.Drawing;
 using NPOI.Util;
 using VCPortal_Models.Models.PCCM;
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using System.Net;
+using VCPortal_Models.Models.Report_Timeliness;
 
 
 var adHoc = new AdHoc();
@@ -105,8 +107,123 @@ adHoc.PEGReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Repor
 
 adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\EBM Template\\342 EBM DQ&C Results - Template.xlsx";
 
+IRelationalDataAccess db_sqsl = new SqlDataAccess();
 
 
+string file_location;
+string file_name;
+string zip_file_name = "";
+
+var rtfm = await db_sqsl.LoadData<Report_Timeliness_Files_Model>(connectionString: adHoc.ConnectionStringMSSQL, "SELECT [ertf_id],[file_location_wild],[file_name_wild] FROM [IL_UCA].[stg].[Evicore_Report_Timeliness_Files]");
+
+
+List<int> years = new List<int>();
+//years.Add(2023);
+years.Add(2024);
+
+List<int> months = new List<int>();
+months.Add(1);
+months.Add(2);
+months.Add(3);
+months.Add(4);
+months.Add(5);
+months.Add(6);
+months.Add(7);
+months.Add(8);
+months.Add(9);
+months.Add(10);
+months.Add(11);
+months.Add(12);
+
+foreach(var y in years)
+{
+    foreach(var m in months)
+    {
+
+        foreach(var rf in rtfm)
+        {
+            bool is_zip = (rf.file_location_wild.Contains(".zip") ? true : false);
+            
+            if(is_zip)
+            {
+                var arr = rf.file_location_wild.Split('\\');
+                var sbl = new StringBuilder();
+                sbl.Append(@"\\");
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    if (arr[i] == "")
+                        continue;
+
+                    
+                    if(i+1 == arr.Length)
+                    {
+                        zip_file_name = arr[i].Replace("MMMM", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)).Replace("MM", (m < 10 ? "0" + m : m.ToString())).Replace("YYYY", y.ToString()).Replace("YY", y.ToString().Substring(2, 2));
+                    }
+                    else
+                    {
+                        sbl.Append(arr[i] + @"\");
+                    }
+                    
+                }
+                file_location = sbl.ToString();
+
+            }
+            else
+            {
+                file_location = rf.file_location_wild;
+            }
+            
+       
+            file_name = rf.file_name_wild.Replace("MMMM", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)).Replace("MM", (m < 10 ? "0" + m : m.ToString())).Replace("YYYY", y.ToString()).Replace("YY", y.ToString().Substring(2,2));
+
+
+            var files = Directory.GetFiles(file_location, (is_zip ? zip_file_name : file_name), SearchOption.TopDirectoryOnly);
+
+            var ssss = "";
+
+
+            //int month, year;
+            //string fileCreateDate;
+            //StringBuilder sbUpdate = new StringBuilder();
+            //foreach (var l in list)
+            //{
+            //    string fileName = System.IO.Path.GetFileName(l).Replace("Sept_", "Sep_").Replace("_ ", "_").Replace(" ", "_").Replace(".zip", "").Trim();
+            //    var fileParsed = fileName.Split('_');
+
+            //    if (fileParsed.Length != 4)
+            //    {
+            //        continue;
+            //    }
+
+            //    var format = (fileParsed[2].Length == 3 ? "MMM" : "MMMM"); //Jan vs January
+            //    month = DateTime.ParseExact(fileParsed[2].Trim(), format, CultureInfo.CurrentCulture).Month;
+            //    year = int.TryParse(fileParsed[3], out year) ? year : 0;
+
+            //    FileInfo fi = new FileInfo(l);
+            //    DateTime dtCreateDate = fi.CreationTime;
+
+            //    fileCreateDate = dtCreateDate.ToShortDateString();
+
+
+            //    sbUpdate.Append("UPDATE stg.EviCore_TAT SET delivery_date = '" + fileCreateDate + "' WHERE file_month = " + month + " AND file_year = " + year + ";");
+            //    sbUpdate.Append("UPDATE stg.EviCore_YTDMetrics SET delivery_date = '" + fileCreateDate + "' WHERE file_month = " + month + " AND file_year = " + year + ";");
+            //}
+
+
+
+
+
+
+
+
+        }
+
+    }
+}
+
+
+
+return;
 
 
 
@@ -199,7 +316,7 @@ return;
 
 
 IRelationalDataAccess db_odbc = new ODBCDataAccess();
-IRelationalDataAccess db_sqsl = new SqlDataAccess();
+
 
 
 //STEP 3 CREATE NEW TABLES AND COLUMNS VIA INNA SQL

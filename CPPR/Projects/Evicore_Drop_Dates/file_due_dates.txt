@@ -1,31 +1,35 @@
-\\NASGWFTP03\Care_Core_FTP_Files\Radiology\Rad_MMMM_YYYY.zip
-UnitedPCP_RAD Auths Summary by CaseInit_2024_01.xls
-UnitedPCP_RAD_CPT_Redirections_2024_01.xls
+\\NASGWFTP03\Care_Core_FTP_Files\Radiology\Rad*MMMM*YYYY.zip
+UnitedPCP*RAD*Auths*Summary*by*CaseInit*YYYY*MM.xls
+UnitedPCP*RAD*CPT*Redirections*YYYY*MM.xls
 
 
-
-\\NASGWFTP03\Care_Core_FTP_Files\Radiology\Over_All_MMMM_YYYY.zip
-UHC_Scorecard_2024_01.xls
-United_Enterprise_Wide_Routine_TAT_UHC_Enterprise_2024_01.xlsx
-United_Enterprise_Wide_Urgent_TAT_UHC_Enterprise_2024_01.xlsx
-Intellipath Workflow Results 202401.xlsx
-YTD - Cisco - UHC Metrics 2024_01.xlsx
-Site of Care Report_2024_01.xlsx
-SLAs MTD 2_12_24.xlsx
-UHC_Complaints_2024_01.xls
-UnitedPCP OON vs. INN Volumes_2024_01.xls
-TIN 440605373 PCP Rad_2024_01.xls
-TIN 440605373 PCP Card_2024_01.xls
-DDP Monthly Report_2024_01.xls
-
+\\NASGWFTP03\Care_Core_FTP_Files\Radiology\Over*All*MMMM*YYYY.zip
+UHC*Scorecard*YYYY*MM.xls
+United*Enterprise*Wide*Routine*TAT*UHC*Enterprise*YYYY*MM.xlsx
+United*Enterprise*Wide*Urgent*TAT*UHC*Enterprise*YYYY*MM.xlsx
+Intellipath*Workflow*Results*YYYYMM.xlsx
+YTD*Cisco*UHC*Metrics*YYYY*MM.xlsx
+Site*of*Care*Report*YYYY*MM.xlsx
+SLAs*MTD*D*MM*YY.xlsx
+UHC*Complaints*YYYY*MM.xls
+UnitedPCP*OON*vs.*INN*Volumes*YYYY*MM.xls
+TIN*440605373*PCP*Rad*YYYY*MM.xls
+TIN*440605373*PCP*Card*YYYY*MM.xls
+DDP*Monthly*Report*YYYY*MM.xls
 
 
 \\NASGWFTP03\Care_Core_FTP_Files\Radiology\
-Oxford MMMM -Radiology Cardiology Universe YYYY.xlsx
-United PCP- Gastro_MMMM_YYYY.xlsx
-Oxford MMMM-Gastro Universe YYYY.xlsx
-United PCP- Rad & Card_MMMM_YYYY.xlsx
-Americhoice MMMM -Radiology Cardiology Universe YYYY.xlsx
+Oxford*MMMM*Radiology*Cardiology*Universe*YYYY.xlsx
+United*PCP*Gastro*MMMM*YYYY.xlsx
+Oxford*MMMM*Gastro*Universe*YYYY.xlsx
+United*PCP*Rad*&*Card*MMMM*YYYY.xlsx
+Americhoice*MMMM*Radiology*Cardiology*Universe*YYYY.xlsx
+
+
+
+
+
+
 
 
 
