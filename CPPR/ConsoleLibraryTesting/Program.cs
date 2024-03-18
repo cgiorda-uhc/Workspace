@@ -114,17 +114,21 @@ string file_location;
 string file_name;
 string zip_file_name = "";
 
+string last_file_location = null;
+
+
+List<Report_Timeliness_Model> rtm = new List<Report_Timeliness_Model>();
 
 
 
 var rtfm = await db_sqsl.LoadData<Report_Timeliness_Files_Model>(connectionString: adHoc.ConnectionStringMSSQL, "SELECT [ertf_id],[file_location_wild],[file_name_wild] FROM [IL_UCA].[stg].[Evicore_Report_Timeliness_Files]");
 
 
-List<int> years = new List<int>();
+List<Int16> years = new List<Int16>();
 //years.Add(2023);
 years.Add(2024);
 
-List<int> months = new List<int>();
+List<Int16> months = new List<Int16>();
 months.Add(1);
 months.Add(2);
 months.Add(3);
@@ -151,7 +155,6 @@ foreach(var y in years)
             bool is_zip = (rf.file_location_wild.Contains(".zip") ? true : false);
 
 
-            
             if(is_zip)
             {
 
@@ -181,8 +184,19 @@ foreach(var y in years)
             {
                 file_location = rf.file_location_wild;
             }
-            
-       
+
+
+
+            if (is_zip && last_file_location == file_location)
+            {
+                continue;
+            }
+
+            last_file_location = file_location;
+
+
+
+
             file_name = rf.file_name_wild.Replace("MMMM", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)).Replace("MM", (m < 10 ? "0" + m : m.ToString())).Replace("YYYY", y.ToString()).Replace("YY", y.ToString().Substring(2,2));
 
 
@@ -201,19 +215,49 @@ foreach(var y in years)
                         {
                             found_file_name = entry.FullName;
 
+                            var r  = new Report_Timeliness_Model();
+
+                            r.ertf_id = rf.ertf_id;
+                            r.file_location = file_location;
+                            r.file_name = found_file_name;
+
+                            r.file_date = new DateTime(y, m, 1);
+
+                            r.file_month = m;
+
+                            r.file_year = y;
+
+                            r.drop_date = dropped_date;
 
 
+                            rtm.Add(r);
 
                         }
                     }
                 }
                 else
                 {
-                    
+                    var r = new Report_Timeliness_Model();
+
+                    r.ertf_id = rf.ertf_id;
+                    r.file_location = file_location;
+                    r.file_name = file_name;
+
+                    r.file_date = new DateTime(y, m, 1);
+
+                    r.file_month = m;
+
+                    r.file_year = y;
+
+                    r.drop_date = dropped_date;
+
+
+                    rtm.Add(r);
                 }
    
             }
 
+            var t = "";
 
             //int month, year;
             //string fileCreateDate;
