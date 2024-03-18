@@ -172,35 +172,26 @@ foreach(var y in years)
                 var arr = rf.file_location_wild.Split('\\');
                 for (int i = 0; i < arr.Length; i++)
                 {
-                    if (arr[i] == "")
-                        continue;
-
-                    
-                    if(i+1 == arr.Length)
+                    if (i + 1 == arr.Length)
                     {
                         zip_file_name = arr[i].Replace("MMMM", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)).Replace("MM", (m < 10 ? "0" + m : m.ToString())).Replace("YYYY", y.ToString()).Replace("YY", y.ToString().Substring(2, 2));
                     }
-                   
-                    
+                    else
+                    {
+                        continue;
+                    }
                 }
-
-
             }
-
 
             if (is_zip && last_file_location == rf.file_location_wild)
             {
                 continue;
             }
-
             last_file_location = rf.file_location_wild;
-
 
             Console.WriteLine("Processing " + m + " " + y + " - " + rf.file_location_wild + "/" + rf.file_name_wild);
 
-
             file_name = rf.file_name_wild.Replace("MMMM", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)).Replace("MM", (m < 10 ? "0" + m : m.ToString())).Replace("YYYY", y.ToString()).Replace("YY", y.ToString().Substring(2,2));
-
 
             var files = Directory.GetFiles(search_path, (is_zip ? zip_file_name : file_name), SearchOption.TopDirectoryOnly);
 
@@ -228,32 +219,20 @@ foreach(var y in years)
                                     r.ertf_id = x.ertf_id;
                                     break;
                                 }
-                              
                             }
-
-
                             if (r.ertf_id == null)
                             {
                                 //r.ertf_id = rf.ertf_id;
                                 r.ertf_id = -1;
                             }
 
-
-
                             r.file_location = search_path;
                             r.file_name = found_file_name;
-
                             r.file_date = new DateTime(y, m, 1);
-
                             r.file_month = m;
-
                             r.file_year = y;
-
                             r.drop_date = dropped_date;
-
-
                             rtm.Add(r);
-
 
                             Console.WriteLine("Added " + found_file_name);
 
@@ -267,51 +246,16 @@ foreach(var y in years)
                     r.ertf_id = rf.ertf_id;
                     r.file_location = search_path + zip_file_name;
                     r.file_name = file_name;
-
                     r.file_date = new DateTime(y, m, 1);
-
                     r.file_month = m;
-
                     r.file_year = y;
-
                     r.drop_date = dropped_date;
-
-
                     rtm.Add(r);
 
                     Console.WriteLine("Added " + file_name);
                 }
    
             }
-
-
-            //int month, year;
-            //string fileCreateDate;
-            //StringBuilder sbUpdate = new StringBuilder();
-            //foreach (var l in list)
-            //{
-            //    string fileName = System.IO.Path.GetFileName(l).Replace("Sept_", "Sep_").Replace("_ ", "_").Replace(" ", "_").Replace(".zip", "").Trim();
-            //    var fileParsed = fileName.Split('_');
-
-            //    if (fileParsed.Length != 4)
-            //    {
-            //        continue;
-            //    }
-
-            //    var format = (fileParsed[2].Length == 3 ? "MMM" : "MMMM"); //Jan vs January
-            //    month = DateTime.ParseExact(fileParsed[2].Trim(), format, CultureInfo.CurrentCulture).Month;
-            //    year = int.TryParse(fileParsed[3], out year) ? year : 0;
-
-            //    FileInfo fi = new FileInfo(l);
-            //    DateTime dtCreateDate = fi.CreationTime;
-
-            //    fileCreateDate = dtCreateDate.ToShortDateString();
-
-
-            //    sbUpdate.Append("UPDATE stg.EviCore_TAT SET delivery_date = '" + fileCreateDate + "' WHERE file_month = " + month + " AND file_year = " + year + ";");
-            //    sbUpdate.Append("UPDATE stg.EviCore_YTDMetrics SET delivery_date = '" + fileCreateDate + "' WHERE file_month = " + month + " AND file_year = " + year + ";");
-            //}
-
 
         }
 
