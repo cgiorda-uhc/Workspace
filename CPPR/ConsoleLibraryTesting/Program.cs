@@ -110,7 +110,15 @@ adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Repor
 IRelationalDataAccess db_sqsl = new SqlDataAccess();
 
 
-string file_location;
+
+
+//await adHoc.generateTATReportsAsync();
+
+//return;
+
+
+
+
 string file_name;
 string zip_file_name = "";
 
@@ -121,7 +129,10 @@ List<Report_Timeliness_Model> rtm = new List<Report_Timeliness_Model>();
 
 
 
-var rtfm = await db_sqsl.LoadData<Report_Timeliness_Files_Model>(connectionString: adHoc.ConnectionStringMSSQL, "SELECT [ertf_id],[file_location_wild],[file_name_wild] FROM [IL_UCA].[stg].[Evicore_Report_Timeliness_Files]");
+var rtfm = await db_sqsl.LoadData<Report_Timeliness_Files_Model>(connectionString: adHoc.ConnectionStringMSSQL, "SELECT [ertf_id],[file_location_wild],[file_name_wild] FROM [IL_UCA].[stg].[Evicore_Report_Timeliness_Files] ");
+//var month = await db_sqsl.ExecuteScalar(connectionString: connectionStringTD, "SELECT COUNT(*) FROM (" + strSQL + ") tmp;");
+//var year = await db_sqsl.ExecuteScalar(connectionString: connectionStringTD, "SELECT COUNT(*) FROM (" + strSQL + ") tmp;");
+var search_path = @"\\NASGWFTP03\Care_Core_FTP_Files\Radiology";
 
 
 List<Int16> years = new List<Int16>();
@@ -131,16 +142,16 @@ years.Add(2024);
 List<Int16> months = new List<Int16>();
 months.Add(1);
 months.Add(2);
-months.Add(3);
-months.Add(4);
-months.Add(5);
-months.Add(6);
-months.Add(7);
-months.Add(8);
-months.Add(9);
-months.Add(10);
-months.Add(11);
-months.Add(12);
+//months.Add(3);
+//months.Add(4);
+//months.Add(5);
+//months.Add(6);
+//months.Add(7);
+//months.Add(8);
+//months.Add(9);
+//months.Add(10);
+//months.Add(11);
+//months.Add(12);
 
 DateTime dropped_date;
 string found_file_name = null;
@@ -152,15 +163,13 @@ foreach(var y in years)
 
         foreach(var rf in rtfm)
         {
-            bool is_zip = (rf.file_location_wild.Contains(".zip") ? true : false);
 
+            bool is_zip = (rf.file_location_wild.Contains(".zip") ? true : false);
 
             if(is_zip)
             {
 
                 var arr = rf.file_location_wild.Split('\\');
-                var sbl = new StringBuilder();
-                sbl.Append(@"\\");
                 for (int i = 0; i < arr.Length; i++)
                 {
                     if (arr[i] == "")
@@ -171,36 +180,29 @@ foreach(var y in years)
                     {
                         zip_file_name = arr[i].Replace("MMMM", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)).Replace("MM", (m < 10 ? "0" + m : m.ToString())).Replace("YYYY", y.ToString()).Replace("YY", y.ToString().Substring(2, 2));
                     }
-                    else
-                    {
-                        sbl.Append(arr[i] + @"\");
-                    }
+                   
                     
                 }
-                file_location = sbl.ToString();
 
-            }
-            else
-            {
-                file_location = rf.file_location_wild;
+
             }
 
 
-
-            if (is_zip && last_file_location == file_location)
+            if (is_zip && last_file_location == rf.file_location_wild)
             {
                 continue;
             }
 
-            last_file_location = file_location;
+            last_file_location = rf.file_location_wild;
 
 
+            Console.WriteLine("Processing " + m + " " + y + " - " + rf.file_location_wild + "/" + rf.file_name_wild);
 
 
             file_name = rf.file_name_wild.Replace("MMMM", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)).Replace("MM", (m < 10 ? "0" + m : m.ToString())).Replace("YYYY", y.ToString()).Replace("YY", y.ToString().Substring(2,2));
 
 
-            var files = Directory.GetFiles(file_location, (is_zip ? zip_file_name : file_name), SearchOption.TopDirectoryOnly);
+            var files = Directory.GetFiles(search_path, (is_zip ? zip_file_name : file_name), SearchOption.TopDirectoryOnly);
 
             foreach(var fl in files)
             {
@@ -217,8 +219,28 @@ foreach(var y in years)
 
                             var r  = new Report_Timeliness_Model();
 
-                            r.ertf_id = rf.ertf_id;
-                            r.file_location = file_location;
+                            var cleanString = new string(found_file_name.Where(Char.IsLetter).ToArray());
+                            foreach(var x in rtfm)
+                            {
+                                var cs = new string(x.file_name_wild.Where(Char.IsLetter).ToArray()).Replace("MMMM", "").Replace("MM", "").Replace("YYYY", "").Replace("YY", "");
+                                if (cleanString.ToLower().StartsWith(cs.ToLower()))
+                                {
+                                    r.ertf_id = x.ertf_id;
+                                    break;
+                                }
+                              
+                            }
+
+
+                            if (r.ertf_id == null)
+                            {
+                                //r.ertf_id = rf.ertf_id;
+                                r.ertf_id = -1;
+                            }
+
+
+
+                            r.file_location = search_path;
                             r.file_name = found_file_name;
 
                             r.file_date = new DateTime(y, m, 1);
@@ -232,6 +254,9 @@ foreach(var y in years)
 
                             rtm.Add(r);
 
+
+                            Console.WriteLine("Added " + found_file_name);
+
                         }
                     }
                 }
@@ -240,7 +265,7 @@ foreach(var y in years)
                     var r = new Report_Timeliness_Model();
 
                     r.ertf_id = rf.ertf_id;
-                    r.file_location = file_location;
+                    r.file_location = search_path + zip_file_name;
                     r.file_name = file_name;
 
                     r.file_date = new DateTime(y, m, 1);
@@ -253,11 +278,12 @@ foreach(var y in years)
 
 
                     rtm.Add(r);
+
+                    Console.WriteLine("Added " + file_name);
                 }
    
             }
 
-            var t = "";
 
             //int month, year;
             //string fileCreateDate;
@@ -287,16 +313,14 @@ foreach(var y in years)
             //}
 
 
-
-
-
-
-
-
         }
 
     }
 }
+
+
+var columnsss = typeof(Report_Timeliness_Model).GetProperties().Select(p => p.Name).ToArray();
+await db_sqsl.BulkSave<Report_Timeliness_Model>(connectionString: adHoc.ConnectionStringMSSQL, "stg.Evicore_Report_Timeliness", rtm, columnsss, truncate: true);
 
 
 

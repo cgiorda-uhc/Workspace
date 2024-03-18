@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace VCPortal_Models.Models.Report_Timeliness;
 public class Report_Timeliness_Model
 {
-    public Int16 ertf_id { get; set; }
+    public Int16? ertf_id { get; set; }
     public string file_location { get; set; }
     public string file_name { get; set; }
 
