@@ -160,27 +160,14 @@ foreach(var y in years)
 {
     foreach(var m in months)
     {
-
         foreach(var rf in rtfm)
         {
-
             bool is_zip = (rf.file_location_wild.Contains(".zip") ? true : false);
 
             if(is_zip)
             {
-
                 var arr = rf.file_location_wild.Split('\\');
-                for (int i = 0; i < arr.Length; i++)
-                {
-                    if (i + 1 == arr.Length)
-                    {
-                        zip_file_name = arr[i].Replace("MMMM", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)).Replace("MM", (m < 10 ? "0" + m : m.ToString())).Replace("YYYY", y.ToString()).Replace("YY", y.ToString().Substring(2, 2));
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                }
+                zip_file_name = arr[arr.Length - 1].Replace("MMMM", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)).Replace("MM", (m < 10 ? "0" + m : m.ToString())).Replace("YYYY", y.ToString()).Replace("YY", y.ToString().Substring(2, 2));
             }
 
             if (is_zip && last_file_location == rf.file_location_wild)
@@ -261,7 +248,6 @@ foreach(var y in years)
 
     }
 }
-
 
 var columnsss = typeof(Report_Timeliness_Model).GetProperties().Select(p => p.Name).ToArray();
 await db_sqsl.BulkSave<Report_Timeliness_Model>(connectionString: adHoc.ConnectionStringMSSQL, "stg.Evicore_Report_Timeliness", rtm, columnsss, truncate: true);
