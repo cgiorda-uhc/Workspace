@@ -170,6 +170,7 @@ foreach(var y in years)
                 zip_file_name = arr[arr.Length - 1].Replace("MMMM", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)).Replace("MM", (m < 10 ? "0" + m : m.ToString())).Replace("YYYY", y.ToString()).Replace("YY", y.ToString().Substring(2, 2));
             }
 
+            //LOOP THROUGH ONE ZIP FILE AND CONTINUE
             if (is_zip && last_file_location == rf.file_location_wild)
             {
                 continue;
@@ -182,32 +183,32 @@ foreach(var y in years)
 
             var files = Directory.GetFiles(search_path, (is_zip ? zip_file_name : file_name), SearchOption.TopDirectoryOnly);
 
-            foreach(var fl in files)
+            foreach(var fl in files) //HOPEFULLY ON ONE FILE FOUND. IF NOT CAPTURE IT!
             {
                 FileInfo fi = new FileInfo(fl);
-                dropped_date = fi.CreationTime;
+                dropped_date = fi.CreationTime; //FILE DROPPED DATE
 
-                if(is_zip)
+                if(is_zip) //MULTIPLE FILES
                 {
-                    using (ZipArchive archive = ZipFile.OpenRead(fl))
+                    using (ZipArchive archive = ZipFile.OpenRead(fl)) //UNZIP
                     {
-                        foreach (ZipArchiveEntry entry in archive.Entries)
+                        foreach (ZipArchiveEntry entry in archive.Entries) //LOOP ALL FILES WITHIN
                         {
                             found_file_name = entry.FullName;
 
                             var r  = new Report_Timeliness_Model();
 
-                            var cleanString = new string(found_file_name.Where(Char.IsLetter).ToArray());
-                            foreach(var x in rtfm)
+                            var cleanString = new string(found_file_name.Where(Char.IsLetter).ToArray()); //ONLY ALPHA CHARS
+                            foreach(var x in rtfm) //GET ID's PER EACH FILE IN ZIP
                             {
-                                var cs = new string(x.file_name_wild.Where(Char.IsLetter).ToArray()).Replace("MMMM", "").Replace("MM", "").Replace("YYYY", "").Replace("YY", "");
+                                var cs = new string(x.file_name_wild.Where(Char.IsLetter).ToArray()).Replace("MMMM", "").Replace("MM", "").Replace("YYYY", "").Replace("YY", "");  //ONLY ALPHA CHARS MINUS DATE HOLDERS
                                 if (cleanString.ToLower().StartsWith(cs.ToLower()))
                                 {
                                     r.ertf_id = x.ertf_id;
                                     break;
                                 }
                             }
-                            if (r.ertf_id == null)
+                            if (r.ertf_id == null) //NO MACTH
                             {
                                 //r.ertf_id = rf.ertf_id;
                                 r.ertf_id = -1;
@@ -226,7 +227,7 @@ foreach(var y in years)
                         }
                     }
                 }
-                else
+                else //INDIVIDUAL FILE
                 {
                     var r = new Report_Timeliness_Model();
 
