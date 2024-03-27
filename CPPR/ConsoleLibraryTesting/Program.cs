@@ -112,9 +112,9 @@ IRelationalDataAccess db_sqsl = new SqlDataAccess();
 
 
 
-//await adHoc.generateTATReportsAsync();
+await adHoc.generateTATReportsAsync();
 
-//return;
+ return;
 
 //await adHoc.generateTATReportsAsync();
 
@@ -186,7 +186,7 @@ foreach (var month in month_list)
 
         var files = Directory.GetFiles(search_path, (is_zip ? zip_file_name : file_name), SearchOption.TopDirectoryOnly);
 
-        foreach (var fl in files) //HOPEFULLY ON ONE FILE FOUND. IF NOT CAPTURE IT!
+        foreach (var fl in files) //HOPEFULLY ONLY ONE FILE FOUND. IF NOT CAPTURE IT!
         {
             FileInfo fi = new FileInfo(fl);
             dropped_date = fi.CreationTime; //FILE DROPPED DATE

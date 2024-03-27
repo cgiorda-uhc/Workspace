@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 namespace VCPortal_Models.Models.TAT;
 public class TAT_Summary_Model
 {
- 
+    public string rtype { get; set; }
     public string lob { get; set; }
     public string Modality { get; set; }
 
     public int metric_id { get; set; }
 
     public string metric_desc { get; set; }
+
     public int YTD_Penalty { get; set; }
     public int Jan { get; set; }
     public int Feb { get; set; }
