@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 namespace VCPortal_Models.Models.TAT;
 public class TAT_Summary_Model
 {
-    public string rtype { get; set; }
     public string lob { get; set; }
     public string Modality { get; set; }
 

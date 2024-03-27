@@ -36,7 +36,7 @@ namespace FileParsingLibrary.MSExcel.Custom.TAT
                     var type = ex.ExportList!.FirstOrDefault()!.GetType();
                     PropertyInfo[] properties = type.GetProperties();
 
-                    if(ex.SheetName == "SLA summary, penalties")
+                    if(ex.SheetName == "SLA summary, penalties" || ex.SheetName == "COM SLA summary, penalties" || ex.SheetName == "MR SLA summary, penalties" || ex.SheetName == "CS SLA summary, penalties" || ex.SheetName == "OXF SLA summary, penalties")
                     {
 
                         ws.Cell(3, 1).Value = "Metrics current through " + current_spelled;
