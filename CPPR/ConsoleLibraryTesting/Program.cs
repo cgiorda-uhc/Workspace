@@ -65,6 +65,9 @@ using VCPortal_Models.Models.PCCM;
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using System.Net;
 using VCPortal_Models.Models.Report_Timeliness;
+using ClosedXML.Excel;
+using static Azure.Core.HttpHeader;
+using DocumentFormat.OpenXml.Packaging;
 
 
 var adHoc = new AdHoc();
@@ -112,9 +115,70 @@ IRelationalDataAccess db_sqsl = new SqlDataAccess();
 
 
 
-await adHoc.generateTATReportsAsync();
+var file = await adHoc.generateTATReportsAsync();
 
- return;
+string sheet_main = "All SLAs, no current metrics";
+string sheet_common = "SLA summary, penalties";
+
+
+List<string> sheets = new List<string>();
+sheets.Add("COM");
+sheets.Add("MR");
+sheets.Add("CS");
+sheets.Add("OXF");
+
+
+
+
+foreach (var s in sheets)
+{
+    var wb = new XLWorkbook(file);
+
+    using (var spreadSheetDocument = SpreadsheetDocument.Open(file, false))
+    {
+        int sheetIndex = 0;
+        foreach (var worksheetpart in spreadSheetDocument.WorkbookPart.WorksheetParts)
+        {
+            string sheetName = spreadSheetDocument.WorkbookPart.Workbook.Descendants<Sheet>().ElementAt(sheetIndex).Name;
+
+
+            if (sheetName != s + " " + sheet_common && sheetName != sheet_main)
+            {
+                wb.Worksheet(sheetName).Delete();
+            }
+
+              //names.Add(sheetName);
+
+            sheetIndex++;
+        }
+    }
+
+    var final = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + s + "_" + System.IO.Path.GetFileName(file);
+    wb.SaveAs(final);
+    
+}
+
+
+
+
+//foreach (var s in sheets)
+//{
+//    using (var wb = new XLWorkbook(file))
+//    {
+//        foreach (var sheet in wb.Worksheets)
+//        {
+//            if(sheet.Name != s && sheet.Name != sheet_main)
+//            {
+//                Worksheet wkSheet = (Worksheet)xlApp.ActiveWorkbook.Worksheets[i];
+
+
+//            }
+//        }
+//    }
+//}
+
+
+return;
 
 //await adHoc.generateTATReportsAsync();
 
@@ -958,9 +1022,9 @@ return;
 
 StringBuilder sb = new StringBuilder();
 
-foreach (string file in files_loaded)
+foreach (string f in files_loaded)
 {
-    sb.Append("'" +  file + "',");
+    sb.Append("'" +  f + "',");
 }
 
 strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Yearly_Universes]  WHERE file_name in (" + sb.ToString().TrimEnd(',') + ");";

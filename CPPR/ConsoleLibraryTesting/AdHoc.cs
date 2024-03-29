@@ -893,7 +893,7 @@ namespace ConsoleLibraryTesting
 
 
 
-        public async Task generateTATReportsAsync()
+        public async Task<string> generateTATReportsAsync()
         {
 
             List<ExcelExport> export = new List<ExcelExport>();
@@ -1065,14 +1065,15 @@ namespace ConsoleLibraryTesting
 
 
 
-            var p = new Process();
-            p.StartInfo = new ProcessStartInfo(file)
-            {
-                UseShellExecute = true
-            };
-            p.Start();
+            //var p = new Process();
+            //p.StartInfo = new ProcessStartInfo(file)
+            //{
+            //    UseShellExecute = true
+            //};
+            //p.Start();
 
 
+            return file;
         }
 
 
