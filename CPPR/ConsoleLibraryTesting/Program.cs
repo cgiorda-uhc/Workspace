@@ -113,8 +113,6 @@ adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Repor
 IRelationalDataAccess db_sqsl = new SqlDataAccess();
 
 
-
-
 var file = await adHoc.generateTATReportsAsync();
 
 string sheet_main = "All SLAs, no current metrics";
@@ -126,8 +124,6 @@ sheets.Add("COM");
 sheets.Add("MR");
 sheets.Add("CS");
 sheets.Add("OXF");
-
-
 
 
 foreach (var s in sheets)
@@ -147,8 +143,6 @@ foreach (var s in sheets)
                 wb.Worksheet(sheetName).Delete();
             }
 
-              //names.Add(sheetName);
-
             sheetIndex++;
         }
     }
@@ -157,25 +151,6 @@ foreach (var s in sheets)
     wb.SaveAs(final);
     
 }
-
-
-
-
-//foreach (var s in sheets)
-//{
-//    using (var wb = new XLWorkbook(file))
-//    {
-//        foreach (var sheet in wb.Worksheets)
-//        {
-//            if(sheet.Name != s && sheet.Name != sheet_main)
-//            {
-//                Worksheet wkSheet = (Worksheet)xlApp.ActiveWorkbook.Worksheets[i];
-
-
-//            }
-//        }
-//    }
-//}
 
 
 return;

@@ -87,11 +87,11 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="55"/>
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="100"/>
                 <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="35"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -113,10 +113,12 @@
                 </TextBlock.Style>
             </TextBlock>
 
-            <telerik:Label Grid.Row="0" Grid.Column="6"  Content="Row Count:" Margin="1" HorizontalAlignment="Left" Style="{StaticResource OptionalLabel}"  />
-            <telerik:RadNumericUpDown Grid.Row="0" Grid.Column="7" NumberDecimalDigits="0" Value="{Binding TopRows}" Minimum="1" Maximum="10000000" SmallChange="100" />
 
-            <telerik:RadButton x:Name="btnGenerateReport"  Grid.Row="0" Grid.Column="8" Width="170" Command="{Binding GenerateReportCallCommand}"  Content="Generate Report">
+
+            <telerik:Label Grid.Row="0" Grid.Column="5"  Content="Row Count:" Margin="1" HorizontalAlignment="Left" Style="{StaticResource OptionalLabel}"  />
+            <telerik:RadNumericUpDown Grid.Row="0" Grid.Column="6" NumberDecimalDigits="0" Value="{Binding TopRows}" Minimum="1" Maximum="10000000" SmallChange="100" />
+
+            <telerik:RadButton x:Name="btnGenerateReport"  Grid.Row="0" Grid.Column="7" Width="170" Command="{Binding GenerateReportCallCommand}"  Content="Generate Report">
                 <!--<Button.IsEnabled>
                     <MultiBinding Converter="{StaticResource InverseAndBooleansToBooleanConverter}" Mode="TwoWay" UpdateSourceTrigger="PropertyChanged">
                         <Binding ElementName="cbxRegionFilter" Path="(SelectedItem)" />
@@ -150,6 +152,16 @@
 
 
             </telerik:RadButton>
+
+
+
+            <telerik:RadButton Grid.Row="0" Grid.Column="8" Width="30" >
+                <telerik:RadButton.Content>
+                    <Image Source="\\WP000003507\csg_share\VC_Portal\images\images.jfif" Stretch="Fill" />
+                </telerik:RadButton.Content>
+            </telerik:RadButton>
+
+
         </Grid>
 
         <Grid Grid.Row="1" Background="GhostWhite">
