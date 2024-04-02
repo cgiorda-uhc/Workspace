@@ -3,11 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:VCPortal_WPF.UserControls.Projects.ProcCodeTrends"
+             xmlns:local="clr-namespace:VCPortal_WPF.UserControls.Projects.ProcCodeTrends" xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Background="White">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -30,7 +31,7 @@
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Fill="LightGray" />
-            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center" Padding="3">
+            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center" Padding="3" FontWeight="Bold">
                 Objective
             </TextBlock>
             <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap" Padding="3">
@@ -52,7 +53,7 @@
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Fill="White" />
-            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center" Padding="3">
+            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center" Padding="3" FontWeight="Bold">
                 Data Included
             </TextBlock>
             <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap" Padding="3">
@@ -72,7 +73,7 @@
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Fill="LightGray" />
-            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center" Padding="3">
+            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center" Padding="3" FontWeight="Bold">
                 Time Period
             </TextBlock>
             <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap" Padding="3">
@@ -92,7 +93,7 @@
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Fill="White" />
-            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center" Padding="3">
+            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center" Padding="3" FontWeight="Bold">
                 Claim Runout
             </TextBlock>
             <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap" Padding="3">
@@ -112,7 +113,7 @@
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Fill="LightGray" />
-            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center" Padding="3">
+            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center" Padding="3" FontWeight="Bold">
                Data Sources
             </TextBlock>
             <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap" Padding="3">
@@ -130,7 +131,7 @@
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Fill="White" />
-            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center">
+            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center" FontWeight="Bold">
                 Exclusions
             </TextBlock>
             <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap" Padding="3">
@@ -153,7 +154,7 @@
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Fill="LightGray" />
-            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center" Padding="3">
+            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center" Padding="3" FontWeight="Bold">
                 Contact
             </TextBlock>
             <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap" Padding="3">
@@ -176,7 +177,20 @@
             </TextBlock>
         </Grid>
 
+        <Grid Grid.Row="7">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition  />
+                <ColumnDefinition />
+                <ColumnDefinition Width="10" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="40"  />
+            </Grid.RowDefinitions>
 
+            <Rectangle Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Fill="White" />
+            <telerik:RadButton x:Name="btnClose"  Grid.Column="1" Width="50" HorizontalAlignment="Right"  Content="Close" >
+            </telerik:RadButton>
+        </Grid>
 
     </Grid>
 </UserControl>
