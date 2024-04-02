@@ -26,14 +26,14 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="40"  />
+                <RowDefinition Height="50"  />
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Fill="LightGray" />
-            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center">
+            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center" Padding="3">
                 Objective
             </TextBlock>
-            <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap">
+            <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap" Padding="3">
                 The key objective of this report is to obtain frequency, expense, and utilization at procedure code level. 
                 The report is generated based on the filters and procedure codes selected.
             </TextBlock>
@@ -48,16 +48,15 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition />
+                <RowDefinition Height="50"  />
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Fill="White" />
-            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center">
-                Objective
+            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center" Padding="3">
+                Data Included
             </TextBlock>
-            <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap">
-                The key objective of this report is to obtain frequency, expense, and utilization at procedure code level. 
-                The report is generated based on the filters and procedure codes selected.
+            <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap" Padding="3">
+                E&amp;I, M&amp;R, and C&amp;S
             </TextBlock>
         </Grid>
 
@@ -69,16 +68,17 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition />
+                <RowDefinition Height="50"  />
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Fill="LightGray" />
-            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center">
-                Objective
+            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center" Padding="3">
+                Time Period
             </TextBlock>
-            <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap">
-                The key objective of this report is to obtain frequency, expense, and utilization at procedure code level. 
-                The report is generated based on the filters and procedure codes selected.
+            <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap" Padding="3">
+                202104-202203 incurred dates<LineBreak />
+                202204-202303 incurred dates<LineBreak />
+
             </TextBlock>
         </Grid>
 
@@ -88,16 +88,15 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition />
+                <RowDefinition Height="50"  />
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Fill="White" />
-            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center">
-                Objective
+            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center" Padding="3">
+                Claim Runout
             </TextBlock>
-            <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap">
-                The key objective of this report is to obtain frequency, expense, and utilization at procedure code level. 
-                The report is generated based on the filters and procedure codes selected.
+            <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap" Padding="3">
+                Five months of runout is applied to the claims pull.
             </TextBlock>
         </Grid>
 
@@ -109,16 +108,15 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition />
+                <RowDefinition Height="50"  />
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Fill="LightGray" />
-            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center">
-                Objective
+            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center" Padding="3">
+               Data Sources
             </TextBlock>
-            <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap">
-                The key objective of this report is to obtain frequency, expense, and utilization at procedure code level. 
-                The report is generated based on the filters and procedure codes selected.
+            <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap" Padding="3">
+                Outpatient &amp; Physician claims
             </TextBlock>
         </Grid>
 
@@ -128,16 +126,18 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition />
+                <RowDefinition Height="90"  />
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Fill="White" />
             <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center">
-                Objective
+                Exclusions
             </TextBlock>
-            <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap">
-                The key objective of this report is to obtain frequency, expense, and utilization at procedure code level. 
-                The report is generated based on the filters and procedure codes selected.
+            <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap" Padding="3">
+                Inpatient claims <LineBreak />
+                ISNPs (M&amp;R Members) <LineBreak />
+                Full denials <LineBreak />
+                Capitations <LineBreak />
             </TextBlock>
         </Grid>
 
@@ -149,16 +149,16 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition />
+                <RowDefinition Height="50"  />
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Fill="LightGray" />
-            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center">
-                Objective
+            <TextBlock Grid.Row="0"  Grid.Column="0" HorizontalAlignment="Center" Padding="3">
+                Contact
             </TextBlock>
-            <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap">
-                The key objective of this report is to obtain frequency, expense, and utilization at procedure code level. 
-                The report is generated based on the filters and procedure codes selected.
+            <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap" Padding="3">
+                For technical support, please contact Chris Giordano (chris_giordano@uhc.com). <LineBreak />
+                For data/report support, please contact Tiffany Ho (tiffany_ho@uhc.com).<LineBreak />
             </TextBlock>
         </Grid>
 
