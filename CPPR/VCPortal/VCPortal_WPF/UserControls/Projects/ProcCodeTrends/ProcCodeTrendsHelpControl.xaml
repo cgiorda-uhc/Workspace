@@ -157,8 +157,22 @@
                 Contact
             </TextBlock>
             <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap" Padding="3">
-                For technical support, please contact Chris Giordano (chris_giordano@uhc.com). <LineBreak />
-                For data/report support, please contact Tiffany Ho (tiffany_ho@uhc.com).<LineBreak />
+                For technical support, please contact Chris Giordano (
+                
+                
+                  <Hyperlink NavigateUri="mailto:chris_giordano@uhc.com?subject=ProcCodeTrendTechSupport&amp;body=EnterQuestion" RequestNavigate="OnNavigate">
+                    chris_giordano@uhc.com
+                </Hyperlink>
+                ). <LineBreak />
+                For data/report support, please contact Tiffany Ho (
+                
+                
+                
+                 <Hyperlink NavigateUri="mailto:tiffany_ho@uhc.com?subject=ProcCodeTrendDataSupport&amp;body=EnterQuestion" RequestNavigate="OnNavigate">
+                    tiffany_ho@uhc.com
+                </Hyperlink>
+                
+                ).<LineBreak />
             </TextBlock>
         </Grid>
 
