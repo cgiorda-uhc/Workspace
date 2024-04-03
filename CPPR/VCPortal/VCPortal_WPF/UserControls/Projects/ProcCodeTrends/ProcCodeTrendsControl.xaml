@@ -161,12 +161,17 @@
                 </telerik:RadButton.Content>
             </telerik:RadButton>
 
-            <Popup Name="help" IsOpen="False"  StaysOpen="False" Placement="Center" PlacementTarget="{Binding ElementName=MainPanel}">
-                <Border Background="Bisque">
-                        <local:ProcCodeTrendsHelpControl Width="900" Height="400"/>
-                </Border>
-            </Popup>
 
+            <Border Background="Bisque" Margin="0 0 8 8">
+                <Border.Effect>
+                    <DropShadowEffect />
+                </Border.Effect>
+                <Popup Name="help" IsOpen="False"  StaysOpen="False" Placement="Center" PlacementTarget="{Binding ElementName=MainPanel}">
+     
+                        <local:ProcCodeTrendsHelpControl Width="900" Height="460"/>
+
+                </Popup>
+            </Border>
 
 
 

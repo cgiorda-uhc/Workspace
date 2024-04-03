@@ -13,13 +13,13 @@
             <Style x:Key="Desc" TargetType="{x:Type TextBlock}">
                 <Setter Property="FontFamily" Value="Calibri" />
                 <Setter Property="FontWeight" Value="Normal" />
-                <Setter Property="Padding" Value="3" />
+                <Setter Property="Padding" Value="10" />
             </Style>
 
             <Style x:Key="Label" TargetType="{x:Type TextBlock}">
                 <Setter Property="FontFamily" Value="Calibri" />
                 <Setter Property="FontWeight" Value="Bold" />
-                <Setter Property="Padding" Value="3" />
+                <Setter Property="Padding" Value="10" />
             </Style>
             </Grid.Resources>
 
@@ -42,7 +42,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="50"  />
+                <RowDefinition Height="60"  />
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Fill="LightGray" />
@@ -84,7 +84,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="50"  />
+                <RowDefinition Height="70"  />
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Fill="LightGray" />
@@ -142,7 +142,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="90"  />
+                <RowDefinition Height="110"  />
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Fill="White" />
@@ -165,7 +165,7 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="50"  />
+                <RowDefinition Height="70"  />
             </Grid.RowDefinitions>
 
             <Rectangle Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2" Fill="LightGray" />
@@ -176,7 +176,7 @@
                 For technical support, please contact Chris Giordano (
                 
                 
-                  <Hyperlink NavigateUri="mailto:chris_giordano@uhc.com?subject=ProcCodeTrendTechSupport&amp;body=EnterQuestion">
+                  <Hyperlink NavigateUri="mailto:chris_giordano@uhc.com?subject=ProcCodeTrendTechSupport&amp;body=Issue:" RequestNavigate="Hyperlink_RequestNavigate">
                     chris_giordano@uhc.com
                 </Hyperlink>
                 ). <LineBreak />
@@ -184,7 +184,7 @@
                 
                 
                 
-                 <Hyperlink NavigateUri="mailto:tiffany_ho@uhc.com?subject=ProcCodeTrendDataSupport&amp;body=EnterQuestion" >
+                 <Hyperlink NavigateUri="mailto:tiffany_ho@uhc.com?subject=ProcCodeTrendDataSupport&amp;body=Issue:" RequestNavigate="Hyperlink_RequestNavigate" >
                     tiffany_ho@uhc.com
                 </Hyperlink>
                 

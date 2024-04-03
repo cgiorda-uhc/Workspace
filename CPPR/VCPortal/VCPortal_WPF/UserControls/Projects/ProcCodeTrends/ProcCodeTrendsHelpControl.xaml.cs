@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,6 +28,13 @@ namespace VCPortal_WPF.UserControls.Projects.ProcCodeTrends
 
         }
 
-        
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+        {
+
+            string address = e.Uri.AbsoluteUri;
+            System.Diagnostics.Process.Start(new ProcessStartInfo(address) { UseShellExecute = true });
+
+            e.Handled = true;
+        }
     }
 }
