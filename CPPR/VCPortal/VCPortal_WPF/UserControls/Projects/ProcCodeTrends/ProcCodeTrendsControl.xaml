@@ -155,16 +155,39 @@
 
 
 
-            <telerik:RadButton Grid.Row="0" Grid.Column="8" Width="30" >
+            <telerik:RadButton Grid.Row="0" Grid.Column="8" Width="30" Click="RadButton_Click" >
                 <telerik:RadButton.Content>
                     <Image Source="\\WP000003507\csg_share\VC_Portal\images\images.jfif" Stretch="Fill" />
                 </telerik:RadButton.Content>
             </telerik:RadButton>
 
+            <Popup Name="help" IsOpen="False"  StaysOpen="False" Placement="Center" PlacementTarget="{Binding ElementName=MainPanel}">
+                <Border Background="Bisque">
+                        <local:ProcCodeTrendsHelpControl Width="900" Height="400"/>
+                </Border>
+            </Popup>
+
+
+
+
+
+            <!--<telerik:RadNotifyIcon x:Name="help" PopupActivationMouseEvent = "LeftClick" Height="400" Width="800" HorizontalAlignment="Center" VerticalAlignment="Center" >
+                <telerik:RadNotifyIcon.PopupContentTemplate>
+                    <DataTemplate>
+                        <Border Background="Bisque">
+                            <local:ProcCodeTrendsHelpControl/>
+                        </Border>
+                    </DataTemplate>
+                </telerik:RadNotifyIcon.PopupContentTemplate>
+            </telerik:RadNotifyIcon>-->
+
+
+
+
 
         </Grid>
 
-        <Grid Grid.Row="1" Background="GhostWhite">
+        <Grid x:Name="MainPanel" Grid.Row="1" Background="GhostWhite">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="20"/>
                 <ColumnDefinition Width="*"/>

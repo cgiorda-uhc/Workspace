@@ -16,8 +16,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Telerik.Windows.Controls;
 using Telerik.Windows.Core;
 using Telerik.Windows.Data;
+using Telerik.Windows.Diagrams.Core;
 using VCPortal_WPF.Components;
 using VCPortal_WPF.UserControls.Shared;
 
@@ -171,5 +173,29 @@ public partial class ProcCodeTrendsControl : System.Windows.Controls.UserControl
             System.Windows.MessageBox.Show("The following Proc Codes could not be found:" + Environment.NewLine + sb.ToString(), "Missing Proc Codes", MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
 
+    }
+
+    private void RadButton_Click(object sender, RoutedEventArgs e)
+    {
+        //double screenWidth = System.Windows.SystemParameters.PrimaryScreenWidth;
+        //double screenHeight = System.Windows.SystemParameters.PrimaryScreenHeight;
+        //double windowWidth = this.Width;
+        //double windowHeight = this.Height;
+
+        //var x = (screenWidth / 2) - (windowWidth / 2);
+        //var y = (screenHeight / 2) - (windowHeight / 2);
+
+        //var p = new System.Windows.Point(-400, -400);
+
+        //this.help.PlacementTarget = button;
+        //this.help.ShowPopup(p);
+
+        //this.help.HorizontalOffset = 100;
+        //this.help.VerticalOffset = 100;
+
+
+        //help.PlacementTarget = MyPage;
+
+        this.help.IsOpen = true;
     }
 }
