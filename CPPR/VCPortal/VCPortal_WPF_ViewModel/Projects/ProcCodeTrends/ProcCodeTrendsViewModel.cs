@@ -93,6 +93,12 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
     public int _topRows = 100;
 
 
+    [ObservableProperty]
+    public string _startDateSpan;
+
+    [ObservableProperty]
+    public string _endDateSpan;
+
     public ProcCodeTrendsViewModel(IConfiguration config, IExcelFunctions excelFunctions, Serilog.ILogger logger, DBRepoModel dBRepo)
     {
         _logger = logger;
@@ -458,7 +464,7 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
                 {
                     var template = @"\\WP000003507\csg_share\VC_Portal\templates\PC_Trends\Read_Me.xlsx";
 
-                    var b = await ProcCodeTrendsExport.ExportReadmeToExcel(pc_param, template, sb_lob.ToString().Trim().TrimEnd(','), () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
+                    var b = await ProcCodeTrendsExport.ExportReadmeToExcel(pc_param, template, sb_lob.ToString().Trim().TrimEnd(','), StartDateSpan, EndDateSpan, () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
 
                     _sbStatus.Remove(0, _sbStatus.Length);
                     _sbStatus.Append(ProgressMessageViewModel.Message);
@@ -821,6 +827,13 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
 
                     _date_span = results.ToList();
+
+
+
+                    StartDateSpan = _date_span[0].year + "0" + _date_span[0].quarter + "-"  + _date_span[3].year + "0" + _date_span[3].quarter;
+
+                    EndDateSpan = _date_span[4].year + "0" + _date_span[4].quarter + "-" + _date_span[7].year + "0" + _date_span[7].quarter;
+
 
                 }
                 else

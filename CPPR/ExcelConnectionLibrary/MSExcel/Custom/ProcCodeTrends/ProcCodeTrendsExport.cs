@@ -1289,7 +1289,7 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
 
 
 
-        public static async Task<byte[]> ExportReadmeToExcel(ProcCodeTrends_Parameters pc_param,string template, string selected_lob, Func<string> getterStatus, Action<string> setterStatus, CancellationToken token)
+        public static async Task<byte[]> ExportReadmeToExcel(ProcCodeTrends_Parameters pc_param,string template, string selected_lob, string start_span, string end_span, Func<string> getterStatus, Action<string> setterStatus, CancellationToken token)
         {
 
             //throw new Exception("Oh nooooooo!!!");
@@ -1307,6 +1307,11 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             XLWorkbook wb = new XLWorkbook(fileStream);
             IXLWorksheet ws = wb.Worksheet("Read Me");
 
+
+
+           ws.Cell(4, 3).Value = start_span +" incurred dates" + Environment.NewLine + end_span + " incurred dates";
+
+
             var none_label = "None Selected";
             ws.Cell(12, 3).Value = selected_lob;
             ws.Cell(13, 3).Value = (pc_param.Region != null ? pc_param.Region.Replace("'","") : none_label);
@@ -1320,7 +1325,11 @@ namespace FileParsingLibrary.MSExcel.Custom.ProcCodeTrends
             ws.Cell(21, 3).Value = (pc_param.MR_DUAL_IND != null ? pc_param.MR_DUAL_IND.Replace("'", "") : none_label);
             ws.Cell(22, 3).Value = (pc_param.px != null ? pc_param.px.Replace("'", "") : none_label);
 
+
+
             ws.Columns("C", "C").AdjustToContents();
+
+            ws.Cell("A1").SetActive();
 
             if (token.IsCancellationRequested)
             {

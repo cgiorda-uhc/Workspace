@@ -92,10 +92,20 @@
                 Time Period
             </TextBlock>
             <TextBlock Grid.Row="0"  Grid.Column="1" HorizontalAlignment="Left" TextWrapping="Wrap" Style="{StaticResource Desc}">
-                202104-202203 incurred dates<LineBreak />
-                202204-202303 incurred dates<LineBreak />
 
-            </TextBlock>
+
+                
+                        
+            <Run Text="{Binding StartDateSpan}"/>
+            <Run Text=" incurred dates"/>
+            <LineBreak/>
+            <Run Text="{Binding EndDateSpan}"/>
+            <Run Text=" incurred dates"/>
+            <LineBreak/>
+        </TextBlock >
+                
+
+
         </Grid>
 
         <Grid Grid.Row="3">
