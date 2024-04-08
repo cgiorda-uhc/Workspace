@@ -114,7 +114,8 @@ IRelationalDataAccess db_sqsl = new SqlDataAccess();
 
 
 //GET FILE 'Create_Date' FROM EVICORE
-await adHoc.getReportsTimelinessAsync();
+var search_path = @"\\NASGWFTP03\Care_Core_FTP_Files\Radiology";
+await adHoc.getReportsTimelinessAsync(search_path);
 
 //GENERATE FINAL TAT REPORTS
 await adHoc.generateTATReportsAsync();

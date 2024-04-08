@@ -896,7 +896,7 @@ namespace ConsoleLibraryTesting
         }
 
 
-        public async Task getReportsTimelinessAsync()
+        public async Task getReportsTimelinessAsync(string search_path)
         {
             string file_name; //INDIVIDUAL FILES
             string zip_file_name = ""; //FILE WITHIN ZIP
@@ -910,127 +910,109 @@ namespace ConsoleLibraryTesting
             //GET FILE MASTER LIST FOR SEARCHING
             var rtfm = await db_sql.LoadData<Report_Timeliness_Files_Model>(connectionString: ConnectionStringMSSQL, "SELECT [ertf_id],[file_location_wild],[file_name_wild] FROM [IL_UCA].[stg].[Evicore_Report_Timeliness_Files] ");
             //GET LATEST MONTH
-            //var month = Int16.Parse(await db_sqsl.ExecuteScalar(connectionString: adHoc.ConnectionStringMSSQL, "SELECT MAX(CASE WHEN [file_month] = 12 THEN  1 ELSE [file_month] + 1  END) FROM [stg].[Evicore_Report_Timeliness] WHERE [file_date] = (SELECT MAX([file_date])  FROM [stg].[Evicore_Report_Timeliness] );") + "");
+            var month = Int16.Parse(await db_sql.ExecuteScalar(connectionString: ConnectionStringMSSQL, "SELECT MAX(CASE WHEN [file_month] = 12 THEN  1 ELSE [file_month] + 1  END) FROM [stg].[Evicore_Report_Timeliness] WHERE [file_date] = (SELECT MAX([file_date])  FROM [stg].[Evicore_Report_Timeliness] );") + "");
             //GET LATEST YEAR
-            //var year = Int16.Parse(await db_sqsl.ExecuteScalar(connectionString: adHoc.ConnectionStringMSSQL, "SELECT MAX(CASE WHEN [file_month] = 12 THEN  [file_year] + 1 ELSE [file_year]  END) FROM [stg].[Evicore_Report_Timeliness] WHERE [file_date] = (SELECT MAX([file_date])  FROM [stg].[Evicore_Report_Timeliness] );") + "");
-            var search_path = @"\\NASGWFTP03\Care_Core_FTP_Files\Radiology";
-            //Int16 month = 1;
-            Int16 year = 2024;
+            var year = Int16.Parse(await db_sql.ExecuteScalar(connectionString: ConnectionStringMSSQL, "SELECT MAX(CASE WHEN [file_month] = 12 THEN  [file_year] + 1 ELSE [file_year]  END) FROM [stg].[Evicore_Report_Timeliness] WHERE [file_date] = (SELECT MAX([file_date])  FROM [stg].[Evicore_Report_Timeliness] );") + "");
+  
+     
 
 
             DateTime dropped_date;
             string found_file_name = null;
 
-            List<Int16> month_list = new List<Int16>();
-            month_list.Add(1);
-            month_list.Add(2);
-            //month_list.Add(3);
-            //month_list.Add(4);
-            //month_list.Add(5);
-            //month_list.Add(6);
-            //month_list.Add(7);
-            //month_list.Add(8);
-            //month_list.Add(9);
-            //month_list.Add(10);
-            //month_list.Add(11);
-            //month_list.Add(12);
 
-            foreach (var month in month_list)
+            foreach (var rf in rtfm)
             {
-                foreach (var rf in rtfm)
+                bool is_zip = (rf.file_location_wild.Contains(".zip") ? true : false);
+
+                if (is_zip)
                 {
-                    bool is_zip = (rf.file_location_wild.Contains(".zip") ? true : false);
+                    var arr = rf.file_location_wild.Split('\\');
+                    zip_file_name = arr[arr.Length - 1].Replace("MMMM", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)).Replace("MM", (month < 10 ? "0" + month : month.ToString())).Replace("YYYY", year.ToString()).Replace("YY", year.ToString().Substring(2, 2));
+                }
 
-                    if (is_zip)
+                //LOOP THROUGH ONE ZIP FILE AND CONTINUE
+                if (is_zip && last_file_location == rf.file_location_wild)
+                {
+                    continue;
+                }
+                last_file_location = rf.file_location_wild; //TRACK LAST FILE FOR ABOVE
+
+                Console.WriteLine("Processing " + month + " " + year + " - " + rf.file_location_wild + "/" + rf.file_name_wild);
+
+                //REPLACE MM YY WITH PROPER DATE DISPLAY
+                file_name = rf.file_name_wild.Replace("MMMM", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)).Replace("MM", (month < 10 ? "0" + month : month.ToString())).Replace("YYYY", year.ToString()).Replace("YY", year.ToString().Substring(2, 2));
+
+                var files = Directory.GetFiles(search_path, (is_zip ? zip_file_name : file_name), SearchOption.TopDirectoryOnly);
+
+                foreach (var fl in files) //HOPEFULLY ONLY ONE FILE FOUND. IF NOT CAPTURE IT!
+                {
+                    FileInfo fi = new FileInfo(fl);
+                    dropped_date = fi.CreationTime; //FILE DROPPED DATE
+
+                    if (is_zip) //MULTIPLE FILES WITHIN ZIP
                     {
-                        var arr = rf.file_location_wild.Split('\\');
-                        zip_file_name = arr[arr.Length - 1].Replace("MMMM", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)).Replace("MM", (month < 10 ? "0" + month : month.ToString())).Replace("YYYY", year.ToString()).Replace("YY", year.ToString().Substring(2, 2));
-                    }
-
-                    //LOOP THROUGH ONE ZIP FILE AND CONTINUE
-                    if (is_zip && last_file_location == rf.file_location_wild)
-                    {
-                        continue;
-                    }
-                    last_file_location = rf.file_location_wild; //TRACK LAST FILE FOR ABOVE
-
-                    Console.WriteLine("Processing " + month + " " + year + " - " + rf.file_location_wild + "/" + rf.file_name_wild);
-
-                    //REPLACE MM YY WITH PROPER DATE DISPLAY
-                    file_name = rf.file_name_wild.Replace("MMMM", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)).Replace("MM", (month < 10 ? "0" + month : month.ToString())).Replace("YYYY", year.ToString()).Replace("YY", year.ToString().Substring(2, 2));
-
-                    var files = Directory.GetFiles(search_path, (is_zip ? zip_file_name : file_name), SearchOption.TopDirectoryOnly);
-
-                    foreach (var fl in files) //HOPEFULLY ONLY ONE FILE FOUND. IF NOT CAPTURE IT!
-                    {
-                        FileInfo fi = new FileInfo(fl);
-                        dropped_date = fi.CreationTime; //FILE DROPPED DATE
-
-                        if (is_zip) //MULTIPLE FILES WITHIN ZIP
+                        using (ZipArchive archive = ZipFile.OpenRead(fl)) //UNZIP
                         {
-                            using (ZipArchive archive = ZipFile.OpenRead(fl)) //UNZIP
+                            foreach (ZipArchiveEntry entry in archive.Entries) //LOOP ALL FILES WITHIN
                             {
-                                foreach (ZipArchiveEntry entry in archive.Entries) //LOOP ALL FILES WITHIN
+                                found_file_name = entry.FullName; //CAPTURE FILE NAME WITHIN ZIP
+
+                                var r = new Report_Timeliness_Model();
+
+                                var cleanString = new string(found_file_name.Where(Char.IsLetter).ToArray()); //ONLY ALPHA CHARS
+                                foreach (var x in rtfm) //GET ID's PER EACH FILE IN ZIP
                                 {
-                                    found_file_name = entry.FullName; //CAPTURE FILE NAME WITHIN ZIP
-
-                                    var r = new Report_Timeliness_Model();
-
-                                    var cleanString = new string(found_file_name.Where(Char.IsLetter).ToArray()); //ONLY ALPHA CHARS
-                                    foreach (var x in rtfm) //GET ID's PER EACH FILE IN ZIP
+                                    var cs = new string(x.file_name_wild.Where(Char.IsLetter).ToArray()).Replace("MMMM", "").Replace("MM", "").Replace("YYYY", "").Replace("YY", "");  //ONLY ALPHA CHARS MINUS DATE HOLDERS
+                                    if (cleanString.ToLower().StartsWith(cs.ToLower()))
                                     {
-                                        var cs = new string(x.file_name_wild.Where(Char.IsLetter).ToArray()).Replace("MMMM", "").Replace("MM", "").Replace("YYYY", "").Replace("YY", "");  //ONLY ALPHA CHARS MINUS DATE HOLDERS
-                                        if (cleanString.ToLower().StartsWith(cs.ToLower()))
-                                        {
-                                            r.ertf_id = x.ertf_id; //LINK FILE LIST WITH CURRENT FILE FOUND
-                                            break;
-                                        }
+                                        r.ertf_id = x.ertf_id; //LINK FILE LIST WITH CURRENT FILE FOUND
+                                        break;
                                     }
-                                    if (r.ertf_id == null) //NO MACTH WILL APPEAR AS NULL FIELDS IN OUTPUT
-                                    {
-                                        //r.ertf_id = rf.ertf_id;
-                                        r.ertf_id = -1;
-                                    }
-
-                                    r.file_location = search_path;
-                                    r.file_name = found_file_name;
-                                    r.file_date = new DateTime(year, month, 1);
-                                    r.file_month = month;
-                                    r.file_year = year;
-                                    r.drop_date = dropped_date;
-                                    rtm.Add(r);
-
-                                    Console.WriteLine("Added " + found_file_name);
-
                                 }
+                                if (r.ertf_id == null) //NO MACTH WILL APPEAR AS NULL FIELDS IN OUTPUT
+                                {
+                                    //r.ertf_id = rf.ertf_id;
+                                    r.ertf_id = -1;
+                                }
+
+                                r.file_location = search_path;
+                                r.file_name = found_file_name;
+                                r.file_date = new DateTime(year, month, 1);
+                                r.file_month = month;
+                                r.file_year = year;
+                                r.drop_date = dropped_date;
+                                rtm.Add(r);
+
+                                Console.WriteLine("Added " + found_file_name);
+
                             }
                         }
-                        else //INDIVIDUAL FILE
-                        {
-                            var r = new Report_Timeliness_Model();
+                    }
+                    else //INDIVIDUAL FILE
+                    {
+                        var r = new Report_Timeliness_Model();
 
-                            r.ertf_id = rf.ertf_id;
-                            r.file_location = search_path + zip_file_name;
-                            r.file_name = file_name;
-                            r.file_date = new DateTime(year, month, 1);
-                            r.file_month = month;
-                            r.file_year = year;
-                            r.drop_date = dropped_date;
-                            rtm.Add(r);
+                        r.ertf_id = rf.ertf_id;
+                        r.file_location = search_path + zip_file_name;
+                        r.file_name = file_name;
+                        r.file_date = new DateTime(year, month, 1);
+                        r.file_month = month;
+                        r.file_year = year;
+                        r.drop_date = dropped_date;
+                        rtm.Add(r);
 
-                            Console.WriteLine("Added " + file_name);
-                        }
-
+                        Console.WriteLine("Added " + file_name);
                     }
 
                 }
-            }
 
+            }
+     
 
             //SAVE FINDINGS TO DB
             var columnsss = typeof(Report_Timeliness_Model).GetProperties().Select(p => p.Name).ToArray();
             await db_sql.BulkSave<Report_Timeliness_Model>(connectionString: ConnectionStringMSSQL, "stg.Evicore_Report_Timeliness", rtm, columnsss, truncate: false);
-
 
         }
 
