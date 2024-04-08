@@ -901,7 +901,7 @@ namespace ConsoleLibraryTesting
             string file_name; //INDIVIDUAL FILES
             string zip_file_name = ""; //FILE WITHIN ZIP
 
-            string last_file_location = null;
+            string last_file_location = null; //USED TO TRACK WHEN NEXT FILE IS DIFFERENT TAHN ZIP BEING PROCESSED
 
 
             List<Report_Timeliness_Model> rtm = new List<Report_Timeliness_Model>();
@@ -1022,58 +1022,59 @@ namespace ConsoleLibraryTesting
 
         public async Task generateTATReportsAsync()
         {
-
+            //LIST TO HOLD DATA AND SHEETS TO PASS TO EXCEL GENERATOR
             List<ExcelExport> export = new List<ExcelExport>();
 
+            //INSTANC OF EXCEL TAT GENERATOR CLASS
             var closed_xml = new TATExport();
 
-
+            //INSTANCE OF SQL SERVER GENERIC FUNCTIONS
             IRelationalDataAccess db_sql = new SqlDataAccess();
 
 
 
 
-            string strSQL = "select max(file_date) from stg.EviCore_YTDMetrics;";
+            string strSQL = "select max(file_date) from stg.EviCore_YTDMetrics;"; //GET LATEST DATE FROM DB
             var obj = await db_sql.ExecuteScalar(connectionString: ConnectionStringMSSQL, strSQL);
             var dt = DateTime.Parse(obj.ToString());
-            string current = dt.Month + "-" + dt.Year;
-            string current_spelled = dt.ToString("MMMM") + ", " + dt.Year;
-            strSQL = "select dateadd(mm, -1, max(file_date)) from stg.EviCore_YTDMetrics;";
+            string current = dt.Month + "-" + dt.Year; //STRING LABEL FOR REPORT
+            string current_spelled = dt.ToString("MMMM") + ", " + dt.Year;  //STRING LABEL FOR REPORT
+            strSQL = "select dateadd(mm, -1, max(file_date)) from stg.EviCore_YTDMetrics;"; //GET LATEST DATE MINUS 1 MONTH FROM DB
             obj = await db_sql.ExecuteScalar(connectionString: ConnectionStringMSSQL, strSQL);
             dt = DateTime.Parse(obj.ToString());
-            string previous = dt.Month + "-" + dt.Year;
+            string previous = dt.Month + "-" + dt.Year; //STRING LABEL FOR REPORT
 
 
 
 
-
-            string strSheetName = "Urgent TAT";
+            //SQL FOUNDATION PROVIDED BY INNA RUDI
+            string strSheetName = "Urgent TAT"; //GET SHEET NAME
             strSQL = "SELECT t.* FROM ( Select s.lob, s.Modality, case when denom is null then 1 else cast(num/denom as decimal(6,4)) end as pct, s.SLA, CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Current' as section from (select * from stg.SLA_Lookup where Metric_id=4 and Is_Archived=0) as s LEFT JOIN (Select report_type,LOB,rpt_modality, cast(sum(Less_State_TAT_Requirements) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where file_date in(select max(file_date) from stg.EviCore_TAT) and report_type = 'Urgent TAT' group by report_type,lob, rpt_Modality ) as e on s.modality=e.rpt_modality and s.lob=e.lob and s.metric=e.report_type UNION ALL Select s.lob, s.Modality, case when denom is null then 1 else cast(num/denom as decimal(6,4)) end as pct, s.SLA, CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Previous' as section from (select * from stg.SLA_Lookup where Metric_id=4 and Is_Archived=0) as s LEFT JOIN (Select report_type,LOB,rpt_modality, cast(sum(Less_State_TAT_Requirements) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_TAT) and report_type = 'Urgent TAT' group by report_type,lob, rpt_Modality ) as e on s.modality=e.rpt_modality and s.lob=e.lob and s.metric=e.report_type ) t order by t.section, t.lob, t.Modality ";
-            var utat = await db_sql.LoadData<TAT_Model>(connectionString: ConnectionStringMSSQL, strSQL);
-            export.Add(new ExcelExport() { ExportList = utat.ToList<object>(), SheetName = strSheetName });
+            var utat = await db_sql.LoadData<TAT_Model>(connectionString: ConnectionStringMSSQL, strSQL); //GET DATA
+            export.Add(new ExcelExport() { ExportList = utat.ToList<object>(), SheetName = strSheetName });//ADD SHEET AND DATA TO export List
 
 
 
-            strSheetName = "Routine TAT";
+            strSheetName = "Routine TAT";//GET SHEET NAME
             strSQL = "SELECT t.* FROM ( Select s.lob, s.Modality, case when denom is null then 1 else cast(num/denom as decimal(6,4)) end as pct, s.SLA, CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Current' as section from (select * from stg.SLA_Lookup where Metric_id=3 and Is_Archived=0) as s LEFT JOIN (Select report_type,LOB,rpt_modality, cast(sum(LessEqual_2_BUS_Days) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where file_date in(select max(file_date) from stg.EviCore_TAT) and report_type = 'Routine TAT' group by report_type,lob, rpt_Modality ) as e on s.modality=e.rpt_modality and s.lob=e.lob and s.metric=e.report_type UNION ALL Select s.lob, s.Modality, case when denom is null then 1 else cast(num/denom as decimal(6,4)) end as pct, s.SLA, CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Previous' as section from (select * from stg.SLA_Lookup where Metric_id=3 and Is_Archived=0) as s LEFT JOIN (Select report_type,LOB,rpt_modality, cast(sum(LessEqual_2_BUS_Days) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_TAT) and report_type = 'Routine TAT' group by report_type,lob, rpt_Modality ) as e on s.modality=e.rpt_modality and s.lob=e.lob and s.metric=e.report_type ) t order by t.section, t.lob, t.Modality ";
-            var rtat = await db_sql.LoadData<TAT_Model>(connectionString: ConnectionStringMSSQL, strSQL);
-            export.Add(new ExcelExport() { ExportList = rtat.ToList<object>(), SheetName = strSheetName });
+            var rtat = await db_sql.LoadData<TAT_Model>(connectionString: ConnectionStringMSSQL, strSQL);//GET DATA
+            export.Add(new ExcelExport() { ExportList = rtat.ToList<object>(), SheetName = strSheetName });//ADD SHEET AND DATA TO export List
 
 
-            strSheetName = "Abandoned Rate";
+            strSheetName = "Abandoned Rate";//GET SHEET NAME
             strSQL = "SELECT t.* FROM ( Select DISTINCT s.lob, s.Modality, Abandoned_Pct as Pct, s.SLA , CASE WHEN t.Abandoned_Pct > s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Current' as section FROM (select * from stg.SLA_Lookup WHERE Metric_id=2 and Is_Archived=0) as s left join (Select lob,rpt_Modality, Avg_Speed_Answer, round(Abandoned_Percent,4) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select max(file_date) from stg.EviCore_YTDMetrics) and LOB<>'E&I' UNION ALL Select lob,rpt_Modality, CAST(ROUND(sum(Total_Calls * Avg_Speed_Answer)/sum(Total_Calls),2) as decimal(5,0)) as Avg_Speed_Answer, CAST(ROUND(sum(Abandoned_Calls)/sum(Total_Calls),5) as decimal(5,4)) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select max(file_date) from stg.EviCore_YTDMetrics) and lob='E&I' and rpt_Modality<>'' group by lob,rpt_Modality) as t on s.lob=t.lob and s.Modality=t.rpt_modality UNION ALL Select DISTINCT s.lob, s.Modality, Abandoned_Pct as Pct, s.SLA , CASE WHEN t.Abandoned_Pct > s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Previous' as section FROM (select * from stg.SLA_Lookup WHERE Metric_id=2 and Is_Archived=0) as s left join (Select lob,rpt_Modality, Avg_Speed_Answer, round(Abandoned_Percent,4) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_YTDMetrics) and LOB<>'E&I' UNION ALL Select lob,rpt_Modality, CAST(ROUND(sum(Total_Calls * Avg_Speed_Answer)/sum(Total_Calls),2) as decimal(5,0)) as Avg_Speed_Answer, CAST(ROUND(sum(Abandoned_Calls)/sum(Total_Calls),5) as decimal(5,4)) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_YTDMetrics) and lob='E&I' and rpt_Modality<>'' group by lob,rpt_Modality) as t on s.lob=t.lob and s.Modality=t.rpt_modality ) t order by t.section, t.lob, t.Modality ";
-            var ar = await db_sql.LoadData<TAT_Model>(connectionString: ConnectionStringMSSQL, strSQL);
-            export.Add(new ExcelExport() { ExportList = ar.ToList<object>(), SheetName = strSheetName });
+            var ar = await db_sql.LoadData<TAT_Model>(connectionString: ConnectionStringMSSQL, strSQL);//GET DATA
+            export.Add(new ExcelExport() { ExportList = ar.ToList<object>(), SheetName = strSheetName });//ADD SHEET AND DATA TO export List
 
 
 
-            strSheetName = "ASA";
+            strSheetName = "ASA";//GET SHEET NAME
             strSQL = "SELECT t.* FROM ( Select s.LOB, s.Modality, Avg_Speed_Answer as Pct, s.SLA , CASE WHEN t.Avg_Speed_Answer > s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Current' as section FROM (select * from stg.SLA_Lookup WHERE Metric_id=1 and Is_Archived=0) as s left join (Select lob,rpt_Modality, Avg_Speed_Answer, round(Abandoned_Percent,3) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select max(file_date) from stg.EviCore_YTDMetrics) and LOB<>'E&I' UNION ALL Select lob,rpt_Modality, CAST(ROUND(sum(Total_Calls * Avg_Speed_Answer)/sum(Total_Calls),2) as decimal(5,0)) as Avg_Speed_Answer, CAST(ROUND(sum(Abandoned_Calls)/sum(Total_Calls),3) as decimal(5,4)) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select max(file_date) from stg.EviCore_YTDMetrics) and lob='E&I' and rpt_Modality<>'' group by lob,rpt_Modality) as t on s.lob=t.lob and s.modality=t.rpt_modality UNION ALL Select s.LOB, s.Modality, Avg_Speed_Answer as Pct, s.SLA , CASE WHEN t.Avg_Speed_Answer > s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Previous' as section FROM (select * from stg.SLA_Lookup WHERE Metric_id=1 and Is_Archived=0) as s left join (Select lob,rpt_Modality, Avg_Speed_Answer, round(Abandoned_Percent,3) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_YTDMetrics) and LOB<>'E&I' UNION ALL Select lob,rpt_Modality, CAST(ROUND(sum(Total_Calls * Avg_Speed_Answer)/sum(Total_Calls),2) as decimal(5,0)) as Avg_Speed_Answer, CAST(ROUND(sum(Abandoned_Calls)/sum(Total_Calls),3) as decimal(5,4)) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_YTDMetrics) and lob='E&I' and rpt_Modality<>'' group by lob,rpt_Modality) as t on s.lob=t.lob and s.modality=t.rpt_modality ) t order by t.section, t.lob, t.Modality ";
-            var asa = await db_sql.LoadData<TAT_Model>(connectionString: ConnectionStringMSSQL, strSQL);
-            export.Add(new ExcelExport() { ExportList = asa.ToList<object>(), SheetName = strSheetName });
+            var asa = await db_sql.LoadData<TAT_Model>(connectionString: ConnectionStringMSSQL, strSQL);//GET DATA
+            export.Add(new ExcelExport() { ExportList = asa.ToList<object>(), SheetName = strSheetName });//ADD SHEET AND DATA TO export List
 
 
-            strSheetName = "SLA summary, penalties";
+            strSheetName = "SLA summary, penalties"; //GET SHEET NAME
             StringBuilder sbSQL = new StringBuilder();
 
             sbSQL.Append("DECLARE @CURRENT_DATE INT;");
@@ -1104,8 +1105,8 @@ namespace ConsoleLibraryTesting
 
             sbSQL.Append("order by modality desc, lob,metric_id  ");
 
-            var tsum = await db_sql.LoadData<TAT_Summary_Model>(connectionString: ConnectionStringMSSQL, sbSQL.ToString());
-            export.Add(new ExcelExport() { ExportList = tsum.ToList<object>(), SheetName = strSheetName });
+            var tsum = await db_sql.LoadData<TAT_Summary_Model>(connectionString: ConnectionStringMSSQL, sbSQL.ToString());//GET DATA
+            export.Add(new ExcelExport() { ExportList = tsum.ToList<object>(), SheetName = strSheetName });//ADD SHEET AND DATA TO export List
 
 
 
