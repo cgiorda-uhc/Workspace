@@ -113,47 +113,56 @@ adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Repor
 IRelationalDataAccess db_sqsl = new SqlDataAccess();
 
 
-var file = await adHoc.generateTATReportsAsync();
+//GET FILE 'Create_Date' FROM EVICORE
+await adHoc.getReportsTimelinessAsync();
 
-string sheet_main = "All SLAs, no current metrics";
-string sheet_common = "SLA summary, penalties";
-
-
-List<string> sheets = new List<string>();
-sheets.Add("COM");
-sheets.Add("MR");
-sheets.Add("CS");
-sheets.Add("OXF");
-
-
-foreach (var s in sheets)
-{
-    var wb = new XLWorkbook(file);
-
-    using (var spreadSheetDocument = SpreadsheetDocument.Open(file, false))
-    {
-        int sheetIndex = 0;
-        foreach (var worksheetpart in spreadSheetDocument.WorkbookPart.WorksheetParts)
-        {
-            string sheetName = spreadSheetDocument.WorkbookPart.Workbook.Descendants<Sheet>().ElementAt(sheetIndex).Name;
-
-
-            if (sheetName != s + " " + sheet_common && sheetName != sheet_main)
-            {
-                wb.Worksheet(sheetName).Delete();
-            }
-
-            sheetIndex++;
-        }
-    }
-
-    var final = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + s + "_" + System.IO.Path.GetFileName(file);
-    wb.SaveAs(final);
-    
-}
-
+//GENERATE FINAL TAT REPORTS
+await adHoc.generateTATReportsAsync();
 
 return;
+
+
+//var file = await adHoc.generateTATReportsAsync();
+
+//string sheet_main = "All SLAs, no current metrics";
+//string sheet_common = "SLA summary, penalties";
+
+
+//List<string> sheets = new List<string>();
+//sheets.Add("COM");
+//sheets.Add("MR");
+//sheets.Add("CS");
+//sheets.Add("OXF");
+
+
+//foreach (var s in sheets)
+//{
+//    var wb = new XLWorkbook(file);
+
+//    using (var spreadSheetDocument = SpreadsheetDocument.Open(file, false))
+//    {
+//        int sheetIndex = 0;
+//        foreach (var worksheetpart in spreadSheetDocument.WorkbookPart.WorksheetParts)
+//        {
+//            string sheetName = spreadSheetDocument.WorkbookPart.Workbook.Descendants<Sheet>().ElementAt(sheetIndex).Name;
+
+
+//            if (sheetName != s + " " + sheet_common && sheetName != sheet_main)
+//            {
+//                wb.Worksheet(sheetName).Delete();
+//            }
+
+//            sheetIndex++;
+//        }
+//    }
+
+//    var final = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + s + "_" + System.IO.Path.GetFileName(file);
+//    wb.SaveAs(final);
+    
+//}
+
+
+//return;
 
 //await adHoc.generateTATReportsAsync();
 

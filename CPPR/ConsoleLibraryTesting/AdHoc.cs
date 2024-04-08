@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using ClosedXML.Excel;
 using Dapper;
 using DataAccessLibrary.DataAccess;
 using DataAccessLibrary.Models;
 using DataAccessLibrary.Scripts;
 using DataAccessLibrary.Shared;
+using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using FileParsingLibrary.Models;
 using FileParsingLibrary.MSExcel;
@@ -21,6 +23,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO.Compression;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -31,6 +34,7 @@ using VCPortal_Models.Models.EBM;
 using VCPortal_Models.Models.ETGFactSymmetry.Configs;
 using VCPortal_Models.Models.ETGFactSymmetry.Dataloads;
 using VCPortal_Models.Models.PEG;
+using VCPortal_Models.Models.Report_Timeliness;
 using VCPortal_Models.Models.Shared;
 using VCPortal_Models.Models.TAT;
 using VCPortal_Models.Parameters.EDCAdhoc;
@@ -892,8 +896,149 @@ namespace ConsoleLibraryTesting
         }
 
 
+        public async Task getReportsTimelinessAsync()
+        {
+            string file_name; //INDIVIDUAL FILES
+            string zip_file_name = ""; //FILE WITHIN ZIP
 
-        public async Task<string> generateTATReportsAsync()
+            string last_file_location = null;
+
+
+            List<Report_Timeliness_Model> rtm = new List<Report_Timeliness_Model>();
+            IRelationalDataAccess db_sql = new SqlDataAccess();
+
+            //GET FILE MASTER LIST FOR SEARCHING
+            var rtfm = await db_sql.LoadData<Report_Timeliness_Files_Model>(connectionString: ConnectionStringMSSQL, "SELECT [ertf_id],[file_location_wild],[file_name_wild] FROM [IL_UCA].[stg].[Evicore_Report_Timeliness_Files] ");
+            //GET LATEST MONTH
+            //var month = Int16.Parse(await db_sqsl.ExecuteScalar(connectionString: adHoc.ConnectionStringMSSQL, "SELECT MAX(CASE WHEN [file_month] = 12 THEN  1 ELSE [file_month] + 1  END) FROM [stg].[Evicore_Report_Timeliness] WHERE [file_date] = (SELECT MAX([file_date])  FROM [stg].[Evicore_Report_Timeliness] );") + "");
+            //GET LATEST YEAR
+            //var year = Int16.Parse(await db_sqsl.ExecuteScalar(connectionString: adHoc.ConnectionStringMSSQL, "SELECT MAX(CASE WHEN [file_month] = 12 THEN  [file_year] + 1 ELSE [file_year]  END) FROM [stg].[Evicore_Report_Timeliness] WHERE [file_date] = (SELECT MAX([file_date])  FROM [stg].[Evicore_Report_Timeliness] );") + "");
+            var search_path = @"\\NASGWFTP03\Care_Core_FTP_Files\Radiology";
+            //Int16 month = 1;
+            Int16 year = 2024;
+
+
+            DateTime dropped_date;
+            string found_file_name = null;
+
+            List<Int16> month_list = new List<Int16>();
+            month_list.Add(1);
+            month_list.Add(2);
+            //month_list.Add(3);
+            //month_list.Add(4);
+            //month_list.Add(5);
+            //month_list.Add(6);
+            //month_list.Add(7);
+            //month_list.Add(8);
+            //month_list.Add(9);
+            //month_list.Add(10);
+            //month_list.Add(11);
+            //month_list.Add(12);
+
+            foreach (var month in month_list)
+            {
+                foreach (var rf in rtfm)
+                {
+                    bool is_zip = (rf.file_location_wild.Contains(".zip") ? true : false);
+
+                    if (is_zip)
+                    {
+                        var arr = rf.file_location_wild.Split('\\');
+                        zip_file_name = arr[arr.Length - 1].Replace("MMMM", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)).Replace("MM", (month < 10 ? "0" + month : month.ToString())).Replace("YYYY", year.ToString()).Replace("YY", year.ToString().Substring(2, 2));
+                    }
+
+                    //LOOP THROUGH ONE ZIP FILE AND CONTINUE
+                    if (is_zip && last_file_location == rf.file_location_wild)
+                    {
+                        continue;
+                    }
+                    last_file_location = rf.file_location_wild; //TRACK LAST FILE FOR ABOVE
+
+                    Console.WriteLine("Processing " + month + " " + year + " - " + rf.file_location_wild + "/" + rf.file_name_wild);
+
+                    //REPLACE MM YY WITH PROPER DATE DISPLAY
+                    file_name = rf.file_name_wild.Replace("MMMM", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)).Replace("MM", (month < 10 ? "0" + month : month.ToString())).Replace("YYYY", year.ToString()).Replace("YY", year.ToString().Substring(2, 2));
+
+                    var files = Directory.GetFiles(search_path, (is_zip ? zip_file_name : file_name), SearchOption.TopDirectoryOnly);
+
+                    foreach (var fl in files) //HOPEFULLY ONLY ONE FILE FOUND. IF NOT CAPTURE IT!
+                    {
+                        FileInfo fi = new FileInfo(fl);
+                        dropped_date = fi.CreationTime; //FILE DROPPED DATE
+
+                        if (is_zip) //MULTIPLE FILES WITHIN ZIP
+                        {
+                            using (ZipArchive archive = ZipFile.OpenRead(fl)) //UNZIP
+                            {
+                                foreach (ZipArchiveEntry entry in archive.Entries) //LOOP ALL FILES WITHIN
+                                {
+                                    found_file_name = entry.FullName; //CAPTURE FILE NAME WITHIN ZIP
+
+                                    var r = new Report_Timeliness_Model();
+
+                                    var cleanString = new string(found_file_name.Where(Char.IsLetter).ToArray()); //ONLY ALPHA CHARS
+                                    foreach (var x in rtfm) //GET ID's PER EACH FILE IN ZIP
+                                    {
+                                        var cs = new string(x.file_name_wild.Where(Char.IsLetter).ToArray()).Replace("MMMM", "").Replace("MM", "").Replace("YYYY", "").Replace("YY", "");  //ONLY ALPHA CHARS MINUS DATE HOLDERS
+                                        if (cleanString.ToLower().StartsWith(cs.ToLower()))
+                                        {
+                                            r.ertf_id = x.ertf_id; //LINK FILE LIST WITH CURRENT FILE FOUND
+                                            break;
+                                        }
+                                    }
+                                    if (r.ertf_id == null) //NO MACTH WILL APPEAR AS NULL FIELDS IN OUTPUT
+                                    {
+                                        //r.ertf_id = rf.ertf_id;
+                                        r.ertf_id = -1;
+                                    }
+
+                                    r.file_location = search_path;
+                                    r.file_name = found_file_name;
+                                    r.file_date = new DateTime(year, month, 1);
+                                    r.file_month = month;
+                                    r.file_year = year;
+                                    r.drop_date = dropped_date;
+                                    rtm.Add(r);
+
+                                    Console.WriteLine("Added " + found_file_name);
+
+                                }
+                            }
+                        }
+                        else //INDIVIDUAL FILE
+                        {
+                            var r = new Report_Timeliness_Model();
+
+                            r.ertf_id = rf.ertf_id;
+                            r.file_location = search_path + zip_file_name;
+                            r.file_name = file_name;
+                            r.file_date = new DateTime(year, month, 1);
+                            r.file_month = month;
+                            r.file_year = year;
+                            r.drop_date = dropped_date;
+                            rtm.Add(r);
+
+                            Console.WriteLine("Added " + file_name);
+                        }
+
+                    }
+
+                }
+            }
+
+
+            //SAVE FINDINGS TO DB
+            var columnsss = typeof(Report_Timeliness_Model).GetProperties().Select(p => p.Name).ToArray();
+            await db_sql.BulkSave<Report_Timeliness_Model>(connectionString: ConnectionStringMSSQL, "stg.Evicore_Report_Timeliness", rtm, columnsss, truncate: false);
+
+
+        }
+
+
+
+
+
+        public async Task generateTATReportsAsync()
         {
 
             List<ExcelExport> export = new List<ExcelExport>();
@@ -1065,6 +1210,46 @@ namespace ConsoleLibraryTesting
 
 
 
+            string sheet_main = "All SLAs, no current metrics";
+            string sheet_common = "SLA summary, penalties";
+
+
+            List<string> sheets = new List<string>();
+            sheets.Add("COM");
+            sheets.Add("MR");
+            sheets.Add("CS");
+            sheets.Add("OXF");
+
+
+            foreach (var s in sheets)
+            {
+                var wb = new XLWorkbook(file);
+
+                using (var spreadSheetDocument = SpreadsheetDocument.Open(file, false))
+                {
+                    int sheetIndex = 0;
+                    foreach (var worksheetpart in spreadSheetDocument.WorkbookPart.WorksheetParts)
+                    {
+                        string sheetName = spreadSheetDocument.WorkbookPart.Workbook.Descendants<Sheet>().ElementAt(sheetIndex).Name;
+
+
+                        if (sheetName != s + " " + sheet_common && sheetName != sheet_main)
+                        {
+                            wb.Worksheet(sheetName).Delete();
+                        }
+
+                        sheetIndex++;
+                    }
+                }
+
+                var final = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + s + "_" + System.IO.Path.GetFileName(file);
+                wb.SaveAs(final);
+
+            }
+
+
+
+
             //var p = new Process();
             //p.StartInfo = new ProcessStartInfo(file)
             //{
@@ -1073,7 +1258,7 @@ namespace ConsoleLibraryTesting
             //p.Start();
 
 
-            return file;
+            //return file;
         }
 
 
