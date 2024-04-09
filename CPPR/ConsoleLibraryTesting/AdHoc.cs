@@ -1194,11 +1194,15 @@ namespace ConsoleLibraryTesting
 
 
 
-            string sheet_main = "All SLAs, no current metrics";
-            string sheet_common = "SLA summary, penalties";
 
 
-            List<string> sheets = new List<string>();
+            //THIS SECTION TAKES THE FILE ABOVE AND BREAKS THEM INTO 4 ADDITONAL FILES
+
+            string sheet_main = "All SLAs, no current metrics"; //THIS SHEET WILL BE IN ALL
+            string sheet_common = "SLA summary, penalties"; //THIS WILL BE APPENDED TO THE 4 BELOW
+
+
+            List<string> sheets = new List<string>(); //LOOP THROUGH THESE 4
             sheets.Add("COM");
             sheets.Add("MR");
             sheets.Add("CS");
@@ -1207,17 +1211,17 @@ namespace ConsoleLibraryTesting
 
             foreach (var s in sheets)
             {
-                var wb = new XLWorkbook(file);
+                var wb = new XLWorkbook(file); //CRTEAT INTSANCE  FOR NEW FILE
 
-                using (var spreadSheetDocument = SpreadsheetDocument.Open(file, false))
+                using (var spreadSheetDocument = SpreadsheetDocument.Open(file, false)) //OPEN FILE ABOVE
                 {
                     int sheetIndex = 0;
-                    foreach (var worksheetpart in spreadSheetDocument.WorkbookPart.WorksheetParts)
+                    foreach (var worksheetpart in spreadSheetDocument.WorkbookPart.WorksheetParts) //LOOP EACH SHEET
                     {
                         string sheetName = spreadSheetDocument.WorkbookPart.Workbook.Descendants<Sheet>().ElementAt(sheetIndex).Name;
 
 
-                        if (sheetName != s + " " + sheet_common && sheetName != sheet_main)
+                        if (sheetName != s + " " + sheet_common && sheetName != sheet_main) //IF ITS NOT THE SHEETS THEN DELETE
                         {
                             wb.Worksheet(sheetName).Delete();
                         }
@@ -1227,7 +1231,7 @@ namespace ConsoleLibraryTesting
                 }
 
                 var final = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + s + "_" + System.IO.Path.GetFileName(file);
-                wb.SaveAs(final);
+                wb.SaveAs(final);//SAVE NEW FILE AND CONTINUE LOOP
 
             }
 
