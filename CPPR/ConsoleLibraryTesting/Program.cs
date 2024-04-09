@@ -187,7 +187,7 @@ var rtfm = await db_sqsl.LoadData<Report_Timeliness_Files_Model>(connectionStrin
 //var month = Int16.Parse(await db_sqsl.ExecuteScalar(connectionString: adHoc.ConnectionStringMSSQL, "SELECT MAX(CASE WHEN [file_month] = 12 THEN  1 ELSE [file_month] + 1  END) FROM [stg].[Evicore_Report_Timeliness] WHERE [file_date] = (SELECT MAX([file_date])  FROM [stg].[Evicore_Report_Timeliness] );") + "");
 //GET LATEST YEAR
 //var year = Int16.Parse(await db_sqsl.ExecuteScalar(connectionString: adHoc.ConnectionStringMSSQL, "SELECT MAX(CASE WHEN [file_month] = 12 THEN  [file_year] + 1 ELSE [file_year]  END) FROM [stg].[Evicore_Report_Timeliness] WHERE [file_date] = (SELECT MAX([file_date])  FROM [stg].[Evicore_Report_Timeliness] );") + "");
-var search_path = @"\\NASGWFTP03\Care_Core_FTP_Files\Radiology";
+search_path = @"\\NASGWFTP03\Care_Core_FTP_Files\Radiology";
 //Int16 month = 1;
 Int16 year = 2024;
 
