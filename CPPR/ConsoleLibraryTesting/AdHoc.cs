@@ -1291,11 +1291,6 @@ namespace ConsoleLibraryTesting
             }
 
 
-            //EMAIL logic
-            ox = false;
-            mr = false;
-            cs = false;
-            com = false;
 
             string emailFilePath = @"\\nasv0048\ucs_ca\PHS_DATA_NEW\Home Directory - Automation\EmailTemplates\";
 
@@ -1306,14 +1301,24 @@ namespace ConsoleLibraryTesting
             string cc;
             string attachment;
 
+
+            attachment = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + System.IO.Path.GetFileName(file);
+            //To: MaryAnnDimartino
+            subject = "TESTING SLA metrics for – " + current;
+            body = "<p>" + (ox ? "Oxford Flagged" : "Oxford Skipped") + "</p><p>" + (mr ? "M&R Flagged" : "M&R  Skipped") + "</p><p>" + (cs ? "C&S Flagged" : "C&S Skipped") + "</p><p>" + (com ? "Comm Flagged" : "Comm Skipped") + "</p>";
+            recipients = "chris_giordano@uhc.com";
+            from = "chris_giordano@uhc.com";
+            cc = "chris_giordano@uhc.com";
+
+            await SharedFunctions.EmailAsync(recipients, from, subject, body, cc, attachment, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
+
             if (ox || mr || cs || com)
             {
-                
-                attachment =  Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + System.IO.Path.GetFileName(file);
+  
 
                 //To: Rosamond Eschert; CC Laura Fischer
                 subject = "SLA metrics for – " + current;
-                body = File.ReadAllText(emailFilePath + "SLA_TAT.txt");
+                body = File.ReadAllText(emailFilePath + "SLA_TAT.txt").Replace("[Date]", current);
                 recipients = "chris_giordano@uhc.com";
                 from = "chris_giordano@uhc.com";
                 cc = "chris_giordano@uhc.com";
@@ -1324,7 +1329,7 @@ namespace ConsoleLibraryTesting
 
                 //To: Judith Bourdeau
                 subject = "CareCore SLA metrics for – " + current;
-                body = File.ReadAllText(emailFilePath + "CareCore_TAT.txt");
+                body = File.ReadAllText(emailFilePath + "CareCore_TAT.txt").Replace("[Date]", current);
                 recipients = "chris_giordano@uhc.com";
                 from = "chris_giordano@uhc.com";
                 cc = "chris_giordano@uhc.com";
@@ -1342,7 +1347,7 @@ namespace ConsoleLibraryTesting
 
                 //E&I: To: Kathryn Tschida (E&I finance); CC: Laura Fischer
                 subject = "COM - CCN SLA Penalties – " + current;
-                body = File.ReadAllText(emailFilePath + "COMM_TAT.txt");
+                body = File.ReadAllText(emailFilePath + "COMM_TAT.txt").Replace("[Date]", current);
                 recipients = "chris_giordano@uhc.com";
                 from = "chris_giordano@uhc.com";
                 cc = "chris_giordano@uhc.com";
@@ -1358,7 +1363,7 @@ namespace ConsoleLibraryTesting
 
                 //Oxford: To: Sharon Wallhofer; CC: Chris Jacozzi, Allyson Clark, and Laura Fischer 
                 subject = "Oxford - CCN SLA Penalties – " + current;
-                body = File.ReadAllText(emailFilePath + "OXF_TAT.txt");
+                body = File.ReadAllText(emailFilePath + "OXF_TAT.txt").Replace("[Date]", current);
                 recipients = "chris_giordano@uhc.com";
                 from = "chris_giordano@uhc.com";
                 cc = "chris_giordano@uhc.com";
@@ -1375,7 +1380,7 @@ namespace ConsoleLibraryTesting
 
                 //Oxford: To: Sharon Wallhofer; CC: Chris Jacozzi, Allyson Clark, and Laura Fischer 
                 subject = "C&S - CCN SLA Penalties – " + current;
-                body = File.ReadAllText(emailFilePath + "CS_TAT.txt");
+                body = File.ReadAllText(emailFilePath + "CS_TAT.txt").Replace("[Date]", current);
                 recipients = "chris_giordano@uhc.com";
                 from = "chris_giordano@uhc.com";
                 cc = "chris_giordano@uhc.com";
@@ -1391,7 +1396,7 @@ namespace ConsoleLibraryTesting
 
                 //Oxford: To: Sharon Wallhofer; CC: Chris Jacozzi, Allyson Clark, and Laura Fischer 
                 subject = "M&R - CCN SLA Penalties – " + current;
-                body = File.ReadAllText(emailFilePath + "MR_TAT.txt");
+                body = File.ReadAllText(emailFilePath + "MR_TAT.txt").Replace("[Date]", current);
                 recipients = "chris_giordano@uhc.com";
                 from = "chris_giordano@uhc.com";
                 cc = "chris_giordano@uhc.com";
