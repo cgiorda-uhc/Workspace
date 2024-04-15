@@ -1312,7 +1312,7 @@ namespace ConsoleLibraryTesting
                 attachment =  Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + System.IO.Path.GetFileName(file);
 
                 //To: Rosamond Eschert; CC Laura Fischer
-                subject = "SLA metrics for - [Date]"; 
+                subject = "SLA metrics for – " + current;
                 body = File.ReadAllText(emailFilePath + "SLA_TAT.txt");
                 recipients = "chris_giordano@uhc.com";
                 from = "chris_giordano@uhc.com";
@@ -1323,7 +1323,7 @@ namespace ConsoleLibraryTesting
 
 
                 //To: Judith Bourdeau
-                subject = "CareCore SLA metrics for - [Date]";
+                subject = "CareCore SLA metrics for – " + current;
                 body = File.ReadAllText(emailFilePath + "CareCore_TAT.txt");
                 recipients = "chris_giordano@uhc.com";
                 from = "chris_giordano@uhc.com";
@@ -1341,7 +1341,7 @@ namespace ConsoleLibraryTesting
                 attachment = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "COM_" + System.IO.Path.GetFileName(file);
 
                 //E&I: To: Kathryn Tschida (E&I finance); CC: Laura Fischer
-                subject = "COM - CCN SLA Penalties – [Date]";
+                subject = "COM - CCN SLA Penalties – " + current;
                 body = File.ReadAllText(emailFilePath + "COMM_TAT.txt");
                 recipients = "chris_giordano@uhc.com";
                 from = "chris_giordano@uhc.com";
@@ -1357,7 +1357,7 @@ namespace ConsoleLibraryTesting
                 attachment = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "OXF_" + System.IO.Path.GetFileName(file);
 
                 //Oxford: To: Sharon Wallhofer; CC: Chris Jacozzi, Allyson Clark, and Laura Fischer 
-                subject = "Oxford - CCN SLA Penalties – [Date]";
+                subject = "Oxford - CCN SLA Penalties – " + current;
                 body = File.ReadAllText(emailFilePath + "OXF_TAT.txt");
                 recipients = "chris_giordano@uhc.com";
                 from = "chris_giordano@uhc.com";
@@ -1374,7 +1374,7 @@ namespace ConsoleLibraryTesting
                 attachment = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "CS_" + System.IO.Path.GetFileName(file);
 
                 //Oxford: To: Sharon Wallhofer; CC: Chris Jacozzi, Allyson Clark, and Laura Fischer 
-                subject = "C&S - CCN SLA Penalties – [Date]";
+                subject = "C&S - CCN SLA Penalties – " + current;
                 body = File.ReadAllText(emailFilePath + "CS_TAT.txt");
                 recipients = "chris_giordano@uhc.com";
                 from = "chris_giordano@uhc.com";
@@ -1390,7 +1390,7 @@ namespace ConsoleLibraryTesting
                 attachment = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "MR_" + System.IO.Path.GetFileName(file);
 
                 //Oxford: To: Sharon Wallhofer; CC: Chris Jacozzi, Allyson Clark, and Laura Fischer 
-                subject = "M&R - CCN SLA Penalties – [Date]";
+                subject = "M&R - CCN SLA Penalties – " + current;
                 body = File.ReadAllText(emailFilePath + "MR_TAT.txt");
                 recipients = "chris_giordano@uhc.com";
                 from = "chris_giordano@uhc.com";
