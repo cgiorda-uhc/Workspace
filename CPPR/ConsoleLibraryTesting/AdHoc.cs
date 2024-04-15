@@ -80,7 +80,7 @@ namespace ConsoleLibraryTesting
         public int Limit { get; set; }
 
 
-        public async Task  runSLAAutomation()
+        public async Task runSLAAutomation()
         {
             var date = "03/01/2022";
             var last_thursday = AdHoc.GetLastChosenDayOfTheMonth(DateTime.ParseExact(date, "MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture), DayOfWeek.Thursday);
@@ -157,7 +157,7 @@ namespace ConsoleLibraryTesting
         }
 
 
-        public static  DateTime GetLastChosenDayOfTheMonth(DateTime date, DayOfWeek dayOfWeek)
+        public static DateTime GetLastChosenDayOfTheMonth(DateTime date, DayOfWeek dayOfWeek)
         {
             var lastDayOfMonth = new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month));
 
@@ -302,7 +302,7 @@ namespace ConsoleLibraryTesting
         public async Task transferMHPDataAsync(List<string> files_loaded)
         {
 
-            
+
 
             //TWO DBS
             IRelationalDataAccess db_td = new TeraDataAccess();
@@ -517,7 +517,7 @@ namespace ConsoleLibraryTesting
         }
 
 
-        public async Task getETGSymmSourceDataOriginalAsync(Int16 year  = 2022)
+        public async Task getETGSymmSourceDataOriginalAsync(Int16 year = 2022)
         {
             //ETG DATA LOAD
             //ETG DATA LOAD
@@ -527,7 +527,7 @@ namespace ConsoleLibraryTesting
             IRelationalDataAccess db_td = new TeraDataAccess();
 
             //STEP 1 etg.NRX_Cost_UGAP_SOURCE
-            string strSQL = "select ETG_D.ETG_BAS_CLSS_NBR, ETG_D.TRT_CD, Count(Distinct ETG_D.INDV_SYS_ID) as MEMBER_COUNT, Count(Distinct ETG_D.EPSD_NBR) as EPSD_COUNT, Sum(ETG_D.TOT_ALLW_AMT) as ETGD_TOT_ALLW_AMT, Sum(ETG_D.RX_ALLW_AMT) as ETGD_RX_ALLW_AMT, case when Sum(ETG_D.TOT_ALLW_AMT) = 0 then 0 else NVL(Sum(ETG_D.RX_ALLW_AMT), 0) / Sum(ETG_D.TOT_ALLW_AMT) end as RX_RATE from ( select ED1.INDV_SYS_ID, ED1.EPSD_NBR, EN1.ETG_BAS_CLSS_NBR, EN1.ETG_TX_IND as TRT_CD, Sum(ED1.QLTY_INCNT_RDUC_AMT) as TOT_ALLW_AMT, Query1.RX_ALLW_AMT from CLODM001.ETG_DETAIL ED1 inner join CLODM001.ETG_NUMBER EN1 on ED1.ETG_SYS_ID = EN1.ETG_SYS_ID inner join CLODM001.DATE_FST_SRVC DFS1 on ED1.FST_SRVC_DT_SYS_ID = DFS1.FST_SRVC_DT_SYS_ID inner join ( select C.INDV_SYS_ID from ( select B.INDV_SYS_ID, Min(B.PHRM_BEN_FLG) as MIN_PHARMACY_FLG, Sum(B.NUM_DAY) as NUM_DAY from ( select a.INDV_SYS_ID, ( case when a.END_DT > '"+ year + "-12-31' then Cast('"+ year + "-12-31' as Date) else a.END_DT end - case when a.EFF_DT < '"+ year + "-01-01' then Cast('"+ year + "-01-01' as Date) else a.EFF_DT end) + 1 as NUM_DAY, a.PHRM_BEN_FLG from CLODM001.MEMBER_DETAIL_INPUT a where a.EFF_DT <= '"+ year + "-12-31' and a.END_DT >= '"+ year + "-01-01') as B group by B.INDV_SYS_ID ) C where C.MIN_PHARMACY_FLG = 'Y' and C.NUM_DAY >= 210 ) as MT on ED1.INDV_SYS_ID = MT.INDV_SYS_ID left join ( select ED2.INDV_SYS_ID, ED2.EPSD_NBR, Sum(ED2.QLTY_INCNT_RDUC_AMT) as RX_ALLW_AMT from CLODM001.ETG_DETAIL ED2 inner join CLODM001.DATE_FST_SRVC DFS2 on ED2.FST_SRVC_DT_SYS_ID = DFS2.FST_SRVC_DT_SYS_ID inner join CLODM001.HP_SERVICE_TYPE_CODE HSTC2 on ED2.HLTH_PLN_SRVC_TYP_CD_SYS_ID = HSTC2.HLTH_PLN_SRVC_TYP_CD_SYS_ID where DFS2.FST_SRVC_DT Between '"+ year + "-01-01'and '"+ year + "-12-31'  and ED2.QLTY_INCNT_RDUC_AMT > 0 and HSTC2.HLTH_PLN_SRVC_TYP_LVL_1_NM = 'PHARMACY' group by ED2.INDV_SYS_ID, ED2.EPSD_NBR ) Query1 on ED1.INDV_SYS_ID = Query1.INDV_SYS_ID and ED1.EPSD_NBR = Query1.EPSD_NBR where ED1.EPSD_NBR not in (0, -1) and DFS1.FST_SRVC_DT Between '"+ year + "-01-01' and '"+ year + "-12-31' and ED1.QLTY_INCNT_RDUC_AMT > 0 group by ED1.INDV_SYS_ID, ED1.EPSD_NBR, EN1.ETG_BAS_CLSS_NBR, EN1.ETG_TX_IND, Query1.RX_ALLW_AMT ) as ETG_D group by ETG_D.ETG_BAS_CLSS_NBR, ETG_D.TRT_CD";
+            string strSQL = "select ETG_D.ETG_BAS_CLSS_NBR, ETG_D.TRT_CD, Count(Distinct ETG_D.INDV_SYS_ID) as MEMBER_COUNT, Count(Distinct ETG_D.EPSD_NBR) as EPSD_COUNT, Sum(ETG_D.TOT_ALLW_AMT) as ETGD_TOT_ALLW_AMT, Sum(ETG_D.RX_ALLW_AMT) as ETGD_RX_ALLW_AMT, case when Sum(ETG_D.TOT_ALLW_AMT) = 0 then 0 else NVL(Sum(ETG_D.RX_ALLW_AMT), 0) / Sum(ETG_D.TOT_ALLW_AMT) end as RX_RATE from ( select ED1.INDV_SYS_ID, ED1.EPSD_NBR, EN1.ETG_BAS_CLSS_NBR, EN1.ETG_TX_IND as TRT_CD, Sum(ED1.QLTY_INCNT_RDUC_AMT) as TOT_ALLW_AMT, Query1.RX_ALLW_AMT from CLODM001.ETG_DETAIL ED1 inner join CLODM001.ETG_NUMBER EN1 on ED1.ETG_SYS_ID = EN1.ETG_SYS_ID inner join CLODM001.DATE_FST_SRVC DFS1 on ED1.FST_SRVC_DT_SYS_ID = DFS1.FST_SRVC_DT_SYS_ID inner join ( select C.INDV_SYS_ID from ( select B.INDV_SYS_ID, Min(B.PHRM_BEN_FLG) as MIN_PHARMACY_FLG, Sum(B.NUM_DAY) as NUM_DAY from ( select a.INDV_SYS_ID, ( case when a.END_DT > '" + year + "-12-31' then Cast('" + year + "-12-31' as Date) else a.END_DT end - case when a.EFF_DT < '" + year + "-01-01' then Cast('" + year + "-01-01' as Date) else a.EFF_DT end) + 1 as NUM_DAY, a.PHRM_BEN_FLG from CLODM001.MEMBER_DETAIL_INPUT a where a.EFF_DT <= '" + year + "-12-31' and a.END_DT >= '" + year + "-01-01') as B group by B.INDV_SYS_ID ) C where C.MIN_PHARMACY_FLG = 'Y' and C.NUM_DAY >= 210 ) as MT on ED1.INDV_SYS_ID = MT.INDV_SYS_ID left join ( select ED2.INDV_SYS_ID, ED2.EPSD_NBR, Sum(ED2.QLTY_INCNT_RDUC_AMT) as RX_ALLW_AMT from CLODM001.ETG_DETAIL ED2 inner join CLODM001.DATE_FST_SRVC DFS2 on ED2.FST_SRVC_DT_SYS_ID = DFS2.FST_SRVC_DT_SYS_ID inner join CLODM001.HP_SERVICE_TYPE_CODE HSTC2 on ED2.HLTH_PLN_SRVC_TYP_CD_SYS_ID = HSTC2.HLTH_PLN_SRVC_TYP_CD_SYS_ID where DFS2.FST_SRVC_DT Between '" + year + "-01-01'and '" + year + "-12-31'  and ED2.QLTY_INCNT_RDUC_AMT > 0 and HSTC2.HLTH_PLN_SRVC_TYP_LVL_1_NM = 'PHARMACY' group by ED2.INDV_SYS_ID, ED2.EPSD_NBR ) Query1 on ED1.INDV_SYS_ID = Query1.INDV_SYS_ID and ED1.EPSD_NBR = Query1.EPSD_NBR where ED1.EPSD_NBR not in (0, -1) and DFS1.FST_SRVC_DT Between '" + year + "-01-01' and '" + year + "-12-31' and ED1.QLTY_INCNT_RDUC_AMT > 0 group by ED1.INDV_SYS_ID, ED1.EPSD_NBR, EN1.ETG_BAS_CLSS_NBR, EN1.ETG_TX_IND, Query1.RX_ALLW_AMT ) as ETG_D group by ETG_D.ETG_BAS_CLSS_NBR, ETG_D.TRT_CD";
 
             var nrxx = await db_td.LoadData<NRX_Cost_UGAPModel>(connectionString: ConnectionStringTD, strSQL);
 
@@ -686,7 +686,7 @@ namespace ConsoleLibraryTesting
 
             var ebm = await db_sql.LoadData<DQC_DATA_EBM_UHPD_SOURCE_Model>(connectionString: ConnectionStringUHPD, strSQL);
 
-            string[]  columns = typeof(DQC_DATA_EBM_UHPD_SOURCE_Model).GetProperties().Select(p => p.Name).ToArray();
+            string[] columns = typeof(DQC_DATA_EBM_UHPD_SOURCE_Model).GetProperties().Select(p => p.Name).ToArray();
             await db_sql.BulkSave<DQC_DATA_EBM_UHPD_SOURCE_Model>(connectionString: ConnectionStringVC, "ebm.DQC_DATA_UHPD_SOURCE", ebm, columns, truncate: true);
 
 
@@ -915,8 +915,8 @@ namespace ConsoleLibraryTesting
             var month = Int16.Parse(await db_sql.ExecuteScalar(connectionString: ConnectionStringMSSQL, "SELECT MAX(CASE WHEN [file_month] = 12 THEN  1 ELSE [file_month] + 1  END) FROM [stg].[Evicore_Report_Timeliness] WHERE [file_date] = (SELECT MAX([file_date])  FROM [stg].[Evicore_Report_Timeliness] );") + "");
             //GET LATEST YEAR
             var year = Int16.Parse(await db_sql.ExecuteScalar(connectionString: ConnectionStringMSSQL, "SELECT MAX(CASE WHEN [file_month] = 12 THEN  [file_year] + 1 ELSE [file_year]  END) FROM [stg].[Evicore_Report_Timeliness] WHERE [file_date] = (SELECT MAX([file_date])  FROM [stg].[Evicore_Report_Timeliness] );") + "");
-  
-     
+
+
 
 
             DateTime dropped_date;
@@ -1010,7 +1010,7 @@ namespace ConsoleLibraryTesting
                 }
 
             }
-     
+
 
             //SAVE FINDINGS TO DB
             var columns = typeof(Report_Timeliness_Model).GetProperties().Select(p => p.Name).ToArray();
@@ -1131,7 +1131,7 @@ namespace ConsoleLibraryTesting
 
             tsum = await db_sql.LoadData<TAT_Summary_Model>(connectionString: ConnectionStringMSSQL, sbSQL.ToString());//GET DATA
 
-            foreach(var s in tsum)
+            foreach (var s in tsum)
             {
                 var val = ObjectExtensions.GetPropValue(s, CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(month));
                 month_total += int.Parse(val + "");
@@ -1234,7 +1234,7 @@ namespace ConsoleLibraryTesting
 
 
             //GENERATE EXCEL FILE IN BYTES
-            var bytes = await closed_xml.ExportToTATExcelTemplateAsync(TATReportTemplatePath, export, current, current_spelled, previous, 1,8,4); 
+            var bytes = await closed_xml.ExportToTATExcelTemplateAsync(TATReportTemplatePath, export, current, current_spelled, previous, 1, 8, 4);
 
 
             //CREATE FILE NAME
@@ -1297,24 +1297,112 @@ namespace ConsoleLibraryTesting
             cs = false;
             com = false;
 
-            string emailFilePath = @"\\nasv0048\ucs_ca\PHS_DATA_NEW\Home Directory - Automation\EmailTemplates\CS_TAT.txt";
+            string emailFilePath = @"\\nasv0048\ucs_ca\PHS_DATA_NEW\Home Directory - Automation\EmailTemplates\";
 
             string subject = "C&S - CCN SLA Penalties – [Date]"; //October 2022
             string body = File.ReadAllText(emailFilePath);
             string recipients = "chris_giordano@uhc.com";
             string from = "chris_giordano@uhc.com";
             string cc = "chris_giordano@uhc.com";
+            string attachment = "";
+
+            if (ox || mr || cs || com)
+            {
+                
+                attachment =  Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + System.IO.Path.GetFileName(file);
+
+                //To: Rosamond Eschert; CC Laura Fischer
+                subject = "SLA metrics for - [Date]"; 
+                body = File.ReadAllText(emailFilePath + "SLA_TAT.txt");
+                recipients = "chris_giordano@uhc.com";
+                from = "chris_giordano@uhc.com";
+                cc = "chris_giordano@uhc.com";
+
+                await SharedFunctions.EmailAsync(recipients, from, subject, body, cc, attachment, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
 
 
-            var fin = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "COM_" + System.IO.Path.GetFileName(file);
-            fin = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "MR_" + System.IO.Path.GetFileName(file);
-            fin = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "CS_" + System.IO.Path.GetFileName(file);
-            fin = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "OXF_" + System.IO.Path.GetFileName(file);
+
+                //To: Judith Bourdeau
+                subject = "CareCore SLA metrics for - [Date]";
+                body = File.ReadAllText(emailFilePath + "CareCore_TAT.txt");
+                recipients = "chris_giordano@uhc.com";
+                from = "chris_giordano@uhc.com";
+                cc = "chris_giordano@uhc.com";
+
+                await SharedFunctions.EmailAsync(recipients, from, subject, body, cc, attachment, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
+
+            }
+
+
+
+            if (com)
+            {
+
+                attachment = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "COM_" + System.IO.Path.GetFileName(file);
+
+                //E&I: To: Kathryn Tschida (E&I finance); CC: Laura Fischer
+                subject = "COM - CCN SLA Penalties – [Date]";
+                body = File.ReadAllText(emailFilePath + "COMM_TAT.txt");
+                recipients = "chris_giordano@uhc.com";
+                from = "chris_giordano@uhc.com";
+                cc = "chris_giordano@uhc.com";
+
+                await SharedFunctions.EmailAsync(recipients, from, subject, body, cc, attachment, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
+
+            }
+
+            if (ox)
+            {
+
+                attachment = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "OXF_" + System.IO.Path.GetFileName(file);
+
+                //Oxford: To: Sharon Wallhofer; CC: Chris Jacozzi, Allyson Clark, and Laura Fischer 
+                subject = "Oxford - CCN SLA Penalties – [Date]";
+                body = File.ReadAllText(emailFilePath + "OXF_TAT.txt");
+                recipients = "chris_giordano@uhc.com";
+                from = "chris_giordano@uhc.com";
+                cc = "chris_giordano@uhc.com";
+
+                await SharedFunctions.EmailAsync(recipients, from, subject, body, cc, attachment, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
+
+            }
+
+
+            if (cs)
+            {
+
+                attachment = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "CS_" + System.IO.Path.GetFileName(file);
+
+                //Oxford: To: Sharon Wallhofer; CC: Chris Jacozzi, Allyson Clark, and Laura Fischer 
+                subject = "C&S - CCN SLA Penalties – [Date]";
+                body = File.ReadAllText(emailFilePath + "CS_TAT.txt");
+                recipients = "chris_giordano@uhc.com";
+                from = "chris_giordano@uhc.com";
+                cc = "chris_giordano@uhc.com";
+
+                await SharedFunctions.EmailAsync(recipients, from, subject, body, cc, attachment, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
+
+            }
+
+            if (mr)
+            {
+
+                attachment = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "CS_" + System.IO.Path.GetFileName(file);
+
+                //Oxford: To: Sharon Wallhofer; CC: Chris Jacozzi, Allyson Clark, and Laura Fischer 
+                subject = "C&S - CCN SLA Penalties – [Date]";
+                body = File.ReadAllText(emailFilePath + "CS_TAT.txt");
+                recipients = "chris_giordano@uhc.com";
+                from = "chris_giordano@uhc.com";
+                cc = "chris_giordano@uhc.com";
+
+                await SharedFunctions.EmailAsync(recipients, from, subject, body, cc, attachment, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
+
+            }
 
 
 
 
-            await SharedFunctions.EmailAsync(recipients, from, subject, body, cc, null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
         }
 
 
