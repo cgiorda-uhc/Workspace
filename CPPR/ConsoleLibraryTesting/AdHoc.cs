@@ -7,6 +7,7 @@ using DataAccessLibrary.Scripts;
 using DataAccessLibrary.Shared;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.Wordprocessing;
 using FileParsingLibrary.Models;
 using FileParsingLibrary.MSExcel;
 using FileParsingLibrary.MSExcel.Custom.ProcCodeTrends;
@@ -14,6 +15,7 @@ using FileParsingLibrary.MSExcel.Custom.TAT;
 using FileParsingLibrary.MSWord;
 using MathNet.Numerics.Providers.SparseSolver;
 using NPOI.SS.Formula.PTG;
+using Org.BouncyCastle.Cms;
 using Org.BouncyCastle.Utilities;
 using ProjectManagerLibrary.Models;
 using ProjectManagerLibrary.Shared;
@@ -1295,6 +1297,13 @@ namespace ConsoleLibraryTesting
             cs = false;
             com = false;
 
+            string emailFilePath = @"\\nasv0048\ucs_ca\PHS_DATA_NEW\Home Directory - Automation\EmailTemplates\CS_TAT.txt";
+
+            string subject = "C&S - CCN SLA Penalties – [Date]"; //October 2022
+            string body = File.ReadAllText(emailFilePath);
+            string recipients = "chris_giordano@uhc.com";
+            string from = "chris_giordano@uhc.com";
+            string cc = "chris_giordano@uhc.com";
 
 
             var fin = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "COM_" + System.IO.Path.GetFileName(file);
@@ -1304,15 +1313,8 @@ namespace ConsoleLibraryTesting
 
 
 
-            //var p = new Process();
-            //p.StartInfo = new ProcessStartInfo(file)
-            //{
-            //    UseShellExecute = true
-            //};
-            //p.Start();
 
-
-            //return file;
+            await SharedFunctions.EmailAsync(recipients, from, subject, body, cc, null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
         }
 
 
