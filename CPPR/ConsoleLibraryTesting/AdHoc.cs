@@ -1299,12 +1299,12 @@ namespace ConsoleLibraryTesting
 
             string emailFilePath = @"\\nasv0048\ucs_ca\PHS_DATA_NEW\Home Directory - Automation\EmailTemplates\";
 
-            string subject = "C&S - CCN SLA Penalties – [Date]"; //October 2022
-            string body = File.ReadAllText(emailFilePath);
-            string recipients = "chris_giordano@uhc.com";
-            string from = "chris_giordano@uhc.com";
-            string cc = "chris_giordano@uhc.com";
-            string attachment = "";
+            string subject; //October 2022
+            string body;
+            string recipients;
+            string from;
+            string cc;
+            string attachment;
 
             if (ox || mr || cs || com)
             {
@@ -1387,11 +1387,11 @@ namespace ConsoleLibraryTesting
             if (mr)
             {
 
-                attachment = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "CS_" + System.IO.Path.GetFileName(file);
+                attachment = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "MR_" + System.IO.Path.GetFileName(file);
 
                 //Oxford: To: Sharon Wallhofer; CC: Chris Jacozzi, Allyson Clark, and Laura Fischer 
-                subject = "C&S - CCN SLA Penalties – [Date]";
-                body = File.ReadAllText(emailFilePath + "CS_TAT.txt");
+                subject = "M&R - CCN SLA Penalties – [Date]";
+                body = File.ReadAllText(emailFilePath + "MR_TAT.txt");
                 recipients = "chris_giordano@uhc.com";
                 from = "chris_giordano@uhc.com";
                 cc = "chris_giordano@uhc.com";
