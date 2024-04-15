@@ -10,6 +10,13 @@ namespace SharedFunctionsLibrary;
 public static class ObjectExtensions
 {
 
+
+    public static object GetPropValue(object src, string propName)
+    {
+        return src.GetType().GetProperty(propName).GetValue(src, null);
+    }
+
+
     public static T CastToObject<T>(this Object myobj)
     {
         Type objectType = myobj.GetType();

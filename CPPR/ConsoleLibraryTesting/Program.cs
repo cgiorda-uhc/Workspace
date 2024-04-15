@@ -83,7 +83,8 @@ adHoc.ConnectionStringVC = "Data Source=wn000103397;Initial Catalog=VCT_DB;Persi
 adHoc.ConnectionStringUHPD = "data source=UHPD_Reporting;server=WP000052579;Persist Security Info=True;database=PD_Reporting;Integrated Security=SSPI;connect timeout=300000;";
 
 //adHoc.ConnectionStringPD = "data source=UHPD_Analytics;server=DBSWP0662;Persis4t Security Info=True;database=UHPD_Analytics;Integrated Security=SSPI;connect timeout=300000;";
-adHoc.ConnectionStringPD = "data source=UHPD_Analytics;server=DBSWP200136;Persist Security Info=True;database=UHPD_Analytics;Integrated Security=SSPI;connect timeout=300000;";
+//adHoc.ConnectionStringPD = "data source=UHPD_Analytics;server=DBSWP200136;Persist Security Info=True;database=UHPD_Analytics;Integrated Security=SSPI;connect timeout=300000;";
+adHoc.ConnectionStringPD = "data source=UHPD_Analytics;server=DBSWS200137;Persist Security Info=True;database=UHPD_Analytics;Integrated Security=SSPI;connect timeout=300000;";
 
 //adHoc.ConnectionStringUHN = "data source=UHN_Reporting;server=WP000074441CLS;Persist Security Info=True;database=UHN_Reporting;Integrated Security=SSPI;connect timeout=300000;";
 adHoc.ConnectionStringUHN = "data source=UHN_Reporting;server=WP000074680;Persist Security Info=True;database=SourceData;Integrated Security=SSPI;connect timeout=300000;";
@@ -113,9 +114,25 @@ adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Repor
 IRelationalDataAccess db_sqsl = new SqlDataAccess();
 
 
+
+
+//await adHoc.getEBMSourceDataAsync();
+
+//await adHoc.getPEGSourceDataAsync();
+//await adHoc.generatePEGReportsAsync();
+//await adHoc.generateEBMReportsAsync();
+
+//return;
+
+
+
+
+
+
+
 //GET FILE 'Create_Date' FROM EVICORE
 var search_path = @"\\NASGWFTP03\Care_Core_FTP_Files\Radiology";
-await adHoc.getReportsTimelinessAsync(search_path);
+//await adHoc.getReportsTimelinessAsync(search_path);
 
 //GENERATE FINAL TAT REPORTS
 await adHoc.generateTATReportsAsync();

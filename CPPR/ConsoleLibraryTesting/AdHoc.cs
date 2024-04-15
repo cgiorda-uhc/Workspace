@@ -958,7 +958,7 @@ namespace ConsoleLibraryTesting
                             {
                                 found_file_name = entry.FullName; //CAPTURE FILE NAME WITHIN ZIP
 
-                                var r = new Report_Timeliness_Model();
+                                var r = new Report_Timeliness_Model(); //NEW INSTANCE PER ROW
 
                                 var cleanString = new string(found_file_name.Where(Char.IsLetter).ToArray()); //ONLY ALPHA CHARS
                                 foreach (var x in rtfm) //GET ID's PER EACH FILE IN ZIP
@@ -1011,8 +1011,8 @@ namespace ConsoleLibraryTesting
      
 
             //SAVE FINDINGS TO DB
-            var columnsss = typeof(Report_Timeliness_Model).GetProperties().Select(p => p.Name).ToArray();
-            await db_sql.BulkSave<Report_Timeliness_Model>(connectionString: ConnectionStringMSSQL, "stg.Evicore_Report_Timeliness", rtm, columnsss, truncate: false);
+            var columns = typeof(Report_Timeliness_Model).GetProperties().Select(p => p.Name).ToArray();
+            await db_sql.BulkSave<Report_Timeliness_Model>(connectionString: ConnectionStringMSSQL, "stg.Evicore_Report_Timeliness", rtm, columns, truncate: false);
 
         }
 
@@ -1037,6 +1037,7 @@ namespace ConsoleLibraryTesting
             string strSQL = "select max(file_date) from stg.EviCore_YTDMetrics;"; //GET LATEST DATE FROM DB
             var obj = await db_sql.ExecuteScalar(connectionString: ConnectionStringMSSQL, strSQL);
             var dt = DateTime.Parse(obj.ToString());
+            int month = dt.Month;
             string current = dt.Month + "-" + dt.Year; //STRING LABEL FOR REPORT
             string current_spelled = dt.ToString("MMMM") + ", " + dt.Year;  //STRING LABEL FOR REPORT
             strSQL = "select dateadd(mm, -1, max(file_date)) from stg.EviCore_YTDMetrics;"; //GET LATEST DATE MINUS 1 MONTH FROM DB
@@ -1044,6 +1045,12 @@ namespace ConsoleLibraryTesting
             dt = DateTime.Parse(obj.ToString());
             string previous = dt.Month + "-" + dt.Year; //STRING LABEL FOR REPORT
 
+
+            int month_total = 0;
+            bool ox = false;
+            bool mr = false;
+            bool cs = false;
+            bool com = false;
 
 
 
@@ -1120,9 +1127,19 @@ namespace ConsoleLibraryTesting
 
             sbSQL.Append("Select Metric_id,LOB, Modality,metric_desc ,isnull(sum(Penalty_SLA), 0) YTD_Penalty ,isnull(sum(case when month(tmp.file_date) = 1 then tmp.Penalty_SLA end), 0) Jan ,isnull(sum(case when month(tmp.file_date) = 2 then tmp.Penalty_SLA end), 0) Feb ,isnull(sum(case when month(tmp.file_date) = 3 then tmp.Penalty_SLA end), 0) Mar ,isnull(sum(case when month(tmp.file_date) = 4 then tmp.Penalty_SLA end), 0) Apr ,isnull(sum(case when month(tmp.file_date) = 5 then tmp.Penalty_SLA end), 0) May ,isnull(sum(case when month(tmp.file_date) = 6 then tmp.Penalty_SLA end), 0) Jun ,isnull(sum(case when month(tmp.file_date) = 7 then tmp.Penalty_SLA end), 0) Jul ,isnull(sum(case when month(tmp.file_date) = 8 then tmp.Penalty_SLA end), 0) Aug ,isnull(sum(case when month(tmp.file_date) = 9 then tmp.Penalty_SLA end), 0) Sep ,isnull(sum(case when month(tmp.file_date) = 10 then tmp.Penalty_SLA end), 0) Oct ,isnull(sum(case when month(tmp.file_date) = 11 then tmp.Penalty_SLA end), 0) Nov ,isnull(sum(case when month(tmp.file_date) = 12 then tmp.Penalty_SLA end), 0) Dec from (Select Metric_id,Metric_desc, s.file_date,s.LOB, s.Modality, Avg_Speed_Answer, s.SLA, CASE WHEN t.Avg_Speed_Answer > s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA from (select * FROM (select * from stg.SLA_Lookup WHERE Metric_id=1 and Is_Archived=0 and LOB in('E&I','E&I_Notif','E&I_PA','NHP','RV')) as b cross join (select distinct file_date from stg.EviCore_TAT where year(file_date)=@CURRENT_DATE) as a ) as s left join (Select file_date,lob,rpt_Modality, CAST(ROUND(sum(Total_Calls * Avg_Speed_Answer)/sum(Total_Calls),2) as decimal(5,0)) as Avg_Speed_Answer, CAST(ROUND(sum(Abandoned_Calls)/sum(Total_Calls),3) as decimal(5,4)) as Abandoned_Pct from stg.EviCore_YTDMetrics where year(file_date)=@CURRENT_DATE and LOB in('E&I','E&I_Notif','E&I_PA','NHP','RV') and rpt_Modality<>'' group by file_date,lob,rpt_Modality) as t on s.lob=t.lob and s.modality=t.rpt_modality and s.file_date=t.file_date ) as tmp group by Metric_id,Metric_desc, LOB, Modality UNION select Metric_id,LOB, Modality,metric_desc ,isnull(sum(Penalty_SLA), 0) YTD_Penalty ,isnull(sum(case when month(tmp.file_date) = 1 then tmp.Penalty_SLA end), 0) Jan ,isnull(sum(case when month(tmp.file_date) = 2 then tmp.Penalty_SLA end), 0) Feb ,isnull(sum(case when month(tmp.file_date) = 3 then tmp.Penalty_SLA end), 0) Mar ,isnull(sum(case when month(tmp.file_date) = 4 then tmp.Penalty_SLA end), 0) Apr ,isnull(sum(case when month(tmp.file_date) = 5 then tmp.Penalty_SLA end), 0) May ,isnull(sum(case when month(tmp.file_date) = 6 then tmp.Penalty_SLA end), 0) Jun ,isnull(sum(case when month(tmp.file_date) = 7 then tmp.Penalty_SLA end), 0) Jul ,isnull(sum(case when month(tmp.file_date) = 8 then tmp.Penalty_SLA end), 0) Aug ,isnull(sum(case when month(tmp.file_date) = 9 then tmp.Penalty_SLA end), 0) Sep ,isnull(sum(case when month(tmp.file_date) = 10 then tmp.Penalty_SLA end), 0) Oct ,isnull(sum(case when month(tmp.file_date) = 11 then tmp.Penalty_SLA end), 0) Nov ,isnull(sum(case when month(tmp.file_date) = 12 then tmp.Penalty_SLA end), 0) Dec from (Select Metric_id,Metric_desc, s.file_date,s.LOB, s.Modality, Abandoned_Pct, s.SLA, CASE WHEN t.Abandoned_Pct > s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA from (select * FROM (select * from stg.SLA_Lookup WHERE Metric_id=2 and Is_Archived=0 and LOB in('E&I','E&I_Notif','E&I_PA','NHP','RV')) as b cross join (select distinct file_date from stg.EviCore_TAT where year(file_date)=@CURRENT_DATE) as a ) as s left join (Select file_date,lob,rpt_Modality, CAST(ROUND(sum(Total_Calls * Avg_Speed_Answer)/sum(Total_Calls),2) as decimal(5,0)) as Avg_Speed_Answer, CAST(ROUND(sum(Abandoned_Calls)/sum(Total_Calls),3) as decimal(5,4)) as Abandoned_Pct from stg.EviCore_YTDMetrics where year(file_date)=@CURRENT_DATE and LOB in('E&I','E&I_Notif','E&I_PA','NHP','RV') and rpt_Modality<>'' group by file_date,lob,rpt_Modality) as t on s.lob=t.lob and s.modality=t.rpt_modality and s.file_date=t.file_date ) as tmp group by Metric_id,metric_desc, LOB, Modality UNION select Metric_id,LOB, Modality,metric_desc ,isnull(sum(Penalty_SLA), 0) YTD_Penalty ,isnull(sum(case when month(tmp.file_date) = 1 then tmp.Penalty_SLA end), 0) Jan ,isnull(sum(case when month(tmp.file_date) = 2 then tmp.Penalty_SLA end), 0) Feb ,isnull(sum(case when month(tmp.file_date) = 3 then tmp.Penalty_SLA end), 0) Mar ,isnull(sum(case when month(tmp.file_date) = 4 then tmp.Penalty_SLA end), 0) Apr ,isnull(sum(case when month(tmp.file_date) = 5 then tmp.Penalty_SLA end), 0) May ,isnull(sum(case when month(tmp.file_date) = 6 then tmp.Penalty_SLA end), 0) Jun ,isnull(sum(case when month(tmp.file_date) = 7 then tmp.Penalty_SLA end), 0) Jul ,isnull(sum(case when month(tmp.file_date) = 8 then tmp.Penalty_SLA end), 0) Aug ,isnull(sum(case when month(tmp.file_date) = 9 then tmp.Penalty_SLA end), 0) Sep ,isnull(sum(case when month(tmp.file_date) = 10 then tmp.Penalty_SLA end), 0) Oct ,isnull(sum(case when month(tmp.file_date) = 11 then tmp.Penalty_SLA end), 0) Nov ,isnull(sum(case when month(tmp.file_date) = 12 then tmp.Penalty_SLA end), 0) Dec from (Select s.Metric_id,s.Metric_desc,s.file_date, case when s.lob like '%E&I%' then 'E&I' else s.lob end as lob,s.Modality, sum(CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end) as Penalty_SLA from (select * FROM (select * from stg.SLA_Lookup WHERE Metric_id=3 and Is_Archived=0 and LOB in('E&I','E&I_Notif','E&I_PA','NHP','RV')) as b cross join (select distinct file_date from stg.EviCore_TAT where year(file_date)=@CURRENT_DATE) as a ) as s LEFT JOIN (Select file_date,report_type,LOB,rpt_modality, cast(sum(LessEqual_2_BUS_Days) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where year(file_date)=@CURRENT_DATE and LOB in('E&I','E&I_Notif','E&I_PA','NHP','RV') and report_type = 'Routine TAT' group by file_date,report_type,lob, rpt_Modality ) as t on s.modality=t.rpt_modality and s.lob=t.lob and s.file_date=t.file_date group by Metric_id,Metric_desc, case when s.lob like '%E&I%' then 'E&I' else s.lob end, s.Modality,s.file_date ) as tmp group by Metric_id,LOB, Modality,metric_desc UNION select Metric_id,LOB, Modality,metric_desc ,isnull(sum(Penalty_SLA), 0) YTD_Penalty ,isnull(sum(case when month(tmp.file_date) = 1 then tmp.Penalty_SLA end), 0) Jan ,isnull(sum(case when month(tmp.file_date) = 2 then tmp.Penalty_SLA end), 0) Feb ,isnull(sum(case when month(tmp.file_date) = 3 then tmp.Penalty_SLA end), 0) Mar ,isnull(sum(case when month(tmp.file_date) = 4 then tmp.Penalty_SLA end), 0) Apr ,isnull(sum(case when month(tmp.file_date) = 5 then tmp.Penalty_SLA end), 0) May ,isnull(sum(case when month(tmp.file_date) = 6 then tmp.Penalty_SLA end), 0) Jun ,isnull(sum(case when month(tmp.file_date) = 7 then tmp.Penalty_SLA end), 0) Jul ,isnull(sum(case when month(tmp.file_date) = 8 then tmp.Penalty_SLA end), 0) Aug ,isnull(sum(case when month(tmp.file_date) = 9 then tmp.Penalty_SLA end), 0) Sep ,isnull(sum(case when month(tmp.file_date) = 10 then tmp.Penalty_SLA end), 0) Oct ,isnull(sum(case when month(tmp.file_date) = 11 then tmp.Penalty_SLA end), 0) Nov ,isnull(sum(case when month(tmp.file_date) = 12 then tmp.Penalty_SLA end), 0) Dec from (Select s.Metric_id,s.Metric_desc,s.file_date, case when s.lob like '%E&I%' then 'E&I' else s.lob end as lob,s.Modality, sum(CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end) as Penalty_SLA from (select * FROM (select * from stg.SLA_Lookup WHERE Metric_id=4 and Is_Archived=0 and LOB in('E&I','E&I_Notif','E&I_PA','NHP','RV')) as b cross join (select distinct file_date from stg.EviCore_TAT where year(file_date)=@CURRENT_DATE) as a ) as s LEFT JOIN (Select file_date,report_type,LOB,rpt_modality, cast(sum(Less_State_TAT_Requirements) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where year(file_date)=@CURRENT_DATE and LOB in('E&I','E&I_Notif','E&I_PA','NHP','RV') and report_type = 'Urgent TAT' group by file_date,report_type,lob, rpt_Modality ) as t on s.modality=t.rpt_modality and s.lob=t.lob and s.file_date=t.file_date group by Metric_id,Metric_desc, case when s.lob like '%E&I%' then 'E&I' else s.lob end, s.Modality,s.file_date ) as tmp group by Metric_id,LOB, Modality,metric_desc UNION select Metric_id,LOB, Modality,metric_desc ,isnull(sum(Penalty_SLA), 0) YTD_Penalty ,isnull(sum(case when month(tmp.file_date) = 1 then tmp.Penalty_SLA end), 0) Jan ,isnull(sum(case when month(tmp.file_date) = 2 then tmp.Penalty_SLA end), 0) Feb ,isnull(sum(case when month(tmp.file_date) = 3 then tmp.Penalty_SLA end), 0) Mar ,isnull(sum(case when month(tmp.file_date) = 4 then tmp.Penalty_SLA end), 0) Apr ,isnull(sum(case when month(tmp.file_date) = 5 then tmp.Penalty_SLA end), 0) May ,isnull(sum(case when month(tmp.file_date) = 6 then tmp.Penalty_SLA end), 0) Jun ,isnull(sum(case when month(tmp.file_date) = 7 then tmp.Penalty_SLA end), 0) Jul ,isnull(sum(case when month(tmp.file_date) = 8 then tmp.Penalty_SLA end), 0) Aug ,isnull(sum(case when month(tmp.file_date) = 9 then tmp.Penalty_SLA end), 0) Sep ,isnull(sum(case when month(tmp.file_date) = 10 then tmp.Penalty_SLA end), 0) Oct ,isnull(sum(case when month(tmp.file_date) = 11 then tmp.Penalty_SLA end), 0) Nov ,isnull(sum(case when month(tmp.file_date) = 12 then tmp.Penalty_SLA end), 0) Dec from (Select metric_id,metric_desc,file_date,lob, Modality, CASE when drop_date > datefromparts ( year(drop_date), month(drop_date), ( CASE WHEN dbo.fn_IsHoliday(datefromparts(year(drop_date), month(drop_date), '15')) = 1 AND DATEPART(DW,datefromparts(year(drop_date), month(drop_date), '15')) = 2 THEN '16' ELSE CASE WHEN DATEPART(DW,datefromparts(year(drop_date), month(drop_date), '15')) = 7 THEN CASE WHEN dbo.fn_IsHoliday(datefromparts(year(drop_date), month(drop_date), '17')) = 1 THEN '18' ELSE '17' END ELSE CASE WHEN DATEPART(DW,datefromparts(year(drop_date), month(drop_date), '15')) = 1 THEN CASE WHEN dbo.fn_IsHoliday(datefromparts(year(drop_date), month(drop_date), '16')) = 1 THEN '17' ELSE '16' END ELSE '15' END END END ) ) THEN tot.Penalty_SLA else 0 end as Penalty_SLA from (select * FROM (select distinct Metric_id,Metric_desc,lob,Modality,penalty_SLA from stg.SLA_Lookup where Is_Archived=0 and Metric_id=5 and LOB in('E&I','E&I_Notif','E&I_PA','NHP','RV')) as b cross join (select distinct file_date,file_month,file_year,drop_date from stg.Evicore_Report_Timeliness where file_year=@CURRENT_DATE) as t ) as tot ) as tmp group by metric_id,metric_desc,lob, Modality  order by modality desc, lob,metric_id ");
 
-
-
             tsum = await db_sql.LoadData<TAT_Summary_Model>(connectionString: ConnectionStringMSSQL, sbSQL.ToString());//GET DATA
+
+            foreach(var s in tsum)
+            {
+                var val = ObjectExtensions.GetPropValue(s, CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(month));
+                month_total += int.Parse(val + "");
+            }
+            if (month_total > 0)
+            {
+                com = true;
+            }
+            month_total = 0;
+
             export.Add(new ExcelExport() { ExportList = tsum.ToList<object>(), SheetName = strSheetName });//ADD SHEET AND DATA TO export List
 
 
@@ -1140,6 +1157,18 @@ namespace ConsoleLibraryTesting
 
 
             tsum = await db_sql.LoadData<TAT_Summary_Model>(connectionString: ConnectionStringMSSQL, sbSQL.ToString());//GET DATA
+
+            foreach (var s in tsum)
+            {
+                var val = ObjectExtensions.GetPropValue(s, CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(month));
+                month_total += int.Parse(val + "");
+            }
+            if (month_total > 0)
+            {
+                ox = true;
+            }
+            month_total = 0;
+
             export.Add(new ExcelExport() { ExportList = tsum.ToList<object>(), SheetName = strSheetName });//ADD SHEET AND DATA TO export List
 
 
@@ -1157,6 +1186,18 @@ namespace ConsoleLibraryTesting
 
 
             tsum = await db_sql.LoadData<TAT_Summary_Model>(connectionString: ConnectionStringMSSQL, sbSQL.ToString());//GET DATA
+
+            foreach (var s in tsum)
+            {
+                var val = ObjectExtensions.GetPropValue(s, CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(month));
+                month_total += int.Parse(val + "");
+            }
+            if (month_total > 0)
+            {
+                cs = true;
+            }
+            month_total = 0;
+
             export.Add(new ExcelExport() { ExportList = tsum.ToList<object>(), SheetName = strSheetName });//ADD SHEET AND DATA TO export List
 
 
@@ -1173,6 +1214,18 @@ namespace ConsoleLibraryTesting
             sbSQL.Append("select Metric_id,LOB, Modality,metric_desc ,isnull(sum(Penalty_SLA), 0) YTD_Penalty ,isnull(sum(case when month(tmp.file_date) = 1 then tmp.Penalty_SLA end), 0) Jan ,isnull(sum(case when month(tmp.file_date) = 2 then tmp.Penalty_SLA end), 0) Feb ,isnull(sum(case when month(tmp.file_date) = 3 then tmp.Penalty_SLA end), 0) Mar ,isnull(sum(case when month(tmp.file_date) = 4 then tmp.Penalty_SLA end), 0) Apr ,isnull(sum(case when month(tmp.file_date) = 5 then tmp.Penalty_SLA end), 0) May ,isnull(sum(case when month(tmp.file_date) = 6 then tmp.Penalty_SLA end), 0) Jun ,isnull(sum(case when month(tmp.file_date) = 7 then tmp.Penalty_SLA end), 0) Jul ,isnull(sum(case when month(tmp.file_date) = 8 then tmp.Penalty_SLA end), 0) Aug ,isnull(sum(case when month(tmp.file_date) = 9 then tmp.Penalty_SLA end), 0) Sep ,isnull(sum(case when month(tmp.file_date) = 10 then tmp.Penalty_SLA end), 0) Oct ,isnull(sum(case when month(tmp.file_date) = 11 then tmp.Penalty_SLA end), 0) Nov ,isnull(sum(case when month(tmp.file_date) = 12 then tmp.Penalty_SLA end), 0) Dec from (Select Metric_id,Metric_desc, s.file_date,s.LOB, s.Modality, Avg_Speed_Answer, s.SLA, CASE WHEN t.Avg_Speed_Answer > s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA from (select * FROM (select * from stg.SLA_Lookup WHERE Metric_id=1 and Is_Archived=0 and LOB='M&R') as b cross join (select distinct file_date from stg.EviCore_TAT where year(file_date)=@CURRENT_DATE) as a ) as s left join (Select file_date,lob,rpt_Modality, Avg_Speed_Answer, round(Abandoned_Percent,3) as Abandoned_Pct from stg.EviCore_YTDMetrics where year(file_date)=@CURRENT_DATE and rpt_Modality<>'' and LOB='M&R' ) as t on s.lob=t.lob and s.modality=t.rpt_modality and s.file_date=t.file_date ) as tmp group by Metric_id,Metric_desc, LOB, Modality UNION select Metric_id,LOB, Modality,metric_desc ,isnull(sum(Penalty_SLA), 0) YTD_Penalty ,isnull(sum(case when month(tmp.file_date) = 1 then tmp.Penalty_SLA end), 0) Jan ,isnull(sum(case when month(tmp.file_date) = 2 then tmp.Penalty_SLA end), 0) Feb ,isnull(sum(case when month(tmp.file_date) = 3 then tmp.Penalty_SLA end), 0) Mar ,isnull(sum(case when month(tmp.file_date) = 4 then tmp.Penalty_SLA end), 0) Apr ,isnull(sum(case when month(tmp.file_date) = 5 then tmp.Penalty_SLA end), 0) May ,isnull(sum(case when month(tmp.file_date) = 6 then tmp.Penalty_SLA end), 0) Jun ,isnull(sum(case when month(tmp.file_date) = 7 then tmp.Penalty_SLA end), 0) Jul ,isnull(sum(case when month(tmp.file_date) = 8 then tmp.Penalty_SLA end), 0) Aug ,isnull(sum(case when month(tmp.file_date) = 9 then tmp.Penalty_SLA end), 0) Sep ,isnull(sum(case when month(tmp.file_date) = 10 then tmp.Penalty_SLA end), 0) Oct ,isnull(sum(case when month(tmp.file_date) = 11 then tmp.Penalty_SLA end), 0) Nov ,isnull(sum(case when month(tmp.file_date) = 12 then tmp.Penalty_SLA end), 0) Dec from (Select Metric_id,Metric_desc, s.file_date,s.LOB, s.Modality, Abandoned_Pct, s.SLA, CASE WHEN t.Abandoned_Pct > s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA from (select * FROM (select * from stg.SLA_Lookup WHERE Metric_id=2 and Is_Archived=0 and LOB='M&R') as b cross join (select distinct file_date from stg.EviCore_TAT where year(file_date)=@CURRENT_DATE) as a ) as s left join (Select file_date,lob,rpt_Modality, Avg_Speed_Answer, round(Abandoned_Percent,3) as Abandoned_Pct from stg.EviCore_YTDMetrics where year(file_date)=@CURRENT_DATE and rpt_Modality<>'' and LOB='M&R') as t on s.lob=t.lob and s.modality=t.rpt_modality and s.file_date=t.file_date ) as tmp group by Metric_id,metric_desc, LOB, Modality UNION select Metric_id,LOB, Modality,metric_desc ,isnull(sum(Penalty_SLA), 0) YTD_Penalty ,isnull(sum(case when month(tmp.file_date) = 1 then tmp.Penalty_SLA end), 0) Jan ,isnull(sum(case when month(tmp.file_date) = 2 then tmp.Penalty_SLA end), 0) Feb ,isnull(sum(case when month(tmp.file_date) = 3 then tmp.Penalty_SLA end), 0) Mar ,isnull(sum(case when month(tmp.file_date) = 4 then tmp.Penalty_SLA end), 0) Apr ,isnull(sum(case when month(tmp.file_date) = 5 then tmp.Penalty_SLA end), 0) May ,isnull(sum(case when month(tmp.file_date) = 6 then tmp.Penalty_SLA end), 0) Jun ,isnull(sum(case when month(tmp.file_date) = 7 then tmp.Penalty_SLA end), 0) Jul ,isnull(sum(case when month(tmp.file_date) = 8 then tmp.Penalty_SLA end), 0) Aug ,isnull(sum(case when month(tmp.file_date) = 9 then tmp.Penalty_SLA end), 0) Sep ,isnull(sum(case when month(tmp.file_date) = 10 then tmp.Penalty_SLA end), 0) Oct ,isnull(sum(case when month(tmp.file_date) = 11 then tmp.Penalty_SLA end), 0) Nov ,isnull(sum(case when month(tmp.file_date) = 12 then tmp.Penalty_SLA end), 0) Dec from (Select s.Metric_id,s.Metric_desc,s.file_date,s.lob,s.Modality, sum(CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end) as Penalty_SLA from (select * FROM (select * from stg.SLA_Lookup WHERE Metric_id=3 and Is_Archived=0 and LOB='M&R') as b cross join (select distinct file_date from stg.EviCore_TAT where year(file_date)=@CURRENT_DATE) as a ) as s LEFT JOIN (Select file_date,report_type,LOB,rpt_modality, cast(sum(LessEqual_2_BUS_Days) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where year(file_date)=@CURRENT_DATE and LOB='M&R' and report_type = 'Routine TAT' group by file_date,report_type,lob, rpt_Modality ) as t on s.modality=t.rpt_modality and s.lob=t.lob and s.file_date=t.file_date group by Metric_id,Metric_desc, s.lob, s.Modality,s.file_date ) as tmp group by Metric_id,LOB, Modality,metric_desc UNION select Metric_id,LOB, Modality,metric_desc ,isnull(sum(Penalty_SLA), 0) YTD_Penalty ,isnull(sum(case when month(tmp.file_date) = 1 then tmp.Penalty_SLA end), 0) Jan ,isnull(sum(case when month(tmp.file_date) = 2 then tmp.Penalty_SLA end), 0) Feb ,isnull(sum(case when month(tmp.file_date) = 3 then tmp.Penalty_SLA end), 0) Mar ,isnull(sum(case when month(tmp.file_date) = 4 then tmp.Penalty_SLA end), 0) Apr ,isnull(sum(case when month(tmp.file_date) = 5 then tmp.Penalty_SLA end), 0) May ,isnull(sum(case when month(tmp.file_date) = 6 then tmp.Penalty_SLA end), 0) Jun ,isnull(sum(case when month(tmp.file_date) = 7 then tmp.Penalty_SLA end), 0) Jul ,isnull(sum(case when month(tmp.file_date) = 8 then tmp.Penalty_SLA end), 0) Aug ,isnull(sum(case when month(tmp.file_date) = 9 then tmp.Penalty_SLA end), 0) Sep ,isnull(sum(case when month(tmp.file_date) = 10 then tmp.Penalty_SLA end), 0) Oct ,isnull(sum(case when month(tmp.file_date) = 11 then tmp.Penalty_SLA end), 0) Nov ,isnull(sum(case when month(tmp.file_date) = 12 then tmp.Penalty_SLA end), 0) Dec from (Select s.Metric_id,s.Metric_desc,s.file_date, s.lob,s.Modality, sum(CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end) as Penalty_SLA from (select * FROM (select * from stg.SLA_Lookup WHERE Metric_id=4 and Is_Archived=0 and LOB='M&R') as b cross join (select distinct file_date from stg.EviCore_TAT where year(file_date)=@CURRENT_DATE) as a ) as s LEFT JOIN (Select file_date,report_type,LOB,rpt_modality, cast(sum(Less_State_TAT_Requirements) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where year(file_date)=@CURRENT_DATE and LOB='M&R' and report_type = 'Urgent TAT' group by file_date,report_type,lob, rpt_Modality ) as t on s.modality=t.rpt_modality and s.lob=t.lob and s.file_date=t.file_date group by Metric_id,Metric_desc, s.lob, s.Modality,s.file_date ) as tmp group by Metric_id,LOB, Modality,metric_desc UNION select Metric_id,LOB, Modality,metric_desc ,isnull(sum(Penalty_SLA), 0) YTD_Penalty ,isnull(sum(case when month(tmp.file_date) = 1 then tmp.Penalty_SLA end), 0) Jan ,isnull(sum(case when month(tmp.file_date) = 2 then tmp.Penalty_SLA end), 0) Feb ,isnull(sum(case when month(tmp.file_date) = 3 then tmp.Penalty_SLA end), 0) Mar ,isnull(sum(case when month(tmp.file_date) = 4 then tmp.Penalty_SLA end), 0) Apr ,isnull(sum(case when month(tmp.file_date) = 5 then tmp.Penalty_SLA end), 0) May ,isnull(sum(case when month(tmp.file_date) = 6 then tmp.Penalty_SLA end), 0) Jun ,isnull(sum(case when month(tmp.file_date) = 7 then tmp.Penalty_SLA end), 0) Jul ,isnull(sum(case when month(tmp.file_date) = 8 then tmp.Penalty_SLA end), 0) Aug ,isnull(sum(case when month(tmp.file_date) = 9 then tmp.Penalty_SLA end), 0) Sep ,isnull(sum(case when month(tmp.file_date) = 10 then tmp.Penalty_SLA end), 0) Oct ,isnull(sum(case when month(tmp.file_date) = 11 then tmp.Penalty_SLA end), 0) Nov ,isnull(sum(case when month(tmp.file_date) = 12 then tmp.Penalty_SLA end), 0) Dec from (Select metric_id,metric_desc,file_date,lob, Modality, CASE when drop_date > datefromparts ( year(drop_date), month(drop_date), ( CASE WHEN dbo.fn_IsHoliday(datefromparts(year(drop_date), month(drop_date), '15')) = 1 AND DATEPART(DW,datefromparts(year(drop_date), month(drop_date), '15')) = 2 THEN '16' ELSE CASE WHEN DATEPART(DW,datefromparts(year(drop_date), month(drop_date), '15')) = 7 THEN CASE WHEN dbo.fn_IsHoliday(datefromparts(year(drop_date), month(drop_date), '17')) = 1 THEN '18' ELSE '17' END ELSE CASE WHEN DATEPART(DW,datefromparts(year(drop_date), month(drop_date), '15')) = 1 THEN CASE WHEN dbo.fn_IsHoliday(datefromparts(year(drop_date), month(drop_date), '16')) = 1 THEN '17' ELSE '16' END ELSE '15' END END END ) ) THEN tot.Penalty_SLA else 0 end as Penalty_SLA from (select * FROM (select distinct Metric_id,Metric_desc,lob,Modality,penalty_SLA from stg.SLA_Lookup where Is_Archived=0 and Metric_id=5 and LOB='M&R') as b cross join (select distinct file_date,file_month,file_year,drop_date from stg.Evicore_Report_Timeliness where file_year=@CURRENT_DATE) as t ) as tot ) as tmp group by metric_id,metric_desc,lob, Modality order by modality desc, lob,metric_id  ");
 
             tsum = await db_sql.LoadData<TAT_Summary_Model>(connectionString: ConnectionStringMSSQL, sbSQL.ToString());//GET DATA
+
+            foreach (var s in tsum)
+            {
+                var val = ObjectExtensions.GetPropValue(s, CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(month));
+                month_total += int.Parse(val + "");
+            }
+            if (month_total > 0)
+            {
+                mr = true;
+            }
+            month_total = 0;
+
             export.Add(new ExcelExport() { ExportList = tsum.ToList<object>(), SheetName = strSheetName });//ADD SHEET AND DATA TO export List
 
 
@@ -1235,6 +1288,19 @@ namespace ConsoleLibraryTesting
 
             }
 
+
+            //EMAIL logic
+            ox = false;
+            mr = false;
+            cs = false;
+            com = false;
+
+
+
+            var fin = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "COM_" + System.IO.Path.GetFileName(file);
+            fin = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "MR_" + System.IO.Path.GetFileName(file);
+            fin = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "CS_" + System.IO.Path.GetFileName(file);
+            fin = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + "OXF_" + System.IO.Path.GetFileName(file);
 
 
 
