@@ -1291,17 +1291,17 @@ namespace ConsoleLibraryTesting
             }
 
 
-
+            //HERE WE A START EMAIL PROCESS
             string emailFilePath = @"\\nasv0048\ucs_ca\PHS_DATA_NEW\Home Directory - Automation\EmailTemplates\";
 
-            string subject; //October 2022
+            string subject; 
             string body;
             string recipients;
             string from;
             string cc;
             string attachment;
 
-
+            //FOR TESTING
             attachment = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + System.IO.Path.GetFileName(file);
             //To: MaryAnnDimartino
             subject = "TESTING SLA metrics for – " + current;
@@ -1312,6 +1312,8 @@ namespace ConsoleLibraryTesting
 
             await SharedFunctions.EmailAsync(recipients, from, subject, body, cc, attachment, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
 
+
+            //COMPLETE EMAILS
             if (ox || mr || cs || com)
             {
   
@@ -1339,7 +1341,7 @@ namespace ConsoleLibraryTesting
             }
 
 
-
+            //COM EMAIL
             if (com)
             {
 
@@ -1356,6 +1358,7 @@ namespace ConsoleLibraryTesting
 
             }
 
+            //OX EMAIL
             if (ox)
             {
 
@@ -1372,7 +1375,7 @@ namespace ConsoleLibraryTesting
 
             }
 
-
+            //CS EMAIL
             if (cs)
             {
 
@@ -1389,6 +1392,7 @@ namespace ConsoleLibraryTesting
 
             }
 
+            //MR EMAIL
             if (mr)
             {
 
