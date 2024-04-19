@@ -101,33 +101,13 @@ adHoc.ConnectionStringGalaxy = "Data Source=UDWPROD;User ID=cgiorda;Password=Boo
 adHoc.TableUGAP = "stg.MHP_Yearly_Universes_UGAP";
 adHoc.Limit = 3000;
 
-adHoc.TATReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\TAT_Reporting\\TAT_Template.xlsx";
+adHoc.TATReportTemplatePath = "\\\\nasv0048\\ucs_ca\\PHS_DATA_NEW\\Home Directory - Automation\\ExcelTemplates\\TAT_Reporting\\TAT_Template.xlsx";
 
-adHoc.PEGReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\PEG Template\\341 PEG DQ&C Results - Template.xlsx";
+adHoc.PEGReportTemplatePath = "\\\\nasv0048\\ucs_ca\\PHS_DATA_NEW\\Home Directory - Automation\\ExcelTemplates\\PEG Template\\341 PEG DQ&C Results - Template.xlsx";
 
-adHoc.EBMReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\EBM Template\\342 EBM DQ&C Results - Template.xlsx";
+adHoc.EBMReportTemplatePath = "\\\\nasv0048\\ucs_ca\\PHS_DATA_NEW\\Home Directory - Automation\\ExcelTemplates\\DQ&C Report Automation\\EBM Template\\342 EBM DQ&C Results - Template.xlsx";
 
 IRelationalDataAccess db_sqsl = new SqlDataAccess();
-
-
-
-
-
-
-
-
-
-
-
-//await adHoc.getEBMSourceDataAsync();
-
-//await adHoc.getPEGSourceDataAsync();
-//await adHoc.generatePEGReportsAsync();
-await adHoc.generateEBMReportsAsync();
-
-return;
-
-
 
 
 
@@ -138,9 +118,29 @@ var search_path = @"\\NASGWFTP03\Care_Core_FTP_Files\Radiology";
 //await adHoc.getReportsTimelinessAsync(search_path);
 
 //GENERATE FINAL TAT REPORTS
-await adHoc.generateTATReportsAsync();
+//await adHoc.generateTATReportsAsync();
 
-return;
+//return;
+
+
+
+
+
+
+//await adHoc.getPEGSourceDataAsync();
+//await adHoc.generatePEGReportsAsync();
+
+//await adHoc.getEBMSourceDataAsync();
+//await adHoc.generateEBMReportsAsync();
+//return;
+
+
+
+
+
+
+
+
 
 
 //var file = await adHoc.generateTATReportsAsync();
@@ -179,7 +179,7 @@ return;
 
 //    var final = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + s + "_" + System.IO.Path.GetFileName(file);
 //    wb.SaveAs(final);
-    
+
 //}
 
 

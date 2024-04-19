@@ -1035,7 +1035,8 @@ namespace ConsoleLibraryTesting
             //INSTANCE OF SQL SERVER GENERIC FUNCTIONS
             IRelationalDataAccess db_sql = new SqlDataAccess();
 
-
+            string message = "Getting data for";
+            int row = 0;
 
 
             string strSQL = "select max(file_date) from stg.EviCore_YTDMetrics;"; //GET LATEST DATE FROM DB
@@ -1440,7 +1441,7 @@ namespace ConsoleLibraryTesting
 
             var closed_xml = new ClosedXMLFunctions();
 
-            string message = "Generating sheet";
+            string message = "Getting data for";
             int row = 0;
 
             IRelationalDataAccess db_sql = new SqlDataAccess();
@@ -2131,9 +2132,20 @@ namespace ConsoleLibraryTesting
             var qmminps = await db_sql.LoadData<Quality_Metric_Minor_Market_PEG_Subcat_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = qmminps.ToList<object>(), SheetName = strSheetName });
             _stop_watch.Stop();
-     
 
+
+
+
+            Thread.Sleep(100);
+
+
+            _console_message = "Creating final spreadsheet";
+            Console.SetCursorPosition(0, 0);
+            Console.Clear();
+            _stop_watch.Start();
             var bytes = await closed_xml.ExportToExcelTemplateAsync(PEGReportTemplatePath, export);
+            _stop_watch.Stop();
+
 
 
             var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\PEG_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
@@ -2142,7 +2154,11 @@ namespace ConsoleLibraryTesting
             if (File.Exists(file))
                 File.Delete(file);
 
+            _console_message = "Opening final spreadsheet";
+            Console.SetCursorPosition(0, 1);
+            _stop_watch.Start();
             await File.WriteAllBytesAsync(file, bytes);
+            _stop_watch.Stop();
 
 
 
@@ -2164,14 +2180,14 @@ namespace ConsoleLibraryTesting
 
             var closed_xml = new ClosedXMLFunctions();
 
-            string message = "Generating sheet";
+            string message = "Getting data for";
             int row = 0;
 
             IRelationalDataAccess db_sql = new SqlDataAccess();
             string strSheetName = "Measure";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             string strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC)";
             var meas = await db_sql.LoadData<Measure_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = meas.ToList<object>(), SheetName = strSheetName });
@@ -2182,7 +2198,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "LOB";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.LOB, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.LOB";
             var lob = await db_sql.LoadData<LOB_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lob.ToList<object>(), SheetName = strSheetName });
@@ -2193,7 +2209,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "Specialty";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD";
             var spec = await db_sql.LoadData<Specialty_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = spec.ToList<object>(), SheetName = strSheetName });
@@ -2204,7 +2220,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "Region";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.RGN_NM as Region, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.RGN_NM";
             var reg = await db_sql.LoadData<Region_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = reg.ToList<object>(), SheetName = strSheetName });
@@ -2216,7 +2232,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "Major Market";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM as Major_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM";
             var maj = await db_sql.LoadData<Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = maj.ToList<object>(), SheetName = strSheetName });
@@ -2228,7 +2244,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "Minor Market";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM as Minor_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM";
             var min = await db_sql.LoadData<Minor_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = min.ToList<object>(), SheetName = strSheetName });
@@ -2241,7 +2257,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "Measure by LOB";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.LOB, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.LOB";
             var ml = await db_sql.LoadData<Measure_LOB_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = ml.ToList<object>(), SheetName = strSheetName });
@@ -2252,7 +2268,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "Measure by Specialty";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD";
             var msp = await db_sql.LoadData<Measure_Specialty_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = msp.ToList<object>(), SheetName = strSheetName });
@@ -2263,7 +2279,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "Measure by Region";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.RGN_NM as Region, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.RGN_NM";
             var mr = await db_sql.LoadData<Measure_Region_Mode>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = mr.ToList<object>(), SheetName = strSheetName });
@@ -2275,7 +2291,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "Measure by Major Mkt";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM As Major_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM";
             var mmaj = await db_sql.LoadData<Measure_Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = mmaj.ToList<object>(), SheetName = strSheetName });
@@ -2287,7 +2303,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "Measure by Minor Mkt";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM as Minor_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM";
             var mmin = await db_sql.LoadData<Measure_Minor_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = mmin.ToList<object>(), SheetName = strSheetName });
@@ -2300,7 +2316,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "LOB by Specialty";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD";
             var ls = await db_sql.LoadData<LOB_Spec_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = ls.ToList<object>(), SheetName = strSheetName });
@@ -2311,7 +2327,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "LOB by Region";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.RGN_NM as Region, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.RGN_NM";
             var lr = await db_sql.LoadData<LOB_Region_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lr.ToList<object>(), SheetName = strSheetName });
@@ -2322,7 +2338,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "LOB by Major Mkt";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM as Major_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM";
             var lmaj = await db_sql.LoadData<LOB_Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lmaj.ToList<object>(), SheetName = strSheetName });
@@ -2333,7 +2349,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "LOB by Minor Mkt";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM as Minor_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM";
             var lmin = await db_sql.LoadData<LOB_Minor_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lmin.ToList<object>(), SheetName = strSheetName });
@@ -2346,7 +2362,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "Specialty by Region";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, VCT_DB.ebm.VW_EBM_Final.RGN_NM as Region, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD, VCT_DB.ebm.VW_EBM_Final.RGN_NM";
             var sr = await db_sql.LoadData<Spec_Region_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = sr.ToList<object>(), SheetName = strSheetName });
@@ -2360,7 +2376,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "Specialty by Major Mkt";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM as Major_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM";
             var smaj = await db_sql.LoadData<Spec_Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = smaj.ToList<object>(), SheetName = strSheetName });
@@ -2373,7 +2389,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "Specialty by Minor Mkt";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM as Minor_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM";
             var  smin = await db_sql.LoadData<Spec_Minor_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = smin.ToList<object>(), SheetName = strSheetName });
@@ -2385,7 +2401,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "Measure by LOB by Specialty";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD";
             var mls = await db_sql.LoadData<Measure_LOB_Spec_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = mls.ToList<object>(), SheetName = strSheetName });
@@ -2396,7 +2412,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "Measure by LOB by Region";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.RGN_NM as Region, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.RGN_NM";
             var mlr = await db_sql.LoadData<Measure_LOB_Region_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = mlr.ToList<object>(), SheetName = strSheetName });
@@ -2408,7 +2424,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "Measure by LOB by Major Mkt";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM as Major_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM";
             var mlmaj = await db_sql.LoadData<Measure_LOB_Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = mlmaj.ToList<object>(), SheetName = strSheetName });
@@ -2420,7 +2436,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "Measure by LOB by Minor Mkt";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM as Minor_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM";
             var mlmin = await db_sql.LoadData<Measure_LOB_Minor_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = mlmin.ToList<object>(), SheetName = strSheetName });
@@ -2431,7 +2447,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "Measure by Specialty by Region";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, VCT_DB.ebm.VW_EBM_Final.RGN_NM as Region, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD, VCT_DB.ebm.VW_EBM_Final.RGN_NM";
             var msr = await db_sql.LoadData<Measure_Specialty_Region_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = msr.ToList<object>(), SheetName = strSheetName });
@@ -2442,7 +2458,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "Measure by Specialty by Maj Mkt";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM as Major_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM";
             var msmaj = await db_sql.LoadData<Measure_Specialty_Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = msmaj.ToList<object>(), SheetName = strSheetName });
@@ -2453,7 +2469,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "Measure by Specialty by Min Mkt";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM as Minor_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM";
             var msmin = await db_sql.LoadData<Measure_Specialty_Minor_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = msmin.ToList<object>(), SheetName = strSheetName });
@@ -2464,7 +2480,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "LOB by Specialty by Region";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, VCT_DB.ebm.VW_EBM_Final.RGN_NM as Region, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD, VCT_DB.ebm.VW_EBM_Final.RGN_NM";
             var lsr = await db_sql.LoadData<LOB_Spec_Region_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lsr.ToList<object>(), SheetName = strSheetName });
@@ -2476,7 +2492,7 @@ namespace ConsoleLibraryTesting
             strSheetName = "LOB by Specialty by Maj Mkt";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM as Major_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM";
             var lsmaj = await db_sql.LoadData<LOB_Spec_Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lsmaj.ToList<object>(), SheetName = strSheetName });
@@ -2488,18 +2504,22 @@ namespace ConsoleLibraryTesting
             strSheetName = "LOB by Specialty by Min Mkt";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch.Start();
+            _stop_watch.Reset(); _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM as Minor_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM";
             var lsmin = await db_sql.LoadData<LOB_Spec_Minor_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lsmin.ToList<object>(), SheetName = strSheetName });
             _stop_watch.Stop();
-            row++;
 
 
+            Thread.Sleep(100);
 
 
+            _console_message = "Creating final spreadsheet";
+            Console.SetCursorPosition(0, 0);
+            Console.Clear(); 
+            _stop_watch.Reset(); _stop_watch.Start();
             var bytes = await closed_xml.ExportToExcelTemplateAsync(EBMReportTemplatePath, export);
-
+            _stop_watch.Stop();
 
             var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\EBM_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
 
@@ -2507,8 +2527,15 @@ namespace ConsoleLibraryTesting
             if (File.Exists(file))
                 File.Delete(file);
 
-            await File.WriteAllBytesAsync(file, bytes);
 
+            Thread.Sleep(100);
+
+
+            _console_message = "Opening final spreadsheet";
+            Console.SetCursorPosition(0, 1);
+            _stop_watch.Reset(); _stop_watch.Start();
+            await File.WriteAllBytesAsync(file, bytes);
+            _stop_watch.Stop();
 
 
             var p = new Process();
