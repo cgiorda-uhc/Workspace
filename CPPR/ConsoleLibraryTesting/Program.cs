@@ -101,10 +101,6 @@ adHoc.ConnectionStringGalaxy = "Data Source=UDWPROD;User ID=cgiorda;Password=Boo
 adHoc.TableUGAP = "stg.MHP_Yearly_Universes_UGAP";
 adHoc.Limit = 3000;
 
-
-
-
-
 adHoc.TATReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\TAT_Reporting\\TAT_Template.xlsx";
 
 adHoc.PEGReportTemplatePath = "C:\\Users\\cgiorda\\Desktop\\Projects\\DQ&C Report Automation\\PEG Template\\341 PEG DQ&C Results - Template.xlsx";
@@ -116,13 +112,20 @@ IRelationalDataAccess db_sqsl = new SqlDataAccess();
 
 
 
+
+
+
+
+
+
+
 //await adHoc.getEBMSourceDataAsync();
 
 //await adHoc.getPEGSourceDataAsync();
-//await adHoc.generatePEGReportsAsync();
+await adHoc.generatePEGReportsAsync();
 //await adHoc.generateEBMReportsAsync();
 
-//return;
+return;
 
 
 

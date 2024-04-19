@@ -148,10 +148,6 @@ public class EvicoreScorecard : IEvicoreScorecard
                             }
                         }
 
-
-                        
-
-
                         var eslos = closed_xml.ImportExcel<EvicoreScorecardSheetLOSModel>(cleanFileName, sheet.SheetName, sheet.ColumnRange, sheet.StartingDataRow);
 
 
@@ -209,6 +205,12 @@ public class EvicoreScorecard : IEvicoreScorecard
                             //closed_xml.Mappings = getColumnLOSMappings();
                             //var cnt = -1;
                             var es = eslos.Where(x => !string.IsNullOrEmpty(x.EINotif));
+
+
+                            if (es.Count() == 0)
+                            {
+                              es  = eslos.Where(x => !string.IsNullOrEmpty(x.EIPA));
+                            }
                            //var test2 = eslos.Where(x => !string.IsNullOrEmpty(x.EINotif)).ToList();
 
                             foreach (var e in es)
@@ -236,8 +238,6 @@ public class EvicoreScorecard : IEvicoreScorecard
                                     //ex MAP 'E&I - Notif.' to 'EINotif'
                                     mapping = closed_xml.Mappings.SingleOrDefault(m => m.Key.ToLower().Trim() == f.Header.ToLower().Trim());
                                     var colSheetMapped = mapping.Value;
-
-
 
                                     try
                                     {
@@ -288,7 +288,7 @@ public class EvicoreScorecard : IEvicoreScorecard
                         }
 
 
-                        var test = esstate.Where(x => x.AZ == null);
+                        //var test = esstate.Where(x => x.AZ == null);
 
                         foreach (var e in esstate.Where(x => !string.IsNullOrEmpty(x.AZ)))
                         {
