@@ -1416,17 +1416,14 @@ namespace ConsoleLibraryTesting
 
         }
 
-        private static bool _new_line = true;
-        private static Stopwatch _stop_watch;
-        private Timer _timer;
+        private static Stopwatch _stop_watch = new Stopwatch();
         private static string _console_message;
 
         private static void TimerCallback(Object o)
         {
 
             var time_span = _stop_watch.Elapsed;
-
-            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+            var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
             time_span.Hours, time_span.Minutes, time_span.Seconds,
             time_span.Milliseconds / 10);
 
@@ -1435,9 +1432,10 @@ namespace ConsoleLibraryTesting
 
         }
 
+        private Timer _timer = new Timer(TimerCallback, null, 0, 1);
         public async Task generatePEGReportsAsync()
         {
- 
+
             List<ExcelExport> export = new List<ExcelExport>();
 
             var closed_xml = new ClosedXMLFunctions();
@@ -1446,28 +1444,24 @@ namespace ConsoleLibraryTesting
             int row = 0;
 
             IRelationalDataAccess db_sql = new SqlDataAccess();
+
+
             string strSheetName = "PEG";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch = new Stopwatch();
             _stop_watch.Start();
-            _new_line = true;
-            _timer = new Timer(TimerCallback, null, 0, 0);
             string strSQL = "select Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC) as PEG, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC)";
             var peg = await db_sql.LoadData<PEG_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = peg.ToList<object>(), SheetName = strSheetName });
             _stop_watch.Stop();
-            
             row++;
 
 
             strSheetName = "PEG Subcat";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch = new Stopwatch();
+            _stop_watch.Reset();
             _stop_watch.Start();
-            _new_line = true;
-            _timer = new Timer(TimerCallback, null, 0,0);
             strSQL = "select Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ',VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC) as PEG_with_Subcategory, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC)";
             var pegsub = await db_sql.LoadData<PEG_Subcat_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = pegsub.ToList<object>(), SheetName = strSheetName });
@@ -1478,10 +1472,8 @@ namespace ConsoleLibraryTesting
             strSheetName = "LOB";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch = new Stopwatch();
+            _stop_watch.Reset();
             _stop_watch.Start();
-            _new_line = true;
-            _timer = new Timer(TimerCallback, null, 0, 1);
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end";
             var lob = await db_sql.LoadData<LOB_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lob.ToList<object>(), SheetName = strSheetName });
@@ -1492,10 +1484,8 @@ namespace ConsoleLibraryTesting
             strSheetName = "Specialty";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch = new Stopwatch();
+            _stop_watch.Reset();
             _stop_watch.Start();
-            _new_line = true;
-            _timer = new Timer(TimerCallback, null, 0, 1);
             strSQL = "select VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD";
             var spec = await db_sql.LoadData<Specialty_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = spec.ToList<object>(), SheetName = strSheetName });
@@ -1506,10 +1496,8 @@ namespace ConsoleLibraryTesting
             strSheetName = "Quality Metric";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch = new Stopwatch();
+            _stop_watch.Reset();
             _stop_watch.Start();
-            _new_line = true;
-            _timer = new Timer(TimerCallback, null, 0, 1);
             strSQL = "select VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM";
             var qm = await db_sql.LoadData<Quality_Metric_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = qm.ToList<object>(), SheetName = strSheetName });
@@ -1520,365 +1508,630 @@ namespace ConsoleLibraryTesting
             strSheetName = "Region";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch = new Stopwatch();
+            _stop_watch.Reset();
             _stop_watch.Start();
-            _new_line = true;
-            _timer = new Timer(TimerCallback, null, 0, 1);
             strSQL = "select VCT_DB.peg.VW_PEG_Final.RGN_NM as Region, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.RGN_NM";
             var r = await db_sql.LoadData<Region_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = r.ToList<object>(), SheetName = strSheetName });
             _stop_watch.Stop();
             row++;
 
+
             strSheetName = "Major Market";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch = new Stopwatch();
+            _stop_watch.Reset();
             _stop_watch.Start();
-            _new_line = true;
-            _timer = new Timer(TimerCallback, null, 0, 1);
             strSQL = "select VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM as Major_Market, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM";
             var maj = await db_sql.LoadData<Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = maj.ToList<object>(), SheetName = strSheetName });
             _stop_watch.Stop();
             row++;
 
+
             strSheetName = "Minor Market";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch = new Stopwatch();
+            _stop_watch.Reset();
             _stop_watch.Start();
-            _new_line = true;
-            _timer = new Timer(TimerCallback, null, 0, 1);
             strSQL = "select VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM as Minor_Market, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM";
             var min = await db_sql.LoadData<Minor_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = min.ToList<object>(), SheetName = strSheetName });
             _stop_watch.Stop();
             row++;
 
+
             strSheetName = "LOB by PEG";
-            Console.WriteLine("Generating sheet " + strSheetName);
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC) as PEG, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC)";
             var lp = await db_sql.LoadData<LOB_PEG_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lp.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
 
             strSheetName = "LOB by PEG Subcat";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch = new Stopwatch();
+            _stop_watch.Reset();
             _stop_watch.Start();
-            _new_line = true;
-            _timer = new Timer(TimerCallback, null, 0, 1);
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC) as PEG_with_Subcategory, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC)";
             var lps = await db_sql.LoadData<LOB_PEG_Subcat_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lps.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
             strSheetName = "Specialty by PEG";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch = new Stopwatch();
+            _stop_watch.Reset();
             _stop_watch.Start();
-            _new_line = true;
-            _timer = new Timer(TimerCallback, null, 0, 1);
             strSQL = "select VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC) as PEG, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC)";
             var sp = await db_sql.LoadData<Specialty_PEG_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = sp.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "Spec by PEG Subcat";
             Console.SetCursorPosition(0, row);
             _console_message = message + " " + strSheetName;
-            _stop_watch = new Stopwatch();
+            _stop_watch.Reset();
             _stop_watch.Start();
-            _new_line = true;
-            _timer = new Timer(TimerCallback, null, 0, 1);
             strSQL = "select VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC) as PEG_with_Subcategory, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC)";
             var sps = await db_sql.LoadData<Spec_PEG_Subcat_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = sps.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
             strSheetName = "Quality Metric by PEG";
-            Console.WriteLine("Generating sheet " + strSheetName);
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC) as PEG, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC)";
             var qmp = await db_sql.LoadData<Quality_Metric_PEG_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = qmp.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
             strSheetName = "Qual Metric by PEG Subcat";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC) as PEG_with_Subcategory, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC)";
             var qmps = await db_sql.LoadData<Quality_Metric_PEG_Subcat_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = qmps.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "LOB by Spec";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD";
             var ls = await db_sql.LoadData<LOB_Spec_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = ls.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "LOB by Qual Metric";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM";
             var lqm = await db_sql.LoadData<LOB_Quality_Metric_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lqm.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
             strSheetName = "LOB by Region";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, VCT_DB.peg.VW_PEG_Final.RGN_NM as Region, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, VCT_DB.peg.VW_PEG_Final.RGN_NM";
             var lr = await db_sql.LoadData<LOB_Region_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lr.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "LOB by Major Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "SELECT case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM as Major_Market, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant FROM VCT_DB.peg.VW_PEG_Final GROUP BY case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM";
             var lmaj = await db_sql.LoadData<LOB_Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lmaj.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "LOB by Minor Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM as Minor_Market, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM";
             var lmin = await db_sql.LoadData<LOB_Minor_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lmin.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "Spec by Quality Metric";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM";
             var sqm = await db_sql.LoadData<Spec_Quality_Metric_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = sqm.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "Spec by Region";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, VCT_DB.peg.VW_PEG_Final.RGN_NM as Region, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, VCT_DB.peg.VW_PEG_Final.RGN_NM";
             var sr = await db_sql.LoadData<Spec_Region_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = sr.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "Spec by Major Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM as Major_Market, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM";
             var smaj = await db_sql.LoadData<Spec_Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = smaj.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
             strSheetName = "Spec by Minor Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM as Minor_Market, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM";
             var smin = await db_sql.LoadData<Spec_Minor_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = smin.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
 
             strSheetName = "Qual Metric by Region";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, VCT_DB.peg.VW_PEG_Final.RGN_NM as Region, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM, VCT_DB.peg.VW_PEG_Final.RGN_NM";
             var qmr = await db_sql.LoadData<Quality_Metric_Region_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = qmr.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
             strSheetName = "Qual Metric by Major Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM as Major_Market, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM";
             var qmMaj = await db_sql.LoadData<Quality_Metric_Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = qmMaj.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
+
 
             strSheetName = "Qual Metric by Minor Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM as Minor_Market, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM";
             var qmMin = await db_sql.LoadData<Quality_Metric_Minor_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = qmMin.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
 
 
             strSheetName = "LOB by Qual Metric by PEG";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC) as PEG, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC)";
             var lqmp = await db_sql.LoadData<LOB_Quality_Metric_PEG_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lqmp.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "LOB by Qual Metric by PEG Subc";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC) as PEG_with_Subcategory, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC)";
             var lqmsc = await db_sql.LoadData<LOB_Quality_Metric_PEG_Subcat_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lqmsc.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "Spec by Qual Metric by PEG";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC) as PEG, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC)";
             var sqmp = await db_sql.LoadData<Spec_Quality_Metric_PEG_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = sqmp.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "Spec by Qual Metric by PEG Subc";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC) as PEG_with_Subcategory, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC)";
             var sqmps = await db_sql.LoadData<Spec_Quality_Metric_PEG_Subcat_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = sqmps.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "LOB by Region by PEG";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, VCT_DB.peg.VW_PEG_Final.RGN_NM as Region, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC) as PEG, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, VCT_DB.peg.VW_PEG_Final.RGN_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC)";
             var lrp = await db_sql.LoadData<LOB_Region_PEG_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lrp.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "LOB by Region by PEG Subc";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, VCT_DB.peg.VW_PEG_Final.RGN_NM as Region, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC) as PEG_with_Subcategory, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, VCT_DB.peg.VW_PEG_Final.RGN_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC)";
             var lrpsc = await db_sql.LoadData<LOB_Region_PEG_Subcat_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lrpsc.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
             strSheetName = "LOB by Maj Mkt by PEG";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM as Major_Market, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC) as PEG, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC)";
             var lmajp = await db_sql.LoadData<LOB_Major_Market_PEG_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lmajp.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
             strSheetName = "LOB by Maj Mkt by PEG Subc";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM as Major_Market, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC) as PEG_with_Subcategory, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC)";
             var lmajps = await db_sql.LoadData<LOB_Major_Market_PEG_Subcat_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lmajps.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "LOB by Min Mkt by PEG";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM as Minor_Market, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC) as PEG, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC)";
             var lminp = await db_sql.LoadData<LOB_Minor_Market_PEG_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lminp.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "LOB by Min Mkt by PEG Subc";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM as Minor_Market, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC) as PEG_with_Subcategory, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC)";
             var lminps = await db_sql.LoadData<LOB_Minor_Market_PEG_Subcat_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lminps.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "LOB by Spec by Region";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, VCT_DB.peg.VW_PEG_Final.RGN_NM as Region, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, VCT_DB.peg.VW_PEG_Final.RGN_NM";
             var lsr = await db_sql.LoadData<LOB_Spec_Region_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lsr.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "LOB by Spec by Maj Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM as Major_Market, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM";
             var lsmaj = await db_sql.LoadData<LOB_Spec_Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lsmaj.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "LOB by Spec by Min Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM as Minor_Market, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM";
             var lsmin = await db_sql.LoadData<LOB_Spec_Minor_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lsmin.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "LOB by Qual Metric by Region";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, VCT_DB.peg.VW_PEG_Final.RGN_NM as Region, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM, VCT_DB.peg.VW_PEG_Final.RGN_NM";
             var lqmr = await db_sql.LoadData<LOB_Quality_Metric_Region_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lqmr.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "LOB by Qual Metric by Maj Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM as Major_Market, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM";
             var lqmmaj = await db_sql.LoadData<LOB_Quality_Metric_Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lqmmaj.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "LOB by Qual Metric by Min Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM as Minor_Market, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM";
             var lqmin = await db_sql.LoadData<LOB_Quality_Metric_Minor_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lqmin.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "LOB by Spec by Qual Metric";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end as LOB, VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by case when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when VCT_DB.peg.VW_PEG_Final.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else '' end, VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM";
             var lsqm = await db_sql.LoadData<LOB_Spec_Quality_Metric_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lsqm.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "Spec by Region by PEG";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, VCT_DB.peg.VW_PEG_Final.RGN_NM as Region, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC) as PEG, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, VCT_DB.peg.VW_PEG_Final.RGN_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC)";
             var srp = await db_sql.LoadData<Spec_Region_PEG_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = srp.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "Spec by Region by PEG Subc";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, VCT_DB.peg.VW_PEG_Final.RGN_NM as Region, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC) as PEG_with_Subcategory, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, VCT_DB.peg.VW_PEG_Final.RGN_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC)";
             var srps = await db_sql.LoadData<Spec_Region_PEG_Subcat_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = srps.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
             strSheetName = "Spec by Major Mkt by PEG";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM as Major_Market, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC) as PEG, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC)";
             var smajp = await db_sql.LoadData<Spec_Major_Market_PEG_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = smajp.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
 
             strSheetName = "Spec by Major Mkt by PEG Subc";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM as Major_Market, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC) as PEG_with_Subcategory, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC)";
             var smajps = await db_sql.LoadData<Spec_Major_Market_PEG_Subcat_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = smajps.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "Spec by Minor Mkt by PEG";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM as Minor_Market, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC) as PEG, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC)";
             var sminp = await db_sql.LoadData<Spec_Minor_Market_PEG_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = sminp.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "Spec by Minor Mkt by PEG Subc";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM as Minor_Market, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC) as PEG_with_Subcategory, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC)";
             var sminps = await db_sql.LoadData<Spec_Minor_Market_PEG_Subcat_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = sminps.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "Spec by Qual Metric by Region";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, VCT_DB.peg.VW_PEG_Final.RGN_NM as Region, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM, VCT_DB.peg.VW_PEG_Final.RGN_NM";
             var sqmr = await db_sql.LoadData<Spec_Quality_Metric_Region_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = sqmr.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
             strSheetName = "Spec by Qual Met by Major Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
+            
             strSQL = "select VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM as Major_Market, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM";
             var sqmmaj = await db_sql.LoadData<Spec_Quality_Metric_Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = sqmmaj.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "Spec by Qual Met by Minor Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD as Specialty, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM as Minor_Market, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.PREM_SPCL_CD, VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM";
             var sqmmin = await db_sql.LoadData<Spec_Quality_Metric_Minor_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = sqmmin.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
             strSheetName = "Qual Met by Region by PEG";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
+            
             strSQL = "select VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, VCT_DB.peg.VW_PEG_Final.RGN_NM as Region, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC) as PEG, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM, VCT_DB.peg.VW_PEG_Final.RGN_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC)";
             var qmrp = await db_sql.LoadData<Quality_Metric_Region_PEG_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = qmrp.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "Qual Met by Region by PEG Subc";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, VCT_DB.peg.VW_PEG_Final.RGN_NM as Region, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC) as PEG_with_Subcategory, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM, VCT_DB.peg.VW_PEG_Final.RGN_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC)";
             var qmrps = await db_sql.LoadData<Quality_Metric_Region_PEG_Subcat_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = qmrps.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
             strSheetName = "Qual Met by Major Mkt by PEG";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM as Major_Market, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC) as PEG, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC)";
             var qmmajp = await db_sql.LoadData<Quality_Metric_Major_Market_PEG_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = qmmajp.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
 
 
             strSheetName = "Qual Met by Maj Mkt by PEG Subc";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM as Major_Market, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC) as PEG_with_Subcategory, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM, VCT_DB.peg.VW_PEG_Final.MAJ_MKT_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC)";
             var qmmajps = await db_sql.LoadData<Quality_Metric_Major_Market_PEG_Subcat_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = qmmajps.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
             strSheetName = "Qual Met by Minor Mkt by PEG";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM as Minor_Market, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC) as PEG, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_DESC)";
             var qmminp = await db_sql.LoadData<Quality_Metric_Minor_Market_PEG_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = qmminp.ToList<object>(), SheetName = strSheetName });
-
+            _stop_watch.Stop();
+            row++;
 
             strSheetName = "Qual Met by Min Mkt by PEG Subc";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM as Quality_Metric, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM as Minor_Market, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC) as PEG_with_Subcategory, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Opportunity) as Previous_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.peg.VW_PEG_Final.Current_Market_Compliant) as Current_Compliant from VCT_DB.peg.VW_PEG_Final group by VCT_DB.peg.VW_PEG_Final.QLTY_MSR_NM, VCT_DB.peg.VW_PEG_Final.MKT_RLLP_NM, Concat(VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY_ID, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_CATGY, ': ', VCT_DB.peg.VW_PEG_Final.PEG_ANCH_SBCATGY_DESC)";
             var qmminps = await db_sql.LoadData<Quality_Metric_Minor_Market_PEG_Subcat_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = qmminps.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+     
 
             var bytes = await closed_xml.ExportToExcelTemplateAsync(PEGReportTemplatePath, export);
 
@@ -1911,167 +2164,337 @@ namespace ConsoleLibraryTesting
 
             var closed_xml = new ClosedXMLFunctions();
 
+            string message = "Generating sheet";
+            int row = 0;
 
             IRelationalDataAccess db_sql = new SqlDataAccess();
             string strSheetName = "Measure";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             string strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC)";
             var meas = await db_sql.LoadData<Measure_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = meas.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
             strSheetName = "LOB";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.LOB, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.LOB";
             var lob = await db_sql.LoadData<LOB_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lob.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
             strSheetName = "Specialty";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD";
             var spec = await db_sql.LoadData<Specialty_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = spec.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
             strSheetName = "Region";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.RGN_NM as Region, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.RGN_NM";
             var reg = await db_sql.LoadData<Region_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = reg.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
 
             strSheetName = "Major Market";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM as Major_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM";
             var maj = await db_sql.LoadData<Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = maj.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
 
             strSheetName = "Minor Market";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM as Minor_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM";
             var min = await db_sql.LoadData<Minor_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = min.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
 
 
             strSheetName = "Measure by LOB";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.LOB, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.LOB";
             var ml = await db_sql.LoadData<Measure_LOB_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = ml.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
             strSheetName = "Measure by Specialty";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD";
             var msp = await db_sql.LoadData<Measure_Specialty_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = msp.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
             strSheetName = "Measure by Region";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.RGN_NM as Region, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.RGN_NM";
             var mr = await db_sql.LoadData<Measure_Region_Mode>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = mr.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
 
             strSheetName = "Measure by Major Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM As Major_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM";
             var mmaj = await db_sql.LoadData<Measure_Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = mmaj.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
 
             strSheetName = "Measure by Minor Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM as Minor_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM";
             var mmin = await db_sql.LoadData<Measure_Minor_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = mmin.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
 
 
             strSheetName = "LOB by Specialty";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD";
             var ls = await db_sql.LoadData<LOB_Spec_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = ls.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
             strSheetName = "LOB by Region";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.RGN_NM as Region, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.RGN_NM";
             var lr = await db_sql.LoadData<LOB_Region_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lr.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
             strSheetName = "LOB by Major Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM as Major_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM";
             var lmaj = await db_sql.LoadData<LOB_Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lmaj.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
             strSheetName = "LOB by Minor Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM as Minor_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM";
             var lmin = await db_sql.LoadData<LOB_Minor_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lmin.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
 
 
             strSheetName = "Specialty by Region";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, VCT_DB.ebm.VW_EBM_Final.RGN_NM as Region, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD, VCT_DB.ebm.VW_EBM_Final.RGN_NM";
             var sr = await db_sql.LoadData<Spec_Region_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = sr.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
 
 
 
             strSheetName = "Specialty by Major Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM as Major_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM";
             var smaj = await db_sql.LoadData<Spec_Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = smaj.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
 
 
             strSheetName = "Specialty by Minor Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM as Minor_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM";
             var  smin = await db_sql.LoadData<Spec_Minor_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = smin.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
 
             strSheetName = "Measure by LOB by Specialty";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD";
             var mls = await db_sql.LoadData<Measure_LOB_Spec_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = mls.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
             strSheetName = "Measure by LOB by Region";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.RGN_NM as Region, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.RGN_NM";
             var mlr = await db_sql.LoadData<Measure_LOB_Region_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = mlr.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
 
             strSheetName = "Measure by LOB by Major Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM as Major_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM";
             var mlmaj = await db_sql.LoadData<Measure_LOB_Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = mlmaj.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
 
             strSheetName = "Measure by LOB by Minor Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM as Minor_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM";
             var mlmin = await db_sql.LoadData<Measure_LOB_Minor_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = mlmin.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
             strSheetName = "Measure by Specialty by Region";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, VCT_DB.ebm.VW_EBM_Final.RGN_NM as Region, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD, VCT_DB.ebm.VW_EBM_Final.RGN_NM";
             var msr = await db_sql.LoadData<Measure_Specialty_Region_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = msr.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
             strSheetName = "Measure by Specialty by Maj Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM as Major_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM";
             var msmaj = await db_sql.LoadData<Measure_Specialty_Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = msmaj.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
             strSheetName = "Measure by Specialty by Min Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC) as Measure, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM as Minor_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by Concat(VCT_DB.ebm.VW_EBM_Final.REPORT_CASE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.REPORT_RULE_ID, ': ', VCT_DB.ebm.VW_EBM_Final.COND_NM, ': ', VCT_DB.ebm.VW_EBM_Final.RULE_DESC), VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM";
             var msmin = await db_sql.LoadData<Measure_Specialty_Minor_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = msmin.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
             strSheetName = "LOB by Specialty by Region";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, VCT_DB.ebm.VW_EBM_Final.RGN_NM as Region, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD, VCT_DB.ebm.VW_EBM_Final.RGN_NM";
             var lsr = await db_sql.LoadData<LOB_Spec_Region_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lsr.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
 
             strSheetName = "LOB by Specialty by Maj Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM as Major_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD, VCT_DB.ebm.VW_EBM_Final.MAJ_MKT_NM";
             var lsmaj = await db_sql.LoadData<LOB_Spec_Major_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lsmaj.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
 
             strSheetName = "LOB by Specialty by Min Mkt";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Start();
             strSQL = "select VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD as Specialty, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM as Minor_Market, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Compliant) as Current_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Current_Market_Opportunity) as Current_Opportunity, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Compliant) as Previous_Compliant, Sum(VCT_DB.ebm.VW_EBM_Final.Previous_Market_Opportunity) as Previous_Opportunity from VCT_DB.ebm.VW_EBM_Final group by VCT_DB.ebm.VW_EBM_Final.LOB, VCT_DB.ebm.VW_EBM_Final.PREM_SPCL_CD, VCT_DB.ebm.VW_EBM_Final.MKT_RLLP_NM";
             var lsmin = await db_sql.LoadData<LOB_Spec_Minor_Market_Model>(connectionString: ConnectionStringVC, strSQL);
             export.Add(new ExcelExport() { ExportList = lsmin.ToList<object>(), SheetName = strSheetName });
+            _stop_watch.Stop();
+            row++;
+
 
 
 

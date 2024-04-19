@@ -122,8 +122,8 @@ IRelationalDataAccess db_sqsl = new SqlDataAccess();
 //await adHoc.getEBMSourceDataAsync();
 
 //await adHoc.getPEGSourceDataAsync();
-await adHoc.generatePEGReportsAsync();
-//await adHoc.generateEBMReportsAsync();
+//await adHoc.generatePEGReportsAsync();
+await adHoc.generateEBMReportsAsync();
 
 return;
 
