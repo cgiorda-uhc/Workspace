@@ -118,9 +118,9 @@ var search_path = @"\\NASGWFTP03\Care_Core_FTP_Files\Radiology";
 //await adHoc.getReportsTimelinessAsync(search_path);
 
 //GENERATE FINAL TAT REPORTS
-//await adHoc.generateTATReportsAsync();
+await adHoc.generateTATReportsAsync();
 
-//return;
+return;
 
 
 

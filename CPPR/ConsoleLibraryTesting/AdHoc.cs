@@ -1035,10 +1035,11 @@ namespace ConsoleLibraryTesting
             //INSTANCE OF SQL SERVER GENERIC FUNCTIONS
             IRelationalDataAccess db_sql = new SqlDataAccess();
 
-            string message = "Getting data for";
             int row = 0;
 
-
+            Console.SetCursorPosition(0, row);
+            _console_message = "Get latest dates from stg.EviCore_YTDMetrics";
+            _stop_watch.Start();
             string strSQL = "select max(file_date) from stg.EviCore_YTDMetrics;"; //GET LATEST DATE FROM DB
             var obj = await db_sql.ExecuteScalar(connectionString: ConnectionStringMSSQL, strSQL);
             var dt = DateTime.Parse(obj.ToString());
@@ -1049,6 +1050,9 @@ namespace ConsoleLibraryTesting
             obj = await db_sql.ExecuteScalar(connectionString: ConnectionStringMSSQL, strSQL);
             dt = DateTime.Parse(obj.ToString());
             string previous = dt.Month + "-" + dt.Year; //STRING LABEL FOR REPORT
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
 
 
             int month_total = 0;
@@ -1057,36 +1061,62 @@ namespace ConsoleLibraryTesting
             bool cs = false;
             bool com = false;
 
-
+            string message = "Getting data for";
 
             //SQL FOUNDATION PROVIDED BY INNA RUDI
             string strSheetName = "Urgent TAT"; //GET SHEET NAME
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "SELECT t.* FROM ( Select s.lob, s.Modality, case when denom is null then 1 else cast(num/denom as decimal(6,4)) end as pct, s.SLA, CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Current' as section from (select * from stg.SLA_Lookup where Metric_id=4 and Is_Archived=0) as s LEFT JOIN (Select report_type,LOB,rpt_modality, cast(sum(Less_State_TAT_Requirements) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where file_date in(select max(file_date) from stg.EviCore_TAT) and report_type = 'Urgent TAT' group by report_type,lob, rpt_Modality ) as e on s.modality=e.rpt_modality and s.lob=e.lob and s.metric=e.report_type UNION ALL Select s.lob, s.Modality, case when denom is null then 1 else cast(num/denom as decimal(6,4)) end as pct, s.SLA, CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Previous' as section from (select * from stg.SLA_Lookup where Metric_id=4 and Is_Archived=0) as s LEFT JOIN (Select report_type,LOB,rpt_modality, cast(sum(Less_State_TAT_Requirements) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_TAT) and report_type = 'Urgent TAT' group by report_type,lob, rpt_Modality ) as e on s.modality=e.rpt_modality and s.lob=e.lob and s.metric=e.report_type ) t order by t.section, t.lob, t.Modality ";
             var utat = await db_sql.LoadData<TAT_Model>(connectionString: ConnectionStringMSSQL, strSQL); //GET DATA
             export.Add(new ExcelExport() { ExportList = utat.ToList<object>(), SheetName = strSheetName });//ADD SHEET AND DATA TO export List
-
-
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
 
             strSheetName = "Routine TAT";//GET SHEET NAME
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "SELECT t.* FROM ( Select s.lob, s.Modality, case when denom is null then 1 else cast(num/denom as decimal(6,4)) end as pct, s.SLA, CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Current' as section from (select * from stg.SLA_Lookup where Metric_id=3 and Is_Archived=0) as s LEFT JOIN (Select report_type,LOB,rpt_modality, cast(sum(LessEqual_2_BUS_Days) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where file_date in(select max(file_date) from stg.EviCore_TAT) and report_type = 'Routine TAT' group by report_type,lob, rpt_Modality ) as e on s.modality=e.rpt_modality and s.lob=e.lob and s.metric=e.report_type UNION ALL Select s.lob, s.Modality, case when denom is null then 1 else cast(num/denom as decimal(6,4)) end as pct, s.SLA, CASE when cast(num/denom as decimal(6,4)) < s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Previous' as section from (select * from stg.SLA_Lookup where Metric_id=3 and Is_Archived=0) as s LEFT JOIN (Select report_type,LOB,rpt_modality, cast(sum(LessEqual_2_BUS_Days) as decimal) as num, cast(sum(Total_Authorizations_Notifications)as decimal) as denom from stg.EviCore_TAT as e where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_TAT) and report_type = 'Routine TAT' group by report_type,lob, rpt_Modality ) as e on s.modality=e.rpt_modality and s.lob=e.lob and s.metric=e.report_type ) t order by t.section, t.lob, t.Modality ";
             var rtat = await db_sql.LoadData<TAT_Model>(connectionString: ConnectionStringMSSQL, strSQL);//GET DATA
             export.Add(new ExcelExport() { ExportList = rtat.ToList<object>(), SheetName = strSheetName });//ADD SHEET AND DATA TO export List
-
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
 
             strSheetName = "Abandoned Rate";//GET SHEET NAME
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "SELECT t.* FROM ( Select DISTINCT s.lob, s.Modality, Abandoned_Pct as Pct, s.SLA , CASE WHEN t.Abandoned_Pct > s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Current' as section FROM (select * from stg.SLA_Lookup WHERE Metric_id=2 and Is_Archived=0) as s left join (Select lob,rpt_Modality, Avg_Speed_Answer, round(Abandoned_Percent,4) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select max(file_date) from stg.EviCore_YTDMetrics) and LOB<>'E&I' UNION ALL Select lob,rpt_Modality, CAST(ROUND(sum(Total_Calls * Avg_Speed_Answer)/sum(Total_Calls),2) as decimal(5,0)) as Avg_Speed_Answer, CAST(ROUND(sum(Abandoned_Calls)/sum(Total_Calls),5) as decimal(5,4)) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select max(file_date) from stg.EviCore_YTDMetrics) and lob='E&I' and rpt_Modality<>'' group by lob,rpt_Modality) as t on s.lob=t.lob and s.Modality=t.rpt_modality UNION ALL Select DISTINCT s.lob, s.Modality, Abandoned_Pct as Pct, s.SLA , CASE WHEN t.Abandoned_Pct > s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Previous' as section FROM (select * from stg.SLA_Lookup WHERE Metric_id=2 and Is_Archived=0) as s left join (Select lob,rpt_Modality, Avg_Speed_Answer, round(Abandoned_Percent,4) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_YTDMetrics) and LOB<>'E&I' UNION ALL Select lob,rpt_Modality, CAST(ROUND(sum(Total_Calls * Avg_Speed_Answer)/sum(Total_Calls),2) as decimal(5,0)) as Avg_Speed_Answer, CAST(ROUND(sum(Abandoned_Calls)/sum(Total_Calls),5) as decimal(5,4)) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_YTDMetrics) and lob='E&I' and rpt_Modality<>'' group by lob,rpt_Modality) as t on s.lob=t.lob and s.Modality=t.rpt_modality ) t order by t.section, t.lob, t.Modality ";
             var ar = await db_sql.LoadData<TAT_Model>(connectionString: ConnectionStringMSSQL, strSQL);//GET DATA
             export.Add(new ExcelExport() { ExportList = ar.ToList<object>(), SheetName = strSheetName });//ADD SHEET AND DATA TO export List
-
-
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
 
             strSheetName = "ASA";//GET SHEET NAME
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "SELECT t.* FROM ( Select s.LOB, s.Modality, Avg_Speed_Answer as Pct, s.SLA , CASE WHEN t.Avg_Speed_Answer > s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Current' as section FROM (select * from stg.SLA_Lookup WHERE Metric_id=1 and Is_Archived=0) as s left join (Select lob,rpt_Modality, Avg_Speed_Answer, round(Abandoned_Percent,3) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select max(file_date) from stg.EviCore_YTDMetrics) and LOB<>'E&I' UNION ALL Select lob,rpt_Modality, CAST(ROUND(sum(Total_Calls * Avg_Speed_Answer)/sum(Total_Calls),2) as decimal(5,0)) as Avg_Speed_Answer, CAST(ROUND(sum(Abandoned_Calls)/sum(Total_Calls),3) as decimal(5,4)) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select max(file_date) from stg.EviCore_YTDMetrics) and lob='E&I' and rpt_Modality<>'' group by lob,rpt_Modality) as t on s.lob=t.lob and s.modality=t.rpt_modality UNION ALL Select s.LOB, s.Modality, Avg_Speed_Answer as Pct, s.SLA , CASE WHEN t.Avg_Speed_Answer > s.SLA THEN s.Penalty_SLA else 0 end as Penalty_SLA, 'Previous' as section FROM (select * from stg.SLA_Lookup WHERE Metric_id=1 and Is_Archived=0) as s left join (Select lob,rpt_Modality, Avg_Speed_Answer, round(Abandoned_Percent,3) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_YTDMetrics) and LOB<>'E&I' UNION ALL Select lob,rpt_Modality, CAST(ROUND(sum(Total_Calls * Avg_Speed_Answer)/sum(Total_Calls),2) as decimal(5,0)) as Avg_Speed_Answer, CAST(ROUND(sum(Abandoned_Calls)/sum(Total_Calls),3) as decimal(5,4)) as Abandoned_Pct from stg.EviCore_YTDMetrics where file_date in(select dateadd(mm,-1,max(file_date)) from stg.EviCore_YTDMetrics) and lob='E&I' and rpt_Modality<>'' group by lob,rpt_Modality) as t on s.lob=t.lob and s.modality=t.rpt_modality ) t order by t.section, t.lob, t.Modality ";
             var asa = await db_sql.LoadData<TAT_Model>(connectionString: ConnectionStringMSSQL, strSQL);//GET DATA
             export.Add(new ExcelExport() { ExportList = asa.ToList<object>(), SheetName = strSheetName });//ADD SHEET AND DATA TO export List
-
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
 
             strSheetName = "SLA summary, penalties"; //GET SHEET NAME
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             StringBuilder sbSQL = new StringBuilder();
 
             sbSQL.Append("DECLARE @CURRENT_DATE INT;");
@@ -1120,11 +1150,18 @@ namespace ConsoleLibraryTesting
             var tsum = await db_sql.LoadData<TAT_Summary_Model>(connectionString: ConnectionStringMSSQL, sbSQL.ToString());//GET DATA
             export.Add(new ExcelExport() { ExportList = tsum.ToList<object>(), SheetName = strSheetName });//ADD SHEET AND DATA TO export List
 
-
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
 
 
 
             strSheetName = "COM SLA summary, penalties";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
+
 
             sbSQL.Remove(0, sbSQL.Length);
             sbSQL.Append("DECLARE @CURRENT_DATE INT;");
@@ -1147,10 +1184,16 @@ namespace ConsoleLibraryTesting
 
             export.Add(new ExcelExport() { ExportList = tsum.ToList<object>(), SheetName = strSheetName });//ADD SHEET AND DATA TO export List
 
-
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
 
 
             strSheetName = "OXF SLA summary, penalties";
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
 
             sbSQL.Remove(0, sbSQL.Length);
             sbSQL.Append("DECLARE @CURRENT_DATE INT;");
@@ -1176,10 +1219,16 @@ namespace ConsoleLibraryTesting
 
             export.Add(new ExcelExport() { ExportList = tsum.ToList<object>(), SheetName = strSheetName });//ADD SHEET AND DATA TO export List
 
-
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
 
             strSheetName = "CS SLA summary, penalties";
 
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             sbSQL.Remove(0, sbSQL.Length);
             sbSQL.Append("DECLARE @CURRENT_DATE INT;");
             sbSQL.Append("SELECT @CURRENT_DATE= year(max(file_date)) FROM stg.EviCore_TAT;");
@@ -1205,12 +1254,17 @@ namespace ConsoleLibraryTesting
 
             export.Add(new ExcelExport() { ExportList = tsum.ToList<object>(), SheetName = strSheetName });//ADD SHEET AND DATA TO export List
 
-
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
 
 
 
             strSheetName = "MR SLA summary, penalties";
-
+            Console.SetCursorPosition(0, row);
+            _console_message = message + " " + strSheetName;
+            _stop_watch.Reset();
+            _stop_watch.Start();
             sbSQL.Remove(0, sbSQL.Length);
             sbSQL.Append("DECLARE @CURRENT_DATE INT;");
             sbSQL.Append("SELECT @CURRENT_DATE= year(max(file_date)) FROM stg.EviCore_TAT;");
@@ -1233,12 +1287,23 @@ namespace ConsoleLibraryTesting
 
             export.Add(new ExcelExport() { ExportList = tsum.ToList<object>(), SheetName = strSheetName });//ADD SHEET AND DATA TO export List
 
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
 
 
+
+            Thread.Sleep(100);
 
             //GENERATE EXCEL FILE IN BYTES
+            _console_message = "Creating final spreadsheet";
+            Console.SetCursorPosition(0, row);
+            _stop_watch.Reset();
+            _stop_watch.Start();
             var bytes = await closed_xml.ExportToTATExcelTemplateAsync(TATReportTemplatePath, export, current, current_spelled, previous, 1, 8, 4);
-
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
 
             //CREATE FILE NAME
             var file = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\TAT_Reporting_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
@@ -1248,13 +1313,25 @@ namespace ConsoleLibraryTesting
                 File.Delete(file);
 
             //CONVERT BYTES TO FINAL EXCEL
+            _console_message = "Saving spreadsheet";
+            Console.SetCursorPosition(0, row);
+            _stop_watch.Reset();
+            _stop_watch.Start();
             await File.WriteAllBytesAsync(file, bytes);
-
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
 
 
 
 
             //THIS SECTION TAKES THE FILE ABOVE AND BREAKS THEM INTO 4 ADDITONAL FILES
+            _console_message = "Breaking up multiple spreadsheets";
+            Console.SetCursorPosition(0, row);
+            _stop_watch.Reset();
+            _stop_watch.Start();
+            row++;
+            _console_message = "";
 
             string sheet_main = "All SLAs, no current metrics"; //THIS SHEET WILL BE IN ALL
             string sheet_common = "SLA summary, penalties"; //THIS WILL BE APPENDED TO THE 4 BELOW
@@ -1292,6 +1369,10 @@ namespace ConsoleLibraryTesting
                 wb.SaveAs(final);//SAVE NEW FILE AND CONTINUE LOOP
 
             }
+            _stop_watch.Stop();
+
+
+            return;
 
 
             //HERE WE A START EMAIL PROCESS
@@ -1417,20 +1498,27 @@ namespace ConsoleLibraryTesting
 
         }
 
+        
+        
+        
+        
         private static Stopwatch _stop_watch = new Stopwatch();
         private static string _console_message;
 
         private static void TimerCallback(Object o)
         {
 
-            var time_span = _stop_watch.Elapsed;
-            var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
-            time_span.Hours, time_span.Minutes, time_span.Seconds,
-            time_span.Milliseconds / 10);
+            if(!string.IsNullOrEmpty(_console_message))
+            {
+                var time_span = _stop_watch.Elapsed;
+                var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                time_span.Hours, time_span.Minutes, time_span.Seconds,
+                time_span.Milliseconds / 10);
 
 
-            Console.Write("\r" + _console_message + " : " + elapsedTime);
-
+                Console.Write("\r" + _console_message + " : " + elapsedTime);
+            }
+  
         }
 
         private Timer _timer = new Timer(TimerCallback, null, 0, 1);
@@ -2142,6 +2230,7 @@ namespace ConsoleLibraryTesting
             _console_message = "Creating final spreadsheet";
             Console.SetCursorPosition(0, 0);
             Console.Clear();
+            _stop_watch.Reset();
             _stop_watch.Start();
             var bytes = await closed_xml.ExportToExcelTemplateAsync(PEGReportTemplatePath, export);
             _stop_watch.Stop();
@@ -2156,6 +2245,7 @@ namespace ConsoleLibraryTesting
 
             _console_message = "Opening final spreadsheet";
             Console.SetCursorPosition(0, 1);
+            _stop_watch.Reset();
             _stop_watch.Start();
             await File.WriteAllBytesAsync(file, bytes);
             _stop_watch.Stop();
