@@ -5,6 +5,7 @@ using DataAccessLibrary.DataAccess;
 using DataAccessLibrary.Models;
 using DataAccessLibrary.Scripts;
 using DataAccessLibrary.Shared;
+using DocumentFormat.OpenXml.Office2010.ExcelAc;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Wordprocessing;
@@ -347,7 +348,7 @@ namespace ConsoleLibraryTesting
             await db_sql.BulkSave<MHP_Reporting_Filters>(connectionString: ConnectionStringVC, "mhp.MHP_Universes_Filter_Cache", fs, columns, truncate: true);
 
 
-            await SharedFunctions.EmailAsync("jon.piotrowski@uhc.com;renee_l_struck@uhc.com;hong_gao@uhc.com", "chris_giordano@uhc.com", "MHPUniverse January 2024 was refreshed", "MHPUniverse January 2024 was refreshed", "chris_giordano@uhc.com;laura_fischer@uhc.com;inna_rudi@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
+            await SharedFunctions.EmailAsync("jon.piotrowski@uhc.com;renee_l_struck@uhc.com;hong_gao@uhc.com", "chris_giordano@uhc.com", "MHPUniverse February 2024 was refreshed", "MHPUniverse February 2024 was refreshed", "chris_giordano@uhc.com;laura_fischer@uhc.com;inna_rudi@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
         }
 
 
@@ -1330,8 +1331,6 @@ namespace ConsoleLibraryTesting
             Console.SetCursorPosition(0, row);
             _stop_watch.Reset();
             _stop_watch.Start();
-            row++;
-            _console_message = "";
 
             string sheet_main = "All SLAs, no current metrics"; //THIS SHEET WILL BE IN ALL
             string sheet_common = "SLA summary, penalties"; //THIS WILL BE APPENDED TO THE 4 BELOW
@@ -1370,7 +1369,8 @@ namespace ConsoleLibraryTesting
 
             }
             _stop_watch.Stop();
-
+            row++;
+            _console_message = "";
 
             return;
 
@@ -1384,18 +1384,59 @@ namespace ConsoleLibraryTesting
             string from;
             string cc;
             string attachment;
+            string attachmentT;
+
+            
+
 
             //FOR TESTING
             attachment = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\" + System.IO.Path.GetFileName(file);
             //To: MaryAnnDimartino
             subject = "TESTING SLA metrics for – " + current;
             body = "<p>" + (ox ? "Oxford Flagged" : "Oxford Skipped") + "</p><p>" + (mr ? "M&R Flagged" : "M&R  Skipped") + "</p><p>" + (cs ? "C&S Flagged" : "C&S Skipped") + "</p><p>" + (com ? "Comm Flagged" : "Comm Skipped") + "</p>";
-            recipients = "chris_giordano@uhc.com";
+            recipients = "mary_ann_dimartino@uhc.com";
             from = "chris_giordano@uhc.com";
             cc = "chris_giordano@uhc.com";
 
-            await SharedFunctions.EmailAsync(recipients, from, subject, body, cc, attachment, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
 
+
+
+            _console_message = "Creating ReportTimeliness spreadsheet";
+            Console.SetCursorPosition(0, row);
+            _stop_watch.Reset();
+            _stop_watch.Start();
+            sbSQL.Remove(0, sbSQL.Length);
+            sbSQL.Append("SELECT j.[ertf_id] ,[file_location_wild] ,[file_name_wild] ,[file_name] ,[file_date] ,[file_month] ,[file_year] ,[drop_date] FROM [stg].[Evicore_Report_Timeliness_Files] j INNER JOIN [IL_UCA].[stg].[Evicore_Report_Timeliness] t ON j.[ertf_id] = t.[ertf_id] ORDER BY [file_date], j.[ertf_id]");
+            var rt = await db_sql.LoadData<Report_Timeliness_Output_Model>(connectionString: ConnectionStringMSSQL, sbSQL.ToString());//GET DATA
+            var columns = typeof(Report_Timeliness_Output_Model).GetProperties().Select(p => p.Name).ToList();
+            var closed_xmlf = new ClosedXMLFunctions();
+            bytes = await closed_xmlf.ExportToExcelAsync(rt.ToList(), "ReportTimeliness");
+            attachmentT = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\Report_Timeliness_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".xlsx";
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
+
+
+            //CONVERT BYTES TO FINAL EXCEL
+            _console_message = "Saving ReportTimeliness spreadsheet";
+            Console.SetCursorPosition(0, row);
+            _stop_watch.Reset();
+            _stop_watch.Start();
+            await File.WriteAllBytesAsync(attachmentT, bytes);
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
+
+
+
+            await SharedFunctions.EmailAsync(recipients, from, subject, body, cc, attachment + ";" + attachmentT, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
+
+
+
+            //ox = false;
+            //mr = true;
+            //cs = true;
+            //com = false;
 
             //COMPLETE EMAILS
             if (ox || mr || cs || com)
@@ -1405,7 +1446,7 @@ namespace ConsoleLibraryTesting
                 //To: Rosamond Eschert; CC Laura Fischer
                 subject = "SLA metrics for – " + current;
                 body = File.ReadAllText(emailFilePath + "SLA_TAT.txt").Replace("[Date]", current);
-                recipients = "chris_giordano@uhc.com";
+                recipients = "mary_ann_dimartino@uhc.com";
                 from = "chris_giordano@uhc.com";
                 cc = "chris_giordano@uhc.com";
 
@@ -1416,7 +1457,7 @@ namespace ConsoleLibraryTesting
                 //To: Judith Bourdeau
                 subject = "CareCore SLA metrics for – " + current;
                 body = File.ReadAllText(emailFilePath + "CareCore_TAT.txt").Replace("[Date]", current);
-                recipients = "chris_giordano@uhc.com";
+                recipients = "mary_ann_dimartino@uhc.com";
                 from = "chris_giordano@uhc.com";
                 cc = "chris_giordano@uhc.com";
 
@@ -1434,7 +1475,7 @@ namespace ConsoleLibraryTesting
                 //E&I: To: Kathryn Tschida (E&I finance); CC: Laura Fischer
                 subject = "COM - CCN SLA Penalties – " + current;
                 body = File.ReadAllText(emailFilePath + "COMM_TAT.txt").Replace("[Date]", current);
-                recipients = "chris_giordano@uhc.com";
+                recipients = "mary_ann_dimartino@uhc.com";
                 from = "chris_giordano@uhc.com";
                 cc = "chris_giordano@uhc.com";
 
@@ -1451,7 +1492,7 @@ namespace ConsoleLibraryTesting
                 //Oxford: To: Sharon Wallhofer; CC: Chris Jacozzi, Allyson Clark, and Laura Fischer 
                 subject = "Oxford - CCN SLA Penalties – " + current;
                 body = File.ReadAllText(emailFilePath + "OXF_TAT.txt").Replace("[Date]", current);
-                recipients = "chris_giordano@uhc.com";
+                recipients = "mary_ann_dimartino@uhc.com";
                 from = "chris_giordano@uhc.com";
                 cc = "chris_giordano@uhc.com";
 
@@ -1468,7 +1509,7 @@ namespace ConsoleLibraryTesting
                 //Oxford: To: Sharon Wallhofer; CC: Chris Jacozzi, Allyson Clark, and Laura Fischer 
                 subject = "C&S - CCN SLA Penalties – " + current;
                 body = File.ReadAllText(emailFilePath + "CS_TAT.txt").Replace("[Date]", current);
-                recipients = "chris_giordano@uhc.com";
+                recipients = "mary_ann_dimartino@uhc.com";
                 from = "chris_giordano@uhc.com";
                 cc = "chris_giordano@uhc.com";
 
@@ -1485,7 +1526,7 @@ namespace ConsoleLibraryTesting
                 //Oxford: To: Sharon Wallhofer; CC: Chris Jacozzi, Allyson Clark, and Laura Fischer 
                 subject = "M&R - CCN SLA Penalties – " + current;
                 body = File.ReadAllText(emailFilePath + "MR_TAT.txt").Replace("[Date]", current);
-                recipients = "chris_giordano@uhc.com";
+                recipients = "mary_ann_dimartino@uhc.com";
                 from = "chris_giordano@uhc.com";
                 cc = "chris_giordano@uhc.com";
 

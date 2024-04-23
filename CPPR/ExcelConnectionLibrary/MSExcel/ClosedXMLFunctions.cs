@@ -479,7 +479,77 @@ namespace FileParsingLibrary.MSExcel
             return final;
         }
 
-       public async Task<byte[]> ExportToExcelAsync(List<ExcelExport> excelExports)
+
+
+        public async Task<byte[]> ExportToExcelAsync<T>(List<T> list, string worksheetTitle)
+        {
+
+            byte[] final = new byte[0];
+            Task t = Task.Run(async () =>
+            {
+                using var wb = new XLWorkbook(); //create workbook
+                int rowcnt = 1;
+                int colcnt = 1;
+                int totalcnt = 0;
+
+
+                var ws = wb.Worksheets.Add(worksheetTitle); //add worksheet to workbook
+                var type = list!.FirstOrDefault()!.GetType();
+
+                PropertyInfo[] properties = type.GetProperties();
+
+                colcnt = 1;
+                foreach (var prop in properties)
+                {
+                    ws.Cell(1, colcnt).Value = prop.Name;
+                    ws.Cell(1, colcnt).Style.Font.Bold = true; //font must be bold
+                    ws.Cell(1, colcnt).Style.Fill.BackgroundColor = XLColor.Yellow;
+                    ws.Cell(1, colcnt).Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+                    ws.Cell(1, colcnt).Style.Border.BottomBorder = XLBorderStyleValues.Thin;
+                    ws.Cell(1, colcnt).Style.Border.TopBorder = XLBorderStyleValues.Thin;
+                    ws.Cell(1, colcnt).Style.Border.LeftBorder = XLBorderStyleValues.Thin;
+                    ws.Cell(1, colcnt).Style.Border.RightBorder = XLBorderStyleValues.Thin;
+
+                    colcnt++;
+                }
+
+                totalcnt = list.Count();
+                if (list != null && totalcnt > 0)
+                {
+                    rowcnt = 2;
+                    foreach (var item in list)
+                    {
+                        colcnt = 1;
+                        foreach (var prop in properties)
+                        {
+                            ws.Cell(rowcnt, colcnt).Value = prop.GetValue(item, null) + "";
+                            colcnt++;
+                        }
+                        rowcnt++;
+                    }
+
+                }
+
+                ws.Columns().AdjustToContents(1, 20);
+
+
+
+                //save file to memory stream and return it as byte array
+                using (var ms = new MemoryStream())
+                {
+                    wb.SaveAs(ms);
+
+                    final = ms.ToArray();
+                }
+
+            });
+            t.Wait(); // Wait until the above task is complete, email is sent
+            return final;
+        }
+
+
+
+        public async Task<byte[]> ExportToExcelAsync(List<ExcelExport> excelExports)
         {
             byte[] final = new byte[0];
             Task t = Task.Run(async () =>
