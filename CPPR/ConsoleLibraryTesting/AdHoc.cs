@@ -56,9 +56,13 @@ namespace ConsoleLibraryTesting
 
         public string TATReportTemplatePath { get; set; }
 
+        public string UGAPConfigPath { get; set; }
 
+        public string UGAPConfigOutputFile { get; set; }
 
-        public string ConnectionStringVC { get; set; }
+        public string ReportsTimelinessPath { get; set; }
+
+    public string ConnectionStringVC { get; set; }
 
         public string ConnectionStringMSSQL { get; set; }
 
@@ -207,9 +211,10 @@ namespace ConsoleLibraryTesting
 
 
         //MHP ILUCA TO VC
-        public async Task transferMHPDataAsync(List<string> files_loaded)
+        public async Task transferMHPDataAsync(List<string> files_loaded, string month, string year)
         {
 
+            int row = 0;
 
 
             //TWO DBS
@@ -224,36 +229,80 @@ namespace ConsoleLibraryTesting
                 sb.Append("'" + file + "',");
             }
 
+
+            Console.SetCursorPosition(0, row);
+            _console_message = "Copying [IL_UCA].[stg].[MHP_Yearly_Universes] to [VCT_DB].[mhp].[MHP_Yearly_Universes]";
+            _stop_watch.Reset();
+            _stop_watch.Start();
             string strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Yearly_Universes]  WHERE file_name in (" + sb.ToString().TrimEnd(',') + ");";
             var mhp = await db_sql.LoadData<MHPUniverseModel>(connectionString: ConnectionStringMSSQL, strSQL);
             var columns = typeof(MHPUniverseModel).GetProperties().Select(p => p.Name).ToArray();
             await db_sql.BulkSave<MHPUniverseModel>(connectionString: ConnectionStringVC, "mhp.MHP_Yearly_Universes", mhp, columns);
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
 
+
+            Console.SetCursorPosition(0, row);
+            _console_message = "Copying [IL_UCA].[stg].[MHP_Yearly_Universes_UGAP] to [VCT_DB].[mhp].[MHP_Yearly_Universes_UGAP]";
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Yearly_Universes_UGAP] WHERE mhp_uni_id in (SELECT [mhp_uni_id] FROM [IL_UCA].[stg].[MHP_Yearly_Universes] WHERE file_name in (" + sb.ToString().TrimEnd(',') + "));";
             var mhp_ugap = await db_sql.LoadData<MHPMemberDetailsModel>(connectionString: ConnectionStringMSSQL, strSQL);
             columns = typeof(MHPMemberDetailsModel).GetProperties().Select(p => p.Name).ToArray();
             await db_sql.BulkSave<MHPMemberDetailsModel>(connectionString: ConnectionStringVC, "mhp.MHP_Yearly_Universes_UGAP", mhp_ugap, columns);
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
 
 
+            Console.SetCursorPosition(0, row);
+            _console_message = "Copying [IL_UCA].[dbo].[cs_product_map] to [VCT_DB].[vct].[cs_product_map]";
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "SELECT * FROM  [IL_UCA].[dbo].[cs_product_map];";
             var pm = await db_sql.LoadData<CS_Product_Map>(connectionString: ConnectionStringMSSQL, strSQL);
             columns = typeof(CS_Product_Map).GetProperties().Select(p => p.Name).ToArray();
             await db_sql.BulkSave<CS_Product_Map>(connectionString: ConnectionStringVC, "vct.cs_product_map", pm, columns, truncate: true);
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
 
 
+            Console.SetCursorPosition(0, row);
+            _console_message = "Copying [IL_UCA].[stg].[MHP_Group_State] to [VCT_DB].[mhp].[MHP_Group_State]";
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Group_State];";
             var gs = await db_sql.LoadData<MHP_Group_State_Model>(connectionString: ConnectionStringMSSQL, strSQL);
             columns = typeof(MHP_Group_State_Model).GetProperties().Select(p => p.Name).ToArray();
             await db_sql.BulkSave<MHP_Group_State_Model>(connectionString: ConnectionStringVC, "mhp.MHP_Group_State", gs, columns, truncate: true);
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
 
 
+            Console.SetCursorPosition(0, row);
+            _console_message = "Copying [IL_UCA].[stg].[MHP_Universes_Filter_Cache] to [VCT_DB].[mhp].[MHP_Universes_Filter_Cache]";
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Universes_Filter_Cache];";
             var fs = await db_sql.LoadData<MHP_Reporting_Filters>(connectionString: ConnectionStringMSSQL, strSQL);
             columns = typeof(MHP_Reporting_Filters).GetProperties().Select(p => p.Name).ToArray();
             await db_sql.BulkSave<MHP_Reporting_Filters>(connectionString: ConnectionStringVC, "mhp.MHP_Universes_Filter_Cache", fs, columns, truncate: true);
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
 
 
-            await SharedFunctions.EmailAsync("jon.piotrowski@uhc.com;renee_l_struck@uhc.com;hong_gao@uhc.com", "chris_giordano@uhc.com", "MHPUniverse February 2024 was refreshed", "MHPUniverse February 2024 was refreshed", "chris_giordano@uhc.com;laura_fischer@uhc.com;inna_rudi@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
+            Console.SetCursorPosition(0, row);
+            _console_message = "Sending email to MHP users";
+            _stop_watch.Reset();
+            _stop_watch.Start();
+            await SharedFunctions.EmailAsync("jon.piotrowski@uhc.com;renee_l_struck@uhc.com;hong_gao@uhc.com", "chris_giordano@uhc.com", "MHPUniverse " + month + " "+ year +" was refreshed", "MHPUniverse " + month + " "+ year +" was refreshed", "chris_giordano@uhc.com;laura_fischer@uhc.com;inna_rudi@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
         }
 
 
@@ -653,7 +702,7 @@ namespace ConsoleLibraryTesting
             StreamReader? csvreader = null;
             string _strTableName;
             //string[] strLstFiles;
-            string[] strLstFiles = Directory.GetFiles(@"C:\Users\cgiorda\Desktop\Projects\UGAP Configuration", "*.txt", SearchOption.TopDirectoryOnly);
+            string[] strLstFiles = Directory.GetFiles(UGAPConfigPath, "*.txt", SearchOption.TopDirectoryOnly);
             string? strInputLine = "";
             string[] csvArray;
             string strSQL;
@@ -762,7 +811,7 @@ namespace ConsoleLibraryTesting
             List<UGAPETGModel> etg_final = etg.OrderBy(o => o.RISK_Model).ThenBy(o => o.MPC_NBR).ToList();
             StringBuilder sb = new StringBuilder();
 
-            filename = "C:\\Users\\cgiorda\\Desktop\\Projects\\UGAP Configuration\\output\\UGAP_Config_Automated.txt";
+            filename = UGAPConfigOutputFile;
             if (File.Exists(filename))
             {
                 File.Delete(filename);
@@ -804,7 +853,7 @@ namespace ConsoleLibraryTesting
         }
 
 
-        public async Task getReportsTimelinessAsync(string search_path)
+        public async Task getReportsTimelinessAsync()
         {
             string file_name; //INDIVIDUAL FILES
             string zip_file_name = ""; //FILE WITHIN ZIP
@@ -851,7 +900,7 @@ namespace ConsoleLibraryTesting
                 //REPLACE MM YY WITH PROPER DATE DISPLAY
                 file_name = rf.file_name_wild.Replace("MMMM", CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)).Replace("MM", (month < 10 ? "0" + month : month.ToString())).Replace("YYYY", year.ToString()).Replace("YY", year.ToString().Substring(2, 2));
 
-                var files = Directory.GetFiles(search_path, (is_zip ? zip_file_name : file_name), SearchOption.TopDirectoryOnly);
+                var files = Directory.GetFiles(ReportsTimelinessPath, (is_zip ? zip_file_name : file_name), SearchOption.TopDirectoryOnly);
 
                 foreach (var fl in files) //HOPEFULLY ONLY ONE FILE FOUND. IF NOT CAPTURE IT!
                 {
@@ -884,7 +933,7 @@ namespace ConsoleLibraryTesting
                                     r.ertf_id = -1;
                                 }
 
-                                r.file_location = search_path;
+                                r.file_location = ReportsTimelinessPath;
                                 r.file_name = found_file_name;
                                 r.file_date = new DateTime(year, month, 1);
                                 r.file_month = month;
@@ -902,7 +951,7 @@ namespace ConsoleLibraryTesting
                         var r = new Report_Timeliness_Model();
 
                         r.ertf_id = rf.ertf_id;
-                        r.file_location = search_path + zip_file_name;
+                        r.file_location = ReportsTimelinessPath + zip_file_name;
                         r.file_name = file_name;
                         r.file_date = new DateTime(year, month, 1);
                         r.file_month = month;

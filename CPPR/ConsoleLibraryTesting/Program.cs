@@ -107,6 +107,9 @@ adHoc.PEGReportTemplatePath = "\\\\nasv0048\\ucs_ca\\PHS_DATA_NEW\\Home Director
 
 adHoc.EBMReportTemplatePath = "\\\\nasv0048\\ucs_ca\\PHS_DATA_NEW\\Home Directory - Automation\\ExcelTemplates\\DQ&C Report Automation\\EBM Template\\342 EBM DQ&C Results - Template.xlsx";
 
+adHoc.UGAPConfigPath = @"C:\Users\cgiorda\Desktop\Projects\UGAP Configuration\";
+adHoc.UGAPConfigOutputFile = @"C:\Users\cgiorda\Desktop\Projects\UGAP Configuration\output\UGAP_Config_Automated.txt";
+adHoc.ReportsTimelinessPath = @"\\NASGWFTP03\Care_Core_FTP_Files\Radiology";
 IRelationalDataAccess db_sqsl = new SqlDataAccess();
 
 
@@ -120,13 +123,10 @@ await adHoc.UGAPConfig();
 
 
 //GET FILE 'Create_Date' FROM EVICORE TAT REPORTING Mary Ann Dimartino
-var search_path = @"\\NASGWFTP03\Care_Core_FTP_Files\Radiology";
-await adHoc.getReportsTimelinessAsync(search_path);
+await adHoc.getReportsTimelinessAsync();
 //GENERATE FINAL TAT REPORTS
 await adHoc.generateTATReportsAsync();
 //return;
-
-
 
 
 
@@ -140,7 +140,7 @@ files_loaded.Add("Oxford March -Radiology Cardiology Universe 2024.xlsx");
 //MHP UGAP CLEANUP
 await adHoc.cleanupMemberDataAsync(files_loaded);
 //MHP LOAD TO VCT_DB
-await adHoc.transferMHPDataAsync(files_loaded);
+await adHoc.transferMHPDataAsync(files_loaded, "March", "2024");
 //return;
 
 
