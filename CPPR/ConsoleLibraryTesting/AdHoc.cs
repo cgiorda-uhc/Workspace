@@ -753,8 +753,6 @@ namespace ConsoleLibraryTesting
             string[] csvArray;
             string strSQL;
             int intBulkSize = 10000;
-            var connectionString = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
-            var tdConnectionString = "Data Source=UDWPROD;User ID=cgiorda;Password=BooWooDooFoo2023!!;Authentication Mechanism=LDAP;Session Mode=TERADATA;Session Character Set=ASCII;Persist Security Info=true;Connection Timeout=99999;";
             IRelationalDataAccess db_sql = new SqlDataAccess();
             IRelationalDataAccess db_td = new TeraDataAccess();
             System.Data.DataTable dtTransfer = new System.Data.DataTable();
@@ -790,13 +788,13 @@ namespace ConsoleLibraryTesting
 
 
                         //SQL FOR TMP TABLE TO STORE ALL VALUES A VARCHAR(MAX)
-                        strSQL = CommonFunctions.getCreateTmpTableScript("stg", tmp_table, strLstColumnNames);
-                        await db_sql.Execute(connectionString: connectionString, strSQL);
+                        strSQL = CommonFunctions.getCreateTmpTableScript("vct", tmp_table, strLstColumnNames);
+                        await db_sql.Execute(connectionString: ConnectionStringVC, strSQL);
 
-                        strSQL = "SELECT * FROM [stg].[" + tmp_table + "]; ";
+                        strSQL = "SELECT * FROM [vct].[" + tmp_table + "]; ";
                         //CREATE TMP TABLE AND COLLECT NEW DB TABLE FOR BULK TRANSFERS
-                        dtTransfer = await db_sql.LoadDataTable(connectionString, strSQL);
-                        dtTransfer.TableName = "stg." + tmp_table;
+                        dtTransfer = await db_sql.LoadDataTable(ConnectionStringVC, strSQL);
+                        dtTransfer.TableName = "vct." + tmp_table;
 
                         //GOT COLUMNS, CREATED TMP TABLE FOR FIRST PASS
                         continue;
@@ -813,7 +811,7 @@ namespace ConsoleLibraryTesting
 
                     if (dtTransfer.Rows.Count == intBulkSize) //intBulkSize = 10000 DEFAULT
                     {
-                        await db_sql.BulkSave(connectionString: connectionString, dtTransfer);
+                        await db_sql.BulkSave(connectionString: ConnectionStringVC, dtTransfer);
                         dtTransfer.Rows.Clear();
                     }
 
@@ -822,31 +820,31 @@ namespace ConsoleLibraryTesting
 
                 //CATCH REST OF UPLOADS OUTSIDE CSV LOOP
                 if (dtTransfer.Rows.Count > 0)
-                    await db_sql.BulkSave(connectionString: connectionString, dtTransfer);
+                    await db_sql.BulkSave(connectionString: ConnectionStringVC, dtTransfer);
 
 
 
-                strSQL = CommonFunctions.getTableAnalysisScript("stg", tmp_table, strLstColumnNames);
-                var dataTypes = (await db_sql.LoadData<DataTypeModel>(connectionString: connectionString, strSQL));
+                strSQL = CommonFunctions.getTableAnalysisScript("vct", tmp_table, strLstColumnNames);
+                var dataTypes = (await db_sql.LoadData<DataTypeModel>(connectionString: ConnectionStringVC, strSQL));
 
-                strSQL = CommonFunctions.getCreateFinalTableScript("stg", table, dataTypes);
-                await db_sql.Execute(connectionString: connectionString, strSQL);
+                strSQL = CommonFunctions.getCreateFinalTableScript("vct", table, dataTypes);
+                await db_sql.Execute(connectionString: ConnectionStringVC, strSQL);
 
-                strSQL = CommonFunctions.getSelectInsertScript("stg", tmp_table, table, strLstColumnNames);
-                await db_sql.Execute(connectionString: connectionString, strSQL);
+                strSQL = CommonFunctions.getSelectInsertScript("vct", tmp_table, table, strLstColumnNames);
+                await db_sql.Execute(connectionString: ConnectionStringVC, strSQL);
 
                 strLstColumnNames = null;
             }
 
             //2 GENERTATE FINAL OUTPUT
             strSQL = "Select distinct ETG_BAS_CLSS_NBR, MPC_NBR from CLODM001.ETG_NUMBER";
-            var mcp = await db_td.LoadData<UGAPMPCNBRModel>(connectionString: tdConnectionString, strSQL);
+            var mcp = await db_td.LoadData<UGAPMPCNBRModel>(connectionString: ConnectionStringTD, strSQL);
 
 
 
             strSQL = "SELECT [MPC_NBR] ,[ETG_BAS_CLSS_NBR] ,[ALWAYS] ,[ATTRIBUTED] ,[ERG_SPCL_CATGY_CD] ,[TRT_CD] ,[RX] ,[NRX] ,[RISK_Model] ,[LOW_MONTH] ,[HIGH_MONTH] FROM [IL_UCA].[dbo].[VW_UGAPCFG_FINAL]";
 
-            var etg = await db_sql.LoadData<UGAPETGModel>(connectionString: connectionString, strSQL);
+            var etg = await db_sql.LoadData<UGAPETGModel>(connectionString: ConnectionStringVC, strSQL);
 
 
             foreach (var item in etg)

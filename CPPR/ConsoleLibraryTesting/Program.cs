@@ -109,6 +109,16 @@ adHoc.EBMReportTemplatePath = "\\\\nasv0048\\ucs_ca\\PHS_DATA_NEW\\Home Director
 
 IRelationalDataAccess db_sqsl = new SqlDataAccess();
 
+
+//HANDLES TI MAPPING FOR ETG
+//PARSES 3 FILES, LOADS TO DB, OUPUPTS ALL FILES PLUS SOME
+//TODO CHANGE DB FROM ILUCA TO VC!!!!!!
+await adHoc.UGAPConfig();
+return;
+
+
+
+
 ////GET FILE 'Create_Date' FROM EVICORE
 //var search_path = @"\\NASGWFTP03\Care_Core_FTP_Files\Radiology";
 ////await adHoc.getReportsTimelinessAsync(search_path);

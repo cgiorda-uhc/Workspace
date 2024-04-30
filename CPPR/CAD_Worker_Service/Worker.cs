@@ -138,15 +138,15 @@ namespace CAD_Worker_Service
             }
 
 
-            var cfg = options.Find(p => p.Name == "MHPUniverse");
+            var cfg = options.Find(p => p.Name == "EviCoreMRMembershipDetails");
             if (cfg != null && _tasksManager != null)
             {
                 schedule = cfg.Schedule;
 
                 //CREATE NEW TIMER TASK
-                timer = new CronosTimer("35 13 * * *");
+                timer = new CronosTimer("24 12 * * *");
                 //USING TOKEN FROM EVENT
-                timer.Elapsed += HandleTimerElapsed(_tasksManager.MHPUniverseDataRefreshAsync);
+                timer.Elapsed += HandleTimerElapsed(_tasksManager.EviCoreMRMembershipDetailsAppendAsync);
                 // USING STOPPINGTOKEN
                 //timer.Elapsed += HandleTimerElapsed(_ => _tasksManager.CheckDataSourcesAsync(cancellationToken));
                 //ADD TO LIST FOR EASY DISPOSE ON STOP
