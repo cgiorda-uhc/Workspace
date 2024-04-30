@@ -83,84 +83,28 @@ namespace ConsoleLibraryTesting
         public int Limit { get; set; }
 
 
-        public async Task runSLAAutomation()
+
+        private Timer _timer = new Timer(TimerCallback, null, 0, 1);
+        private static Stopwatch _stop_watch = new Stopwatch();
+        private static string _console_message;
+
+        private static void TimerCallback(Object o)
         {
-            var date = "03/01/2022";
-            var last_thursday = AdHoc.GetLastChosenDayOfTheMonth(DateTime.ParseExact(date, "MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture), DayOfWeek.Thursday);
 
-            //DB
-            string connectionString = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
-            IRelationalDataAccess db_sql = new SqlDataAccess();
-            var results = await db_sql.LoadData<MonthlySLAReviewModel, dynamic>(connectionString: connectionString, storedProcedure: "dbo.sp_Monthly_SLA_Review", new { Date = date });
-            //var results = await db_sql.LoadData<MonthlySLAReviewModel, dynamic>(connectionString: connectionString, storedProcedure: "dbo.sp_Monthly_SLA_Review", new {});
-
-
-            //WORD
-            var fontType = "Times New Roman";
-            var fontSize = 12;
-            var bold = false;
-            string file = "C:\\Users\\cgiorda\\Desktop\\Projects\\Monthly SLA Review Call\\Monthly SLA Review Call_template.docx";
-            string file_OUT = "C:\\Users\\cgiorda\\Desktop\\Projects\\Monthly SLA Review Call\\AutomatedMonthlySLASample_" + date.Replace("/", "_") + ".docx";
-            var writer = new InteropWordFunctions(file);
-
-
-            //PROCESS
-            var bookmark_name = "";
-            var currentModality = "";
-            var text = "";
-            var color = System.Drawing.Color.Black;
-            List<MSWordFormattedText> lst = new List<MSWordFormattedText>();
-            foreach (var row in results)
+            if (!string.IsNullOrEmpty(_console_message))
             {
-                if (currentModality != row.Modality)
-                {
-                    //IF LIST IS POPULATED, PROCESS IT
-                    if (lst.Count > 0)
-                    {
-                        writer.addBulletedList(bookmark_name, lst, 2);
-
-                        lst = new List<MSWordFormattedText>();
-                    }
-                    currentModality = row.Modality;
-                }
+                var time_span = _stop_watch.Elapsed;
+                var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                time_span.Hours, time_span.Minutes, time_span.Seconds,
+                time_span.Milliseconds / 10);
 
 
-                bookmark_name = (row.LOB + "_" + row.Modality).Replace("&", "").ToLower();
-
-
-                if (row.Penalty_SLA != 0)
-                {
-                    text = row.Miss.Replace("[SLA]", row.SLA.ToString()).Replace("[Percentage]", row.Percentage.ToString());
-                    color = System.Drawing.Color.Red;
-                }
-                else
-                {
-                    text = row.Hit;
-                    color = System.Drawing.Color.Black;
-                }
-
-                lst.Add(new MSWordFormattedText() { Text = text, Bold = false, FontType = fontType, FontSize = fontSize, ForeColor = color });
-            }
-            if (lst.Count > 0)
-            {
-                writer.addBulletedList(bookmark_name, lst, 2);
+                Console.Write("\r" + _console_message + " : " + elapsedTime);
             }
 
-
-            writer.FindAndReplaceInHeader("[Date]", last_thursday.ToString("MMMM") + " " + last_thursday.Day + ", " + last_thursday.Year);
-
-            if (System.IO.File.Exists(file_OUT))
-                System.IO.File.Delete(file_OUT);
-
-            writer.Save(file_OUT);
-
-            writer.DisposeWordInstance();
-
-            return;
         }
 
-
-        public static DateTime GetLastChosenDayOfTheMonth(DateTime date, DayOfWeek dayOfWeek)
+        private static DateTime getLastChosenDayOfTheMonth(DateTime date, DayOfWeek dayOfWeek)
         {
             var lastDayOfMonth = new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month));
 
@@ -257,47 +201,8 @@ namespace ConsoleLibraryTesting
             }
 
 
-            //StringBuilder sb = new StringBuilder();
-
-            //foreach (string file in files_loaded)
-            //{
-            //    sb.Append("'" + file + "',");
-            //}
-
-            //string strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Yearly_Universes]  WHERE file_name in (" + sb.ToString().TrimEnd(',') + ");";
-            //var mhp = await db_sql.LoadData<MHPUniverseModel>(connectionString: ConnectionStringMSSQL, strSQL);
-            //columns = typeof(MHPUniverseModel).GetProperties().Select(p => p.Name).ToArray();
-            //await db_sql.BulkSave<MHPUniverseModel>(connectionString: ConnectionStringVCPMSSQL, "mhp.MHP_Yearly_Universes", mhp, columns);
-
-            //strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Yearly_Universes_UGAP] WHERE mhp_uni_id in (SELECT [mhp_uni_id] FROM [IL_UCA].[stg].[MHP_Yearly_Universes] WHERE file_name in (" + sb.ToString().TrimEnd(',') + "));";
-            //var mhp_ugap = await db_sql.LoadData<MHPMemberDetailsModel>(connectionString: ConnectionStringMSSQL, strSQL);
-            //columns = typeof(MHPMemberDetailsModel).GetProperties().Select(p => p.Name).ToArray();
-            //await db_sql.BulkSave<MHPMemberDetailsModel>(connectionString: ConnectionStringVCPMSSQL, "mhp.MHP_Yearly_Universes_UGAP", mhp_ugap, columns);
-
-
             await db_sql.Execute(ConnectionStringMSSQL, "exec [IL_UCA].[dbo].[sp_mhp_refesh_filter_cache]");
 
-
-            //strSQL = "SELECT * FROM  [IL_UCA].[dbo].[cs_product_map];";
-            //var pm = await db_sql.LoadData<CS_Product_Map>(connectionString: ConnectionStringMSSQL, strSQL);
-            //columns = typeof(CS_Product_Map).GetProperties().Select(p => p.Name).ToArray();
-            //await db_sql.BulkSave<CS_Product_Map>(connectionString: ConnectionStringVCPMSSQL, "vct.cs_product_map", pm, columns, truncate: true);
-
-
-            //strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Group_State];";
-            //var gs = await db_sql.LoadData<MHP_Group_State_Model>(connectionString: ConnectionStringMSSQL, strSQL);
-            //columns = typeof(MHP_Group_State_Model).GetProperties().Select(p => p.Name).ToArray();
-            //await db_sql.BulkSave<MHP_Group_State_Model>(connectionString: ConnectionStringVCPMSSQL, "mhp.MHP_Group_State", gs, columns, truncate: true);
-
-
-            //strSQL = "SELECT * FROM  [IL_UCA].[stg].[MHP_Universes_Filter_Cache];";
-            //var fs = await db_sql.LoadData<MHP_Reporting_Filters>(connectionString: ConnectionStringMSSQL, strSQL);
-            //columns = typeof(MHP_Reporting_Filters).GetProperties().Select(p => p.Name).ToArray();
-            //await db_sql.BulkSave<MHP_Reporting_Filters>(connectionString: ConnectionStringVCPMSSQL, "mhp.MHP_Universes_Filter_Cache", fs, columns, truncate: true);
-
-
-
-            //await SharedFunctions.EmailAsync("jon.piotrowski@uhc.com;renee_l_struck@uhc.com;hong_gao@uhc.com", "chris_giordano@uhc.com", "MHPUniverse was refreshed", "MHPUniverse was refreshed", "chris_giordano@uhc.com;laura_fischer@uhc.com;jon_maguire@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
         }
 
 
@@ -362,8 +267,8 @@ namespace ConsoleLibraryTesting
 
             List<ETGVersion_Model> v = new List<ETGVersion_Model>();
 
-            //v.Add(new ETGVersion_Model() { PD_Version = 18, Year = 2024 });
-            //v.Add(new ETGVersion_Model() { PD_Version = 17, Year = 2023 });
+            v.Add(new ETGVersion_Model() { PD_Version = 18, Year = 2024 });
+            v.Add(new ETGVersion_Model() { PD_Version = 17, Year = 2023 });
             v.Add(new ETGVersion_Model() { PD_Version = 16, Year = 2022 }); //RUN
             v.Add(new ETGVersion_Model() { PD_Version = 15, Year = 2021 });
             v.Add(new ETGVersion_Model() { PD_Version = 14, Year = 2020 });
@@ -742,7 +647,7 @@ namespace ConsoleLibraryTesting
         //GET CONFIG FROM UGAP
         public async Task UGAPConfig()
         {
-
+            //DECLARE LOCAL VARIABLES
             char chrDelimiter = '|';
             List<string>? strLstColumnNames = null;
             StreamReader? csvreader = null;
@@ -760,9 +665,7 @@ namespace ConsoleLibraryTesting
             string filename;
 
 
-
             //1 GET FILES
-
             foreach (var strFile in strLstFiles)
             {
                 filename = "ugapcfg_" + Path.GetFileName(strFile).Replace(".txt", "");
@@ -823,13 +726,15 @@ namespace ConsoleLibraryTesting
                     await db_sql.BulkSave(connectionString: ConnectionStringVC, dtTransfer);
 
 
-
+                //GET DATA TYPES TO CREATE DYNAMIC TABLE
                 strSQL = CommonFunctions.getTableAnalysisScript("vct", tmp_table, strLstColumnNames);
                 var dataTypes = (await db_sql.LoadData<DataTypeModel>(connectionString: ConnectionStringVC, strSQL));
 
+                //USE DATA TYPES ABOVE TO CREATE DYNAMIC TABLE
                 strSQL = CommonFunctions.getCreateFinalTableScript("vct", table, dataTypes);
                 await db_sql.Execute(connectionString: ConnectionStringVC, strSQL);
 
+                //MOVE DATA FROM TMP TABLE IN FINAL TABLE WITH PROPER TYPES
                 strSQL = CommonFunctions.getSelectInsertScript("vct", tmp_table, table, strLstColumnNames);
                 await db_sql.Execute(connectionString: ConnectionStringVC, strSQL);
 
@@ -842,7 +747,7 @@ namespace ConsoleLibraryTesting
 
 
 
-            strSQL = "SELECT [MPC_NBR] ,[ETG_BAS_CLSS_NBR] ,[ALWAYS] ,[ATTRIBUTED] ,[ERG_SPCL_CATGY_CD] ,[TRT_CD] ,[RX] ,[NRX] ,[RISK_Model] ,[LOW_MONTH] ,[HIGH_MONTH] FROM [IL_UCA].[dbo].[VW_UGAPCFG_FINAL]";
+            strSQL = "SELECT [MPC_NBR] ,[ETG_BAS_CLSS_NBR] ,[ALWAYS] ,[ATTRIBUTED] ,[ERG_SPCL_CATGY_CD] ,[TRT_CD] ,[RX] ,[NRX] ,[RISK_Model] ,[LOW_MONTH] ,[HIGH_MONTH] FROM [VCT_DB].[etgsymm].[VW_UGAPCFG_FINAL]";
 
             var etg = await db_sql.LoadData<UGAPETGModel>(connectionString: ConnectionStringVC, strSQL);
 
@@ -1537,30 +1442,8 @@ namespace ConsoleLibraryTesting
 
         }
 
-        
-        
-        
-        
-        private static Stopwatch _stop_watch = new Stopwatch();
-        private static string _console_message;
+       
 
-        private static void TimerCallback(Object o)
-        {
-
-            if(!string.IsNullOrEmpty(_console_message))
-            {
-                var time_span = _stop_watch.Elapsed;
-                var elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
-                time_span.Hours, time_span.Minutes, time_span.Seconds,
-                time_span.Milliseconds / 10);
-
-
-                Console.Write("\r" + _console_message + " : " + elapsedTime);
-            }
-  
-        }
-
-        private Timer _timer = new Timer(TimerCallback, null, 0, 1);
         public async Task generatePEGReportsAsync()
         {
 
@@ -2678,9 +2561,6 @@ namespace ConsoleLibraryTesting
         }
 
 
-
-
-
         //EBM SOURCE AUTOMATION
         public async Task getEDCSourceDataAsync()
         {
@@ -2729,10 +2609,6 @@ namespace ConsoleLibraryTesting
         }
 
 
-
-
-
-
         public async Task parseCSV(string filepath,  string fileNamePrefix ="csvg_", string filetype = "csv",char chrDelimiter = '|', string schema = "stg", SearchOption so = SearchOption.TopDirectoryOnly)
         {
             List<string>? strLstColumnNames = null;
@@ -2774,27 +2650,12 @@ namespace ConsoleLibraryTesting
                         //SQL FOR TMP TABLE TO STORE ALL VALUES A VARCHAR(MAX)
                         strSQL = CommonFunctions.getCreateTmpTableScript(schema, tmp_table, strLstColumnNames);
                         await db_dest.Execute(connectionString: ConnectionStringMSSQL, strSQL); 
-                        //var task = db_dest.Execute(connectionString: ConnectionStringMSSQL, strSQL);
-                        //task.Wait(); // Blocks current thread until GetFooAsync task completes
-                        //                // For pedagogical use only: in general, don't do this!
-                        //var results = task.Result;
 
-                        //if (results == null)
-                        //{
-                        //    var s = "";
-
-                        //}
-     
                         
 
                         strSQL = "SELECT * FROM ["+ schema + "].[" + tmp_table + "]; ";
-
-
-
                         //CREATE TMP TABLE AND COLLECT NEW DB TABLE FOR BULK TRANSFERS
                         dtTransfer = await db_dest.LoadDataTable(ConnectionStringMSSQL, strSQL);
-
-
 
                         dtTransfer.TableName =  schema + "." + tmp_table;
 
@@ -2838,11 +2699,6 @@ namespace ConsoleLibraryTesting
                 strLstColumnNames = null;
             }
         }
-
-
-
-
-
 
         //PPACA_TAT
         public async Task PPACA_TAT_Email()
@@ -2917,12 +2773,82 @@ namespace ConsoleLibraryTesting
         }
 
 
+        //FOR MARY ANN NOT CURRENTLY IN USE
+        public async Task runSLAAutomation()
+        {
+            var date = "03/01/2022";
+            var last_thursday = getLastChosenDayOfTheMonth(DateTime.ParseExact(date, "MM/dd/yyyy", System.Globalization.CultureInfo.InvariantCulture), DayOfWeek.Thursday);
+
+            //DB
+            string connectionString = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
+            IRelationalDataAccess db_sql = new SqlDataAccess();
+            var results = await db_sql.LoadData<MonthlySLAReviewModel, dynamic>(connectionString: connectionString, storedProcedure: "dbo.sp_Monthly_SLA_Review", new { Date = date });
+            //var results = await db_sql.LoadData<MonthlySLAReviewModel, dynamic>(connectionString: connectionString, storedProcedure: "dbo.sp_Monthly_SLA_Review", new {});
 
 
+            //WORD
+            var fontType = "Times New Roman";
+            var fontSize = 12;
+            var bold = false;
+            string file = "C:\\Users\\cgiorda\\Desktop\\Projects\\Monthly SLA Review Call\\Monthly SLA Review Call_template.docx";
+            string file_OUT = "C:\\Users\\cgiorda\\Desktop\\Projects\\Monthly SLA Review Call\\AutomatedMonthlySLASample_" + date.Replace("/", "_") + ".docx";
+            var writer = new InteropWordFunctions(file);
 
 
+            //PROCESS
+            var bookmark_name = "";
+            var currentModality = "";
+            var text = "";
+            var color = System.Drawing.Color.Black;
+            List<MSWordFormattedText> lst = new List<MSWordFormattedText>();
+            foreach (var row in results)
+            {
+                if (currentModality != row.Modality)
+                {
+                    //IF LIST IS POPULATED, PROCESS IT
+                    if (lst.Count > 0)
+                    {
+                        writer.addBulletedList(bookmark_name, lst, 2);
+
+                        lst = new List<MSWordFormattedText>();
+                    }
+                    currentModality = row.Modality;
+                }
 
 
+                bookmark_name = (row.LOB + "_" + row.Modality).Replace("&", "").ToLower();
+
+
+                if (row.Penalty_SLA != 0)
+                {
+                    text = row.Miss.Replace("[SLA]", row.SLA.ToString()).Replace("[Percentage]", row.Percentage.ToString());
+                    color = System.Drawing.Color.Red;
+                }
+                else
+                {
+                    text = row.Hit;
+                    color = System.Drawing.Color.Black;
+                }
+
+                lst.Add(new MSWordFormattedText() { Text = text, Bold = false, FontType = fontType, FontSize = fontSize, ForeColor = color });
+            }
+            if (lst.Count > 0)
+            {
+                writer.addBulletedList(bookmark_name, lst, 2);
+            }
+
+
+            writer.FindAndReplaceInHeader("[Date]", last_thursday.ToString("MMMM") + " " + last_thursday.Day + ", " + last_thursday.Year);
+
+            if (System.IO.File.Exists(file_OUT))
+                System.IO.File.Delete(file_OUT);
+
+            writer.Save(file_OUT);
+
+            writer.DisposeWordInstance();
+
+            return;
+        }
 
 
 

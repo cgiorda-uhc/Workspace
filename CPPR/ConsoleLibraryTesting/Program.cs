@@ -110,69 +110,77 @@ adHoc.EBMReportTemplatePath = "\\\\nasv0048\\ucs_ca\\PHS_DATA_NEW\\Home Director
 IRelationalDataAccess db_sqsl = new SqlDataAccess();
 
 
-//HANDLES TI MAPPING FOR ETG
+//HANDLES TI MAPPING FOR ETG Brandee Shemo
 //PARSES 3 FILES, LOADS TO DB, OUPUPTS ALL FILES PLUS SOME
 //TODO CHANGE DB FROM ILUCA TO VC!!!!!!
 await adHoc.UGAPConfig();
-return;
+//return;
 
 
 
 
-////GET FILE 'Create_Date' FROM EVICORE
-//var search_path = @"\\NASGWFTP03\Care_Core_FTP_Files\Radiology";
-////await adHoc.getReportsTimelinessAsync(search_path);
-
-////GENERATE FINAL TAT REPORTS
+//GET FILE 'Create_Date' FROM EVICORE TAT REPORTING Mary Ann Dimartino
+var search_path = @"\\NASGWFTP03\Care_Core_FTP_Files\Radiology";
+await adHoc.getReportsTimelinessAsync(search_path);
+//GENERATE FINAL TAT REPORTS
 await adHoc.generateTATReportsAsync();
-
-return;
-
-
-
-
-
-List<string> files_loaded = new List<string>();
-
-files_loaded.Add("Americhoice March -Radiology Cardiology Universe 2024.xlsx");
-files_loaded.Add("Oxford March-Gastro Universe 2024.xlsx");
-files_loaded.Add("United PCP- Rad & Card_March_2024.xlsx");
-files_loaded.Add("United PCP-Gastro_March_2024.xlsx");
-files_loaded.Add("Oxford March -Radiology Cardiology Universe 2024.xlsx");
-
-
-////await adHoc.cleanupMemberDataAsync(files_loaded);
-
-//await adHoc.transferMHPDataAsync(files_loaded);
-
-return;
-
-
-
-
-
-
-
-
-
-
-
-
-//await adHoc.getPEGSourceDataAsync();
-//await adHoc.generatePEGReportsAsync();
-
-//await adHoc.getEBMSourceDataAsync();
-//await adHoc.generateEBMReportsAsync();
 //return;
 
 
 
 
 
+//MHP UGAP CLEANUP AND LOAD TO VCT_DB   JON PIOTROWSKI
+List<string> files_loaded = new List<string>();
+files_loaded.Add("Americhoice March -Radiology Cardiology Universe 2024.xlsx");
+files_loaded.Add("Oxford March-Gastro Universe 2024.xlsx");
+files_loaded.Add("United PCP- Rad & Card_March_2024.xlsx");
+files_loaded.Add("United PCP-Gastro_March_2024.xlsx");
+files_loaded.Add("Oxford March -Radiology Cardiology Universe 2024.xlsx");
+//MHP UGAP CLEANUP
+await adHoc.cleanupMemberDataAsync(files_loaded);
+//MHP LOAD TO VCT_DB
+await adHoc.transferMHPDataAsync(files_loaded);
+//return;
 
-await adHoc.runSLAAutomation();
+
+
+//PEG ETL Angela RS
+await adHoc.getPEGSourceDataAsync();
+//PEG REPORT
+await adHoc.generatePEGReportsAsync();
+//EBM ETL Angela RS
+await adHoc.getEBMSourceDataAsync();
+//EBM REPORT
+await adHoc.generateEBMReportsAsync();
+//return;
+
+
+
+
+
+//PREMIUM DESIGNATION ETL Angela RS
+await adHoc.getETGSymmSourceDataAsync(16);
+
 
 return;
+
+
+
+////BELOW IS NOT IN USE
+////BELOW IS NOT IN USE
+////BELOW IS NOT IN USE
+////BELOW IS NOT IN USE
+////BELOW IS NOT IN USE
+////BELOW IS NOT IN USE
+////BELOW IS NOT IN USE
+
+
+
+//MARY ANN NOT IN USE
+await adHoc.runSLAAutomation();
+
+
 
 
 
