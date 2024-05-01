@@ -2927,9 +2927,9 @@ namespace ConsoleLibraryTesting
             body = body.Replace("{$den_tat_ox}", String.Format("{0:n0}", dr["den_tat"]));
 
 
-            var manual = ProjectsPath + @"\PPACA_TAT\Archive\United_Enterprise_Wide_Urgent_TAT_UHC_Enterprise_" + file_year + "_" + (file_month > 9 ? "0" + file_month : file_month + "") + ".xlsx";
+            var manual = ProjectsPath + @"\PPACA_TAT\Archive\United_Enterprise_Wide_Urgent_TAT_UHC_Enterprise_" + file_year + "_" + (file_month <= 9 ? "0" + file_month : file_month + "") + ".xlsx";
 
-            manual = @"C:\Users\cgiorda\Desktop\Projects\PPACA_TAT\Archive\United_Enterprise_Wide_Urgent_TAT_UHC_Enterprise_"+ file_year + "_"+ (file_month > 9 ? "0" + file_month : file_month + "") +".xlsx";
+            manual = @"C:\Users\cgiorda\Desktop\Projects\PPACA_TAT\Archive\United_Enterprise_Wide_Urgent_TAT_UHC_Enterprise_"+ file_year + "_"+ (file_month <= 9 ? "0" + file_month : file_month + "") +".xlsx";
 
 
             //SENDING EMAIL AND ATTACHEMENT
