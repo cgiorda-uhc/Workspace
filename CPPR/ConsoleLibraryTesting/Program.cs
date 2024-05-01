@@ -9,6 +9,8 @@ using Serilog;
 
 var adHoc = new AdHoc();
 
+
+//AD HOC GLOBAL VARIABLES
 adHoc.ConnectionStringMSSQL = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
 adHoc.TableMHP = "stg.MHP_Yearly_Universes";
 adHoc.ConnectionStringTD = "Data Source=UDWPROD;User ID=cgiorda;Password=BooWooDooFoo2023!!;Authentication Mechanism=LDAP;Session Mode=TERADATA;Session Character Set=ASCII;Persist Security Info=true;Connection Timeout=99999;";
@@ -52,14 +54,19 @@ adHoc.PPACA_TAT_EmailTemplatePath = @"\\nasv0048\ucs_ca\PHS_DATA_NEW\Home Direct
 
 adHoc.ProjectsPath = @"\\nasv0048\ucs_ca\PHS_DATA_NEW\Home Directory - Automation\Projects";
 
+
+//DATABASE OBJECT
 IRelationalDataAccess db_sqsl = new SqlDataAccess();
 
+
+
+//SETUP CONFIG 
 var builder = new ConfigurationBuilder()
                  .AddJsonFile($"appsettings.json", true, true);
 var config = builder.Build();
 
 
-
+//SETUP LOGGING
 Log.Logger = new LoggerConfiguration()
            .ReadFrom.Configuration(config)
            .CreateLogger();
@@ -72,10 +79,10 @@ var adr = new ADDirectReportAlertsLR(config, db_sqsl);
 var i = await adr.RefreshTable();
 return;
 
-//EVICORE MONTHLY PROCESS START
-//EVICORE MONTHLY PROCESS START
-//EVICORE MONTHLY PROCESS START
 
+//EVICORE MONTHLY PROCESS START
+//EVICORE MONTHLY PROCESS START
+//EVICORE MONTHLY PROCESS START
 //CHECK FOR NEW EVICORE FILES EACH MONTH
 var vds = new DataSourceVerification(config);
 i = await vds.CheckDataSources();
@@ -125,7 +132,6 @@ return;
 var nice = new NICEUHCWestEligibility(config, db_sqsl);
 i = await nice.LoadNICEUHCWestEligibilityData();
 return;
-
 //EVICORE MONTHLY PROCESS END
 //EVICORE MONTHLY PROCESS END
 //EVICORE MONTHLY PROCESS END
