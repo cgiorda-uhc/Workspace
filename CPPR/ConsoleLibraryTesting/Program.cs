@@ -115,13 +115,15 @@ adHoc.ReportsTimelinessPath = @"\\NASGWFTP03\Care_Core_FTP_Files\Radiology";
 
 adHoc.PPACA_TAT_EmailTemplatePath = @"\\nasv0048\ucs_ca\PHS_DATA_NEW\Home Directory - Automation\EmailTemplates\PPACA_TAT.txt";
 
+adHoc.ProjectsPath = @"\\nasv0048\ucs_ca\PHS_DATA_NEW\Home Directory - Automation\Projects";
+
 IRelationalDataAccess db_sqsl = new SqlDataAccess();
 
 
 
 //GENERATE DYNAMIC EMAIL FOR PPACA_TAT Mary Ann Dimartino
 await adHoc.PPACA_TAT_Email();
-
+//return
 
 
 //HANDLES TI MAPPING FOR ETG Brandee Shemo

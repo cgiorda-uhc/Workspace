@@ -49,7 +49,7 @@ namespace ConsoleLibraryTesting
 {
     public class AdHoc
     {
-
+        public string ProjectsPath { get; set; }
 
         public string PEGReportTemplatePath { get; set; }
         public string EBMReportTemplatePath { get; set; }
@@ -314,6 +314,8 @@ namespace ConsoleLibraryTesting
         //ETG SYMM SOURCE AUTOMATION
         public async Task getETGSymmSourceDataAsync(float version)
         {
+            int row = 0;
+
             //ETG DATA LOAD
             //ETG DATA LOAD
             //ETG DATA LOAD
@@ -333,12 +335,16 @@ namespace ConsoleLibraryTesting
             IRelationalDataAccess db_td = new TeraDataAccess();
 
             //STEP 1 etg.NRX_Cost_UGAP_SOURCE
+            Console.SetCursorPosition(0, row);
+            _console_message = "Loading data from TD to VCT_DB.etg.NRX_Cost_UGAP_SOURCE";
+            _stop_watch.Reset();
+            _stop_watch.Start();
             string strSQL = "select ETG_D.ETG_BAS_CLSS_NBR, ETG_D.TRT_CD, Count(Distinct ETG_D.INDV_SYS_ID) as MEMBER_COUNT, Count(Distinct ETG_D.EPSD_NBR) as EPSD_COUNT, Sum(ETG_D.TOT_ALLW_AMT) as ETGD_TOT_ALLW_AMT, Sum(ETG_D.RX_ALLW_AMT) as ETGD_RX_ALLW_AMT, case when Sum(ETG_D.TOT_ALLW_AMT) = 0 then 0 else NVL(Sum(ETG_D.RX_ALLW_AMT), 0) / Sum(ETG_D.TOT_ALLW_AMT) end as RX_RATE from ( select ED1.INDV_SYS_ID, ED1.EPSD_NBR, EN1.ETG_BAS_CLSS_NBR, EN1.ETG_TX_IND as TRT_CD, Sum(ED1.QLTY_INCNT_RDUC_AMT) as TOT_ALLW_AMT, Query1.RX_ALLW_AMT from CLODM001.ETG_DETAIL ED1 inner join CLODM001.ETG_NUMBER EN1 on ED1.ETG_SYS_ID = EN1.ETG_SYS_ID inner join CLODM001.DATE_FST_SRVC DFS1 on ED1.FST_SRVC_DT_SYS_ID = DFS1.FST_SRVC_DT_SYS_ID inner join ( select C.INDV_SYS_ID from ( select B.INDV_SYS_ID, Min(B.PHRM_BEN_FLG) as MIN_PHARMACY_FLG, Sum(B.NUM_DAY) as NUM_DAY from ( select a.INDV_SYS_ID, ( case when a.END_DT > '" + year + "-12-31' then Cast('" + year + "-12-31' as Date) else a.END_DT end - case when a.EFF_DT < '" + year + "-01-01' then Cast('" + year + "-01-01' as Date) else a.EFF_DT end) + 1 as NUM_DAY, a.PHRM_BEN_FLG from CLODM001.MEMBER_DETAIL_INPUT a where a.EFF_DT <= '" + year + "-12-31' and a.END_DT >= '" + year + "-01-01') as B group by B.INDV_SYS_ID ) C where C.MIN_PHARMACY_FLG = 'Y' and C.NUM_DAY >= 210 ) as MT on ED1.INDV_SYS_ID = MT.INDV_SYS_ID left join ( select ED2.INDV_SYS_ID, ED2.EPSD_NBR, Sum(ED2.QLTY_INCNT_RDUC_AMT) as RX_ALLW_AMT from CLODM001.ETG_DETAIL ED2 inner join CLODM001.DATE_FST_SRVC DFS2 on ED2.FST_SRVC_DT_SYS_ID = DFS2.FST_SRVC_DT_SYS_ID inner join CLODM001.HP_SERVICE_TYPE_CODE HSTC2 on ED2.HLTH_PLN_SRVC_TYP_CD_SYS_ID = HSTC2.HLTH_PLN_SRVC_TYP_CD_SYS_ID where DFS2.FST_SRVC_DT Between '" + year + "-01-01'and '" + year + "-12-31'  and ED2.QLTY_INCNT_RDUC_AMT > 0 and HSTC2.HLTH_PLN_SRVC_TYP_LVL_1_NM = 'PHARMACY' group by ED2.INDV_SYS_ID, ED2.EPSD_NBR ) Query1 on ED1.INDV_SYS_ID = Query1.INDV_SYS_ID and ED1.EPSD_NBR = Query1.EPSD_NBR where ED1.EPSD_NBR not in (0, -1) and DFS1.FST_SRVC_DT Between '" + year + "-01-01' and '" + year + "-12-31' and ED1.QLTY_INCNT_RDUC_AMT > 0 group by ED1.INDV_SYS_ID, ED1.EPSD_NBR, EN1.ETG_BAS_CLSS_NBR, EN1.ETG_TX_IND, Query1.RX_ALLW_AMT ) as ETG_D group by ETG_D.ETG_BAS_CLSS_NBR, ETG_D.TRT_CD";
-
             var nrxx = await db_td.LoadData<NRX_Cost_UGAPModel>(connectionString: ConnectionStringTD, strSQL);
-
             string[] columns = typeof(NRX_Cost_UGAPModel).GetProperties().Select(p => p.Name).ToArray();
             await db_sql.BulkSave<NRX_Cost_UGAPModel>(connectionString: ConnectionStringVC, "etg.NRX_Cost_UGAP_SOURCE", nrxx, columns, truncate: true);
+            _stop_watch.Stop();
+            _console_message = "";
 
             //STEP 2 etg.ETG_Episodes_UGAP_SOURCE
             //BROKEN APART DUE TO 200+ MILLION ROWS
@@ -367,53 +373,82 @@ namespace ConsoleLibraryTesting
             {
                 lob_id = (l == "COMMERCIAL" ? 1 : (l == "MEDICARE" ? 2 : 3));
 
+                row++;
+                Console.SetCursorPosition(0, row);
 
-                Console.WriteLine("LOB:" + lob_id + " - " + l);
-
+                Console.Write("\r" + "LOB:" + lob_id + " - " + l);
                 foreach (var y in lst_yr)
                 {
 
 
                     foreach (var q in lst_qrt)
                     {
+                        row++;
+                        Console.SetCursorPosition(0, row);
+
                         var startdate = y + "-" + q.Split('~')[0];
                         var enddate = y + "-" + q.Split('~')[1];
 
-                        Console.WriteLine("ETG Start Date: " + startdate);
-                        Console.WriteLine("ETG End Date: " + enddate);
+                        Console.Write("\r" + "ETG Start Date: " + startdate);
+                        Console.Write("\r" + "ETG End Date: " + enddate);
 
 
                         strSQL = "select es.EPSD_NBR, es.TOT_ALLW_AMT, en.SVRTY, en.ETG_BAS_CLSS_NBR, en.ETG_TX_IND, up.PROV_MPIN, es.TOT_NP_ALLW_AMT, " + lob_id + " as LOB_ID from CLODM001.ETG_SUMMARY es inner join CLODM001.ETG_NUMBER en on es.ETG_SYS_ID = en.ETG_SYS_ID inner join CLODM001.UNIQUE_PROVIDER up on es.RESP_UNIQ_PROV_SYS_ID = up.UNIQ_PROV_SYS_ID inner join CLODM001.INDIVIDUAL ind on es.INDV_SYS_ID = ind.INDV_SYS_ID inner join CLODM001.CLNOPS_CUSTOMER_SEGMENT ccs on ind.CLNOPS_CUST_SEG_SYS_ID = ccs.CLNOPS_CUST_SEG_SYS_ID inner join CLODM001.PRODUCT prod on ccs.PRDCT_SYS_ID = prod.PRDCT_SYS_ID inner join CLODM001.DATE_ETG_START DES on es.ETG_STRT_DT_SYS_ID = DES.ETG_STRT_DT_SYS_ID where es.EP_TYP_NBR in (0, 1, 2, 3) and es.TOT_ALLW_AMT >= 35 and COALESCE(en.SVRTY,'') <> '' and prod.PRDCT_LVL_1_NM = '" + l + "' and DES.ETG_STRT_DT >= '" + startdate + "' and DES.ETG_STRT_DT <= '" + enddate + "'";
 
-                        Console.WriteLine("UGAP Pull Start Time: " + DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"));
+                        Console.Write("\r" + "UGAP Pull Start Time: " + DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"));
 
                         var cnt = await db_td.ExecuteScalar(connectionString: ConnectionStringTD, "SELECT COUNT(*) FROM (" + strSQL + ") tmp;");
 
-                        Console.WriteLine("Count: " + string.Format("{0:#,0}", cnt));
+                        Console.Write("\r" + "Count: " + string.Format("{0:#,0}", cnt));
 
                         var ugap = await db_td.LoadData<ETG_Episodes_UGAP>(connectionString: ConnectionStringTD, strSQL);
 
                         columns = typeof(ETG_Episodes_UGAP).GetProperties().Select(p => p.Name).ToArray();
                         await db_sql.BulkSave<ETG_Episodes_UGAP>(connectionString: ConnectionStringVC, "etg.ETG_Episodes_UGAP_SOURCE", ugap, columns, truncate: blTruncate);
-                        Console.WriteLine("UGAP Pull End Time: " + DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"));
+                        Console.Write("\r" + "UGAP Pull End Time: " + DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"));
 
                         blTruncate = false;
                         ugap = null;
+ 
                     }
 
                 }
-
             }
+
+
 
             //STEP 3 etg.PrimarySpecWithCode_PDNDB_SOURCE
             //1 NDB  NDB NDB NDB NDB  NDB NDB NDB NDB NDB NDB NDB NDB
+            row++;
+            Console.SetCursorPosition(0, row);
+            _console_message = "Getting Primary Spec data from UHN";
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "Select prov.MPIN, prov.ProvType, prov.PrimSpec NDB_SPCL_CD, spcl.SpecTypeCd, spcl.PrimaryInd, spcltyp.ShortDesc From dbo.PROVIDER As prov Left Join dbo.PROV_SPECIALTIES spcl On prov.MPIN = spcl.MPIN And spcl.PractInSpecInd = 'Y' Left Join dbo.SPECIALTY_TYPES spcltyp On spcl.SpecTypeCd = spcltyp.SpecTypeCd;";
             var ndb = await db_sql.LoadData<PrimarySpecUHNModel>(connectionString: ConnectionStringUHN, strSQL);
+            _stop_watch.Stop();
+            _console_message = "";
+
             //2 PD
             //strSQL = "select A.PREM_SPCL_CD, A.NDB_SPCL_TYP_CD from PD.CNFG_PREM_SPCL_MAP A where A.PREM_DESG_VER_NBR = 15;"; //SELECT MAX(PREM_DESG_VER_NBR) FROM 
+            row++;
+            Console.SetCursorPosition(0, row);
+            _console_message = "Getting Primary Spec data from PD";
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select A.PREM_SPCL_CD, A.NDB_SPCL_TYP_CD from PD.CNFG_PREM_SPCL_MAP A where A.PREM_DESG_VER_NBR = (SELECT MAX(PREM_DESG_VER_NBR) FROM PD.CNFG_PREM_SPCL_MAP)";
             var pd = await db_sql.LoadData<PremiumSpecPDModel>(connectionString: ConnectionStringPD, strSQL);
+            _stop_watch.Stop();
+            _console_message = "";
+
+
+
             //3 JOIN NDB + PD INTO etg.PrimarySpecWithCode_PDNDB_SOURCE
+            row++;
+            Console.SetCursorPosition(0, row);
+            _console_message = "Merging and Loading data into etg.PrimarySpecWithCode_PDNDB_SOURCE";
+            _stop_watch.Reset();
+            _stop_watch.Start();
             var pd_ndb = from n in ndb
                          join p in pd on n.NDB_SPCL_CD equals p.NDB_SPCL_TYP_CD into n_p_join
                          from np in n_p_join.DefaultIfEmpty()
@@ -431,7 +466,8 @@ namespace ConsoleLibraryTesting
 
             columns = typeof(PrimarySpecWithCodeModel).GetProperties().Select(p => p.Name).ToArray();
             await db_sql.BulkSave<PrimarySpecWithCodeModel>(connectionString: ConnectionStringVC, "etg.PrimarySpecWithCode_PDNDB_SOURCE", pd_ndb, columns, truncate: true);
-
+            _stop_watch.Stop();
+            _console_message = "";
 
             //UNUSED DELETE???
             //strSQL = "SELECT prim.MPIN, CASE WHEN prim.[PREM_SPCL_CD] ='CARDCD' AND sec.[secondary_spec] = 'CARDEP' THEN 'CARDEP' ELSE CASE WHEN prim.[PREM_SPCL_CD] in ('NS', 'ORTHO') THEN 'NOS' ELSE [PREM_SPCL_CD] END END as [PREM_SPCL_CD] FROM (SELECT [PREM_SPCL_CD], [MPIN] FROM [vct].[PrimarySpecWithCode] GROUP BY [PREM_SPCL_CD], [MPIN] ) prim LEFT JOIN (SELECT [Secondary_Spec], [MPIN] FROM [vct].[PrimarySpecWithCode] GROUP BY [Secondary_Spec], [MPIN]) sec ON prim.MPIN = sec.MPIN";
@@ -439,37 +475,79 @@ namespace ConsoleLibraryTesting
 
 
             //STEP 4 etg.ETG_Cancer_Flag_PD_SOURCE
+            row++;
+            Console.SetCursorPosition(0, row);
+            _console_message = "Loading data from ETG_Cancer_Flag_PD to VCT_DB.etg.ETG_Cancer_Flag_PD_SOURCE";
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select a.ETG_BASE_CLASS, a.CNCR_IND from PD.CNFG_CNCR_REL_ETG a inner join ( select Max(PD.CNFG_CNCR_REL_ETG.PREM_DESG_VER_NBR) as Max_PREM_DESG_VER_NBR from PD.CNFG_CNCR_REL_ETG ) b on a.PREM_DESG_VER_NBR = b.Max_PREM_DESG_VER_NBR";
             var can = await db_sql.LoadData<ETG_Cancer_Flag_PDModel>(connectionString: ConnectionStringPD, strSQL);
             columns = typeof(ETG_Cancer_Flag_PDModel).GetProperties().Select(p => p.Name).ToArray();
             await db_sql.BulkSave<ETG_Cancer_Flag_PDModel>(connectionString: ConnectionStringVC, "etg.ETG_Cancer_Flag_PD_SOURCE", can, columns, truncate: true);
+            _stop_watch.Stop();
+            _console_message = "";
 
             //STEP 5 etg.PremiumNDBSpec_PD_SOURCE
+            row++;
+            Console.SetCursorPosition(0, row);
+            _console_message = "Loading data from PremiumNDBSpecPD to VCT_DB.etg.PremiumNDBSpec_PD_SOURCE";
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select n.NDB_SPCL_TYP_CD, n.SPCL_TYP_CD_DESC, c.PREM_SPCL_CD from pd.CLCT_SPCL_TYP_CD n left join ( select b.PREM_SPCL_CD, b.NDB_SPCL_TYP_CD from PD.CNFG_PREM_SPCL_MAP b inner join ( select Max(PD.CNFG_PREM_SPCL_MAP.PREM_DESG_VER_NBR) as Max_PREM_DESG_VER_NBR from PD.CNFG_PREM_SPCL_MAP ) a on b.PREM_DESG_VER_NBR = a.Max_PREM_DESG_VER_NBR ) c on n.NDB_SPCL_TYP_CD = c.NDB_SPCL_TYP_CD where n.NDB_SPCL_TYP_CD <> ' '";
             var pndb = await db_sql.LoadData<PremiumNDBSpecPDModel>(connectionString: ConnectionStringPD, strSQL);
             columns = typeof(PremiumNDBSpecPDModel).GetProperties().Select(p => p.Name).ToArray();
             await db_sql.BulkSave<PremiumNDBSpecPDModel>(connectionString: ConnectionStringVC, "etg.PremiumNDBSpec_PD_SOURCE", pndb, columns, truncate: true);
+            _stop_watch.Stop();
+            _console_message = "";
 
             //STEP 6 etg.ETG_Mapped_PD_SOURCE
+            row++;
+            Console.SetCursorPosition(0, row);
+            _console_message = "Loading data from ETG MAPPING PD to VCT_DB.etg.ETG_Mapped_PD_SOURCE";
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select LTRIM(RTRIM(a.PREM_SPCL_CD)) as PREM_SPCL_CD, a.TRT_CD, a.ETG_BASE_CLASS from pd.CNFG_ETG_SPCL a inner join ( select Max(PD.CNFG_ETG_SPCL.PREM_DESG_VER_NBR) as Max_PREM_DESG_VER_NBR from PD.CNFG_ETG_SPCL ) Query1 on a.PREM_DESG_VER_NBR = Query1.Max_PREM_DESG_VER_NBR";
             var map = await db_sql.LoadData<ETG_Mapped_PD>(connectionString: ConnectionStringPD, strSQL);
             columns = typeof(ETG_Mapped_PD).GetProperties().Select(p => p.Name).ToArray();
             await db_sql.BulkSave<ETG_Mapped_PD>(connectionString: ConnectionStringVC, "etg.ETG_Mapped_PD_SOURCE", map, columns, truncate: true);
+            _stop_watch.Stop();
+            _console_message = "";
 
 
             //STEP 7 [etg].[ETG_Dataload_NRX_AGG] CACHE
+            row++;
+            Console.SetCursorPosition(0, row);
+            _console_message = "CACHING DATA INTO VCT_DB.[etg].[ETG_Dataload_NRX_AGG] ";
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "TRUNCATE TABLE [etg].[ETG_Dataload_NRX_AGG]; INSERT INTO [etg].[ETG_Dataload_NRX_AGG] ([ETG_Base_Class] ,MEMBER_COUNT,EPSD_COUNT,ETGD_TOT_ALLW_AMT,ETGD_RX_ALLW_AMT,[RX_NRX] ,[Has_RX] ,[Has_NRX] ,[RX_RATE] ,[RX] ,[NRX]) SELECT [ETG_Base_Class] ,MEMBER_COUNT,EPSD_COUNT,ETGD_TOT_ALLW_AMT,ETGD_RX_ALLW_AMT,[RX_NRX] ,[Has_RX] ,[Has_NRX] ,[RX_RATE] ,[RX] ,[NRX] FROM [etg].[VW_ETG_Dataload_NRX_AGG];";
             await db_sql.Execute(ConnectionStringVC, strSQL);
+            _stop_watch.Stop();
+            _console_message = "";
 
 
             //STEP 8 [etg].[ETG_Dataload_EC_AGG] CACHE
+            row++;
+            Console.SetCursorPosition(0, row);
+            _console_message = "CACHING DATA INTO VCT_DB.[etg].[ETG_Dataload_EC_AGG]";
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "TRUNCATE TABLE [etg].[ETG_Dataload_EC_AGG];INSERT INTO [etg].[ETG_Dataload_EC_AGG] ([Premium_Specialty] ,[ETG_Base_Class] ,[EC_Treatment_Indicator] ,[EC_Episode_Count] ,[EC_Total_Cost] ,[EC_Average_Cost] ,[EC_Coefficients_of_Variation] ,[EC_Normalized_Pricing_Episode_Count] ,[EC_Normalized_Pricing_Total_Cost] ,[EC_Spec_Episode_Count] ,[EC_Spec_Total_Cost] ,[EC_Spec_Average_Cost] ,[EC_Spec_Coefficients_of_Variation] ,[EC_Spec_Percent_of_Episodes] ,[EC_Spec_Normalized_Pricing_Episode_Count] ,[EC_Spec_Normalized_Pricing_Total_Cost] ,[EC_CV3] ,[EC_Spec_Episode_Volume] ,[PD_Mapped]) SELECT [Premium_Specialty] ,[ETG_Base_Class] ,[EC_Treatment_Indicator] ,[EC_Episode_Count] ,[EC_Total_Cost] ,[EC_Average_Cost] ,[EC_Coefficients_of_Variation] ,[EC_Normalized_Pricing_Episode_Count] ,[EC_Normalized_Pricing_Total_Cost] ,[EC_Spec_Episode_Count] ,[EC_Spec_Total_Cost] ,[EC_Spec_Average_Cost] ,[EC_Spec_Coefficients_of_Variation] ,[EC_Spec_Percent_of_Episodes] ,[EC_Spec_Normalized_Pricing_Episode_Count] ,[EC_Spec_Normalized_Pricing_Total_Cost] ,[EC_CV3] ,[EC_Spec_Episode_Volume] ,[PD_Mapped] FROM [etg].[VW_ETG_Dataload_EC_AGG];";
             await db_sql.Execute(ConnectionStringVC, strSQL);
+            _stop_watch.Stop();
+            _console_message = "";
 
 
             //STEP 9 [etg].[ETG_Dataload_PC_AGG] CACHE
+            row++;
+            Console.SetCursorPosition(0, row);
+            _console_message = "CACHING DATA INTO VCT_DB.[etg].[ETG_Dataload_PC_AGG]";
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "TRUNCATE TABLE [etg].[ETG_Dataload_PC_AGG];INSERT INTO [etg].[ETG_Dataload_PC_AGG] ([Premium_Specialty] ,[ETG_Base_Class] ,[PC_Episode_Count] ,[PC_Total_Cost] ,[PC_Average_Cost] ,[PC_Coefficients_of_Variation] ,[PC_Normalized_Pricing_Episode_Count] ,[PC_Normalized_Pricing_Total_Cost] ,[PC_Spec_Episode_Count] ,[PC_Spec_Total_Cost] ,[PC_Spec_Average_Cost] ,[PC_Spec_CV] ,[PC_Spec_Percent_of_Episodes] ,[PC_Spec_Normalized_Pricing_Episode_Count] ,[PC_Spec_Normalized_Pricing_Total_Cost] ,[PC_CV3] ,[PC_Spec_Epsd_Volume]) SELECT [Premium_Specialty] ,[ETG_Base_Class] ,[PC_Episode_Count] ,[PC_Total_Cost] ,[PC_Average_Cost] ,[PC_Coefficients_of_Variation] ,[PC_Normalized_Pricing_Episode_Count] ,[PC_Normalized_Pricing_Total_Cost] ,[PC_Spec_Episode_Count] ,[PC_Spec_Total_Cost] ,[PC_Spec_Average_Cost] ,[PC_Spec_CV] ,[PC_Spec_Percent_of_Episodes] ,[PC_Spec_Normalized_Pricing_Episode_Count] ,[PC_Spec_Normalized_Pricing_Total_Cost] ,[PC_CV3] ,[PC_Spec_Epsd_Volume] FROM [etg].[VW_ETG_Dataload_PC_AGG];";
             await db_sql.Execute(ConnectionStringVC, strSQL);
+            _stop_watch.Stop();
+            _console_message = "";
 
 
 
@@ -635,6 +713,8 @@ namespace ConsoleLibraryTesting
         //EBM SOURCE AUTOMATION
         public async Task getEBMSourceDataAsync()
         {
+            int row = 0;
+
             //EBM DATA LOAD
             //EBM DATA LOAD
             //EBM DATA LOAD
@@ -643,13 +723,19 @@ namespace ConsoleLibraryTesting
 
 
             //1 ebm.DQC_DATA_UHPD_SOURCE
+            Console.SetCursorPosition(0, row);
+            _console_message = "Copying [IL_UCA].[stg].[MHP_Universes_Filter_Cache] to [VCT_DB].[mhp].[MHP_Universes_Filter_Cache]";
+            _stop_watch.Reset();
+            _stop_watch.Start();
             string strSQL = "select cur.REPORT_CASE_ID, cur.REPORT_RULE_ID, cur.COND_NM, cur.RULE_DESC, cur.PREM_SPCL_CD, cur.CNFG_POP_SYS_ID, case when cur.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when cur.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when cur.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else 'UNKNOWN' end as LOB, Replace(Str(cur.UNET_MKT_NBR, 7), Space(1), '0') as MKT_NBR, cur.UNET_MKT_NBR, cur.MKT_DESC as UNET_MKT_DESC, cur.Cur_Version as Current_Version, cur.Cur_CMPLNT_CNT as Current_Market_Compliant, cur.Cur_OPRTNTY_CNT as Current_Market_Opportunity, cur.Cur_NAT_CMPLNC_CNT as Current_National_Compliant, cur.Cur_NAT_OPRTNTY_CNT as Current_National_Opportunity, prev.Prev_Version as Previous_Version, prev.Prev_CMPLNT_CNT as Previous_Market_Compliant, prev.Prev_OPRTNTY_CNT as Previous_Market_Opportunity, prev.Prev_NAT_CMPLNC_CNT as Previous_National_Compliant, prev.Prev_NAT_OPRTNTY_CNT as Previous_National_Opportunity, Concat(@@servername, ' - ', Db_Name()) as DTLocation, Cast(GetDate() as Date) as data_Extract_Dt from ( select a.REPORT_CASE_ID, a.REPORT_RULE_ID, a.PREM_SPCL_CD, Sum(a.CMPLNT_CNT) as Cur_CMPLNT_CNT, Sum(a.OPRTNTY_CNT) as Cur_OPRTNTY_CNT, Concat('PD', c.PD_Version, '-', c.Run, ' Iteration - ', c.Iteration) as Cur_Version, b.COND_NM, b.RULE_DESC, c.NAT_CMPLNC_CNT as Cur_NAT_CMPLNC_CNT, c.NAT_OPRTNTY_CNT as Cur_NAT_OPRTNTY_CNT, a.CNFG_POP_SYS_ID, d.UNET_MKT_NBR, e.MKT_DESC from PD_Reporting.DQC.DQC_342_EBM_QLTY_MPIN_MSR_SUMMARY a inner join PD_Reporting.DQC.DQC_342_EBM_RULE_DESCRIPTION b on a.REPORT_CASE_ID = b.REPORT_CASE_ID and a.REPORT_RULE_ID = b.REPORT_RULE_ID and a.Iteration = b.Iteration and a.PD_Version = b.PD_Version and a.Run = b.Run inner join PD_Reporting.DQC.DQC_342_EBM_QLTY_EXPT_MSR c on b.REPORT_CASE_ID = c.REPORT_CASE_ID and b.REPORT_RULE_ID = c.REPORT_RULE_ID and a.CNFG_POP_SYS_ID = c.CNFG_POP_SYS_ID and a.PREM_SPCL_CD = c.PREM_SPCL_CD and b.Iteration = c.Iteration and b.PD_Version = c.PD_Version and b.Run = c.Run inner join PD_Reporting.DQC.DQC_341_PROV_ROLLOUT_UNET_MKT d on a.MPIN = d.MPIN and c.Iteration = d.Iteration and c.PD_Version = d.PD_Version and c.Run = d.Run inner join PD_Reporting.DQC.DQC_341_UNET_MKT e on d.UNET_MKT_NBR = e.UNET_MKT_NBR inner join ( select b.* from ( select a.Iteration, a.Run, a.run_sequence, a.PREM_DESG_VER_NBR, Rank() over (Order by a.PREM_DESG_VER_NBR Desc, a.run_sequence Desc, a.Iteration Desc) as rank from ( select a.Iteration, a.Run, case when Upper(a.Run) = 'DEV' then 1 when Upper(a.Run) = 'TRIAL' then 2 when Upper(a.Run) = 'STAGE' then 3 when Upper(a.Run) = 'PROD' then 4 end as run_sequence, a.PREM_DESG_VER_NBR from PD_Reporting.DQC.DQC_342_EBM_QLTY_EXPT_MSR a group by a.Iteration, a.Run, case when Upper(a.Run) = 'DEV' then 1 when Upper(a.Run) = 'TRIAL' then 2 when Upper(a.Run) = 'STAGE' then 3 when Upper(a.Run) = 'PROD' then 4 end, a.PREM_DESG_VER_NBR ) a ) b where b.rank = 1 ) f on a.Iteration = f.Iteration and a.Run = f.Run and a.PREM_DESG_VER_NBR = f.PREM_DESG_VER_NBR group by a.REPORT_CASE_ID, a.REPORT_RULE_ID, a.PREM_SPCL_CD, Concat('PD', c.PD_Version, '-', c.Run, ' Iteration - ', c.Iteration), b.COND_NM, b.RULE_DESC, c.NAT_CMPLNC_CNT, c.NAT_OPRTNTY_CNT, a.CNFG_POP_SYS_ID, d.UNET_MKT_NBR, e.MKT_DESC ) cur left join ( select a.REPORT_CASE_ID, a.REPORT_RULE_ID, a.PREM_SPCL_CD, Sum(a.CMPLNT_CNT) as Prev_CMPLNT_CNT, Sum(a.OPRTNTY_CNT) as Prev_OPRTNTY_CNT, Concat('PD', c.PD_Version, '-', c.Run, ' Iteration - ', c.Iteration) as Prev_Version, b.COND_NM, b.RULE_DESC, c.NAT_CMPLNC_CNT as Prev_NAT_CMPLNC_CNT, c.NAT_OPRTNTY_CNT as Prev_NAT_OPRTNTY_CNT, a.CNFG_POP_SYS_ID, d.UNET_MKT_NBR, e.MKT_DESC from PD_Reporting.DQC.DQC_342_EBM_QLTY_MPIN_MSR_SUMMARY a inner join PD_Reporting.DQC.DQC_342_EBM_RULE_DESCRIPTION b on a.REPORT_CASE_ID = b.REPORT_CASE_ID and a.REPORT_RULE_ID = b.REPORT_RULE_ID and a.Iteration = b.Iteration and a.PD_Version = b.PD_Version and a.Run = b.Run inner join PD_Reporting.DQC.DQC_342_EBM_QLTY_EXPT_MSR c on b.REPORT_CASE_ID = c.REPORT_CASE_ID and b.REPORT_RULE_ID = c.REPORT_RULE_ID and a.CNFG_POP_SYS_ID = c.CNFG_POP_SYS_ID and a.PREM_SPCL_CD = c.PREM_SPCL_CD and b.Iteration = c.Iteration and b.PD_Version = c.PD_Version and b.Run = c.Run inner join PD_Reporting.DQC.DQC_341_PROV_ROLLOUT_UNET_MKT d on a.MPIN = d.MPIN and c.Iteration = d.Iteration and c.PD_Version = d.PD_Version and c.Run = d.Run inner join PD_Reporting.DQC.DQC_341_UNET_MKT e on d.UNET_MKT_NBR = e.UNET_MKT_NBR inner join ( select b.* from ( select a.Iteration, a.Run, a.run_sequence, a.PREM_DESG_VER_NBR, Rank() over (Order by a.PREM_DESG_VER_NBR Desc, a.run_sequence Desc, a.Iteration Desc) as rank from ( select a.Iteration, a.Run, case when Upper(a.Run) = 'DEV' then 1 when Upper(a.Run) = 'TRIAL' then 2 when Upper(a.Run) = 'STAGE' then 3 when Upper(a.Run) = 'PROD' then 4 end as run_sequence, a.PREM_DESG_VER_NBR from PD_Reporting.DQC.DQC_342_EBM_QLTY_EXPT_MSR a group by a.Iteration, a.Run, case when Upper(a.Run) = 'DEV' then 1 when Upper(a.Run) = 'TRIAL' then 2 when Upper(a.Run) = 'STAGE' then 3 when Upper(a.Run) = 'PROD' then 4 end, a.PREM_DESG_VER_NBR ) a ) b where b.rank = 2 ) f on a.Iteration = f.Iteration and a.Run = f.Run and a.PREM_DESG_VER_NBR = f.PREM_DESG_VER_NBR group by a.REPORT_CASE_ID, a.REPORT_RULE_ID, a.PREM_SPCL_CD, Concat('PD', c.PD_Version, '-', c.Run, ' Iteration - ', c.Iteration), b.COND_NM, b.RULE_DESC, c.NAT_CMPLNC_CNT, c.NAT_OPRTNTY_CNT, a.CNFG_POP_SYS_ID, d.UNET_MKT_NBR, e.MKT_DESC ) prev on cur.REPORT_CASE_ID = prev.REPORT_CASE_ID and cur.REPORT_RULE_ID = prev.REPORT_RULE_ID and cur.PREM_SPCL_CD = prev.PREM_SPCL_CD and cur.UNET_MKT_NBR = prev.UNET_MKT_NBR and cur.CNFG_POP_SYS_ID = prev.CNFG_POP_SYS_ID";
 
             var ebm = await db_sql.LoadData<DQC_DATA_EBM_UHPD_SOURCE_Model>(connectionString: ConnectionStringUHPD, strSQL);
 
             string[] columns = typeof(DQC_DATA_EBM_UHPD_SOURCE_Model).GetProperties().Select(p => p.Name).ToArray();
             await db_sql.BulkSave<DQC_DATA_EBM_UHPD_SOURCE_Model>(connectionString: ConnectionStringVC, "ebm.DQC_DATA_UHPD_SOURCE", ebm, columns, truncate: true);
-
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
 
 
             //EBM DATA LOAD
@@ -661,6 +747,8 @@ namespace ConsoleLibraryTesting
         //PEG SOURCE AUTOMATION
         public async Task getPEGSourceDataAsync()
         {
+            int row = 0;
+
             //PEG DATA LOAD
             //PEG DATA LOAD
             //PEG DATA LOAD
@@ -669,25 +757,43 @@ namespace ConsoleLibraryTesting
 
 
             //3 peg.PEG_ANCH_UHPD_SOURCE
+            Console.SetCursorPosition(0, row);
+            _console_message = "Loading data from PD to VCT_DB.peg.PEG_ANCH_UHPD_SOURCE";
+            _stop_watch.Reset();
+            _stop_watch.Start();
             string strSQL = "select b.PEG_ANCH_CATGY, b.PEG_ANCH_SBCATGY, b.PEG_ANCH_SBCATGY_DESC, a.PEG_ANCH_CATGY_ID, a.PEG_ANCH_CATGY_DESC, Concat(@@servername, ' - ', Db_Name()) as PACLocation from PD.CNFG_ANCH_SBCATGY b inner join PD.PEG_ANCHOR_CATEGORY a on b.PEG_ANCH_CATGY = a.PEG_ANCH_CATGY group by b.PEG_ANCH_CATGY, b.PEG_ANCH_SBCATGY, b.PEG_ANCH_SBCATGY_DESC, a.PEG_ANCH_CATGY_ID, a.PEG_ANCH_CATGY_DESC";
             var pa = await db_sql.LoadData<PEG_ANCH_Model>(connectionString: ConnectionStringPD, strSQL);
             string[] columns = typeof(PEG_ANCH_Model).GetProperties().Select(p => p.Name).ToArray();
             await db_sql.BulkSave<PEG_ANCH_Model>(connectionString: ConnectionStringVC, "peg.PEG_ANCH_UHPD_SOURCE", pa, columns, truncate: true);
-
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
 
             //2 vct.Rate_Region
+            Console.SetCursorPosition(0, row);
+            _console_message = "Loading data from PD to VCT_DB.vct.Rate_Region";
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select PD.RATE_REGION.MKT_NBR, PD.RATE_REGION.MKT_NM, PD.RATE_REGION.MAJ_MKT_NM, PD.RATE_REGION.RGN_NM, PD.RATE_REGION.MKT_RLLP_NM, Concat(@@servername, ' - ', Db_Name()) as RRLocation from PD.RATE_REGION";
             var rr = await db_sql.LoadData<Rate_Region_Model>(connectionString: ConnectionStringPD, strSQL);
             columns = typeof(Rate_Region_Model).GetProperties().Select(p => p.Name).ToArray();
             await db_sql.BulkSave<Rate_Region_Model>(connectionString: ConnectionStringVC, "vct.Rate_Region", rr, columns, truncate: true);
-
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
 
             //1 peg.DQC_DATA_UHPD_SOURCE
+            Console.SetCursorPosition(0, row);
+            _console_message = "Loading data from UHPD to VCT_DB.peg.DQC_DATA_UHPD_SOURCE";
+            _stop_watch.Reset();
+            _stop_watch.Start();
             strSQL = "select cur.PEG_ANCH_CATGY, cur.PEG_ANCH_SBCATGY, cur.PREM_SPCL_CD, cur.SVRTY_LVL_CD, cur.APR_DRG_RLLP_NBR, cur.QLTY_MSR_NM, cur.CNFG_POP_SYS_ID, case when cur.CNFG_POP_SYS_ID = 1 then 'COMMERCIAL' when cur.CNFG_POP_SYS_ID = 2 then 'MEDICARE' when cur.CNFG_POP_SYS_ID = 3 then 'MEDICAID' else 'UNKNOWN' end as LOB, Replace(Str(cur.UNET_MKT_NBR, 7), Space(1), '0') as MKT_NBR, cur.UNET_MKT_NBR, cur.MKT_DESC as UNET_MKT_DESC, cur.Cur_Version as Current_Version, cur.Cur_CMPLNT_CNT as Current_Market_Compliant, cur.Cur_OPRTNTY_CNT as Current_Market_Opportunity, cur.Cur_NAT_CMPLNC_CNT as Current_National_Compliant, cur.Cur_NAT_OPRTNTY_CNT as Current_National_Opportunity, prev.Prev_Version as Previous_Version, prev.Prev_CMPLNT_CNT as Previous_Market_Compliant, prev.Prev_OPRTNTY_CNT as Previous_Market_Opportunity, prev.Prev_NAT_CMPLNC_CNT as Previous_National_Compliant, prev.Prev_NAT_OPRTNTY_CNT as Previous_National_Opportunity, Concat(@@servername, ' - ', Db_Name()) as DTLocation, Cast(GetDate() as Date) as data_Extract_Dt from ( select c.PEG_ANCH_SBCATGY, c.PEG_ANCH_CATGY, c.SVRTY_LVL_CD, c.PREM_SPCL_CD, Sum(c.CMPLNT_CNT) as Cur_CMPLNT_CNT, Sum(c.OPRTNTY_CNT) as Cur_OPRTNTY_CNT, Concat('PD', c.PD_Version, '-', c.Run, ' Iteration - ', c.Iteration) as Cur_Version, c.APR_DRG_RLLP_NBR, c.QLTY_MSR_NM, c.CNFG_POP_SYS_ID, d.UNET_MKT_NBR, e.MKT_DESC, f.NAT_CMPLNC_CNT as Cur_NAT_CMPLNC_CNT, f.NAT_OPRTNTY_CNT as Cur_NAT_OPRTNTY_CNT from ( select a.Iteration, a.Run, a.run_sequence, a.PREM_DESG_VER_NBR, Rank() over (Order by a.PREM_DESG_VER_NBR Desc, a.run_sequence Desc, a.Iteration Desc) as rank, a.PD_Version from ( select a.Iteration, a.Run, case when Upper(a.Run) = 'DEV' then 1 when Upper(a.Run) = 'TRIAL' then 2 when Upper(a.Run) = 'STAGE' then 3 when Upper(a.Run) = 'PROD' then 4 end as run_sequence, a.PREM_DESG_VER_NBR, a.PD_Version from PD_Reporting.DQC.DQC_341_PEG_QLTY_EXPT_MSR a group by a.Iteration, a.Run, case when Upper(a.Run) = 'DEV' then 1 when Upper(a.Run) = 'TRIAL' then 2 when Upper(a.Run) = 'STAGE' then 3 when Upper(a.Run) = 'PROD' then 4 end, a.PREM_DESG_VER_NBR, a.PD_Version ) a ) b inner join PD_Reporting.DQC.DQC_341_PEG_QLTY_MPIN_MSR_SUMMARY c on b.Iteration = c.Iteration and b.PD_Version = c.PD_Version and b.Run = c.Run inner join PD_Reporting.DQC.DQC_341_PROV_ROLLOUT_UNET_MKT d on c.MPIN = d.MPIN and c.Iteration = d.Iteration and c.PD_Version = d.PD_Version and c.Run = d.Run inner join PD_Reporting.DQC.DQC_341_UNET_MKT e on d.UNET_MKT_NBR = e.UNET_MKT_NBR inner join PD_Reporting.DQC.DQC_341_PEG_QLTY_EXPT_MSR f on c.PEG_ANCH_SBCATGY = f.PEG_ANCH_SBCATGY and c.PEG_ANCH_CATGY = f.PEG_ANCH_CATGY and c.SVRTY_LVL_CD = f.SVRTY_LVL_CD and c.QLTY_MSR_NM = f.QLTY_MSR_NM and c.CNFG_POP_SYS_ID = f.CNFG_POP_SYS_ID and c.PREM_SPCL_CD = f.PREM_SPCL_CD and d.Iteration = f.Iteration and d.PD_Version = f.PD_Version and d.Run = f.Run and c.APR_DRG_RLLP_NBR = f.APR_DRG_RLLP_NBR where b.rank = 1 group by c.PEG_ANCH_SBCATGY, c.PEG_ANCH_CATGY, c.SVRTY_LVL_CD, c.PREM_SPCL_CD, Concat('PD', c.PD_Version, '-', c.Run, ' Iteration - ', c.Iteration), c.APR_DRG_RLLP_NBR, c.QLTY_MSR_NM, c.CNFG_POP_SYS_ID, d.UNET_MKT_NBR, e.MKT_DESC, f.NAT_CMPLNC_CNT, f.NAT_OPRTNTY_CNT ) cur left join ( select c.PEG_ANCH_SBCATGY, c.PEG_ANCH_CATGY, c.SVRTY_LVL_CD, c.PREM_SPCL_CD, Sum(c.CMPLNT_CNT) as Prev_CMPLNT_CNT, Sum(c.OPRTNTY_CNT) as Prev_OPRTNTY_CNT, Concat('PD', c.PD_Version, '-', c.Run, ' Iteration - ', c.Iteration) as Prev_Version, c.APR_DRG_RLLP_NBR, c.QLTY_MSR_NM, c.CNFG_POP_SYS_ID, d.UNET_MKT_NBR, e.MKT_DESC, f.NAT_CMPLNC_CNT as Prev_NAT_CMPLNC_CNT, f.NAT_OPRTNTY_CNT as Prev_NAT_OPRTNTY_CNT from ( select a.Iteration, a.Run, a.run_sequence, a.PREM_DESG_VER_NBR, Rank() over (Order by a.PREM_DESG_VER_NBR Desc, a.run_sequence Desc, a.Iteration Desc) as rank, a.PD_Version from ( select a.Iteration, a.Run, case when Upper(a.Run) = 'DEV' then 1 when Upper(a.Run) = 'TRIAL' then 2 when Upper(a.Run) = 'STAGE' then 3 when Upper(a.Run) = 'PROD' then 4 end as run_sequence, a.PREM_DESG_VER_NBR, a.PD_Version from PD_Reporting.DQC.DQC_341_PEG_QLTY_EXPT_MSR a group by a.Iteration, a.Run, case when Upper(a.Run) = 'DEV' then 1 when Upper(a.Run) = 'TRIAL' then 2 when Upper(a.Run) = 'STAGE' then 3 when Upper(a.Run) = 'PROD' then 4 end, a.PREM_DESG_VER_NBR, a.PD_Version ) a ) b inner join PD_Reporting.DQC.DQC_341_PEG_QLTY_MPIN_MSR_SUMMARY c on b.Iteration = c.Iteration and b.PD_Version = c.PD_Version and b.Run = c.Run inner join PD_Reporting.DQC.DQC_341_PROV_ROLLOUT_UNET_MKT d on c.MPIN = d.MPIN and c.Iteration = d.Iteration and c.PD_Version = d.PD_Version and c.Run = d.Run inner join PD_Reporting.DQC.DQC_341_UNET_MKT e on d.UNET_MKT_NBR = e.UNET_MKT_NBR inner join PD_Reporting.DQC.DQC_341_PEG_QLTY_EXPT_MSR f on c.PEG_ANCH_SBCATGY = f.PEG_ANCH_SBCATGY and c.PEG_ANCH_CATGY = f.PEG_ANCH_CATGY and c.SVRTY_LVL_CD = f.SVRTY_LVL_CD and c.QLTY_MSR_NM = f.QLTY_MSR_NM and c.CNFG_POP_SYS_ID = f.CNFG_POP_SYS_ID and c.PREM_SPCL_CD = f.PREM_SPCL_CD and d.Iteration = f.Iteration and d.PD_Version = f.PD_Version and d.Run = f.Run and c.APR_DRG_RLLP_NBR = f.APR_DRG_RLLP_NBR where b.rank = 2 group by c.PEG_ANCH_SBCATGY, c.PEG_ANCH_CATGY, c.SVRTY_LVL_CD, c.PREM_SPCL_CD, Concat('PD', c.PD_Version, '-', c.Run, ' Iteration - ', c.Iteration), c.APR_DRG_RLLP_NBR, c.QLTY_MSR_NM, c.CNFG_POP_SYS_ID, d.UNET_MKT_NBR, e.MKT_DESC, f.NAT_CMPLNC_CNT, f.NAT_OPRTNTY_CNT ) prev on cur.PEG_ANCH_SBCATGY = prev.PEG_ANCH_SBCATGY and cur.PEG_ANCH_CATGY = prev.PEG_ANCH_CATGY and cur.SVRTY_LVL_CD = prev.SVRTY_LVL_CD and cur.PREM_SPCL_CD = prev.PREM_SPCL_CD and cur.APR_DRG_RLLP_NBR = prev.APR_DRG_RLLP_NBR and cur.QLTY_MSR_NM = prev.QLTY_MSR_NM and cur.CNFG_POP_SYS_ID = prev.CNFG_POP_SYS_ID and cur.UNET_MKT_NBR = prev.UNET_MKT_NBR";
             var dqc = await db_sql.LoadData<DQC_DATA_UHPD_SOURCE_Model>(connectionString: ConnectionStringUHPD, strSQL);
             columns = typeof(DQC_DATA_UHPD_SOURCE_Model).GetProperties().Select(p => p.Name).ToArray();
             await db_sql.BulkSave<DQC_DATA_UHPD_SOURCE_Model>(connectionString: ConnectionStringVC, "peg.DQC_DATA_UHPD_SOURCE", dqc, columns, truncate: true);
-
+            _stop_watch.Stop();
+            row++;
+            _console_message = "";
 
             //PEG DATA LOAD
             //PEG DATA LOAD
@@ -700,11 +806,12 @@ namespace ConsoleLibraryTesting
         //GET CONFIG FROM UGAP
         public async Task UGAPConfig()
         {
+
+            Console.WriteLine("Getting files to process");
             //DECLARE LOCAL VARIABLES
             char chrDelimiter = '|';
             List<string>? strLstColumnNames = null;
             StreamReader? csvreader = null;
-            string _strTableName;
             //string[] strLstFiles;
             string[] strLstFiles = Directory.GetFiles(UGAPConfigPath, "*.txt", SearchOption.TopDirectoryOnly);
             string? strInputLine = "";
@@ -718,9 +825,12 @@ namespace ConsoleLibraryTesting
             string filename;
 
 
-            //1 GET FILES
+            //1 GET AND LOOP THROUGH FILES
             foreach (var strFile in strLstFiles)
             {
+
+                Console.WriteLine("Processing " + strFile);
+
                 filename = "ugapcfg_" + Path.GetFileName(strFile).Replace(".txt", "");
 
                 var table = CommonFunctions.getCleanTableName(filename);
@@ -767,7 +877,7 @@ namespace ConsoleLibraryTesting
 
                     if (dtTransfer.Rows.Count == intBulkSize) //intBulkSize = 10000 DEFAULT
                     {
-                        await db_sql.BulkSave(connectionString: ConnectionStringVC, dtTransfer);
+                        await db_sql.BulkSave(connectionString: ConnectionStringVC, dtTransfer);//SAVE DATA TO TMP TABLE
                         dtTransfer.Rows.Clear();
                     }
 
@@ -778,7 +888,7 @@ namespace ConsoleLibraryTesting
                 if (dtTransfer.Rows.Count > 0)
                     await db_sql.BulkSave(connectionString: ConnectionStringVC, dtTransfer);
 
-
+                Console.WriteLine("Getting data types for final table");
                 //GET DATA TYPES TO CREATE DYNAMIC TABLE
                 strSQL = CommonFunctions.getTableAnalysisScript("vct", tmp_table, strLstColumnNames);
                 var dataTypes = (await db_sql.LoadData<DataTypeModel>(connectionString: ConnectionStringVC, strSQL));
@@ -787,6 +897,7 @@ namespace ConsoleLibraryTesting
                 strSQL = CommonFunctions.getCreateFinalTableScript("vct", table, dataTypes);
                 await db_sql.Execute(connectionString: ConnectionStringVC, strSQL);
 
+                Console.WriteLine("Saving data to final table");
                 //MOVE DATA FROM TMP TABLE IN FINAL TABLE WITH PROPER TYPES
                 strSQL = CommonFunctions.getSelectInsertScript("vct", tmp_table, table, strLstColumnNames);
                 await db_sql.Execute(connectionString: ConnectionStringVC, strSQL);
@@ -794,14 +905,17 @@ namespace ConsoleLibraryTesting
                 strLstColumnNames = null;
             }
 
+
             //2 GENERTATE FINAL OUTPUT
+            //GET MPC_NBR FROM TD
+            Console.WriteLine("Getting MPC_NBR data from TD");
             strSQL = "Select distinct ETG_BAS_CLSS_NBR, MPC_NBR from CLODM001.ETG_NUMBER";
             var mcp = await db_td.LoadData<UGAPMPCNBRModel>(connectionString: ConnectionStringTD, strSQL);
 
 
-
+            //GET UGAP CFG UNIONED FOR FINAL FLAT REPORT
+            Console.WriteLine("Getting UGAP CFG for flat report");
             strSQL = "SELECT [MPC_NBR] ,[ETG_BAS_CLSS_NBR] ,[ALWAYS] ,[ATTRIBUTED] ,[ERG_SPCL_CATGY_CD] ,[TRT_CD] ,[RX] ,[NRX] ,[RISK_Model] ,[LOW_MONTH] ,[HIGH_MONTH] FROM [VCT_DB].[etgsymm].[VW_UGAPCFG_FINAL]";
-
             var etg = await db_sql.LoadData<UGAPETGModel>(connectionString: ConnectionStringVC, strSQL);
 
 
@@ -814,13 +928,15 @@ namespace ConsoleLibraryTesting
 
             List<UGAPETGModel> etg_final = etg.OrderBy(o => o.RISK_Model).ThenBy(o => o.MPC_NBR).ToList();
             StringBuilder sb = new StringBuilder();
-
+            //CREATE FINAL FLAT FILE
             filename = UGAPConfigOutputFile;
             if (File.Exists(filename))
             {
                 File.Delete(filename);
             }
 
+            //MERGE UGAP CFG WITH MPC_NBR ABOVE
+            Console.WriteLine("Merging UGAP CFG with MPC_NBR");
             using (var file = File.CreateText(filename))
             {
                 string[] columns = typeof(UGAPETGModel).GetProperties().Select(p => p.Name).ToArray();
@@ -857,6 +973,7 @@ namespace ConsoleLibraryTesting
         }
 
 
+        //CHECKS SPECIFIC FILES LISTED IN [IL_UCA].[stg].[Evicore_Report_Timeliness_Files] TO CHECK DATA FILE WAS DROPED TO THE FTP
         public async Task getReportsTimelinessAsync()
         {
             string file_name; //INDIVIDUAL FILES
@@ -868,6 +985,8 @@ namespace ConsoleLibraryTesting
             List<Report_Timeliness_Model> rtm = new List<Report_Timeliness_Model>();
             IRelationalDataAccess db_sql = new SqlDataAccess();
 
+
+            Console.WriteLine("Getting file search patterns and latest date to search");
             //GET FILE MASTER LIST FOR SEARCHING
             var rtfm = await db_sql.LoadData<Report_Timeliness_Files_Model>(connectionString: ConnectionStringMSSQL, "SELECT [ertf_id],[file_location_wild],[file_name_wild] FROM [IL_UCA].[stg].[Evicore_Report_Timeliness_Files] ");
             //GET LATEST MONTH
@@ -881,9 +1000,10 @@ namespace ConsoleLibraryTesting
             DateTime dropped_date;
             string found_file_name = null;
 
-
+            //LOOP THROUGH FILE SEARCH PATTERNS FOUND IN DB
             foreach (var rf in rtfm)
             {
+
                 bool is_zip = (rf.file_location_wild.Contains(".zip") ? true : false);
 
                 if (is_zip)
@@ -970,7 +1090,7 @@ namespace ConsoleLibraryTesting
 
             }
 
-
+            Console.WriteLine("Saving latest data to IL_UCA.stg.Evicore_Report_Timelines");
             //SAVE FINDINGS TO DB
             var columns = typeof(Report_Timeliness_Model).GetProperties().Select(p => p.Name).ToArray();
             await db_sql.BulkSave<Report_Timeliness_Model>(connectionString: ConnectionStringMSSQL, "stg.Evicore_Report_Timeliness", rtm, columns, truncate: false);
@@ -2807,7 +2927,10 @@ namespace ConsoleLibraryTesting
             body = body.Replace("{$den_tat_ox}", String.Format("{0:n0}", dr["den_tat"]));
 
 
-            var manual = @"C:\Users\cgiorda\Desktop\Projects\PPACA_TAT\Archive\United_Enterprise_Wide_Urgent_TAT_UHC_Enterprise_"+ file_year + "_"+ (file_month > 9 ? "0" + file_month : file_month + "") +".xlsx";
+            var manual = ProjectsPath + @"\PPACA_TAT\Archive\United_Enterprise_Wide_Urgent_TAT_UHC_Enterprise_" + file_year + "_" + (file_month > 9 ? "0" + file_month : file_month + "") + ".xlsx";
+
+            manual = @"C:\Users\cgiorda\Desktop\Projects\PPACA_TAT\Archive\United_Enterprise_Wide_Urgent_TAT_UHC_Enterprise_"+ file_year + "_"+ (file_month > 9 ? "0" + file_month : file_month + "") +".xlsx";
+
 
             //SENDING EMAIL AND ATTACHEMENT
             Console.WriteLine("Sending final email and attachement");
