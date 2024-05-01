@@ -56,7 +56,11 @@ namespace ConsoleLibraryTesting
 
         public string TATReportTemplatePath { get; set; }
 
-        public string UGAPConfigPath { get; set; }
+
+        public string PPACA_TAT_EmailTemplatePath { get; set; }
+
+
+    public string UGAPConfigPath { get; set; }
 
         public string UGAPConfigOutputFile { get; set; }
 
@@ -2753,35 +2757,23 @@ namespace ConsoleLibraryTesting
         public async Task PPACA_TAT_Email()
         {
 
-
-            //TWO DBS
             IRelationalDataAccess db_sql = new SqlDataAccess();
 
+            string recipients = "allyson_k_clark@uhc.com;laura_fischer@uhc.com;audrey_horton@uhc.com;renee_l_struck@uhc.com;mark_j_newman@uhc.com;patricia_c_huntsman@uhc.com";
+            string from = "mary_ann_dimartino@uhc.com";
+            string cc = "jason_t_riley@uhc.com;mary_ann_dimartino@uhc.com;chris_giordano@uhc.com;inna_rudi@uhc.com";
 
+            //GET REPORTING DATA FROM VIEW VW_PPACA_TAT
+            Console.WriteLine("Getting Reporting Data from ILUCA");
             string strSQL = "SELECT [file_month] ,[file_year] ,[num_tat] ,[den_tat] ,[tat_val] ,[rtype] FROM [IL_UCA].[dbo].[VW_PPACA_TAT]";
-            StringBuilder sbEmail = new StringBuilder();
-
-            string recipients = "LAlfonso@uhc.com;allyson_k_clark@uhc.com;sanford_p_cohen@uhc.com;laura_fischer@uhc.com;mayrene_hernandez@uhc.com;steve_lumpinski@optum.com;renee_l_struck@uhc.com;jessica_l_tarnowski@uhc.com;heather_vanis@uhc.com;mark_j_newman@uhc.com;Judy.Fujimoto@optum.com;carol_s_winter@uhc.com;inez.bulatao@uhc.com;nancy.morden@uhc.com;christopher_pauwels@uhc.com;roma_adipat@uhc.com;dana.savoie@optum.com;laurie.gianturco@uhc.com;rosamond_e_eschert@uhc.com;loaiello@uhc.com;candace_smith@uhc.com;stacy_v_washington@uhc.com; Carella-lisa.carellaashla@uhc.com;jon_maguire@uhc.com;inna_rudi@uhc.com";
-
-            recipients = "mary_ann_dimartino@uhc.com;hong_gao@uhc.com;chris_giordano@uhc.com";
-            recipients = "mary_ann_dimartino@uhc.com";
-            string from = "chris_giordano@uhc.com";
-            string cc = "chris_giordano@uhc.com;inna_rudi@uhc.com";
-            //cc = "chris_giordano@uhc.com";
-            //recipients = "chris_giordano@uhc.com";
-
-            string emailFilePath = @"\\nasv0048\ucs_ca\PHS_DATA_NEW\Home Directory - Automation\EmailTemplates\PPACA_TAT.txt";
-
-
             DataRow dr;
             DataTable dt  = await db_sql.LoadDataTable(ConnectionStringMSSQL, strSQL);
+            //GET LATEST DATES
             strSQL = "select top 1 file_month, [file_year],file_date FROM [IL_UCA].[stg].[EviCore_TAT] where file_date = (select max(file_date) from[IL_UCA].[stg].[EviCore_TAT])";
             DataTable dtDate = await db_sql.LoadDataTable(ConnectionStringMSSQL, strSQL);
-
             string fileSearch = "United_Enterprise_Wide_Routine_TAT_UHC_Enterprise_" + dtDate.Rows[0]["file_year"] + "_" + dtDate.Rows[0]["file_month"] + ".xlsx";
             DateTime fileDate = (DateTime)dtDate.Rows[0]["file_date"];
-            string filePath = @"\\NASGWFTP03\Care_Core_FTP_Files\Radiology";
-            FileInfo fi = new FileInfo(filePath + "\\" + fileSearch);
+            FileInfo fi = new FileInfo(ReportsTimelinessPath + "\\" + fileSearch);
             DateTime dtCreateDate = fi.CreationTime;
 
 
@@ -2790,9 +2782,9 @@ namespace ConsoleLibraryTesting
             string strMonthName = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(file_month);
 
             string subject = "United Enterprise Wide PPACA TAT Report - " + strMonthName + " " + file_year; //October 2022
-
-
-            string body = File.ReadAllText(emailFilePath);
+            //GET EMAIL TEMPLATE AND REPLACE PLACEHOLDERS WITH DATA RETRIEVED ABOVE
+            Console.WriteLine("Getting email template and replacing variables");
+            string body = File.ReadAllText(PPACA_TAT_EmailTemplatePath);
             body = body.Replace("{$month}", strMonthName);
             body = body.Replace("{$year}", file_year.ToString());
             body = body.Replace("{$current_month}", dtCreateDate.ToString("MMMM"));
@@ -2815,9 +2807,10 @@ namespace ConsoleLibraryTesting
             body = body.Replace("{$den_tat_ox}", String.Format("{0:n0}", dr["den_tat"]));
 
 
-            var manual = @"C:\Users\cgiorda\Desktop\Projects\PPACA_TAT\Archive\United_Enterprise_Wide_Urgent_TAT_UHC_Enterprise_2023_09.xlsx";
+            var manual = @"C:\Users\cgiorda\Desktop\Projects\PPACA_TAT\Archive\United_Enterprise_Wide_Urgent_TAT_UHC_Enterprise_"+ file_year + "_"+ (file_month > 9 ? "0" + file_month : file_month + "") +".xlsx";
 
-
+            //SENDING EMAIL AND ATTACHEMENT
+            Console.WriteLine("Sending final email and attachement");
             await SharedFunctions.EmailAsync(recipients, from, subject, body, cc, manual,  System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
         }
 
