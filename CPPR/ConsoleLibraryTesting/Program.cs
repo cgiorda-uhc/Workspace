@@ -4,6 +4,7 @@ using ConsoleLibraryTesting;
 using Microsoft.Extensions.Configuration;
 using ProjectManagerLibrary.Projects;
 using ProjectManagerLibrary.Concrete;
+using Serilog;
 
 
 var adHoc = new AdHoc();
@@ -56,6 +57,14 @@ IRelationalDataAccess db_sqsl = new SqlDataAccess();
 var builder = new ConfigurationBuilder()
                  .AddJsonFile($"appsettings.json", true, true);
 var config = builder.Build();
+
+
+
+Log.Logger = new LoggerConfiguration()
+           .ReadFrom.Configuration(config)
+           .CreateLogger();
+
+Log.Logger.Information("Ad Hoc Processes Start");  
 
 
 //CHECK FOR NEW TEAMMATE IN AD AND EMAIL Kristy IF NEED BE
@@ -176,7 +185,7 @@ return;
 
 
 
-
+Log.Logger.Information("Ad Hoc Processes End");
 
 
 
@@ -2986,4 +2995,3 @@ return;
 
 
 
- 
