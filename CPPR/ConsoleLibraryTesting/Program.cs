@@ -1,73 +1,6 @@
 ﻿
 using DataAccessLibrary.DataAccess;
-using DocumentFormat.OpenXml.Bibliography;
-using DocumentFormat.OpenXml.Spreadsheet;
-using ProjectManagerLibrary.Configuration.HeaderInterfaces;
-using ProjectManagerLibrary.Models;
-using ProjectManagerLibrary.Shared;
-using System.Globalization;
-using System.IO.Compression;
-using System.IO;
-using DocumentFormat.OpenXml.Wordprocessing;
-using DocumentFormat.OpenXml.Drawing.Diagrams;
-using System.Formats.Tar;
-using System.Data;
-using NPOI.SS.Formula.Functions;
-using AutoMapper;
-using ActiveDirectoryLibrary;
-using Org.BouncyCastle.Asn1.X509;
-using SharedFunctionsLibrary;
-
-using System.Text;
-//using static NPOI.HSSF.UserModel.HeaderFooter;
-using MongoDB.Driver.Core.Configuration;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Threading;
-using System.Xml;
-using System.Data.Odbc;
-using NPOI.OpenXmlFormats.Wordprocessing;
-using DataAccessLibrary.Models;
-using DataAccessLibrary.Scripts;
-using Microsoft.Office.Interop.Excel;
-using DataAccessLibrary.Shared;
-using DocumentFormat.OpenXml.Office2010.ExcelAc;
-using Amazon.Util.Internal;
-using NPOI.HPSF;
 using ConsoleLibraryTesting;
-using FileParsingLibrary.MSWord;
-using FileParsingLibrary.MSExcel;
-using FileParsingLibrary.Models;
-using DocumentFormat.OpenXml.Office2013.Word;
-using DocumentFormat.OpenXml.Office2010.Excel;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Reflection;
-using DocumentFormat.OpenXml.InkML;
-using VCPortal_Models.Dtos.ETGFactSymmetry;
-using SharpCompress.Common;
-using NPOI.OpenXmlFormats;
-using System.Formats.Asn1;
-using DocumentFormat.OpenXml.Math;
-using DocumentFormat.OpenXml.Drawing.Charts;
-using Microsoft.Extensions.Primitives;
-using VCPortal_Models.Parameters.MHP;
-using VCPortal_Models.Models.Shared;
-using VCPortal_Models.Models.ETGFactSymmetry.Dataloads;
-using Teradata.Client.Provider;
-using VCPortal_Models.Models.PEG;
-using VCPortal_Models.Models.EBM;
-using DocumentFormat.OpenXml.Drawing;
-using NPOI.Util;
-using VCPortal_Models.Models.PCCM;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
-using System.Net;
-using VCPortal_Models.Models.Report_Timeliness;
-using ClosedXML.Excel;
-using static Azure.Core.HttpHeader;
-using DocumentFormat.OpenXml.Packaging;
 using Microsoft.Extensions.Configuration;
 using ProjectManagerLibrary.Projects;
 using ProjectManagerLibrary.Concrete;
@@ -75,8 +8,6 @@ using ProjectManagerLibrary.Concrete;
 
 var adHoc = new AdHoc();
 
-
- 
 adHoc.ConnectionStringMSSQL = "data source=IL_UCA;server=wn000005325;Persist Security Info=True;database=IL_UCA;Integrated Security=SSPI;connect timeout=300000;";
 adHoc.TableMHP = "stg.MHP_Yearly_Universes";
 adHoc.ConnectionStringTD = "Data Source=UDWPROD;User ID=cgiorda;Password=BooWooDooFoo2023!!;Authentication Mechanism=LDAP;Session Mode=TERADATA;Session Character Set=ASCII;Persist Security Info=true;Connection Timeout=99999;";
@@ -127,25 +58,70 @@ var builder = new ConfigurationBuilder()
 var config = builder.Build();
 
 
-var vds = new DataSourceVerification(config);
-var i = await vds.CheckDataSources();
-
+//CHECK FOR NEW TEAMMATE IN AD AND EMAIL Kristy IF NEED BE
 var adr = new ADDirectReportAlertsLR(config, db_sqsl);
-i = await adr.RefreshTable();
+var i = await adr.RefreshTable();
+return;
 
+//EVICORE MONTHLY PROCESS START
+//EVICORE MONTHLY PROCESS START
+//EVICORE MONTHLY PROCESS START
 
+//CHECK FOR NEW EVICORE FILES EACH MONTH
+var vds = new DataSourceVerification(config);
+i = await vds.CheckDataSources();
+return;
+
+//PROCESS UHC_Scorecard_*_*.xls* INTO stg.EviCore_Scorecard
+var esc = new EvicoreScorecard(config, db_sqsl);
+i = await esc.LoadEvicoreScorecardData();
+return;
+
+//PROCESS AMERICHOICE_Allstates_Auths Per 1000 by Modality with Exclusions_*_*_*.xlsx INTO stg.EviCore_AmerichoiceAllstatesAuths
+var aasa = new EviCoreAmerichoiceAllstatesAuth(config, db_sqsl);
+i = await aasa.LoadEviCoreAmerichoiceAllstatesAuthData();
+return;
+
+//PROCESS United_Enterprise_Wide_*_TAT_UHC_Enterprise_*_*.xlsx INTO stg.EviCore_TAT
+var ppca = new PPACATAT(config, db_sqsl);
+i = await ppca.LoadTATData();
+return;
+
+//PROCESS YTD - Cisco - UHC Metrics *_*.xlsx INTO stg.EviCore_YTDMetrics
+var ytdm = new EviCoreYTDMetrics(config, db_sqsl);
+i = await ytdm.LoadEviCoreYTDMetricsData();
+return;
+
+//PROCESS Site of Care Report_*_*.xlsx INTO stg.SiteOfCare_Data_v3
 var soc = new SiteOfCare(config, db_sqsl);
 i = await soc.LoadSiteOfCareData();
+return;
 
+//PROCESS United Gastro Site of Care Report *_*.xlsx INTO stg.SiteOfCare_Gastro
 var socg = new SiteOfCareGastro(config, db_sqsl);
 i = await soc.LoadSiteOfCareData();
+return;
 
-
+//PROCESS MHP Files INTO stg.MHP_Yearly_Universes
 var mhp = new MHPUniverse(config, db_sqsl);
 i = await mhp.LoadMHPUniverseData();
-
-
 return;
+
+//PROCESS CRC_Pivot_Rawdata_*.xlsx INTO stg.EviCore_MR_MembershipDetails
+var mrm = new EviCoreMRMembershipDetails(config, db_sqsl);
+i = await mrm.LoadEviCoreMRMembershipDetails();
+return;
+
+//PROCESS NICE_UHCWestEligibility_*_Medicare_Final_for_membership.xlsx INTO stg.EviCore_NICEDetails
+var nice = new NICEUHCWestEligibility(config, db_sqsl);
+i = await nice.LoadNICEUHCWestEligibilityData();
+return;
+
+//EVICORE MONTHLY PROCESS END
+//EVICORE MONTHLY PROCESS END
+//EVICORE MONTHLY PROCESS END
+
+
 
 
 //GENERATE DYNAMIC EMAIL FOR PPACA_TAT Mary Ann Dimartino
@@ -160,14 +136,11 @@ await adHoc.UGAPConfig();
 //return;
 
 
-
-
 //GET FILE 'Create_Date' FROM EVICORE TAT REPORTING Mary Ann Dimartino
 await adHoc.getReportsTimelinessAsync();
 //GENERATE FINAL TAT REPORTS
 await adHoc.generateTATReportsAsync();
 //return;
-
 
 
 //MHP UGAP CLEANUP AND LOAD TO VCT_DB   JON PIOTROWSKI
@@ -184,7 +157,6 @@ await adHoc.transferMHPDataAsync(files_loaded, "March", "2024");
 //return;
 
 
-
 //PEG ETL Angela RS
 await adHoc.getPEGSourceDataAsync();
 //PEG REPORT
@@ -196,14 +168,15 @@ await adHoc.generateEBMReportsAsync();
 //return;
 
 
-
-
-
 //PREMIUM DESIGNATION ETL Angela RS
 await adHoc.getETGSymmSourceDataAsync(18);
 
 
 return;
+
+
+
+
 
 
 
