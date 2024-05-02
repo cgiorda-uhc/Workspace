@@ -55,18 +55,17 @@ adHoc.PPACA_TAT_EmailTemplatePath = @"\\nasv0048\ucs_ca\PHS_DATA_NEW\Home Direct
 adHoc.ProjectsPath = @"\\nasv0048\ucs_ca\PHS_DATA_NEW\Home Directory - Automation\Projects";
 
 
-//DATABASE OBJECT
+//INSTANTIATE DATABASE OBJECT
 IRelationalDataAccess db_sqsl = new SqlDataAccess();
 
 
-
-//SETUP CONFIG 
+//INSTANTIATE CONFIG 
 var builder = new ConfigurationBuilder()
                  .AddJsonFile($"appsettings.json", true, true);
 var config = builder.Build();
 
 
-//SETUP LOGGING
+//INSTANTIATE LOGGER
 Log.Logger = new LoggerConfiguration()
            .ReadFrom.Configuration(config)
            .CreateLogger();
