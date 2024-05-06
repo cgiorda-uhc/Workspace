@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,7 +15,8 @@
       <Guid>d6979a14-6b31-11d5-ba37-00c04f81bc00</Guid>
       <Lcid>0</Lcid>
       <Isolated>false</Isolated>
-      <EmbedInteropTypes>true</EmbedInteropTypes>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>True</Private>
     </COMReference>
     <COMReference Include="SASOLAP">
       <WrapperTool>tlbimp</WrapperTool>
@@ -23,7 +25,8 @@
       <Guid>1a00f9e0-5c69-11d2-b94b-00c04f81993c</Guid>
       <Lcid>0</Lcid>
       <Isolated>false</Isolated>
-      <EmbedInteropTypes>true</EmbedInteropTypes>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>True</Private>
     </COMReference>
     <COMReference Include="SASWorkspaceManager">
       <WrapperTool>tlbimp</WrapperTool>
@@ -32,7 +35,7 @@
       <Guid>6964d003-4e64-11d2-b94d-00c04f81bc00</Guid>
       <Lcid>0</Lcid>
       <Isolated>false</Isolated>
-      <EmbedInteropTypes>true</EmbedInteropTypes>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
     <COMReference Include="SAS">
       <WrapperTool>tlbimp</WrapperTool>
@@ -41,7 +44,8 @@
       <Guid>2d91f006-62a7-11d0-9f3d-00a024bb830c</Guid>
       <Lcid>0</Lcid>
       <Isolated>false</Isolated>
-      <EmbedInteropTypes>true</EmbedInteropTypes>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>True</Private>
     </COMReference>
   </ItemGroup>
 

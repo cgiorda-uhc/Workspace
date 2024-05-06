@@ -5,6 +5,8 @@ using Microsoft.Extensions.Configuration;
 using ProjectManagerLibrary.Projects;
 using ProjectManagerLibrary.Concrete;
 using Serilog;
+using SASConnectionLibrary;
+using ProjectManagerLibrary.Configuration.HeaderInterfaces.Concrete;
 
 
 var adHoc = new AdHoc();
@@ -70,72 +72,93 @@ Log.Logger = new LoggerConfiguration()
            .ReadFrom.Configuration(config)
            .CreateLogger();
 
-Log.Logger.Information("Ad Hoc Processes Start");  
 
+//INSTANTIATE SAS CONNECTION
+var sas_cfg = config.GetSection("SASConnection").Get<SASConnection_Model>();
+SASConnection.SASHost = sas_cfg.SASHost;
+SASConnection.SASPort = sas_cfg.SASPort;
+SASConnection.SASClassIdentifier = sas_cfg.SASClassIdentifier;
+SASConnection.SASUserName = sas_cfg.SASUserName;
+SASConnection.SASPassword = sas_cfg.SASPassword;
+SASConnection.SASUserNameUnix = sas_cfg.SASUserNameUnix;
+SASConnection.SASPasswordUnix = sas_cfg.SASPasswordUnix;
+SASConnection.SASUserNameOracle = sas_cfg.SASUserNameOracle;
+SASConnection.SASPasswordOracle = sas_cfg.SASPasswordOracle;
+
+
+
+long result = -1;
+
+
+Log.Logger.Information("Ad Hoc Processes Start");
+//COPY PASTE ADHOC FUNCTIONS HERE:
+
+SASConnection.create_SAS_instance();
+SASConnection.runStoredProcess("SAS_test_20240503.sas", "/hpsasfin/int/winfiles7/Program/UEP/ICUE_ADT/EI_ER_report/SAS_file/SDR");
+SASConnection.destroy_SAS_instance();
+
+return;
 
 //CHECK FOR NEW TEAMMATE IN AD AND EMAIL Kristy IF NEED BE
 var adr = new ADDirectReportAlertsLR(config, db_sqsl);
-var i = await adr.RefreshTable();
+result = await adr.RefreshTable();
 return;
-
 
 //EVICORE MONTHLY PROCESS START
 //EVICORE MONTHLY PROCESS START
 //EVICORE MONTHLY PROCESS START
 //CHECK FOR NEW EVICORE FILES EACH MONTH
 var vds = new DataSourceVerification(config);
-i = await vds.CheckDataSources();
+result = await vds.CheckDataSources();
 return;
 
 //PROCESS UHC_Scorecard_*_*.xls* INTO stg.EviCore_Scorecard
 var esc = new EvicoreScorecard(config, db_sqsl);
-i = await esc.LoadEvicoreScorecardData();
+result = await esc.LoadEvicoreScorecardData();
 return;
 
 //PROCESS AMERICHOICE_Allstates_Auths Per 1000 by Modality with Exclusions_*_*_*.xlsx INTO stg.EviCore_AmerichoiceAllstatesAuths
 var aasa = new EviCoreAmerichoiceAllstatesAuth(config, db_sqsl);
-i = await aasa.LoadEviCoreAmerichoiceAllstatesAuthData();
+result = await aasa.LoadEviCoreAmerichoiceAllstatesAuthData();
 return;
 
 //PROCESS United_Enterprise_Wide_*_TAT_UHC_Enterprise_*_*.xlsx INTO stg.EviCore_TAT
 var ppca = new PPACATAT(config, db_sqsl);
-i = await ppca.LoadTATData();
+result = await ppca.LoadTATData();
 return;
 
 //PROCESS YTD - Cisco - UHC Metrics *_*.xlsx INTO stg.EviCore_YTDMetrics
 var ytdm = new EviCoreYTDMetrics(config, db_sqsl);
-i = await ytdm.LoadEviCoreYTDMetricsData();
+result = await ytdm.LoadEviCoreYTDMetricsData();
 return;
 
 //PROCESS Site of Care Report_*_*.xlsx INTO stg.SiteOfCare_Data_v3
 var soc = new SiteOfCare(config, db_sqsl);
-i = await soc.LoadSiteOfCareData();
+result = await soc.LoadSiteOfCareData();
 return;
 
 //PROCESS United Gastro Site of Care Report *_*.xlsx INTO stg.SiteOfCare_Gastro
 var socg = new SiteOfCareGastro(config, db_sqsl);
-i = await soc.LoadSiteOfCareData();
+result = await soc.LoadSiteOfCareData();
 return;
 
 //PROCESS MHP Files INTO stg.MHP_Yearly_Universes
 var mhp = new MHPUniverse(config, db_sqsl);
-i = await mhp.LoadMHPUniverseData();
+result = await mhp.LoadMHPUniverseData();
 return;
 
 //PROCESS CRC_Pivot_Rawdata_*.xlsx INTO stg.EviCore_MR_MembershipDetails
 var mrm = new EviCoreMRMembershipDetails(config, db_sqsl);
-i = await mrm.LoadEviCoreMRMembershipDetails();
+result = await mrm.LoadEviCoreMRMembershipDetails();
 return;
 
 //PROCESS NICE_UHCWestEligibility_*_Medicare_Final_for_membership.xlsx INTO stg.EviCore_NICEDetails
 var nice = new NICEUHCWestEligibility(config, db_sqsl);
-i = await nice.LoadNICEUHCWestEligibilityData();
+result = await nice.LoadNICEUHCWestEligibilityData();
 return;
 //EVICORE MONTHLY PROCESS END
 //EVICORE MONTHLY PROCESS END
 //EVICORE MONTHLY PROCESS END
-
-
 
 
 //GENERATE DYNAMIC EMAIL FOR PPACA_TAT Mary Ann Dimartino

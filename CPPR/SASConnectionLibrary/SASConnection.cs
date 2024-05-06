@@ -9,15 +9,15 @@ namespace SASConnectionLibrary
 {
     public class SASConnection
     {
-        public static string strSASHost = null;// "sasgrid.uhc.com";
-        public static int intSASPort = 0; // 8564;
-        public static string strSASClassIdentifier = null;// "0217E202-B560-11DB-AD91-001083FF6836";
-        public static string strSASUserName = null;// "cgiorda";
-        public static string strSASPassword = null; //xxxxxxxxxxxxxx
-        public static string strSASUserNameUnix = null;// "cgiorda";
-        public static string strSASPasswordUnix = null; //xxxxxxxxxxxxxx
-        public static string strSASUserNameOracle = null;// "UHG_000556521";
-        public static string strSASPasswordOracle = null; //xxxxxxxxxxxxxx
+        public static string SASHost = null;// "sasgrid.uhc.com";
+        public static int SASPort = 0; // 8564;
+        public static string SASClassIdentifier = null;// "0217E202-B560-11DB-AD91-001083FF6836";
+        public static string SASUserName = null;// "cgiorda";
+        public static string SASPassword = null; //xxxxxxxxxxxxxx
+        public static string SASUserNameUnix = null;// "cgiorda";
+        public static string SASPasswordUnix = null; //xxxxxxxxxxxxxx
+        public static string SASUserNameOracle = null;// "UHG_000556521";
+        public static string SASPasswordOracle = null; //xxxxxxxxxxxxxx
 
 
         public static string strSASConnectionLog = null;
@@ -126,6 +126,13 @@ namespace SASConnectionLibrary
             dtLib.Rows.Add(drLib);
 
 
+            drLib = dtLib.NewRow();
+            drLib["Alias"] = "sq";
+            drLib["Path"] = "/hpsasfin/int/winfiles7/Program/UEP/ICUE_ADT/EI_ER_report/SAS_file/SDR";
+            dtLib.Rows.Add(drLib);
+
+
+
 
             //drLib = dtLib.NewRow();
             //drLib["Alias"] = "base_mn";
@@ -223,16 +230,16 @@ namespace SASConnectionLibrary
             populateLiveLibServers();
 
             objServerDef = new SASObjectManager.ServerDef();
-            objServerDef.MachineDNSName = strSASHost;
-            objServerDef.Port = intSASPort;
+            objServerDef.MachineDNSName = SASHost;
+            objServerDef.Port = SASPort;
             objServerDef.Protocol = SASObjectManager.Protocols.ProtocolBridge;
             objServerDef.BridgeEncryptionAlgorithm = "SASProprietary";
             objServerDef.BridgeSecurityPackage = "Negotiate";
-            objServerDef.ClassIdentifier = strSASClassIdentifier;
+            objServerDef.ClassIdentifier = SASClassIdentifier;
 
             objFactory = new SASObjectManager.ObjectFactoryMulti2();
             objKeeper = new SASObjectManager.ObjectKeeper();
-            dynamic omi = objFactory.CreateObjectByServer(strSASHost, true, objServerDef, strSASUserName, strSASPassword);
+            dynamic omi = objFactory.CreateObjectByServer(SASHost, true, objServerDef, SASUserName, SASPassword);
             objFactory.SetRepository(omi);
             IEnumerable<SASObjectManager.ServerDef> serverDefs = objFactory.ServerDefs.Cast<SASObjectManager.ServerDef>();
             SASObjectManager.IServerDef workSpaceServerDef = default(SASObjectManager.IServerDef);
@@ -248,6 +255,9 @@ namespace SASConnectionLibrary
                 //    var s = serverDef.Name;
                 //}
 
+                Console.WriteLine(serverDef.Name);
+
+
                 if (serverDef.Name == "FIN360Int - Workspace Server")
                 {
                     workSpaceServerDef = serverDef;
@@ -256,7 +266,7 @@ namespace SASConnectionLibrary
             }
 
             //objSAS = (SAS.Workspace)objFactory.CreateObjectByServer(strSASHost, true, (SASObjectManager.ServerDef)workSpaceServerDef, strSASUserName, strSASPassword);
-            objSAS = (SAS.Workspace)objFactory.CreateObjectByServer(strSASHost, true, (SASObjectManager.ServerDef)workSpaceServerDef, strSASUserName, strSASPassword);
+            objSAS = (SAS.Workspace)objFactory.CreateObjectByServer(SASHost, true, (SASObjectManager.ServerDef)workSpaceServerDef, SASUserName, SASPassword);
             objKeeper.AddObject(1, "WorkspaceObject", objSAS);
             objLangServ = objSAS.LanguageService;
 
@@ -270,7 +280,7 @@ namespace SASConnectionLibrary
 
             //ADD REMOTE SERVER DATA LIBS
             foreach (string s in alLiveServerLibs)
-                objLangServ.Submit(s.Replace("{$un}", strSASUserName).Replace("{$pw}", strSASPassword).Replace("{$unX}", strSASUserNameUnix).Replace("{$pwX}", strSASPasswordUnix).Replace("{$unO}", strSASUserNameOracle).Replace("{$pwO}", strSASPasswordOracle));
+                objLangServ.Submit(s.Replace("{$un}", SASUserName).Replace("{$pw}", SASPassword).Replace("{$unX}", SASUserNameUnix).Replace("{$pwX}", SASPasswordUnix).Replace("{$unO}", SASUserNameOracle).Replace("{$pwO}", SASPasswordOracle));
 
             objSAS.DataService.ListLibrefs(out arrLibnames);
 
