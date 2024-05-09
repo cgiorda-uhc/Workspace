@@ -1,17 +1,10 @@
 ﻿using ClosedXML.Excel;
 using ClosedXML.Graphics;
-using DocumentFormat.OpenXml.Office2019.Excel.RichData2;
-using DocumentFormat.OpenXml.Spreadsheet;
-using DocumentFormat.OpenXml.Wordprocessing;
 using FileParsingLibrary.Models;
-using Microsoft.Office.Interop.Excel;
-using NPOI.OpenXmlFormats.Dml.Diagram;
-using NPOI.SS.Formula.Functions;
-using SixLabors.Fonts;
 using System.ComponentModel;
-using System.IO;
 using System.Reflection;
 using System.Text;
+using Task = System.Threading.Tasks.Task;
 
 namespace FileParsingLibrary.MSExcel
 {
@@ -822,7 +815,72 @@ namespace FileParsingLibrary.MSExcel
         }
 
 
+        public static System.Data.DataTable ImportExceltoDatatable(string filePath, string sheetName, int start_row = 1)
+        {
+            // Open the Excel file using ClosedXML.
+            // Keep in mind the Excel file cannot be open when trying to read it
+            using (XLWorkbook workBook = new XLWorkbook(filePath))
+            {
+                //Read the first Sheet from Excel file.
+                IXLWorksheet workSheet = workBook.Worksheet(sheetName);
 
+                //Create a new DataTable.
+                System.Data.DataTable dt = new System.Data.DataTable();
+
+
+                //CSG COUNTER
+                int count = 0;
+
+                //Loop through the Worksheet rows.
+                bool firstRow = true;
+                foreach (IXLRow row in workSheet.Rows())
+                {
+                    
+                    //CSG START ROW
+                    if(count < start_row)
+                    {
+                        count++;
+                        continue;
+                    }
+                    
+                    
+                    
+                    //Use the first row to add columns to DataTable.
+                    if (firstRow)
+                    {
+                        foreach (IXLCell cell in row.Cells())
+                        {
+                            if (!dt.Columns.Contains(cell.Value.ToString()))
+                            {
+                                dt.Columns.Add(cell.Value.ToString());
+                            }
+
+
+                        }
+                        firstRow = false;
+                    }
+                    else
+                    {
+                        //Add rows to DataTable.
+                        dt.Rows.Add();
+                        int i = 0;
+
+                        foreach (IXLCell cell in row.Cells(row.FirstCellUsed().Address.ColumnNumber, row.LastCellUsed().Address.ColumnNumber))
+                        {
+                            if(i >= dt.Columns.Count)
+                            {
+                                break;
+                            }
+
+                            dt.Rows[dt.Rows.Count - 1][i] = cell.Value.ToString();
+                            i++;
+                        }
+                    }
+                }
+
+                return dt;
+            }
+        }
 
 
         public object GetValueFromExcel(string fileName, string sheetName, string cell)

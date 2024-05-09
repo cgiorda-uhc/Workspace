@@ -18,11 +18,14 @@ using MathNet.Numerics.Providers.SparseSolver;
 using NPOI.OpenXmlFormats.Spreadsheet;
 using NPOI.SS.Formula.Functions;
 using NPOI.SS.Formula.PTG;
+using NPOI.XWPF.UserModel;
 using Org.BouncyCastle.Cms;
 using Org.BouncyCastle.Utilities;
 using ProjectManagerLibrary.Models;
 using ProjectManagerLibrary.Shared;
+using SASConnectionLibrary;
 using SharedFunctionsLibrary;
+using SharpCompress.Common;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -2780,6 +2783,129 @@ namespace ConsoleLibraryTesting
 
 
         }
+
+
+        //MEDNEC PARSER - SAS LOADER
+        public async Task MedicalNecessity_ACIS_Parser()
+        {
+            Console.WriteLine("Medical_Necessity_ACIS_Parser");
+            //string strSharePointFolderPath = "C:\\Users\\cgiorda\\UHG\\Medical Necessity Resource - Monthly ACIS Report for Med Nec";
+            string strProcessingFolderPath = @"C:\Users\cgiorda\Desktop\Projects\ACIS_MedNec_Report";
+
+
+            string[] files;
+            int intFileCnt = 1;
+            int intRowCnt = 1;
+
+            IRelationalDataAccess db_sql = new SqlDataAccess();
+
+
+            Console.WriteLine();
+            Console.WriteLine("Processing cleaned spreadsheets");
+            //PROCESS ALL EXTRACTED FILES SKIP THOSE ALREADY PROCESSED
+
+
+            var results = await db_sql.LoadDataTable(ConnectionStringMSSQL, "SELECT distinct [file] from[dbo].[ACIS_MedNec_Data_Stage]");
+            string[] strArrAlreadyProcessed = results.AsEnumerable().Select(r => r.Field<string>("file")).ToArray();
+
+            string strSpreadsheetPrefixName = "ACIS_MedNec_Report_Full_";
+            DataTable dtCurrentDataTable;
+            DataTable dtFinalDataTable = null;
+            DataRow currentRow;
+            intFileCnt = 1;
+            files = Directory.GetFiles(strProcessingFolderPath, "*.xlsx", SearchOption.TopDirectoryOnly);
+            foreach (string strFile in files)
+            {
+                Console.Write("\rProcessing " + intFileCnt + " out of " + String.Format("{0:n0}", files.Count()) + " spreadsheets");
+                string strExtension = Path.GetExtension(strFile);
+                string strFileName = Path.GetFileName(strFile);
+                string strFileDate = strFileName.ToLower().Split('_')[4].Replace(".xlsx", "");
+
+                if (strArrAlreadyProcessed.Contains(strFileDate))
+                {
+                    File.Move(strFile, Path.Combine(strProcessingFolderPath + @"\Archive", strFileName));
+                    continue;
+                }
+
+
+                dtCurrentDataTable = ClosedXMLFunctions.ImportExceltoDatatable(strFile, (strSpreadsheetPrefixName + strFileDate).Substring(0, 31));
+                dtFinalDataTable = dtCurrentDataTable.Clone();
+                foreach (DataColumn col in dtFinalDataTable.Columns)
+                {
+                    col.ColumnName = col.ColumnName.Trim().Replace(" ", "_");
+                    if (col.ColumnName == "Effective_Date" || col.ColumnName == "Effective_Date1")
+                    {
+                        col.DataType = typeof(DateTime);
+                    }
+
+
+                }
+                dtFinalDataTable.Columns.Add("File", typeof(String));
+  
+
+                Console.WriteLine();
+                intRowCnt = 1;
+                foreach (DataRow dr in dtCurrentDataTable.Rows)
+                {
+
+                    Console.Write("\rCollecting " + intRowCnt + " out of " + String.Format("{0:n0}", dtCurrentDataTable.Rows.Count) + " rows");
+
+                    currentRow = dtFinalDataTable.NewRow();
+
+                    foreach (DataColumn c in dtCurrentDataTable.Columns)
+                    {
+                        if (c.ColumnName == "Effective Date" || c.ColumnName == "Effective Date1")
+                            currentRow[c.ColumnName.Replace(" ", "_")] = (dr[c.ColumnName] != DBNull.Value && !(dr[c.ColumnName] + "").Trim().Equals("") ? dr[c.ColumnName].ToString() : (object)DBNull.Value);
+                        else
+                            currentRow[c.ColumnName.Replace(" ", "_")] = (dr[c.ColumnName] != DBNull.Value && !(dr[c.ColumnName] + "").Trim().Equals("") ? dr[c.ColumnName] : DBNull.Value);
+                    }
+
+
+                    //foreach (DataColumn c in dtCurrentDataTable.Columns)
+                    //    currentRow[c.ColumnName] = (dr[c.ColumnName] != DBNull.Value ? dr[c.ColumnName] : DBNull.Value);
+
+                    currentRow["File"] = strFileDate;
+                    dtFinalDataTable.Rows.Add(currentRow);
+                    intRowCnt++;
+                }
+
+
+                //RENAME Effective Date1  to Effective DateTmp
+                //RENAME Effective Date  to Effective Date1
+                //RENAME Effective DateTmp to Effective Date
+                //CONVERT Effective Date1 FROM EXCEL TIME TO DATETIME DateTime.FromOADate(double.Parse(dr["DSNPRemovalDt"].ToString())) 
+               // dtFinalDataTable.Columns["Effective_Date1"].ColumnName = "Effective_DateTmp";
+               // dtFinalDataTable.Columns["Effective_Date"].ColumnName = "Effective_Date1";
+               // dtFinalDataTable.Columns["Effective_DateTmp"].ColumnName = "Effective_Date";
+
+
+
+                dtFinalDataTable.TableName = "ACIS_MedNec_Staging";
+                await db_sql.BulkSave(ConnectionStringMSSQL, dtFinalDataTable, truncate:true);
+
+                //ARCHIVE AFTER PROCESS
+                File.Move(strFile, Path.Combine(strProcessingFolderPath + @"\Archive", strFileName));
+
+
+                intFileCnt++;
+            }
+
+
+            Console.Write("Connecting to SAS....");
+            SASConnection.create_SAS_instance();
+
+            SASConnection.runStoredProcess("add_curr_month.sas", "/hpsasfin/int/projects/acad/CategoryAnalytics/Common/code/code_sets");
+
+            SASConnection.destroy_SAS_instance();
+
+
+            //SENDING EMAIL AND ATTACHEMENT
+            Console.WriteLine("Sending final email and attachement");
+            await SharedFunctions.EmailAsync("inna_rudi@uhc.com", "chris_giordano@uhc.com", "VC Automation Manager: ACIS MedNec Tables", "ACIS MedNec tables were updated with data for the month of April 2024", "chris_giordano@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
+
+
+        }
+
 
 
         public async Task parseCSV(string filepath,  string fileNamePrefix ="csvg_", string filetype = "csv",char chrDelimiter = '|', string schema = "stg", SearchOption so = SearchOption.TopDirectoryOnly)

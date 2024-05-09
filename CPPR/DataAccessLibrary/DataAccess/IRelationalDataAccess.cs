@@ -74,7 +74,7 @@ public interface IRelationalDataAccess
 
     Task<object> Execute(string connectionString, string sql);
 
-    Task BulkSave(string connectionString, DataTable table, int bulkTimeout = 120, int batchSize = 5000, int notifyAfter = 120, bool includeMapping = true);
+    Task BulkSave(string connectionString, DataTable table, int bulkTimeout = 120, int batchSize = 5000, int notifyAfter = 120, bool includeMapping = true, bool truncate = false);
 
     Task BulkSave(string connectionString, string destination, IDataReader dr, int bulkTimeout = 120, int batchSize = 5000, int notifyAfter = 120);
 

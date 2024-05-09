@@ -92,17 +92,39 @@ long result = -1;
 
 Log.Logger.Information("Ad Hoc Processes Start");
 //COPY PASTE ADHOC FUNCTIONS HERE:
-
-SASConnection.create_SAS_instance();
-SASConnection.runStoredProcess("SAS_test_20240503.sas", "/hpsasfin/int/winfiles7/Program/UEP/ICUE_ADT/EI_ER_report/SAS_file/SDR");
-SASConnection.destroy_SAS_instance();
-
+ await adHoc.MedicalNecessity_ACIS_Parser();
 return;
+
+
+
+//MHP UGAP CLEANUP AND LOAD TO VCT_DB   JON PIOTROWSKI
+List<string> files_loaded = new List<string>();
+files_loaded.Add("Americhoice March -Radiology Cardiology Universe 2024.xlsx");
+files_loaded.Add("Oxford March-Gastro Universe 2024.xlsx");
+files_loaded.Add("United PCP- Rad & Card_March_2024.xlsx");
+files_loaded.Add("United PCP-Gastro_March_2024.xlsx");
+files_loaded.Add("Oxford March -Radiology Cardiology Universe 2024.xlsx");
+//MHP UGAP CLEANUP
+await adHoc.cleanupMemberDataAsync(files_loaded);
+//MHP LOAD TO VCT_DB
+await adHoc.transferMHPDataAsync(files_loaded, "March", "2024");
+//return;
+
 
 //CHECK FOR NEW TEAMMATE IN AD AND EMAIL Kristy IF NEED BE
 var adr = new ADDirectReportAlertsLR(config, db_sqsl);
 result = await adr.RefreshTable();
 return;
+
+
+//SAS CONNECT TEST
+//SAS CONNECT TEST
+//SAS CONNECT TEST
+SASConnection.create_SAS_instance();
+SASConnection.runStoredProcess("SAS_test_20240503.sas", "/hpsasfin/int/winfiles7/Program/UEP/ICUE_ADT/EI_ER_report/SAS_file/SDR");
+SASConnection.destroy_SAS_instance();
+return;
+
 
 //EVICORE MONTHLY PROCESS START
 //EVICORE MONTHLY PROCESS START
@@ -178,21 +200,6 @@ await adHoc.getReportsTimelinessAsync();
 //GENERATE FINAL TAT REPORTS
 await adHoc.generateTATReportsAsync();
 //return;
-
-
-//MHP UGAP CLEANUP AND LOAD TO VCT_DB   JON PIOTROWSKI
-List<string> files_loaded = new List<string>();
-files_loaded.Add("Americhoice March -Radiology Cardiology Universe 2024.xlsx");
-files_loaded.Add("Oxford March-Gastro Universe 2024.xlsx");
-files_loaded.Add("United PCP- Rad & Card_March_2024.xlsx");
-files_loaded.Add("United PCP-Gastro_March_2024.xlsx");
-files_loaded.Add("Oxford March -Radiology Cardiology Universe 2024.xlsx");
-//MHP UGAP CLEANUP
-await adHoc.cleanupMemberDataAsync(files_loaded);
-//MHP LOAD TO VCT_DB
-await adHoc.transferMHPDataAsync(files_loaded, "March", "2024");
-//return;
-
 
 //PEG ETL Angela RS
 await adHoc.getPEGSourceDataAsync();

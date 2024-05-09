@@ -101,7 +101,7 @@ public class ODBCDataAccess : IRelationalDataAccess
     }
 
 
-    public async Task BulkSave(string connectionString, DataTable table, int bulkTimeout = 120, int batchSize = 5000, int notifyAfter = 120, bool includeMapping = true)
+    public async Task BulkSave(string connectionString, DataTable table, int bulkTimeout = 120, int batchSize = 5000, int notifyAfter = 120, bool includeMapping = true, bool truncate = false)
     {
         throw new NotImplementedException();
     }

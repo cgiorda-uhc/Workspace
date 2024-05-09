@@ -255,7 +255,7 @@ namespace SASConnectionLibrary
                 //    var s = serverDef.Name;
                 //}
 
-                Console.WriteLine(serverDef.Name);
+                //Console.WriteLine(serverDef.Name);
 
 
                 if (serverDef.Name == "FIN360Int - Workspace Server")

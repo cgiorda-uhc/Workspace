@@ -366,7 +366,7 @@ public class SqlDataAccess : IRelationalDataAccess
 
 
 
-    public async Task BulkSave(string connectionString, DataTable table, int bulkTimeout = 12000, int batchSize = 5000, int notifyAfter = 120, bool includeMapping = true)
+    public async Task BulkSave(string connectionString, DataTable table, int bulkTimeout = 12000, int batchSize = 5000, int notifyAfter = 120, bool includeMapping = true, bool truncate = false)
     {
 
         // data is an IEnumerable<T>           
@@ -374,6 +374,15 @@ public class SqlDataAccess : IRelationalDataAccess
         {
             // OPEN THE CONNECTION
             connection.Open();
+
+
+
+            if (truncate)
+            {
+                var result = await connection.ExecuteAsync("TRUNCATE TABLE " + table.TableName, commandType: CommandType.Text);
+
+            }
+
 
             using (SqlBulkCopy bulkCopy = new SqlBulkCopy(connection.ConnectionString))
             {
