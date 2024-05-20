@@ -132,7 +132,12 @@ namespace SharedFunctionsLibrary
                         smtp.UseDefaultCredentials = true;
                         //smtp.Credentials = new NetworkCredential("ms/peisaid", "BooWooDooFoo2023!!");
                         smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-                        await smtp.SendMailAsync(message).ConfigureAwait(false);
+                        //await smtp.SendMailAsync(message).ConfigureAwait(false);
+
+                        await Retry.DoWithRetryAsync(async () => await smtp.SendMailAsync(message).ConfigureAwait(false), TimeSpan.FromSeconds(30), tryCount: 1000);
+
+
+
                     }
                 });
                 t.Wait(); // Wait until the above task is complete, email is sent
@@ -143,6 +148,11 @@ namespace SharedFunctionsLibrary
             //    throw;   //
             //}
         }
+
+
+
+
+
 
     }
 }

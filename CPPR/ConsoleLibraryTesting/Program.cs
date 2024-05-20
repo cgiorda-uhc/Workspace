@@ -92,28 +92,48 @@ long result = -1;
 
 Log.Logger.Information("Ad Hoc Processes Start");
 //COPY PASTE ADHOC FUNCTIONS HERE:
- await adHoc.MedicalNecessity_ACIS_Parser();
+
+
+
+
+//GET FILE 'Create_Date' FROM EVICORE TAT REPORTING Mary Ann Dimartino
+//await adHoc.getReportsTimelinessAsync();
+//GENERATE FINAL TAT REPORTS
+await adHoc.generateTATReportsAsync();
 return;
+
+
+
+
+
+
 
 
 
 //MHP UGAP CLEANUP AND LOAD TO VCT_DB   JON PIOTROWSKI
 List<string> files_loaded = new List<string>();
-files_loaded.Add("Americhoice March -Radiology Cardiology Universe 2024.xlsx");
-files_loaded.Add("Oxford March-Gastro Universe 2024.xlsx");
-files_loaded.Add("United PCP- Rad & Card_March_2024.xlsx");
-files_loaded.Add("United PCP-Gastro_March_2024.xlsx");
-files_loaded.Add("Oxford March -Radiology Cardiology Universe 2024.xlsx");
+files_loaded.Add("Americhoice April -Radiology Cardiology Universe 2024.xlsx");
+files_loaded.Add("United PCP- Rad & Card_April_2024.xlsx");
+files_loaded.Add("Oxford April -Radiology Cardiology Universe 2024.xlsx");
+files_loaded.Add("United PCP-Gastro_April_2024.xlsx");
+files_loaded.Add("Oxford April-Gastro Universe 2024.xlsx");
 //MHP UGAP CLEANUP
 await adHoc.cleanupMemberDataAsync(files_loaded);
 //MHP LOAD TO VCT_DB
-await adHoc.transferMHPDataAsync(files_loaded, "March", "2024");
-//return;
+await adHoc.transferMHPDataAsync(files_loaded, "April", "2024");
+return;
 
 
-//CHECK FOR NEW TEAMMATE IN AD AND EMAIL Kristy IF NEED BE
-var adr = new ADDirectReportAlertsLR(config, db_sqsl);
-result = await adr.RefreshTable();
+
+
+
+//GENERATE DYNAMIC EMAIL FOR PPACA_TAT Mary Ann Dimartino
+await adHoc.PPACA_TAT_Email();
+return;
+
+
+
+await adHoc.MedicalNecessity_ACIS_Parser();
 return;
 
 
@@ -126,6 +146,13 @@ SASConnection.destroy_SAS_instance();
 return;
 
 
+//CHECK FOR NEW TEAMMATE IN AD AND EMAIL Kristy IF NEED BE
+var adr = new ADDirectReportAlertsLR(config, db_sqsl);
+result = await adr.RefreshTable();
+return;
+
+
+
 //EVICORE MONTHLY PROCESS START
 //EVICORE MONTHLY PROCESS START
 //EVICORE MONTHLY PROCESS START
@@ -134,9 +161,15 @@ var vds = new DataSourceVerification(config);
 result = await vds.CheckDataSources();
 return;
 
+
 //PROCESS UHC_Scorecard_*_*.xls* INTO stg.EviCore_Scorecard
 var esc = new EvicoreScorecard(config, db_sqsl);
 result = await esc.LoadEvicoreScorecardData();
+return;
+
+//PROCESS MHP Files INTO stg.MHP_Yearly_Universes
+var mhp = new MHPUniverse(config, db_sqsl);
+result = await mhp.LoadMHPUniverseData();
 return;
 
 //PROCESS AMERICHOICE_Allstates_Auths Per 1000 by Modality with Exclusions_*_*_*.xlsx INTO stg.EviCore_AmerichoiceAllstatesAuths
@@ -161,13 +194,9 @@ return;
 
 //PROCESS United Gastro Site of Care Report *_*.xlsx INTO stg.SiteOfCare_Gastro
 var socg = new SiteOfCareGastro(config, db_sqsl);
-result = await soc.LoadSiteOfCareData();
+result = await socg.LoadSiteOfCareData();
 return;
 
-//PROCESS MHP Files INTO stg.MHP_Yearly_Universes
-var mhp = new MHPUniverse(config, db_sqsl);
-result = await mhp.LoadMHPUniverseData();
-return;
 
 //PROCESS CRC_Pivot_Rawdata_*.xlsx INTO stg.EviCore_MR_MembershipDetails
 var mrm = new EviCoreMRMembershipDetails(config, db_sqsl);
@@ -183,9 +212,6 @@ return;
 //EVICORE MONTHLY PROCESS END
 
 
-//GENERATE DYNAMIC EMAIL FOR PPACA_TAT Mary Ann Dimartino
-await adHoc.PPACA_TAT_Email();
-//return
 
 
 //HANDLES TI MAPPING FOR ETG Brandee Shemo
@@ -195,11 +221,6 @@ await adHoc.UGAPConfig();
 //return;
 
 
-//GET FILE 'Create_Date' FROM EVICORE TAT REPORTING Mary Ann Dimartino
-await adHoc.getReportsTimelinessAsync();
-//GENERATE FINAL TAT REPORTS
-await adHoc.generateTATReportsAsync();
-//return;
 
 //PEG ETL Angela RS
 await adHoc.getPEGSourceDataAsync();

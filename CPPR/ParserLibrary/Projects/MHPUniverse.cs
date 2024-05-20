@@ -185,6 +185,10 @@ public class MHPUniverse : IMHPUniverse
                 }
             }
 
+
+            stopwatch.Stop();
+            return stopwatch.ElapsedMilliseconds;
+
             Log.Information($"Starting UGAP member cleanup.....");
             await cleanupMemberDataAsync(files_loaded);
 

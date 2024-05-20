@@ -1451,7 +1451,7 @@ namespace ConsoleLibraryTesting
             row++;
             _console_message = "";
 
-            return;
+            //return;
 
 
             //HERE WE A START EMAIL PROCESS
@@ -1507,8 +1507,11 @@ namespace ConsoleLibraryTesting
             _console_message = "";
 
 
+           await SharedFunctions.EmailAsync(recipients, from, subject, body, cc, attachment + ";" + attachmentT, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
 
-            await SharedFunctions.EmailAsync(recipients, from, subject, body, cc, attachment + ";" + attachmentT, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
+
+            //await Retry.DoWithRetryAsync(async () => await SharedFunctions.EmailAsync(recipients, from, subject, body, cc, attachment + ";" + attachmentT, System.Net.Mail.MailPriority.Normal), TimeSpan.FromSeconds(2), tryCount: 10);
+
 
 
 
