@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace VCPortal_Models.Models.ETGFactSymmetry.Configs;
-public class ETGSummaryFinalConfig
+public class ETGSummaryPECFinalConfig
 {
     public string ETG_Base_Class { get; set; }
     public string ETG_Description { get; set; }
@@ -28,8 +28,8 @@ public class ETGSummaryFinalConfig
 
     public string LOB_UGAP { get; set; }
 
-    public string PC_Previous_Treatment_Indicator { get; set; }
-    public string PC_Current_Treatment_Indicator { get; set; }
+    //public string PC_Previous_Treatment_Indicator { get; set; }
+    //public string PC_Current_Treatment_Indicator { get; set; }
 
     //public double? PC_Spec_Episode_Cnt { get; set; }
     //public double? PC_Spec_Episode_Distribution { get; set; }
@@ -40,11 +40,11 @@ public class ETGSummaryFinalConfig
     //public double? PC_Spec_Normalized_Pricing { get; set; }
 
 
-    public double? PC_Spec_CV { get; set; }
-    public string PC_Prev_Attribution { get; set; }
+    //public double? PC_Spec_CV { get; set; }
+    //public string PC_Prev_Attribution { get; set; }
 
-    public string PC_Current_Attribution { get; set; }
-    public string PC_Change_Comments { get; set; }
+    //public string PC_Current_Attribution { get; set; }
+    //public string PC_Change_Comments { get; set; }
     //public string EC_Previous_Treatment_Indicator { get; set; }
     //public string EC_Current_Treatment_Indicator { get; set; }
 

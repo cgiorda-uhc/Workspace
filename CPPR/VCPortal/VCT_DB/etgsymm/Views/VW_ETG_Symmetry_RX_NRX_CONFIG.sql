@@ -19,11 +19,15 @@ INNER JOIN (SELECT ETG_Base_Class,Premium_Specialty_id ,'Commercial'as title  FR
 LEFT OUTER JOIN vct.ETG_Dim_Master AS m ON f.ETG_Base_Class = m.ETG_Base_Class 
 LEFT OUTER JOIN vct.ETG_Dim_Premium_Spec_Master AS p ON f.Premium_Specialty_id = p.Premium_Specialty_id
  WHERE f.[PC_Attribution] not in ( 'Not Mapped', 'Not Present')
-AND f.[Data_Date] = (SELECT max(data_Date) FROM etgsymm.ETG_Fact_Symmetry)
+AND f.[Symmetry_Version] = (SELECT MAX(Symmetry_Version) FROM etgsymm.ETG_Fact_Symmetry)
 
 
-AND f.[PC_Attribution]in ('Always Attributed', 'If Involved')
-AND f.[Patient_Centric_Mapping]  = 'Mapped'
+AND (f.[PC_Attribution]in ('Always Attributed', 'If Involved')
+
+OR 
+
+
+(f.ETG_Base_Class = 315100 AND p.Premium_Specialty IN ('FAMED', 'INTMD','NEURO','PEDS')))
 
 
 

@@ -577,7 +577,7 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
                 var etgfinal = await _etg_db.GetETGSummaryPTCFinalAsync(cancellationToken.Token);
                 if (etgfinal.ToList().Count > 0)
                 {
-                    export.Add(new ExcelExport() { ExportList = etgfinal.ToList<object>(), SheetName = sheet.SheetName });
+                    export.Add(new ExcelExport() { ExportList = etgfinal.ToList<object>(), SheetName = suffix + sheet.SheetName });
                 }
 
 
@@ -639,10 +639,10 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
                 //{
                 //    export.Add(new ExcelExport() { ExportList = etgsum.ToList<object>(), SheetName = suffix + sheet.SheetName });
                 //}
-                var etgsum = await _etg_db.GetETGFactSymmetryDisplayAsync(cancellationToken.Token);
+                var etgsum = await _etg_db.GetETGFactSymmetryPECDisplayAsync(cancellationToken.Token);
                 if (etgsum.ToList().Count > 0)
                 {
-                    export.Add(new ExcelExport() { ExportList = etgsum.ToList<object>(), SheetName = sheet.SheetName });
+                    export.Add(new ExcelExport() { ExportList = etgsum.ToList<object>(), SheetName = suffix + sheet.SheetName });
                 }
 
 
@@ -657,7 +657,7 @@ public partial class ETGFactSymmetryListingViewModel : ObservableObject
                 var etgfinal = await _etg_db.GetETGSummaryFinalAsync(cancellationToken.Token);
                 if (etgfinal.ToList().Count > 0)
                 {
-                    export.Add(new ExcelExport() { ExportList = etgfinal.ToList<object>(), SheetName = sheet.SheetName });
+                    export.Add(new ExcelExport() { ExportList = etgfinal.ToList<object>(), SheetName = suffix + sheet.SheetName });
                 }
 
 

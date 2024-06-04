@@ -10,6 +10,10 @@ public interface IETGFactSymmetry_Repo
 {
     Task<IEnumerable<ETGFactSymmetry_ReadDto>> GetETGFactSymmetryDisplayAsync(CancellationToken token);
 
+
+    Task<IEnumerable<ETG_PEC_Summary_Final>> GetETGFactSymmetryPECDisplayAsync(CancellationToken token);
+
+
     Task<IEnumerable<ETGSummaryAdhocConfig>> GetETGFactSymmetryAdhocAsync(int version);
 
     Task<IEnumerable<ETGFactSymmetry_Tracking_ReadDto>> GetETGTrackingAsync(CancellationToken token);
@@ -33,7 +37,7 @@ public interface IETGFactSymmetry_Repo
 
     Task<IEnumerable<ETG_UGAP_CFG_Model>> GetETG_UGAP_CFG_Model(CancellationToken token);
 
-    Task<IEnumerable<ETGSummaryFinalConfig>> GetETGSummaryFinalAsync(CancellationToken token);
+    Task<IEnumerable<ETGSummaryPECFinalConfig>> GetETGSummaryFinalAsync(CancellationToken token);
 
     Task<IEnumerable<ETGVersion_Model>> GetPDVersionsAsync(CancellationToken token);
 

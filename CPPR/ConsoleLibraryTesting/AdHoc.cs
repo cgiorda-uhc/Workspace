@@ -1424,7 +1424,7 @@ namespace ConsoleLibraryTesting
 
             foreach (var s in sheets)
             {
-                var wb = new XLWorkbook(file); //CRTEAT INTSANCE  FOR NEW FILE
+                var wb = new XLWorkbook(file); //CREATE INSTANCE FOR NEW FILE
 
                 using (var spreadSheetDocument = SpreadsheetDocument.Open(file, false)) //OPEN FILE ABOVE
                 {
@@ -1437,6 +1437,7 @@ namespace ConsoleLibraryTesting
                         if (sheetName != s + " " + sheet_common && sheetName != sheet_main) //IF ITS NOT THE SHEETS THEN DELETE
                         {
                             wb.Worksheet(sheetName).Delete();
+
                         }
 
                         sheetIndex++;

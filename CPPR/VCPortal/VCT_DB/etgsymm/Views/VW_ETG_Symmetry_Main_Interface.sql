@@ -203,8 +203,21 @@ CASE WHEN f.[EC_Mapping] = 'Not Mapped' AND fp.[EC_Mapping] = 'Not Mapped' THEN 
 END  END  END  END  END  END  END END as [EC_Changes_Made],
 
 
-CASE WHEN f.EC_Mapping IS NULL THEN 'Not Mapped' ELSE f.EC_Mapping END  as EC_Mapping,
-CASE WHEN fp.EC_Mapping IS NULL THEN 'Not Mapped' ELSE fp.EC_Mapping END as EC_Mapping_Previous,
+CASE WHEN 
+(f.[PC_Attribution] = 'Always Attributed' OR  f.[PC_Attribution] = 'If Involved') 
+OR  
+(f.ETG_Base_Class = 315100 AND p.Premium_Specialty IN ('FAMED', 'INTMD','NEURO','PEDS'))
+THEN 'Mapped' 
+ELSE 'Not Mapped' END AS EC_Mapping,
+
+
+
+CASE WHEN 
+(fp.[PC_Attribution] = 'Always Attributed' OR  fp.[PC_Attribution] = 'If Involved') 
+OR  
+(fp.ETG_Base_Class = 315100 AND p.Premium_Specialty IN ('FAMED', 'INTMD','NEURO','PEDS'))
+THEN 'Mapped' 
+ELSE 'Not Mapped' END AS EC_Mapping_Previous,
 
 --CASE WHEN f.EC_Mapping IS NULL THEN 'Not Mapped' ELSE f.EC_Mapping END  as Current_Mapping_Original,
 --CASE WHEN fp.EC_Mapping IS NULL THEN 'Not Mapped' ELSE fp.EC_Mapping END as Previous_Mapping_Original,

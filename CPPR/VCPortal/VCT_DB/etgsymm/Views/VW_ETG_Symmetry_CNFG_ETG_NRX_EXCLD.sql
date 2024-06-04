@@ -14,12 +14,21 @@ NULL as [NOTES]
 FROM  etgsymm.ETG_Fact_Symmetry AS f 
 
  WHERE 
- f.PD_Version = (SELECT max(PD_Version) FROM etgsymm.ETG_Fact_Symmetry)
+f.[Symmetry_Version] = (SELECT MAX(Symmetry_Version) FROM etgsymm.ETG_Fact_Symmetry)
  --AND [Has_NRX] = 0
   AND  f.ETG_Base_Class <> 000000
 AND f.Premium_Specialty_Id IS NOT NULL
 
-AND f.EC_Mapping = 'Mapped'
+
+
+AND (f.[PC_Attribution]in ('Always Attributed', 'If Involved')
+
+OR 
+
+
+(f.ETG_Base_Class = 315100 AND f.Premium_Specialty_Id IN (SELECT Premium_Specialty_Id FROM [vct].[ETG_Dim_Premium_Spec_Master] WHERE [Premium_Specialty] IN ('FAMED', 'INTMD','NEURO','PEDS'))))
+
+
 AND f.Has_NRX = 0
 and f.Has_RX  =1
 

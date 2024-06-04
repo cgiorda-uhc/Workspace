@@ -92,8 +92,19 @@ long result = -1;
 
 Log.Logger.Information("Ad Hoc Processes Start");
 //COPY PASTE ADHOC FUNCTIONS HERE:
+//COPY PASTE ADHOC FUNCTIONS HERE:
+//COPY PASTE ADHOC FUNCTIONS HERE:
+
+//HANDLES TI MAPPING FOR ETG Brandee Shemo
+//PARSES 3 FILES, LOADS TO DB, OUPUPTS ALL FILES PLUS SOME
+//TODO CHANGE DB FROM ILUCA TO VC!!!!!!
+await adHoc.UGAPConfig();
+return;
 
 
+//GENERATE DYNAMIC EMAIL FOR PPACA_TAT Mary Ann Dimartino
+await adHoc.PPACA_TAT_Email();
+return;
 
 
 //GET FILE 'Create_Date' FROM EVICORE TAT REPORTING Mary Ann Dimartino
@@ -101,12 +112,6 @@ Log.Logger.Information("Ad Hoc Processes Start");
 //GENERATE FINAL TAT REPORTS
 await adHoc.generateTATReportsAsync();
 return;
-
-
-
-
-
-
 
 
 
@@ -124,12 +129,6 @@ await adHoc.transferMHPDataAsync(files_loaded, "April", "2024");
 return;
 
 
-
-
-
-//GENERATE DYNAMIC EMAIL FOR PPACA_TAT Mary Ann Dimartino
-await adHoc.PPACA_TAT_Email();
-return;
 
 
 
@@ -203,10 +202,12 @@ var mrm = new EviCoreMRMembershipDetails(config, db_sqsl);
 result = await mrm.LoadEviCoreMRMembershipDetails();
 return;
 
+
 //PROCESS NICE_UHCWestEligibility_*_Medicare_Final_for_membership.xlsx INTO stg.EviCore_NICEDetails
 var nice = new NICEUHCWestEligibility(config, db_sqsl);
 result = await nice.LoadNICEUHCWestEligibilityData();
 return;
+
 //EVICORE MONTHLY PROCESS END
 //EVICORE MONTHLY PROCESS END
 //EVICORE MONTHLY PROCESS END
@@ -214,11 +215,7 @@ return;
 
 
 
-//HANDLES TI MAPPING FOR ETG Brandee Shemo
-//PARSES 3 FILES, LOADS TO DB, OUPUPTS ALL FILES PLUS SOME
-//TODO CHANGE DB FROM ILUCA TO VC!!!!!!
-await adHoc.UGAPConfig();
-//return;
+
 
 
 
