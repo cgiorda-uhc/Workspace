@@ -45,8 +45,8 @@ public class ETGSummaryPECFinalConfig
 
     //public string PC_Current_Attribution { get; set; }
     //public string PC_Change_Comments { get; set; }
-    //public string EC_Previous_Treatment_Indicator { get; set; }
-    //public string EC_Current_Treatment_Indicator { get; set; }
+    public string EC_Previous_Treatment_Indicator { get; set; }
+    public string EC_Current_Treatment_Indicator { get; set; }
 
     //public double? EC_Spec_Episode_Cnt { get; set; }
     //public double? EC_Spec_Episode_Distribution { get; set; }
@@ -55,9 +55,9 @@ public class ETGSummaryPECFinalConfig
     //public double? EC_Spec_Avg_Cost { get; set; }
     //public double? EC_Spec_Normalized_Pricing { get; set; }
     //public double? EC_Spec_CV { get; set; }
-    //public string EC_Previous_Mapping { get; set; }
-    //public string EC_Current_Mapping { get; set; }
-    //public string EC_Change_Comments { get; set; }
+    public string EC_Previous_Mapping { get; set; }
+    public string EC_Current_Mapping { get; set; }
+    public string EC_Change_Comments { get; set; }
 
     public string Measure_Status { get; set; }
 

@@ -6,8 +6,10 @@ fp.ETG_Fact_Symmetry_Id as ETG_Fact_Symmetry_Id_Previous,
 f.ETG_Base_Class,
 m.ETG_Description,
 f.Premium_Specialty_Id,
-CASE WHEN p.Premium_Specialty = 'CRD2' THEN  'CARDCD' ELSE p.Premium_Specialty END as Premium_Specialty ,
 
+
+--CASE WHEN p.Premium_Specialty = 'CRD2' THEN  'CARDCD' ELSE p.Premium_Specialty END as Premium_Specialty ,
+p.Premium_Specialty  as Premium_Specialty ,
 
 f.Never_Mapped,
 fp.Never_Mapped as Never_Mapped_Previous,
@@ -243,4 +245,4 @@ WHERE f.ETG_Base_Class <> 000000
 AND f.Premium_Specialty_Id IS NOT NULL
 
 --AND f.Premium_Specialty_Id not  in (9, 17)
-AND p.Premium_Specialty not in ('CARDCD', 'CARDEP')
+--AND p.Premium_Specialty not in ('CARDCD', 'CARDEP')

@@ -33,14 +33,18 @@ public class ETG_PEC_Summary_Final
     public string RX_NRX { get; set; }
 
 
-    
+    public string EC_Treatment_Indicator_Previous { get; set; }
     public string EC_Treatment_Indicator { get; set; }
     
+    public string EC_Mapping_Previous { get; set; }
+
     public string EC_Mapping { get; set; }
 
     public string EC_Change_Comments { get; set; }
-    public string Data_Period { get; set; }
+
     public string Data_Period_Previous { get; set; }
+    public string Data_Period { get; set; }
+
 
     public float Symmetry_Version_Previous { get; set; }
 

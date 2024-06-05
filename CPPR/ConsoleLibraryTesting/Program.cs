@@ -95,23 +95,7 @@ Log.Logger.Information("Ad Hoc Processes Start");
 //COPY PASTE ADHOC FUNCTIONS HERE:
 //COPY PASTE ADHOC FUNCTIONS HERE:
 
-//HANDLES TI MAPPING FOR ETG Brandee Shemo
-//PARSES 3 FILES, LOADS TO DB, OUPUPTS ALL FILES PLUS SOME
-//TODO CHANGE DB FROM ILUCA TO VC!!!!!!
-await adHoc.UGAPConfig();
-return;
 
-
-//GENERATE DYNAMIC EMAIL FOR PPACA_TAT Mary Ann Dimartino
-await adHoc.PPACA_TAT_Email();
-return;
-
-
-//GET FILE 'Create_Date' FROM EVICORE TAT REPORTING Mary Ann Dimartino
-//await adHoc.getReportsTimelinessAsync();
-//GENERATE FINAL TAT REPORTS
-await adHoc.generateTATReportsAsync();
-return;
 
 
 
@@ -129,6 +113,27 @@ await adHoc.transferMHPDataAsync(files_loaded, "April", "2024");
 return;
 
 
+
+
+
+
+//HANDLES TI MAPPING FOR ETG Brandee Shemo
+//PARSES 3 FILES, LOADS TO DB, OUPUPTS ALL FILES PLUS SOME
+//TODO CHANGE DB FROM ILUCA TO VC!!!!!!
+await adHoc.UGAPConfig();
+return;
+
+
+//GENERATE DYNAMIC EMAIL FOR PPACA_TAT Mary Ann Dimartino
+await adHoc.PPACA_TAT_Email();
+return;
+
+
+//GET FILE 'Create_Date' FROM EVICORE TAT REPORTING Mary Ann Dimartino
+//await adHoc.getReportsTimelinessAsync();
+//GENERATE FINAL TAT REPORTS
+await adHoc.generateTATReportsAsync();
+return;
 
 
 
