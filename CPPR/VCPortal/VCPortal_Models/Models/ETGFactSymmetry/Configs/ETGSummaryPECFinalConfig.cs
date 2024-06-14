@@ -57,6 +57,10 @@ public class ETGSummaryPECFinalConfig
     //public double? EC_Spec_CV { get; set; }
     public string EC_Previous_Mapping { get; set; }
     public string EC_Current_Mapping { get; set; }
+
+
+    public string EC_Changes_Made { get; set; }
+
     public string EC_Change_Comments { get; set; }
 
     public string Measure_Status { get; set; }

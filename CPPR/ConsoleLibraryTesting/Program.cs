@@ -96,7 +96,15 @@ Log.Logger.Information("Ad Hoc Processes Start");
 //COPY PASTE ADHOC FUNCTIONS HERE:
 
 
-
+//PEG ETL Angela RS
+//await adHoc.getPEGSourceDataAsync();
+//PEG REPORT
+await adHoc.generatePEGReportsAsync();
+//EBM ETL Angela RS
+await adHoc.getEBMSourceDataAsync();
+//EBM REPORT
+await adHoc.generateEBMReportsAsync();
+return;
 
 
 //MHP UGAP CLEANUP AND LOAD TO VCT_DB   JON PIOTROWSKI
@@ -224,15 +232,7 @@ return;
 
 
 
-//PEG ETL Angela RS
-await adHoc.getPEGSourceDataAsync();
-//PEG REPORT
-await adHoc.generatePEGReportsAsync();
-//EBM ETL Angela RS
-await adHoc.getEBMSourceDataAsync();
-//EBM REPORT
-await adHoc.generateEBMReportsAsync();
-//return;
+
 
 
 //PREMIUM DESIGNATION ETL Angela RS

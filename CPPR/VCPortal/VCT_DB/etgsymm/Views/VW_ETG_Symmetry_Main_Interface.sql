@@ -194,15 +194,32 @@ f.[EC_Spec_CV],
 
 
 
-CASE WHEN f.[EC_Mapping] = 'Mapped' AND fp.[EC_Mapping] = 'ADD' THEN 'No Change' ELSE
-CASE WHEN f.[EC_Mapping] = 'Mapped' AND fp.[EC_Mapping] = 'KEEP' THEN 'No Change' ELSE
-CASE WHEN f.[EC_Mapping] = 'Mapped' AND fp.[EC_Mapping] = 'DROP' THEN 'Added' ELSE
-CASE WHEN f.[EC_Mapping] = 'Mapped' AND fp.[EC_Mapping] = 'Not Mapped' THEN 'Added' ELSE
-CASE WHEN f.[EC_Mapping] = 'Not Mapped' AND fp.[EC_Mapping] = 'ADD' THEN 'Removed' ELSE
-CASE WHEN f.[EC_Mapping] = 'Not Mapped' AND fp.[EC_Mapping] = 'KEEP' THEN 'Removed' ELSE
-CASE WHEN f.[EC_Mapping] = 'Not Mapped' AND fp.[EC_Mapping] = 'DROP' THEN 'No Change' ELSE 
-CASE WHEN f.[EC_Mapping] = 'Not Mapped' AND fp.[EC_Mapping] = 'Not Mapped' THEN 'No Change' ELSE NULL
-END  END  END  END  END  END  END END as [EC_Changes_Made],
+--CASE WHEN f.[EC_Mapping] = 'Mapped' AND fp.[EC_Mapping] = 'ADD' THEN 'No Change' ELSE
+--CASE WHEN f.[EC_Mapping] = 'Mapped' AND fp.[EC_Mapping] = 'KEEP' THEN 'No Change' ELSE
+--CASE WHEN f.[EC_Mapping] = 'Mapped' AND fp.[EC_Mapping] = 'DROP' THEN 'Added' ELSE
+--CASE WHEN f.[EC_Mapping] = 'Mapped' AND fp.[EC_Mapping] = 'Not Mapped' THEN 'Added' ELSE
+--CASE WHEN f.[EC_Mapping] = 'Not Mapped' AND fp.[EC_Mapping] = 'ADD' THEN 'Removed' ELSE
+--CASE WHEN f.[EC_Mapping] = 'Not Mapped' AND fp.[EC_Mapping] = 'KEEP' THEN 'Removed' ELSE
+--CASE WHEN f.[EC_Mapping] = 'Not Mapped' AND fp.[EC_Mapping] = 'DROP' THEN 'No Change' ELSE 
+--CASE WHEN f.[EC_Mapping] = 'Not Mapped' AND fp.[EC_Mapping] = 'Not Mapped' THEN 'No Change' ELSE NULL
+--END  END  END  END  END  END  END END as [EC_Changes_Made],
+
+
+CASE WHEN 
+
+CASE WHEN 
+(f.[PC_Attribution] = 'Always Attributed' OR  f.[PC_Attribution] = 'If Involved') 
+OR  
+(f.ETG_Base_Class = 315100 AND p.Premium_Specialty IN ('FAMED', 'INTMD','NEURO','PEDS'))
+THEN 'Mapped' 
+ELSE 'Not Mapped' END  =
+
+CASE WHEN 
+(fp.[PC_Attribution] = 'Always Attributed' OR  fp.[PC_Attribution] = 'If Involved') 
+OR  
+(fp.ETG_Base_Class = 315100 AND p.Premium_Specialty IN ('FAMED', 'INTMD','NEURO','PEDS'))
+THEN 'Mapped' 
+ELSE 'Not Mapped' END THEN 'No Change' ELSE 'Change' END as [EC_Changes_Made],
 
 
 CASE WHEN 

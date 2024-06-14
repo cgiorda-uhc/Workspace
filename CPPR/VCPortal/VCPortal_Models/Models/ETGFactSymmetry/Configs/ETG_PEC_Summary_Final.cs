@@ -40,6 +40,9 @@ public class ETG_PEC_Summary_Final
 
     public string EC_Mapping { get; set; }
 
+    public string EC_Changes_Made { get; set; }
+
+
     public string EC_Change_Comments { get; set; }
 
     public string Data_Period_Previous { get; set; }

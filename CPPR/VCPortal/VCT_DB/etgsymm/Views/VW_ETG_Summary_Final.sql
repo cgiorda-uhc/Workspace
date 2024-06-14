@@ -2,6 +2,7 @@
 	AS 
 
 	/****** Script for SelectTopNRows command from SSMS  ******/
+/****** Script for SelectTopNRows command from SSMS  ******/
 SELECT [ETG_Base_Class]
       ,[ETG_Description]
       ,[Premium_Specialty]
@@ -42,6 +43,9 @@ SELECT [ETG_Base_Class]
       , CASE WHEN [UGAP_Changes] = 'Drop' AND [LOB_UGAP] IS NULL THEN 'Not Mapped'  ELSE EC_Current_Mapping END AS [EC_Current_Mapping]
 
       ,[EC_Previous_Mapping]
+
+	  ,EC_Changes_Made
+
       ,[EC_Change_Comments]
       ,[PC_Measure_Status]
       ,[UGAP_Changes]
@@ -124,6 +128,7 @@ END END END END END END END END as LOB_UGAP
 	,[EC_Spec_CV]
 	,[EC_Mapping] as EC_Current_Mapping
 	,[EC_Mapping_Previous] as EC_Previous_Mapping
+	,EC_Changes_Made
 	,[EC_Change_Comments]
 	,[PC_Measure_Status]
 
