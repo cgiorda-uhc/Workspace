@@ -2905,7 +2905,7 @@ namespace ConsoleLibraryTesting
 
             //SENDING EMAIL AND ATTACHEMENT
             Console.WriteLine("Sending final email and attachement");
-            await SharedFunctions.EmailAsync("inna_rudi@uhc.com", "chris_giordano@uhc.com", "VC Automation Manager: ACIS MedNec Tables", "ACIS MedNec tables were updated with data for the month of April 2024", "chris_giordano@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
+            await SharedFunctions.EmailAsync("inna_rudi@uhc.com", "chris_giordano@uhc.com", "VC Automation Manager: ACIS MedNec Tables", "ACIS MedNec tables were updated with data for the month of June 2024", "chris_giordano@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
 
 
         }

@@ -35,7 +35,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VCPortal_Models", "VCPortal
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "VCT_DB", "VCPortal\VCT_DB\VCT_DB.sqlproj", "{124F375C-AE65-436C-8F35-F38311B057DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleLibraryTesting.Tests", "ConsoleLibraryTesting.Tests\ConsoleLibraryTesting.Tests.csproj", "{74C738E1-9643-4F7C-8D25-8C1B63DB901F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleLibraryTesting.Tests", "ConsoleLibraryTesting.Tests\ConsoleLibraryTesting.Tests.csproj", "{74C738E1-9643-4F7C-8D25-8C1B63DB901F}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "AI_Prototype", "AI_Prototype\AI_Prototype.pyproj", "{A8E6517A-7FE7-4922-9378-C5E7E50D3DE3}"
+EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Python_Testing", "Python_Testing\Python_Testing.pyproj", "{8863EAA6-75D6-4F43-B17D-B7BE6469B320}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -113,6 +117,10 @@ Global
 		{74C738E1-9643-4F7C-8D25-8C1B63DB901F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74C738E1-9643-4F7C-8D25-8C1B63DB901F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74C738E1-9643-4F7C-8D25-8C1B63DB901F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A8E6517A-7FE7-4922-9378-C5E7E50D3DE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A8E6517A-7FE7-4922-9378-C5E7E50D3DE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8863EAA6-75D6-4F43-B17D-B7BE6469B320}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8863EAA6-75D6-4F43-B17D-B7BE6469B320}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
