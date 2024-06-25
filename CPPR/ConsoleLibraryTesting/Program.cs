@@ -7,6 +7,7 @@ using ProjectManagerLibrary.Concrete;
 using Serilog;
 using SASConnectionLibrary;
 using ProjectManagerLibrary.Configuration.HeaderInterfaces.Concrete;
+using System.Diagnostics;
 
 
 var adHoc = new AdHoc();
@@ -94,6 +95,18 @@ Log.Logger.Information("Ad Hoc Processes Start");
 //COPY PASTE ADHOC FUNCTIONS HERE:
 //COPY PASTE ADHOC FUNCTIONS HERE:
 //COPY PASTE ADHOC FUNCTIONS HERE:
+
+
+Process[] workers = Process.GetProcessesByName("Python");
+foreach (Process worker in workers)
+{
+    worker.Kill();
+    worker.WaitForExit();
+    worker.Dispose();
+}
+
+return;
+
 
 
 

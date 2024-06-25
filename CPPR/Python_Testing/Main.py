@@ -1,5 +1,5 @@
 from NamedEntityDataExtraction import pocess_text, linguistic_annotations, tokenization,find_entity,med7_test
-from DBConnection import get_data_table
+from DBConnection import  get_data_table
 
 
 med7_test()

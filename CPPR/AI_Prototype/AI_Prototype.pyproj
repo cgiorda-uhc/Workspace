@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>a8e6517a-7fe7-4922-9378-c5e7e50d3de3</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>K-Nearest_Neighbors.py</StartupFile>
+    <StartupFile>train.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -21,8 +21,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="K-Nearest_Neighbors.py" />
+    <Compile Include="K_Nearest_Neighbors.py" />
     <Compile Include="Linear_Regression.py" />
+    <Compile Include="train.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
