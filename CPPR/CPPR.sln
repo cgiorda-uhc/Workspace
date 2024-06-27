@@ -41,6 +41,8 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "AI_Prototype", "AI_Prototyp
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Python_Testing", "Python_Testing\Python_Testing.pyproj", "{8863EAA6-75D6-4F43-B17D-B7BE6469B320}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Machine_Learning_Foundations", "Machine_Learning_Foundations\Machine_Learning_Foundations.pyproj", "{3FAF77E9-1D39-4232-9351-CC46653A1DA9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -121,6 +123,8 @@ Global
 		{A8E6517A-7FE7-4922-9378-C5E7E50D3DE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8863EAA6-75D6-4F43-B17D-B7BE6469B320}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8863EAA6-75D6-4F43-B17D-B7BE6469B320}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FAF77E9-1D39-4232-9351-CC46653A1DA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FAF77E9-1D39-4232-9351-CC46653A1DA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

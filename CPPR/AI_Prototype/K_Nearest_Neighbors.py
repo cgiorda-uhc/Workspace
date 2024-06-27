@@ -44,5 +44,5 @@ class KNN:
        k_nearest_labels = [self.y_train[i] for i in k_indices]
        #MAJORITY VOTE
        most_common = Counter(k_nearest_labels).most_common()
-       return most_common
+       return most_common[0][0] #RETURN THE FIRST
 
