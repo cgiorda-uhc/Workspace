@@ -41,6 +41,7 @@ using VCPortal_Models.Models.DQC_Reporting;
 using VCPortal_Models.Models.EBM;
 using VCPortal_Models.Models.ETGFactSymmetry.Configs;
 using VCPortal_Models.Models.ETGFactSymmetry.Dataloads;
+using VCPortal_Models.Models.PCCM;
 using VCPortal_Models.Models.PEG;
 using VCPortal_Models.Models.Report_Timeliness;
 using VCPortal_Models.Models.Shared;
@@ -135,11 +136,12 @@ namespace ConsoleLibraryTesting
 
 
             //TWO DBS
-            IRelationalDataAccess db_td = new TeraDataAccess();
+            //IRelationalDataAccess db_td = new TeraDataAccess();
+            IRelationalDataAccess db_odbc = new ODBCDataAccess();
             IRelationalDataAccess db_sql = new SqlDataAccess();
 
             //DRIVING LOOP
-            var parameters = MHPCustomSQL.MHPParameters();
+            var parameters = MHPCustomSQL.MHPParameters_SF();
 
             string sql;
             StringBuilder sbSQL = new StringBuilder();
@@ -167,11 +169,11 @@ namespace ConsoleLibraryTesting
                     {
                         Console.WriteLine("Searching UGAP for " + total_counter + " out of " + total);
                         if (param.LOS == LOS.EI || param.LOS == LOS.EI_OX)
-                            sql = MHPCustomSQL.UGAPSQLLMemberDataEI(param.UGAPSQL, param.LOS == LOS.EI_OX).Replace("{$Inserts}", sbSQL.ToString());
+                            sql = MHPCustomSQL.UGAPSQLLMemberDataEI_SF(param.UGAPSQL, param.LOS == LOS.EI_OX).Replace("{$Inserts}", sbSQL.ToString());
                         else
-                            sql = MHPCustomSQL.UGAPSQLMemberDataCS(param.UGAPSQL, param.LOS == LOS.CS).Replace("{$Inserts}", sbSQL.ToString());
+                            sql = MHPCustomSQL.UGAPSQLMemberDataCS_SF(param.UGAPSQL, param.LOS == LOS.CS).Replace("{$Inserts}", sbSQL.ToString());
 
-                        var ugap = await db_td.LoadData<MHPMemberDetailsModel>(connectionString: ConnectionStringTD, sql);
+                        var ugap = await db_odbc.LoadData<MHPMemberDetailsModel>(connectionString: ConnectionStringSnowflake, sql);
                         foreach (var u in ugap)
                         {
                             u.SearchMethod = param.SearchMethod;
@@ -192,11 +194,11 @@ namespace ConsoleLibraryTesting
                     Console.WriteLine("Searching UGAP for " + total_counter + " out of " + total);
 
                     if (param.LOS == LOS.EI || param.LOS == LOS.EI_OX)
-                        sql = MHPCustomSQL.UGAPSQLLMemberDataEI(param.UGAPSQL, param.LOS == LOS.EI_OX).Replace("{$Inserts}", sbSQL.ToString());
+                        sql = MHPCustomSQL.UGAPSQLLMemberDataEI_SF(param.UGAPSQL, param.LOS == LOS.EI_OX).Replace("{$Inserts}", sbSQL.ToString());
                     else
-                        sql = MHPCustomSQL.UGAPSQLMemberDataCS(param.UGAPSQL, param.LOS == LOS.CS).Replace("{$Inserts}", sbSQL.ToString());
+                        sql = MHPCustomSQL.UGAPSQLMemberDataCS_SF(param.UGAPSQL, param.LOS == LOS.CS).Replace("{$Inserts}", sbSQL.ToString());
 
-                    var ugap = await db_td.LoadData<MHPMemberDetailsModel>(connectionString: ConnectionStringTD, sql);
+                    var ugap = await db_odbc.LoadData<MHPMemberDetailsModel>(connectionString: ConnectionStringSnowflake, sql);
                     foreach (var u in ugap)
                     {
                         u.SearchMethod = param.SearchMethod;

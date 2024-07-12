@@ -28,6 +28,11 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
         string strWhere = null;
         string strExcelRow = null;
 
+
+        sbSQL.Append("CREATE TABLE #States(st VARCHAR(2)); ");
+        sbSQL.Append("INSERT INTO #States(st) ");
+        sbSQL.Append("SELECT " + strState.Replace("', '", "' UNION SELECT '"));
+
         foreach (string strLegalEntity in lstLegalEntities)
         {
             var legalNbr = strLegalEntity;
@@ -69,10 +74,10 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
 
                 sbSQL.Append("SELECT ");
                 sbSQL.Append(strExcelRow + " as ExcelRow, ");//4 AND
-                sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('Site is PAR','Par', 'N/A')  AND tmp.[Inpatient_Outpatient] = 'Inpatient' THEN cnt ELSE NULL END) cnt_in_ip, ");
-                sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('NonPar Site','Non-Par') AND tmp.[Inpatient_Outpatient] = 'Inpatient' THEN cnt ELSE NULL END) cnt_on_ip, ");
-                sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('Site is PAR','Par', 'N/A')  AND tmp.[Inpatient_Outpatient] = 'Outpatient' THEN cnt ELSE NULL END) cnt_in_op, ");
-                sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('NonPar Site','Non-Par') AND tmp.[Inpatient_Outpatient] = 'Outpatient' THEN cnt ELSE NULL END)  cnt_on_op, ");
+                sbSQL.Append("SUM(CASE WHEN tmp.[Par_NonPar_Site] in ('Site is PAR','Par')  AND tmp.[Inpatient_Outpatient] = 'Inpatient' THEN cnt ELSE NULL END) cnt_in_ip, ");
+                sbSQL.Append("SUM(CASE WHEN tmp.[Par_NonPar_Site] in ('NonPar Site','Non-Par', 'N/A') AND tmp.[Inpatient_Outpatient] = 'Inpatient' THEN cnt ELSE NULL END) cnt_on_ip, ");
+                sbSQL.Append("SUM(CASE WHEN tmp.[Par_NonPar_Site] in ('Site is PAR','Par')  AND tmp.[Inpatient_Outpatient] = 'Outpatient' THEN cnt ELSE NULL END) cnt_in_op, ");
+                sbSQL.Append("SUM(CASE WHEN tmp.[Par_NonPar_Site] in ('NonPar Site','Non-Par', 'N/A') AND tmp.[Inpatient_Outpatient] = 'Outpatient' THEN cnt ELSE NULL END)  cnt_on_op, ");
                 sbSQL.Append("'" + strState.Replace("'", "") + "' as State , ");
                 sbSQL.Append("'" + strStartDate + "' as StartDate, ");
                 sbSQL.Append("'" + strEndDate + "' as EndDate, ");
@@ -81,7 +86,7 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
                 sbSQL.Append("SELECT count(Distinct u.[Authorization]) cnt, u.[Par_NonPar_Site], u.[Inpatient_Outpatient] ");
                 sbSQL.Append("FROM [VCT_DB].[mhp].[MHP_Yearly_Universes] u ");
                 sbSQL.Append("INNER JOIN [VCT_DB].[mhp].[MHP_Yearly_Universes_UGAP] c ON c.[mhp_uni_id] = u.[mhp_uni_id] ");
-                sbSQL.Append("WHERE u.[State_of_Issue]  in (" + strState + ")  AND u.[Request_Date] >= '" + strStartDate + "' AND  u.[Request_Date] <= '" + strEndDate + "' "); //
+                sbSQL.Append("WHERE u.[State_of_Issue]  in (SELECT st from #States)  AND u.[Request_Date] >= '" + strStartDate + "' AND  u.[Request_Date] <= '" + strEndDate + "' "); //
                 sbSQL.Append("AND c.[MKT_SEG_RLLP_DESC] in (" + strMKT_SEG_RLLP_DESC + ") AND  c.[FINC_ARNG_DESC] in (" + strFINC_ARNG_DESC + ")  AND [Authorization] IS NOT NULL  AND [Classification]  IN ('EI','EI_OX')  "); //
                 sbSQL.Append("AND c.[LEG_ENTY_NBR] = '" + legalNbr + "' "); //
 
@@ -90,7 +95,7 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
                 if (!string.IsNullOrEmpty(strCUST_SEG))
                     sbSQL.Append("AND c.[CUST_SEG_NBR] in (" + strCUST_SEG + ") ");
                 sbSQL.Append(strWhere);
-                sbSQL.Append("GROUP BY [State_of_Issue], [Par_NonPar_Site], [Inpatient_Outpatient] ");
+                sbSQL.Append("GROUP BY [Par_NonPar_Site], [Inpatient_Outpatient] ");
                 sbSQL.Append(") tmp ");
                 sbSQL.Append("UNION ALL ");
 
@@ -153,10 +158,10 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
 
             sbSQL.Append("SELECT ");
             sbSQL.Append(strExcelRow + " as ExcelRow, ");//4 AND
-            sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('Site is PAR','Par', 'N/A')  AND tmp.[Inpatient_Outpatient] = 'Inpatient' THEN cnt ELSE NULL END) cnt_in_ip, ");
-            sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('NonPar Site','Non-Par') AND tmp.[Inpatient_Outpatient] = 'Inpatient' THEN cnt ELSE NULL END) cnt_on_ip, ");
-            sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('Site is PAR','Par', 'N/A')  AND tmp.[Inpatient_Outpatient] = 'Outpatient' THEN cnt ELSE NULL END) cnt_in_op, ");
-            sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('NonPar Site','Non-Par') AND tmp.[Inpatient_Outpatient] = 'Outpatient' THEN cnt ELSE NULL END)  cnt_on_op, ");
+            sbSQL.Append("SUM(CASE WHEN tmp.[Par_NonPar_Site] in ('Site is PAR','Par')  AND tmp.[Inpatient_Outpatient] = 'Inpatient' THEN cnt ELSE NULL END) cnt_in_ip, ");
+            sbSQL.Append("SUM(CASE WHEN tmp.[Par_NonPar_Site] in ('NonPar Site','Non-Par', 'N/A') AND tmp.[Inpatient_Outpatient] = 'Inpatient' THEN cnt ELSE NULL END) cnt_on_ip, ");
+            sbSQL.Append("SUM(CASE WHEN tmp.[Par_NonPar_Site] in ('Site is PAR','Par')  AND tmp.[Inpatient_Outpatient] = 'Outpatient' THEN cnt ELSE NULL END) cnt_in_op, ");
+            sbSQL.Append("SUM(CASE WHEN tmp.[Par_NonPar_Site] in ('NonPar Site','Non-Par', 'N/A') AND tmp.[Inpatient_Outpatient] = 'Outpatient' THEN cnt ELSE NULL END)  cnt_on_op, ");
             sbSQL.Append("'" + strState.Replace("'", "") + "' as State , ");
             sbSQL.Append("'" + strStartDate + "' as StartDate, ");
             sbSQL.Append("'" + strEndDate + "' as EndDate, ");
@@ -174,7 +179,7 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
             if (!string.IsNullOrEmpty(strCUST_SEG))
                 sbSQL.Append("AND c.[CUST_SEG_NBR] in (" + strCUST_SEG + ") ");
             sbSQL.Append(strWhere);
-            sbSQL.Append("GROUP BY [State_of_Issue], [Par_NonPar_Site], [Inpatient_Outpatient] ");
+            sbSQL.Append("GROUP BY [Par_NonPar_Site], [Inpatient_Outpatient] ");
             sbSQL.Append(") tmp ");
             sbSQL.Append("UNION ALL ");
 
@@ -241,8 +246,8 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
 
             sbSQL.Append("SELECT ");
             sbSQL.Append(strExcelRow + " as ExcelRow, ");//4 AND
-            sbSQL.Append("MAX(CASE WHEN  tmp.[Inpatient_Outpatient] = 'Inpatient' THEN cnt ELSE NULL END) cnt_ip, ");
-            sbSQL.Append("MAX(CASE WHEN  tmp.[Inpatient_Outpatient] = 'Outpatient' THEN cnt ELSE NULL END) cnt_op, ");
+            sbSQL.Append("SUM(CASE WHEN  tmp.[Inpatient_Outpatient] = 'Inpatient' THEN cnt ELSE NULL END) cnt_ip, ");
+            sbSQL.Append("SUM(CASE WHEN  tmp.[Inpatient_Outpatient] = 'Outpatient' THEN cnt ELSE NULL END) cnt_op, ");
             sbSQL.Append("'" + strState.Replace("'", "") + "' as State , ");
             sbSQL.Append("'" + strStartDate + "' as StartDate, ");
             sbSQL.Append("'" + strEndDate + "' as EndDate ");
@@ -257,7 +262,7 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
             if (!string.IsNullOrEmpty(strGroupNumbers))
                 sbSQL.Append("AND c.[PRDCT_CD_DESC] in (" + strGroupNumbers + ") ");
             sbSQL.Append(strWhere);
-            sbSQL.Append("GROUP BY [State_of_Issue], [Par_NonPar_Site], [Inpatient_Outpatient] ");
+            sbSQL.Append("GROUP BY [Par_NonPar_Site], [Inpatient_Outpatient] ");
             sbSQL.Append(") tmp ");
             sbSQL.Append("UNION ALL ");
 
@@ -320,10 +325,10 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
 
                 sbSQL.Append("SELECT ");
                 sbSQL.Append(strExcelRow + " as ExcelRow, ");//4 AND
-                sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('Site is PAR','Par', 'N/A')  AND tmp.[Inpatient_Outpatient] = 'Inpatient' THEN cnt ELSE NULL END) cnt_in_ip, ");
-                sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('NonPar Site','Non-Par') AND tmp.[Inpatient_Outpatient] = 'Inpatient' THEN cnt ELSE NULL END) cnt_on_ip, ");
-                sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('Site is PAR','Par', 'N/A')  AND tmp.[Inpatient_Outpatient] = 'Outpatient' THEN cnt ELSE NULL END) cnt_in_op, ");
-                sbSQL.Append("MAX(CASE WHEN tmp.[Par_NonPar_Site] in ('NonPar Site','Non-Par') AND tmp.[Inpatient_Outpatient] = 'Outpatient' THEN cnt ELSE NULL END)  cnt_on_op, ");
+                sbSQL.Append("SUM(CASE WHEN tmp.[Par_NonPar_Site] in ('Site is PAR','Par')  AND tmp.[Inpatient_Outpatient] = 'Inpatient' THEN cnt ELSE NULL END) cnt_in_ip, ");
+                sbSQL.Append("SUM(CASE WHEN tmp.[Par_NonPar_Site] in ('NonPar Site','Non-Par', 'N/A') AND tmp.[Inpatient_Outpatient] = 'Inpatient' THEN cnt ELSE NULL END) cnt_on_ip, ");
+                sbSQL.Append("SUM(CASE WHEN tmp.[Par_NonPar_Site] in ('Site is PAR','Par')  AND tmp.[Inpatient_Outpatient] = 'Outpatient' THEN cnt ELSE NULL END) cnt_in_op, ");
+                sbSQL.Append("SUM(CASE WHEN tmp.[Par_NonPar_Site] in ('NonPar Site','Non-Par', 'N/A') AND tmp.[Inpatient_Outpatient] = 'Outpatient' THEN cnt ELSE NULL END)  cnt_on_op, ");
                 sbSQL.Append("'" + strState.Replace("'", "") + "' as State , ");
                 sbSQL.Append("'" + strStartDate + "' as StartDate, ");
                 sbSQL.Append("'" + strEndDate + "' as EndDate, ");
@@ -337,7 +342,7 @@ public class MHPUniverse_Repo : IMHPUniverse_Repo
 
                 sbSQL.Append("AND c.[PRDCT_CD] = '" + prod + "' "); //
                 sbSQL.Append(strWhere);
-                sbSQL.Append("GROUP BY [State_of_Issue], [Par_NonPar_Site], [Inpatient_Outpatient] ");
+                sbSQL.Append("GROUP BY [Par_NonPar_Site], [Inpatient_Outpatient] ");
                 sbSQL.Append(") tmp ");
                 sbSQL.Append("UNION ALL ");
 

@@ -39,7 +39,7 @@ adHoc.ConnectionStringGalaxy = "Data Source=UDWPROD;User ID=cgiorda;Password=Boo
 
 
 adHoc.TableUGAP = "stg.MHP_Yearly_Universes_UGAP";
-adHoc.Limit = 3000;
+adHoc.Limit = 5;
 
 adHoc.TATReportTemplatePath = "\\\\nasv0048\\ucs_ca\\PHS_DATA_NEW\\Home Directory - Automation\\ExcelTemplates\\TAT_Reporting\\TAT_Template.xlsx";
 
@@ -97,20 +97,6 @@ Log.Logger.Information("Ad Hoc Processes Start");
 //COPY PASTE ADHOC FUNCTIONS HERE:
 
 
-Process[] workers = Process.GetProcessesByName("Python");
-foreach (Process worker in workers)
-{
-    worker.Kill();
-    worker.WaitForExit();
-    worker.Dispose();
-}
-
-return;
-
-
-
-
-
 //MHP UGAP CLEANUP AND LOAD TO VCT_DB   JON PIOTROWSKI
 List<string> files_loaded = new List<string>();
 files_loaded.Add("United PCP-Gastro_May_2024.xlsx");
@@ -140,7 +126,7 @@ return;
 await adHoc.PPACA_TAT_Email();
 return;
 
-
+//INNA SAS PROCESS
 await adHoc.MedicalNecessity_ACIS_Parser();
 return;
 

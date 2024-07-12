@@ -31,6 +31,42 @@ namespace DataAccessLibrary.Scripts
             return sbSQL.ToString();
         }
 
+        public static List<MHPParameterModel> MHPParameters_SF()
+        {
+            List<MHPParameterModel> pm = new List<MHPParameterModel>();
+
+            //EI
+            //EI
+            //EI
+            pm.Add(new MHPParameterModel() { MHPSQL = "AND (Classification = '" + LOS.EI + "' ) ", UGAPSQL = "inner join " + VolatileName + " as mm on ltrim(a.MBR_ALT_ID, '0') = mm.Cardholder_ID_CLN AND a.BTH_DT = mm.BTH_DT AND mm.REQ_DT BETWEEN c.eff_dt AND LAST_DAY(c.eff_dt)", LOS = LOS.EI, SearchMethod = "MBR_ALT_ID/BD/RD" });
+            pm.Add(new MHPParameterModel() { MHPSQL = "AND Classification = '" + LOS.EI + "'  AND [Enrollee_First_Name] IS NOT NULL AND [Enrollee_Last_Name] IS NOT NULL  AND [Member_Date_of_Birth]  IS NOT NULL ", UGAPSQL = "inner join " + VolatileName + " as mm on upper(a.MBR_FST_NM) = upper(mm.MBR_FST_NM) AND upper(a.MBR_LST_NM) = upper(mm.MBR_LST_NM) AND a.BTH_DT = mm.BTH_DT AND mm.REQ_DT BETWEEN c.eff_dt AND LAST_DAY(c.eff_dt) ", LOS = LOS.EI, SearchMethod = "FN/LN/BD/RD" });
+            pm.Add(new MHPParameterModel() { MHPSQL = "AND Classification = '" + LOS.EI + "' AND [Enrollee_First_Name] IS NOT NULL AND [Enrollee_Last_Name] IS NOT NULL  AND [Member_Date_of_Birth]  IS NOT NULL ", UGAPSQL = "inner join " + VolatileName + " as mm on upper(a.MBR_FST_NM) LIKE upper(mm.MBR_FST_NM) AND  upper(a.MBR_LST_NM) LIKE upper(mm.MBR_LST_NM) AND a.BTH_DT = mm.BTH_DT AND mm.REQ_DT BETWEEN c.eff_dt AND LAST_DAY(c.eff_dt) ", LOS = LOS.EI, SearchMethod = "FN%3/LN%3/BD/RD" });
+            //EI_OX
+            //EI_OX
+            //EI_OX
+            pm.Add(new MHPParameterModel() { MHPSQL = "AND (Classification = '" + LOS.EI_OX + "' )  ", UGAPSQL = "inner join " + VolatileName + " as mm on ltrim(a.MBR_ID, '0') = mm.Cardholder_ID_CLN AND a.BTH_DT = mm.BTH_DT AND mm.REQ_DT BETWEEN c.eff_dt AND LAST_DAY(c.eff_dt) ", LOS = LOS.EI_OX, SearchMethod = "MBR_ID/BD/RD" });
+            pm.Add(new MHPParameterModel() { MHPSQL = "AND Classification = '" + LOS.EI_OX + "' AND [Enrollee_First_Name] IS NOT NULL AND [Enrollee_Last_Name] IS NOT NULL  AND [Member_Date_of_Birth]  IS NOT NULL ", UGAPSQL = "inner join " + VolatileName + " as mm on upper(a.MBR_FST_NM) = upper(mm.MBR_FST_NM) AND upper(a.MBR_LST_NM) = upper(mm.MBR_LST_NM) AND a.BTH_DT = mm.BTH_DT AND mm.REQ_DT BETWEEN c.eff_dt AND LAST_DAY(c.eff_dt) ", LOS = LOS.EI_OX, SearchMethod = "FN/LN/BD/RD" });
+            pm.Add(new MHPParameterModel() { MHPSQL = "AND Classification = '" + LOS.EI_OX + "' AND [Enrollee_First_Name] IS NOT NULL AND [Enrollee_Last_Name] IS NOT NULL  AND [Member_Date_of_Birth]  IS NOT NULL ", UGAPSQL = "inner join " + VolatileName + " as mm on upper(a.MBR_FST_NM) LIKE upper(mm.MBR_FST_NM) AND  upper(a.MBR_LST_NM) LIKE upper(mm.MBR_LST_NM) AND a.BTH_DT = mm.BTH_DT AND mm.REQ_DT BETWEEN c.eff_dt AND LAST_DAY(c.eff_dt) ", LOS = LOS.EI_OX, SearchMethod = "FN%3/LN%3/BD/RD" });
+            //IFP
+            //IFP
+            //IFP
+            pm.Add(new MHPParameterModel() { MHPSQL = "AND (Classification = '" + LOS.IFP + "' ) ", UGAPSQL = "inner join " + VolatileName + " as mm on SUBSTR(a.MBR_ID, 0,10) = mm.Cardholder_ID_CLN AND a.BTH_DT = mm.BTH_DT AND mm.REQ_DT BETWEEN c.eff_dt AND LAST_DAY(c.eff_dt) ", LOS = LOS.IFP, SearchMethod = "MBR_ID/BD/RD" });
+            pm.Add(new MHPParameterModel() { MHPSQL = "AND Classification = '" + LOS.IFP + "'  AND [Enrollee_First_Name] IS NOT NULL AND [Enrollee_Last_Name] IS NOT NULL  AND [Member_Date_of_Birth]  IS NOT NULL ", UGAPSQL = "inner join " + VolatileName + " as mm on upper(a.MBR_FST_NM) = upper(mm.MBR_FST_NM) AND upper(a.MBR_LST_NM) = upper(mm.MBR_LST_NM) AND a.BTH_DT = mm.BTH_DT AND mm.REQ_DT BETWEEN c.eff_dt AND LAST_DAY(c.eff_dt) ", LOS = LOS.IFP, SearchMethod = "FN/LN/BD/RD" });
+            pm.Add(new MHPParameterModel() { MHPSQL = "AND Classification = '" + LOS.IFP + "' AND [Enrollee_First_Name] IS NOT NULL AND [Enrollee_Last_Name] IS NOT NULL  AND [Member_Date_of_Birth]  IS NOT NULL ", UGAPSQL = "inner join " + VolatileName + " as mm on upper(a.MBR_FST_NM) LIKE upper(mm.MBR_FST_NM) AND  upper(a.MBR_LST_NM) LIKE upper(mm.MBR_LST_NM)  AND a.BTH_DT = mm.BTH_DT AND mm.REQ_DT BETWEEN c.eff_dt AND LAST_DAY(c.eff_dt) ", LOS = LOS.IFP, SearchMethod = "FN%3/LN%3/BD/RD" });
+            //CS
+            //CS
+            //CS
+            pm.Add(new MHPParameterModel() { MHPSQL = "AND Classification = '" + LOS.CS + "' AND [Member_Date_of_Birth]  IS NOT NULL ", UGAPSQL = "inner join " + VolatileName + " as mm on ltrim(a.MBR_ID, '0') = mm.Cardholder_ID_CLN  AND k.CS_CO_CD_ST = mm.State_Of_Issue AND a.BTH_DT = mm.BTH_DT AND mm.REQ_DT BETWEEN c.eff_dt AND LAST_DAY(c.eff_dt) ", LOS = LOS.CS, SearchMethod = "MBR_ID/CS_CO_CD_ST/BD/RD" });
+            pm.Add(new MHPParameterModel() { MHPSQL = "AND Classification = '" + LOS.CS + "' AND [Member_Date_of_Birth]  IS NOT NULL  ", UGAPSQL = "inner join " + VolatileName + " as mm on ltrim(a.SBSCR_MEDCD_RCIP_NBR, '0')  = mm.Cardholder_ID_CLN  AND k.CS_CO_CD_ST = mm.State_Of_Issue AND a.BTH_DT = mm.BTH_DT AND mm.REQ_DT BETWEEN c.eff_dt AND LAST_DAY(c.eff_dt) ", LOS = LOS.CS, SearchMethod = "SBSCR_MEDCD_RCIP_NBR/CS_CO_CD_ST/BD/RD" });
+            pm.Add(new MHPParameterModel() { MHPSQL = "AND Classification = '" + LOS.CS + "'  AND [Enrollee_First_Name] IS NOT NULL AND [Enrollee_Last_Name] IS NOT NULL  AND [Member_Date_of_Birth]  IS NOT NULL  ", UGAPSQL = "inner join " + VolatileName + " as mm on upper(a.MBR_FST_NM) = upper(mm.MBR_FST_NM) AND upper(a.MBR_LST_NM) = upper(mm.MBR_LST_NM) AND a.BTH_DT = mm.BTH_DT AND mm.REQ_DT BETWEEN c.eff_dt AND LAST_DAY(c.eff_dt) AND k.CS_CO_CD_ST = mm.State_Of_Issue ", LOS = LOS.CS, SearchMethod = "FN/LN/BD/RD/CS_CO_CD_ST" });
+            pm.Add(new MHPParameterModel() { MHPSQL = "AND Classification = '" + LOS.CS + "'  AND [Enrollee_First_Name] IS NOT NULL AND [Enrollee_Last_Name] IS NOT NULL  AND [Member_Date_of_Birth]  IS NOT NULL  ", UGAPSQL = "inner join " + VolatileName + " as mm on upper(a.MBR_FST_NM) LIKE upper(mm.MBR_FST_NM) AND  upper(a.MBR_LST_NM) LIKE upper(mm.MBR_LST_NM) AND a.BTH_DT = mm.BTH_DT AND mm.REQ_DT BETWEEN c.eff_dt AND LAST_DAY(c.eff_dt) AND k.CS_CO_CD_ST = mm.State_Of_Issue ", LOS = LOS.CS, SearchMethod = "FN%3/LN%3/BD/RD/CS_CO_CD_ST" });
+
+
+            return pm;
+        }
+
+
+
         public static List<MHPParameterModel> MHPParameters()
         {
             List<MHPParameterModel> pm = new List<MHPParameterModel>();
@@ -64,6 +100,65 @@ namespace DataAccessLibrary.Scripts
 
             return pm;
         }
+
+        public static string UGAPSQLMemberDataCS_SF(string strFilterJoin, bool blIsCS)
+        {
+            StringBuilder sbSQL = new StringBuilder();
+
+
+            sbSQL.Append("create or replace table " + VolatileName + "( ");
+
+            sbSQL.Append(VolatileColumnsDeclare);
+
+            sbSQL.Append(")");
+
+            sbSQL.Append("{$Inserts}");
+
+            sbSQL.Append("SELECT ");
+            sbSQL.Append("mm.mhp_uni_id,  ");
+            sbSQL.Append("b.BEN_STRCT_1_CD as PLN_VAR_SUBDIV_CD,  ");
+            sbSQL.Append("c.eff_dt as mnth_eff_dt,  ");
+            sbSQL.Append("NULL as LEG_ENTY_NBR,  ");
+            sbSQL.Append("NULL as LEG_ENTY_FULL_NM,  ");
+            sbSQL.Append("NULL as HCE_LEG_ENTY_ROLLUP_DESC, ");
+            sbSQL.Append("NULL as MKT_TYP_DESC,  ");
+            sbSQL.Append("NULL as CUST_SEG_NBR,  ");
+            sbSQL.Append("NULL as CUST_SEG_NM,  "); //ADD TO DB!!!!
+            sbSQL.Append("i.PRDCT_CD,  ");
+            sbSQL.Append("i.PRDCT_CD_DESC,  ");
+            sbSQL.Append("NULL as MKT_SEG_DESC,  ");
+            sbSQL.Append("NULL as MKT_SEG_RLLP_DESC,  ");
+            sbSQL.Append("NULL as MKT_SEG_CD,  ");
+            sbSQL.Append("NULL as FINC_ARNG_CD,  ");
+            sbSQL.Append("NULL as FINC_ARNG_DESC,  ");
+            sbSQL.Append("a.MBR_FST_NM, ");
+            sbSQL.Append("a.MBR_LST_NM, ");
+            sbSQL.Append("a.BTH_DT, ");
+            sbSQL.Append("a.MBR_ALT_ID, ");
+            sbSQL.Append("a.MBR_ID, ");
+            sbSQL.Append("b.PRDCT_SYS_ID, ");
+            sbSQL.Append("b.CS_PRDCT_CD_SYS_ID, ");
+            sbSQL.Append("k.CS_CO_CD, ");
+            sbSQL.Append("k.CS_CO_CD_ST, ");
+            sbSQL.Append("a.SBSCR_MEDCD_RCIP_NBR ");
+            sbSQL.Append("FROM uhcdm001.hp_member a  ");
+            sbSQL.Append("join uhcdm001.cs_demographics b on a.MBR_SYS_ID = b.MBR_SYS_ID  ");
+            sbSQL.Append("join uhcdm001.date_eff c on b.DT_SYS_ID = c.EFF_DT_SYS_ID  ");
+            sbSQL.Append("join uhcdm001.SOURCE_SYSTEM_COMBO d on b.SRC_SYS_COMBO_SYS_ID = d.SRC_SYS_COMBO_SYS_ID  ");
+            sbSQL.Append("join uhcdm001.SUBSCRIBER_COUNTY h on b.SBSCR_CNTY_SYS_ID = h.SBSCR_CNTY_SYS_ID  ");
+            sbSQL.Append("join uhcdm001.PRODUCT i on b.PRDCT_SYS_ID = i.PRDCT_SYS_ID  ");
+            sbSQL.Append("join uhcdm001.cs_company_code k on b.CS_CO_CD_SYS_ID = k.CS_CO_CD_SYS_ID ");
+
+            sbSQL.Append(strFilterJoin);
+            sbSQL.Append("WHERE k.CS_CO_CD " + (blIsCS ? "<>" : "=") + " 'UHGEX'; ");
+
+
+
+
+            return sbSQL.ToString();
+        }
+
+
 
 
         public static string UGAPSQLMemberDataCS(string strFilterJoin, bool blIsCS)
@@ -130,6 +225,67 @@ namespace DataAccessLibrary.Scripts
 
             return sbSQL.ToString();
         }
+
+
+        public static string UGAPSQLLMemberDataEI_SF(string strFilterJoin, bool blIsOX)
+        {
+            StringBuilder sbSQL = new StringBuilder();
+
+            sbSQL.Append("create or replace table " + VolatileName + "( ");
+
+            sbSQL.Append(VolatileColumnsDeclare);
+
+            sbSQL.Append(")");
+
+            sbSQL.Append("{$Inserts}");
+
+            sbSQL.Append("SELECT ");
+            sbSQL.Append("mm.mhp_uni_id,  ");
+            sbSQL.Append("b.BEN_STRCT_1_CD as PLN_VAR_SUBDIV_CD,  ");
+            sbSQL.Append("c.eff_dt as mnth_eff_dt,  ");
+            sbSQL.Append("e.LEG_ENTY_NBR,  ");
+            sbSQL.Append("e.LEG_ENTY_FULL_NM,  ");
+            sbSQL.Append("e.HCE_LEG_ENTY_ROLLUP_DESC,  ");
+            sbSQL.Append("f.MKT_TYP_DESC,  ");
+            sbSQL.Append("g.CUST_SEG_NBR,  ");
+            sbSQL.Append("g.CUST_SEG_NM,  "); //ADD TO DB!!!!
+            sbSQL.Append("i.PRDCT_CD,  ");
+            sbSQL.Append("i.PRDCT_CD_DESC,  ");
+            sbSQL.Append("j.MKT_SEG_DESC,  ");
+            sbSQL.Append("j.MKT_SEG_RLLP_DESC,  ");
+            sbSQL.Append("j.MKT_SEG_CD,  ");
+            sbSQL.Append("k.FINC_ARNG_CD,  ");
+            sbSQL.Append("k.FINC_ARNG_DESC,  ");
+            sbSQL.Append("a.MBR_FST_NM, ");
+            sbSQL.Append("a.MBR_LST_NM, ");
+            sbSQL.Append("a.BTH_DT, ");
+            sbSQL.Append("a.MBR_ALT_ID, ");
+            sbSQL.Append("a.MBR_ID, ");
+            sbSQL.Append("NULL as PRDCT_SYS_ID, ");
+            sbSQL.Append("NULL as CS_PRDCT_CD_SYS_ID, ");
+            sbSQL.Append("NULL as CS_CO_CD, ");
+            sbSQL.Append("NULL as CS_CO_CD_ST, ");
+            sbSQL.Append("a.SBSCR_MEDCD_RCIP_NBR ");
+            sbSQL.Append("FROM uhcdm001.hp_member a  ");
+            sbSQL.Append("join uhcdm001.hp_demographics b on a.MBR_SYS_ID = b.MBR_SYS_ID  ");
+            sbSQL.Append("join uhcdm001.date_eff c on b.DT_SYS_ID = c.EFF_DT_SYS_ID  ");
+            sbSQL.Append("join uhcdm001.SOURCE_SYSTEM_COMBO d on b.SRC_SYS_COMBO_SYS_ID = d.SRC_SYS_COMBO_SYS_ID  ");
+            sbSQL.Append("join uhcdm001.SUBSCRIBER_COUNTY h on b.SBSCR_CNTY_SYS_ID = h.SBSCR_CNTY_SYS_ID  ");
+            sbSQL.Append("join uhcdm001.LEGAL_ENTITY e on b.LEG_ENTY_SYS_ID = e.LEG_ENTY_SYS_ID  ");
+            sbSQL.Append("join uhcdm001.MARKET_TYPE_CODE f on b.MKT_TYP_CD_SYS_ID = f.MKT_TYP_CD_SYS_ID  ");
+            sbSQL.Append("join uhcdm001.CUSTOMER_SEGMENT g on b.CUST_SEG_SYS_ID = g.CUST_SEG_SYS_ID  ");
+            sbSQL.Append("join uhcdm001.PRODUCT i on b.PRDCT_SYS_ID = i.PRDCT_SYS_ID  ");
+            sbSQL.Append("join uhcdm001.GROUP_INDICATOR j on b.GRP_IND_SYS_ID = j.GRP_IND_SYS_ID  ");
+            sbSQL.Append("join uhcdm001.company_code k on b.CO_CD_SYS_ID = k.CO_CD_SYS_ID  ");
+            sbSQL.Append(strFilterJoin);
+            sbSQL.Append("WHERE e.HCE_LEG_ENTY_ROLLUP_DESC  " + (blIsOX ? "=" : "<>") + " 'OXFORD'; ");
+
+
+
+            return sbSQL.ToString();
+        }
+
+
         public static string UGAPSQLLMemberDataEI(string strFilterJoin, bool blIsOX)
         {
             StringBuilder sbSQL = new StringBuilder();

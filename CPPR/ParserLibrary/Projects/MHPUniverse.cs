@@ -448,7 +448,7 @@ public class MHPUniverse : IMHPUniverse
         IRelationalDataAccess db_sql = new SqlDataAccess();
 
         //DRIVING LOOP
-        var parameters = MHPCustomSQL.MHPParameters();
+        var parameters = MHPCustomSQL.MHPParameters_SF();
 
         string sql;
         StringBuilder sbSQL = new StringBuilder();
@@ -477,9 +477,9 @@ public class MHPUniverse : IMHPUniverse
                 {
                     Log.Information("Searching UGAP for " + total_counter + " out of " + total);
                     if (param.LOS == LOS.EI || param.LOS == LOS.EI_OX)
-                        sql = MHPCustomSQL.UGAPSQLLMemberDataEI(param.UGAPSQL, param.LOS == LOS.EI_OX).Replace("{$Inserts}", sbSQL.ToString());
+                        sql = MHPCustomSQL.UGAPSQLLMemberDataEI_SF(param.UGAPSQL, param.LOS == LOS.EI_OX).Replace("{$Inserts}", sbSQL.ToString());
                     else
-                        sql = MHPCustomSQL.UGAPSQLMemberDataCS(param.UGAPSQL, param.LOS == LOS.CS).Replace("{$Inserts}", sbSQL.ToString());
+                        sql = MHPCustomSQL.UGAPSQLMemberDataCS_SF(param.UGAPSQL, param.LOS == LOS.CS).Replace("{$Inserts}", sbSQL.ToString());
 
                     var ugap = await db_td.LoadData<MHPMemberDetailsModel>(connectionString: tdConnectionString, sql);
                     foreach (var u in ugap)
@@ -502,9 +502,9 @@ public class MHPUniverse : IMHPUniverse
                 Log.Information("Searching UGAP for " + total_counter + " out of " + total);
 
                 if (param.LOS == LOS.EI || param.LOS == LOS.EI_OX)
-                    sql = MHPCustomSQL.UGAPSQLLMemberDataEI(param.UGAPSQL, param.LOS == LOS.EI_OX).Replace("{$Inserts}", sbSQL.ToString());
+                    sql = MHPCustomSQL.UGAPSQLLMemberDataEI_SF(param.UGAPSQL, param.LOS == LOS.EI_OX).Replace("{$Inserts}", sbSQL.ToString());
                 else
-                    sql = MHPCustomSQL.UGAPSQLMemberDataCS(param.UGAPSQL, param.LOS == LOS.CS).Replace("{$Inserts}", sbSQL.ToString());
+                    sql = MHPCustomSQL.UGAPSQLMemberDataCS_SF(param.UGAPSQL, param.LOS == LOS.CS).Replace("{$Inserts}", sbSQL.ToString());
 
                 var ugap = await db_td.LoadData<MHPMemberDetailsModel>(connectionString: tdConnectionString, sql);
                 foreach (var u in ugap)
