@@ -157,7 +157,7 @@
 
             <telerik:RadButton Grid.Row="0" Grid.Column="8" Width="30" Click="RadButton_Click" >
                 <telerik:RadButton.Content>
-                    <Image Source="\\WP000003507\csg_share\VC_Portal\images\question.png" Stretch="Fill" />
+                    <Image Source="\\WN000106596\Value_Creation\VC_Portal\images\question.png" Stretch="Fill" />
                 </telerik:RadButton.Content>
             </telerik:RadButton>
 

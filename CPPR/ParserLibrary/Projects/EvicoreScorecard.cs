@@ -154,14 +154,16 @@ public class EvicoreScorecard : IEvicoreScorecard
                         if (sheet.SheetName == "GASTROENTEROLOGY")
                         {
                             //closed_xml.Mappings = getColumnGastroMappings();
-
-                            foreach (var e in eslos.Where(x => !string.IsNullOrEmpty(x.EIAN)))
+                            int ii = 0;
+                            foreach (var e in eslos.Where(x => !string.IsNullOrEmpty(x.EIAN) && x.EIAN != "-"))
                             {
+
                                 if (e.Header.Trim().EqualsAnyOf(ignore))
                                 {
                                     continue;
                                 }
 
+                             
 
                                 //ex Map '% Fax' = 'Per_Fax'
                                 var mapping = headerMappings.SingleOrDefault(m => m.Key.ToLower().Trim() == e.Header.ToLower().Trim());

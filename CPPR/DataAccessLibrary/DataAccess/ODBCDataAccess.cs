@@ -3,6 +3,7 @@ using Dapper;
 using System.Data;
 using System.Data.Odbc;
 using System.Data.Common;
+using Snowflake.Data.Client;
 
 namespace DataAccessLibrary.DataAccess;
 
@@ -69,7 +70,17 @@ public class ODBCDataAccess : IRelationalDataAccess
 
     public async Task<DataTable> LoadDataTable(string connectionString, string sql)
     {
-        throw new NotImplementedException();
+        using OdbcConnection connection = new OdbcConnection(connectionString);
+
+        var table = new DataTable();
+        OdbcCommand command = new OdbcCommand(sql, connection);
+        command.CommandTimeout = 9999999;
+        using (var da = new OdbcDataAdapter(command))
+        {
+            await Task.Run(() => da.Fill(table));
+        }
+
+        return table;
     }
     public async Task<object> ExecuteScalar<T>(string storedProcedure, T parameters, string connectionId = "VCT_DB")
     {
@@ -79,7 +90,11 @@ public class ODBCDataAccess : IRelationalDataAccess
 
     public async Task<object> Execute(string connectionString, string sql)
     {
-        throw new NotImplementedException();
+        using IDbConnection connection = new OdbcConnection(connectionString);
+
+        var cmd = new CommandDefinition(sql, commandTimeout: 12000);
+        var result = await connection.ExecuteAsync(cmd);
+        return result;
 
     }
 

@@ -462,7 +462,7 @@ public partial class ProcCodeTrendsViewModel : ObservableObject
 
                 if(blFirstPass)
                 {
-                    var template = @"\\WP000003507\csg_share\VC_Portal\templates\PC_Trends\Read_Me.xlsx";
+                    var template = @"\\WN000106596\Value_Creation\VC_Portal\templates\PC_Trends\Read_Me.xlsx";
 
                     var b = await ProcCodeTrendsExport.ExportReadmeToExcel(pc_param, template, sb_lob.ToString().Trim().TrimEnd(','), StartDateSpan, EndDateSpan, () => ProgressMessageViewModel.Message, x => ProgressMessageViewModel.Message = x, cancellationToken.Token);
 

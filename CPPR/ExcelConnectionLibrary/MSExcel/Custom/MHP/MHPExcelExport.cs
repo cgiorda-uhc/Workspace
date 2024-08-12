@@ -22,7 +22,7 @@ namespace FileParsingLibrary.MSExcel.Custom.MHP
             //mhp_details.OrderBy(o => o.LegalEntity).OrderBy(o => o.Request_Date).OrderBy(o => o.Authorization).ToList();
             mhp_details.OrderBy(o => o.LEG_ENTY_NBR).OrderBy(o => o.Request_Date).OrderBy(o => o.Authorization).ToList();
 
-            string strFilePath = @"\\WP000003507\csg_share\VCPortal\Files\MHP_Reporting_Template.xlsx";
+            string strFilePath = @"\\WN000106596\Value_Creation\VC_Portal\templates\MHP\MHP_Reporting_Template.xlsx";
 
             int intNameCntTmp = 0;
             XLWorkbook wb = new XLWorkbook(strFilePath);
@@ -317,7 +317,7 @@ namespace FileParsingLibrary.MSExcel.Custom.MHP
             //mhp_details.OrderBy(o => o.LegalEntity).OrderBy(o => o.Request_Date).OrderBy(o => o.Authorization).ToList();
             mhp_details.OrderBy(o => o.Request_Date).OrderBy(o => o.Authorization).ToList();
 
-            string strFilePath = @"\\WP000003507\Home Directory - UCS Team Portal\Files\MHPCS_Reporting_Template.xlsx";
+            string strFilePath = @"\\WN000106596\Value_Creation\VC_Portal\templates\MHP\MHPCS_Reporting_Template.xlsx";
 
 
             int intNameCntTmp = 0;
@@ -487,7 +487,7 @@ namespace FileParsingLibrary.MSExcel.Custom.MHP
             //mhp_details.OrderBy(o => o.LegalEntity).OrderBy(o => o.Request_Date).OrderBy(o => o.Authorization).ToList();
             mhp_details.OrderBy(o => o.PRDCT_CD).OrderBy(o => o.Request_Date).OrderBy(o => o.Authorization).ToList();
 
-            string strFilePath = @"\\WP000003507\Home Directory - UCS Team Portal\Files\MHP_Reporting_Template.xlsx";
+            string strFilePath = @"\\WN000106596\Value_Creation\VC_Portal\templates\MHP\MHP_Reporting_Template.xlsx";
 
             int intNameCntTmp = 0;
             XLWorkbook wb = new XLWorkbook(strFilePath);

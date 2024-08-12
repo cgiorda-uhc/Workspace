@@ -8,6 +8,8 @@ using Serilog;
 using SASConnectionLibrary;
 using ProjectManagerLibrary.Configuration.HeaderInterfaces.Concrete;
 using System.Diagnostics;
+using VCPortal_Models.Models.PCCM;
+using ProjectManagerLibrary.Models;
 
 
 var adHoc = new AdHoc();
@@ -29,7 +31,16 @@ adHoc.ConnectionStringPD = "data source=UHPD_Analytics;server=DBSWS200137;Persis
 //adHoc.ConnectionStringUHN = "data source=UHN_Reporting;server=WP000074441CLS;Persist Security Info=True;database=UHN_Reporting;Integrated Security=SSPI;connect timeout=300000;";
 adHoc.ConnectionStringUHN = "data source=UHN_Reporting;server=WP000074680;Persist Security Info=True;database=SourceData;Integrated Security=SSPI;connect timeout=300000;";
 
-adHoc.ConnectionStringSnowflake = @"DRIVER=SnowflakeDSIIDriver;SERVER=uhgdwaas.east-us-2.azure.snowflakecomputing.com;ROLE=AR_PRD_CHRIS_GIORDANO_UHC_ROLE;AUTHENTICATOR=SNOWFLAKE_JWT;UID=chris_giordano@uhc.com;PRIV_KEY_FILE=C:\Users\cgiorda\Documents\credentials\rsa_key.p8;PRIV_KEY_FILE_PWD=Sigmund2010!!; WAREHOUSE=OHBI_PRD_CONSUME_FREQ_WH;";
+adHoc.ConnectionStringSnowflakeODBC = @"DRIVER=SnowflakeDSIIDriver;SERVER=uhgdwaas.east-us-2.azure.snowflakecomputing.com;ROLE=AR_PRD_CHRIS_GIORDANO_UHC_ROLE;AUTHENTICATOR=SNOWFLAKE_JWT;UID=chris_giordano@uhc.com;PRIV_KEY_FILE=C:\Users\cgiorda\Documents\credentials\rsa_key.p8;PRIV_KEY_FILE_PWD=Sigmund2010!!; WAREHOUSE=OHBI_PRD_CONSUME_FREQ_WH;";
+
+adHoc.ConnectionStringSnowflake = @"DRIVER=SnowflakeDSIIDriver;ACCOUNT=uhgdwaas.east-us-2.azure.snowflakecomputing.com;HOST=uhgdwaas.east-us-2.azure.snowflakecomputing.com;ROLE=AR_PRD_CHRIS_GIORDANO_UHC_ROLE;AUTHENTICATOR=SNOWFLAKE_JWT;USER=chris_giordano@uhc.com;private_key_file=C:\Users\cgiorda\Documents\credentials\rsa_key.p8;private_key_pwd=Sigmund2010!!; WAREHOUSE=UGP_PRD_END_USERS_WH;";
+
+
+//adHoc.ConnectionStringSnowflake3 = @"DRIVER=SnowflakeDSIIDriver;ACCOUNT=uhgdwaas.east-us-2.azure.snowflakecomputing.com;ROLE=AR_PRD_CHRIS_GIORDANO_UHC_ROLE;AUTHENTICATOR=SNOWFLAKE_JWT;USER=chris_giordano@uhc.com;private_key_file=C:\Users\cgiorda\Documents\credentials\rsa_key.p8;private_key_pwd=Sigmund2010!!; WAREHOUSE=OHBI_PRD_CONSUME_FREQ_WH;";
+
+
+//adHoc.ConnectionStringSnowflake4 = @"DRIVER=SnowflakeDSIIDriver;SERVER=uhgdwaas.east-us-2.azure.snowflakecomputing.com;ROLE=AR_PRD_CHRIS_GIORDANO_UHC_ROLE;AUTHENTICATOR=SNOWFLAKE_JWT;UID=chris_giordano@uhc.com;PRIV_KEY_FILE=C:\Users\cgiorda\Documents\credentials\rsa_key.p8;PRIV_KEY_FILE_PWD=Sigmund2010!!; WAREHOUSE=UGP_PRD_END_USERS_WH;";
+
 //adHoc.ConnectionStringSnowflake = @"DRIVER=SnowflakeDSIIDriver;SERVER=uhgdwaas.east-us-2.azure.snowflakecomputing.com;ROLE=AR_PRD_CHRIS_GIORDANO_UHC_ROLE;AUTHENTICATOR=SNOWFLAKE_JWT;UID=chris_giordano@uhc.com;PRIV_KEY_FILE=C:\Users\cgiorda\Documents\credentials\rsa_key.p8;PRIV_KEY_FILE_PWD=Sigmund2010!!; WAREHOUSE=OHBI_PRD_CONSUME_FREQ_WH;";
 
 
@@ -39,7 +50,7 @@ adHoc.ConnectionStringGalaxy = "Data Source=UDWPROD;User ID=cgiorda;Password=Boo
 
 
 adHoc.TableUGAP = "stg.MHP_Yearly_Universes_UGAP";
-adHoc.Limit = 5;
+adHoc.Limit = 3000;
 
 adHoc.TATReportTemplatePath = "\\\\nasv0048\\ucs_ca\\PHS_DATA_NEW\\Home Directory - Automation\\ExcelTemplates\\TAT_Reporting\\TAT_Template.xlsx";
 
@@ -87,7 +98,7 @@ SASConnection.SASUserNameOracle = sas_cfg.SASUserNameOracle;
 SASConnection.SASPasswordOracle = sas_cfg.SASPasswordOracle;
 
 
-
+ 
 long result = -1;
 
 
@@ -97,17 +108,17 @@ Log.Logger.Information("Ad Hoc Processes Start");
 //COPY PASTE ADHOC FUNCTIONS HERE:
 
 
-//MHP UGAP CLEANUP AND LOAD TO VCT_DB   JON PIOTROWSKI
+
 List<string> files_loaded = new List<string>();
-files_loaded.Add("United PCP-Gastro_May_2024.xlsx");
-files_loaded.Add("Oxford May -Radiology Cardiology Universe 2024.xlsx");
-files_loaded.Add("United PCP- Rad & Card_May_2024.xlsx");
-files_loaded.Add("Oxford May-Gastro Universe 2024.xlsx");
-files_loaded.Add("Americhoice May-Radiology Cardiology Universe 2024.xlsx");
+files_loaded.Add("Oxford June -Radiology Cardiology Universe 2024.xlsx");
+files_loaded.Add("United PCP- Rad & Card_June_2024.xlsx");
+files_loaded.Add("Oxford June-Gastro Universe 2024.xlsx");
+files_loaded.Add("United PCP-Gastro_June_2024.xlsx");
+files_loaded.Add("Americhoice June-Radiology Cardiology Universe 2024.xlsx");
 //MHP UGAP CLEANUP
 await adHoc.cleanupMemberDataAsync(files_loaded);
 //MHP LOAD TO VCT_DB
-await adHoc.transferMHPDataAsync(files_loaded, "May", "2024");
+await adHoc.transferMHPDataAsync(files_loaded, "June", "2024");
 return;
 
 
@@ -120,15 +131,11 @@ await adHoc.generateTATReportsAsync();
 return;
 
 
-
-
 //GENERATE DYNAMIC EMAIL FOR PPACA_TAT Mary Ann Dimartino
 await adHoc.PPACA_TAT_Email();
 return;
 
-//INNA SAS PROCESS
-await adHoc.MedicalNecessity_ACIS_Parser();
-return;
+
 
 //CHECK FOR NEW TEAMMATE IN AD AND EMAIL Kristy IF NEED BE
 var adr = new ADDirectReportAlertsLR(config, db_sqsl);
@@ -166,7 +173,9 @@ SASConnection.destroy_SAS_instance();
 return;
 
 
-
+//INNA SAS PROCESS
+await adHoc.MedicalNecessity_ACIS_Parser();
+return;
 
 
 
@@ -174,6 +183,8 @@ return;
 //EVICORE MONTHLY PROCESS START
 //EVICORE MONTHLY PROCESS START
 //CHECK FOR NEW EVICORE FILES EACH MONTH
+
+
 var vds = new DataSourceVerification(config);
 result = await vds.CheckDataSources();
 return;
@@ -190,7 +201,6 @@ var nice = new NICEUHCWestEligibility(config, db_sqsl);
 result = await nice.LoadNICEUHCWestEligibilityData();
 return;
 
-
 //PROCESS AMERICHOICE_Allstates_Auths Per 1000 by Modality with Exclusions_*_*_*.xlsx INTO stg.EviCore_AmerichoiceAllstatesAuths
 var aasa = new EviCoreAmerichoiceAllstatesAuth(config, db_sqsl);
 result = await aasa.LoadEviCoreAmerichoiceAllstatesAuthData();
@@ -200,6 +210,7 @@ return;
 var ppca = new PPACATAT(config, db_sqsl);
 result = await ppca.LoadTATData();
 return;
+
 
 //PROCESS YTD - Cisco - UHC Metrics *_*.xlsx INTO stg.EviCore_YTDMetrics
 var ytdm = new EviCoreYTDMetrics(config, db_sqsl);
@@ -211,16 +222,18 @@ var mhp = new MHPUniverse(config, db_sqsl);
 result = await mhp.LoadMHPUniverseData();
 return;
 
+
 //PROCESS Site of Care Report_*_*.xlsx INTO stg.SiteOfCare_Data_v3
 var soc = new SiteOfCare(config, db_sqsl);
 result = await soc.LoadSiteOfCareData();
 return;
 
+
+
 //PROCESS United Gastro Site of Care Report *_*.xlsx INTO stg.SiteOfCare_Gastro
 var socg = new SiteOfCareGastro(config, db_sqsl);
 result = await socg.LoadSiteOfCareData();
 return;
-
 
 
 //PROCESS CRC_Pivot_Rawdata_*.xlsx INTO stg.EviCore_MR_MembershipDetails

@@ -5,10 +5,6 @@ using DataAccessLibrary.DataAccess;
 using DataAccessLibrary.Models;
 using DataAccessLibrary.Scripts;
 using DataAccessLibrary.Shared;
-using DocumentFormat.OpenXml.Office2010.ExcelAc;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
-using DocumentFormat.OpenXml.Wordprocessing;
 using FileParsingLibrary.Models;
 using FileParsingLibrary.MSExcel;
 using FileParsingLibrary.MSExcel.Custom.ProcCodeTrends;
@@ -18,6 +14,7 @@ using MathNet.Numerics.Providers.SparseSolver;
 using NPOI.OpenXmlFormats.Spreadsheet;
 using NPOI.SS.Formula.Functions;
 using NPOI.SS.Formula.PTG;
+using NPOI.Util;
 using NPOI.XWPF.UserModel;
 using Org.BouncyCastle.Cms;
 using Org.BouncyCastle.Utilities;
@@ -48,6 +45,7 @@ using VCPortal_Models.Models.Shared;
 using VCPortal_Models.Models.TAT;
 using VCPortal_Models.Parameters.EDCAdhoc;
 using VCPortal_Models.Parameters.MHP;
+using ObjectExtensions = SharedFunctionsLibrary.ObjectExtensions;
 
 namespace ConsoleLibraryTesting
 {
@@ -81,6 +79,8 @@ namespace ConsoleLibraryTesting
 
 
         public string ConnectionStringSnowflake { get; set; }
+
+        public string ConnectionStringSnowflakeODBC { get; set; }
 
 
         public string ConnectionStringUHN { get; set; }
@@ -136,12 +136,13 @@ namespace ConsoleLibraryTesting
 
 
             //TWO DBS
-            //IRelationalDataAccess db_td = new TeraDataAccess();
-            IRelationalDataAccess db_odbc = new ODBCDataAccess();
+            IRelationalDataAccess db_td = new TeraDataAccess();
+            //IRelationalDataAccess db_odbc = new ODBCDataAccess();
+            //IRelationalDataAccess db_sf = new SnowFlakeDataAccess();
             IRelationalDataAccess db_sql = new SqlDataAccess();
 
             //DRIVING LOOP
-            var parameters = MHPCustomSQL.MHPParameters_SF();
+            var parameters = MHPCustomSQL.MHPParameters();
 
             string sql;
             StringBuilder sbSQL = new StringBuilder();
@@ -169,11 +170,11 @@ namespace ConsoleLibraryTesting
                     {
                         Console.WriteLine("Searching UGAP for " + total_counter + " out of " + total);
                         if (param.LOS == LOS.EI || param.LOS == LOS.EI_OX)
-                            sql = MHPCustomSQL.UGAPSQLLMemberDataEI_SF(param.UGAPSQL, param.LOS == LOS.EI_OX).Replace("{$Inserts}", sbSQL.ToString());
+                            sql = MHPCustomSQL.UGAPSQLLMemberDataEI(param.UGAPSQL, param.LOS == LOS.EI_OX).Replace("{$Inserts}", sbSQL.ToString());
                         else
-                            sql = MHPCustomSQL.UGAPSQLMemberDataCS_SF(param.UGAPSQL, param.LOS == LOS.CS).Replace("{$Inserts}", sbSQL.ToString());
+                            sql = MHPCustomSQL.UGAPSQLMemberDataCS(param.UGAPSQL, param.LOS == LOS.CS).Replace("{$Inserts}", sbSQL.ToString());
 
-                        var ugap = await db_odbc.LoadData<MHPMemberDetailsModel>(connectionString: ConnectionStringSnowflake, sql);
+                        var ugap = await db_td.LoadData<MHPMemberDetailsModel>(connectionString: ConnectionStringTD, sql);
                         foreach (var u in ugap)
                         {
                             u.SearchMethod = param.SearchMethod;
@@ -194,11 +195,108 @@ namespace ConsoleLibraryTesting
                     Console.WriteLine("Searching UGAP for " + total_counter + " out of " + total);
 
                     if (param.LOS == LOS.EI || param.LOS == LOS.EI_OX)
-                        sql = MHPCustomSQL.UGAPSQLLMemberDataEI_SF(param.UGAPSQL, param.LOS == LOS.EI_OX).Replace("{$Inserts}", sbSQL.ToString());
+                        sql = MHPCustomSQL.UGAPSQLLMemberDataEI(param.UGAPSQL, param.LOS == LOS.EI_OX).Replace("{$Inserts}", sbSQL.ToString());
                     else
-                        sql = MHPCustomSQL.UGAPSQLMemberDataCS_SF(param.UGAPSQL, param.LOS == LOS.CS).Replace("{$Inserts}", sbSQL.ToString());
+                        sql = MHPCustomSQL.UGAPSQLMemberDataCS(param.UGAPSQL, param.LOS == LOS.CS).Replace("{$Inserts}", sbSQL.ToString());
 
-                    var ugap = await db_odbc.LoadData<MHPMemberDetailsModel>(connectionString: ConnectionStringSnowflake, sql);
+                    var ugap = await db_td.LoadData<MHPMemberDetailsModel>(connectionString: ConnectionStringTD, sql);
+                    foreach (var u in ugap)
+                    {
+                        u.SearchMethod = param.SearchMethod;
+                    }
+
+                    Console.WriteLine("Loading " + ugap.Count() + " UGAP rows into MHP source.");
+                    await db_sql.BulkSave<MHPMemberDetailsModel>(connectionString: ConnectionStringMSSQL, TableUGAP, ugap, columns);
+
+                    sbSQL.Remove(0, sbSQL.Length);
+
+                }
+
+            }
+
+
+            await db_sql.Execute(ConnectionStringMSSQL, "exec [IL_UCA].[dbo].[sp_mhp_refesh_filter_cache]");
+
+        }
+
+
+        //MHP UGAP CLEAN
+        public async Task cleanupMemberDataAsyncSNOWFLAKE(List<string> files_loaded)
+        {
+           //TO DO FINAL SQL:
+           //1. CREATE/REPLACE TABLE;
+           //2. INSERT INTO SELECT UNION SELECT UNION;
+           //3. GET DATA;
+   
+            var files_csv = "'" + string.Join("','", files_loaded.Select(n => n.ToString()).ToArray()) + "'";
+
+
+            //TWO DBS
+            //IRelationalDataAccess db_td = new TeraDataAccess();
+            //IRelationalDataAccess db_odbc = new ODBCDataAccess();
+            IRelationalDataAccess db_sf = new SnowFlakeDataAccess();
+            IRelationalDataAccess db_sql = new SqlDataAccess();
+
+            //DRIVING LOOP
+            var parameters = MHPCustomSQL.MHPParameters_SF();
+
+            string sql;
+            StringBuilder sbSQL = new StringBuilder();
+
+            int total;
+            int total_counter;
+            int limit_counter;
+            var columns = typeof(MHPMemberDetailsModel).GetProperties().Select(p => p.Name).ToArray();
+            foreach (var param in parameters)
+            {
+                sql = MHPCustomSQL.MSSQLMHPMember(TableMHP, TableUGAP, files_csv, param.MHPSQL);
+                //FIND CURRENT MEMBERS
+                var mhp_search = (await db_sql.LoadData<MHPMemberSearchModel>(connectionString: ConnectionStringMSSQL, sql));
+                total = mhp_search.Count();
+                Console.WriteLine(total + " records found for  SM:" + param.SearchMethod + "   LOS:" + param.LOS + "");
+                total_counter = 0;
+                limit_counter = 0;
+
+                foreach (var m in mhp_search)
+                {
+                    sbSQL.Append(MHPCustomSQL.UGAPVolatileInsertSF(m, param));
+                    limit_counter++;
+                    total_counter++;
+                    if (limit_counter == Limit)
+                    {
+
+                        Console.WriteLine("Searching UGAP for " + total_counter + " out of " + total);
+                        if (param.LOS == LOS.EI || param.LOS == LOS.EI_OX)
+                            sql = MHPCustomSQL.UGAPSQLLMemberDataEI_SF(param.UGAPSQL, param.LOS == LOS.EI_OX).Replace("{$Inserts}", sbSQL.ToString().TrimEnd('U', 'N', 'I', 'O', 'N', ' ', 'A', 'L', 'L', ' '));
+                        else
+                            sql = MHPCustomSQL.UGAPSQLMemberDataCS_SF(param.UGAPSQL, param.LOS == LOS.CS).Replace("{$Inserts}", sbSQL.ToString().TrimEnd('U', 'N', 'I', 'O', 'N', ' ', 'A', 'L', 'L', ' '));
+
+                        var ugap = await db_sf.LoadData<MHPMemberDetailsModel>(connectionString: ConnectionStringSnowflake, sql );
+                        foreach (var u in ugap)
+                        {
+                            u.SearchMethod = param.SearchMethod;
+                        }
+
+                        Console.WriteLine("Loading " + ugap.Count() + " UGAP rows into MHP source.");
+                        await db_sql.BulkSave<MHPMemberDetailsModel>(connectionString: ConnectionStringMSSQL, TableUGAP, ugap, columns);
+
+
+
+                        sbSQL.Remove(0, sbSQL.Length);
+                        limit_counter = 0;
+                    }
+                }
+                //FINISHED BEFORE LIMIT SO PROCESS REMAINDER
+                if (sbSQL.Length > 0)
+                {
+                    Console.WriteLine("Searching UGAP for " + total_counter + " out of " + total);
+
+                    if (param.LOS == LOS.EI || param.LOS == LOS.EI_OX)
+                        sql = MHPCustomSQL.UGAPSQLLMemberDataEI_SF(param.UGAPSQL, param.LOS == LOS.EI_OX).Replace("{$Inserts}", sbSQL.ToString().TrimEnd('U', 'N', 'I', 'O', 'N', ' ', 'A', 'L', 'L', ' '));
+                    else
+                        sql = MHPCustomSQL.UGAPSQLMemberDataCS_SF(param.UGAPSQL, param.LOS == LOS.CS).Replace("{$Inserts}", sbSQL.ToString().TrimEnd('U', 'N', 'I', 'O', 'N', ' ', 'A', 'L', 'L', ' '));
+
+                    var ugap = await db_sf.LoadData<MHPMemberDetailsModel>(connectionString: ConnectionStringSnowflake, sql);
                     foreach (var u in ugap)
                     {
                         u.SearchMethod = param.SearchMethod;
@@ -308,7 +406,7 @@ namespace ConsoleLibraryTesting
             _console_message = "Sending email to MHP users";
             _stop_watch.Reset();
             _stop_watch.Start();
-            await SharedFunctions.EmailAsync("jon.piotrowski@uhc.com;renee_l_struck@uhc.com;hong_gao@uhc.com", "chris_giordano@uhc.com", "MHPUniverse " + month + " "+ year +" was refreshed", "MHPUniverse " + month + " "+ year +" was refreshed", "chris_giordano@uhc.com;laura_fischer@uhc.com;inna_rudi@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
+            await SharedFunctions.EmailAsync("jon.piotrowski@uhc.com;renee_l_struck@uhc.com;hong_gao@uhc.com", "chris_giordano@uhc.com", "MHPUniverse " + month + " "+ year +" was refreshed", "MHPUniverse " + month + " "+ year +" was refreshed", "chris_giordano@uhc.com;laura_fischer@uhc.com;sarah.wang@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
             _stop_watch.Stop();
             row++;
             _console_message = "";
@@ -1428,12 +1526,12 @@ namespace ConsoleLibraryTesting
             {
                 var wb = new XLWorkbook(file); //CREATE INSTANCE FOR NEW FILE
 
-                using (var spreadSheetDocument = SpreadsheetDocument.Open(file, false)) //OPEN FILE ABOVE
+                using (var spreadSheetDocument = DocumentFormat.OpenXml.Packaging.SpreadsheetDocument.Open(file, false)) //OPEN FILE ABOVE
                 {
                     int sheetIndex = 0;
                     foreach (var worksheetpart in spreadSheetDocument.WorkbookPart.WorksheetParts) //LOOP EACH SHEET
                     {
-                        string sheetName = spreadSheetDocument.WorkbookPart.Workbook.Descendants<Sheet>().ElementAt(sheetIndex).Name;
+                        string sheetName = spreadSheetDocument.WorkbookPart.Workbook.Descendants<DocumentFormat.OpenXml.Spreadsheet.Sheet>().ElementAt(sheetIndex).Name;
 
 
                         if (sheetName != s + " " + sheet_common && sheetName != sheet_main) //IF ITS NOT THE SHEETS THEN DELETE
@@ -2907,7 +3005,7 @@ namespace ConsoleLibraryTesting
 
             //SENDING EMAIL AND ATTACHEMENT
             Console.WriteLine("Sending final email and attachement");
-            await SharedFunctions.EmailAsync("inna_rudi@uhc.com", "chris_giordano@uhc.com", "VC Automation Manager: ACIS MedNec Tables", "ACIS MedNec tables were updated with data for the month of June 2024", "chris_giordano@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
+            await SharedFunctions.EmailAsync("sarah.wang@uhc.com", "chris_giordano@uhc.com", "VC Automation Manager: ACIS MedNec Tables", "ACIS MedNec tables were updated with data for the month of July 2024", "chris_giordano@uhc.com", null, System.Net.Mail.MailPriority.Normal).ConfigureAwait(false);
 
 
         }
@@ -3013,7 +3111,7 @@ namespace ConsoleLibraryTesting
 
             string recipients = "allyson_k_clark@uhc.com;laura_fischer@uhc.com;audrey_horton@uhc.com;renee_l_struck@uhc.com;mark_j_newman@uhc.com;patricia_c_huntsman@uhc.com";
             string from = "mary_ann_dimartino@uhc.com";
-            string cc = "jason_t_riley@uhc.com;mary_ann_dimartino@uhc.com;chris_giordano@uhc.com;inna_rudi@uhc.com";
+            string cc = "jason_t_riley@uhc.com;mary_ann_dimartino@uhc.com;chris_giordano@uhc.com;sarah.wang@uhc.com";
 
             //GET REPORTING DATA FROM VIEW VW_PPACA_TAT
             Console.WriteLine("Getting Reporting Data from ILUCA");
